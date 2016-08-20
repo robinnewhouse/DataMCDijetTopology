@@ -1,0 +1,92 @@
+LibraryNames libTopEventSelectionTools libTopEventReconstructionTools libDataMCbackgroundTools libBoostedJetTaggers libJetSubStructureUtils libShowerDeconstruction
+
+#########################
+### GRL Configuration ###
+#########################
+
+GRLDir DataMCbackgroundTools
+GRLFile data16_13TeV.periodAllYear_DetStatus-v79-pro20-05_DQDefects-00-02-02_PHYS_StandardGRL_All_Good_25ns.xml
+
+#######################
+### Custom Settings ###
+#######################
+
+DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass
+
+RunHTT True
+HTTConfigs def
+
+RunShowerDeconstruction False
+SaveTrackAssistedMass True
+
+##########################
+### Object Collections ###
+##########################
+
+ElectronCollectionName None
+MuonCollectionName None
+JetCollectionName AntiKt4EMTopoJets
+LargeJetCollectionName AntiKt10LCTopoTrimmedPtFrac5SmallR20Jets
+LargeJetSubstructure None
+TauCollectionName None
+PhotonCollectionName Photons
+METCollectionName MET_Reference_AntiKt4EMTopo
+TruthCollectionName TruthParticles
+TruthJetCollectionName AntiKt4TruthJets
+TruthLargeRJetCollectionName AntiKt10TruthTrimmedPtFrac5SmallR20Jets
+TruthLargeRJetEta 2.5
+TruthLargeRJetPt 25000
+TopPartonHistory None
+TruthBlockInfo False
+PDFInfo False
+
+#############################
+### General Configuration ###
+#############################
+
+#NEvents 100
+JetUncertainties_BunchSpacing 25ns
+
+OutputFileSetAutoFlushZero True
+
+ObjectSelectionName top::ObjectLoaderStandardCuts
+
+#OutputFormat top::EventSaverFlatNtuple
+OutputFormat top::DataMCbackgroundEventSaver
+
+OutputEvents SelectedEvents
+OutputFilename output.root
+PerfStats No
+
+### to retrieve the matrix-method weights from the TopFakes package if available - default is False
+FakesMMWeights False
+
+### handling btag scale-factors
+CalculateSF True
+BTaggingWP FixedCutBEff_70
+
+### handling systematic trees
+LargeRJESUncertaintyConfig MultiTagging
+Systematics Nominal
+
+### to do overlap removal with loose leptons
+ApplyElectronInJetSubtraction False
+
+OverlapRemovalLeptonDef Tight
+ApplyElectronInJetSubtraction False
+
+####################
+### SELECTION(S) ###
+####################
+
+SELECTION gammajet
+INITIAL
+GRL
+GOODCALO
+PRIVTX
+TRIGDEC HLT_g140_loose
+PH_N 150000 == 1
+JETCLEAN LooseBad
+LARGEJET_N 150000 >= 1
+GAMMAJET
+SAVE

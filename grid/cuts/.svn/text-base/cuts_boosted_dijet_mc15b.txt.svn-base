@@ -1,0 +1,99 @@
+LibraryNames libTopEventSelectionTools libTopEventReconstructionTools libDataMCbackgroundTools libBoostedJetTaggers libJetSubStructureUtils libShowerDeconstruction
+
+############################
+### Pileup Configuration ###
+############################
+
+PRWConfigFiles DataMCbackgroundTools/prw.dijet.mc15b.root
+PRWLumiCalcFiles DataMCbackgroundTools/ilumicalc_histograms_None_276262-284484.root
+PRWDefaultChannel 361020
+
+#######################
+### Custom Settings ###
+#######################
+
+DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass
+
+HTTConfigs def,sjcalib1030,sjcalib0970
+RunHTT False
+
+RunShowerDeconstruction False
+SaveTrackAssistedMass True
+
+#################################
+### Systematics Configuration ###
+#################################
+
+LargeRJESUncertaintyConfig TopTagging WZTagging
+#Systematics AllJets
+Systematics None
+#Systematics LARGERJET_Medium_TopTagging_JET_Rtrk_Baseline__1down,LARGERJET_Medium_TopTagging_JET_Rtrk_Baseline__1up,LARGERJET_Medium_TopTagging_JET_Rtrk_Modelling__1down,LARGERJET_Medium_TopTagging_JET_Rtrk_Modelling__1up,LARGERJET_Medium_TopTagging_JET_Rtrk_Tracking__1down,LARGERJET_Medium_TopTagging_JET_Rtrk_Tracking__1up,LARGERJET_Medium_TopTagging_JET_Top_CrossCalib_Tau32__1down,LARGERJET_Medium_TopTagging_JET_Top_CrossCalib_Tau32__1up,LARGERJET_Medium_TopTagging_JET_Top_Run1_Tau32__1down,LARGERJET_Medium_TopTagging_JET_Top_Run1_Tau32__1up,LARGERJET_Medium_WZTagging_JET_WZ_CrossCalib_D2__1down,LARGERJET_Medium_WZTagging_JET_WZ_CrossCalib_D2__1up,LARGERJET_Medium_WZTagging_JET_WZ_Run1_D2__1down,LARGERJET_Medium_WZTagging_JET_WZ_Run1_D2__1up
+
+##########################
+### Object Collections ###
+##########################
+
+ElectronCollectionName None
+MuonCollectionName None
+JetCollectionName AntiKt4EMTopoJets
+LargeJetCollectionName AntiKt10LCTopoTrimmedPtFrac5SmallR20Jets
+LargeJetSubstructure None
+TauCollectionName None
+PhotonCollectionName None
+METCollectionName MET_Reference_AntiKt4EMTopo
+TruthCollectionName TruthParticles
+TruthJetCollectionName AntiKt4TruthJets
+TruthLargeRJetCollectionName AntiKt10TruthTrimmedPtFrac5SmallR20Jets
+TruthLargeRJetEta 2.5
+TruthLargeRJetPt 25000
+TopPartonHistory None
+TruthBlockInfo False
+PDFInfo True
+
+#############################
+### General Configuration ###
+#############################
+
+#NEvents 100
+
+ObjectSelectionName top::ObjectLoaderStandardCuts
+
+#OutputFormat top::EventSaverFlatNtuple
+OutputFormat top::DataMCbackgroundEventSaver
+
+OutputEvents SelectedEvents
+OutputFilename output.root
+PerfStats No
+
+### to retrieve the matrix-method weights from the TopFakes package if available - default is False
+FakesMMWeights False
+
+### handling scale-factors
+CalculateSF False
+#BTagging MV2c20 70% eff. working point
+#BTaggingWP 70%
+
+### to process the loose selection also for MC - default is False
+FakesControlRegionDoLooseMC False
+
+### loose MET collection - default is MET_Reference_AntiKt4EMTopo
+LooseMETCollectionName MET_Reference_AntiKt4EMTopo
+
+### to do overlap removal with loose leptons
+ApplyElectronInJetSubtraction False
+
+####################
+### SELECTION(S) ###
+####################
+
+SELECTION dijets
+INITIAL
+GRL
+GOODCALO
+PRIVTX
+TRIGDEC HLT_j360_a10r_lcw_L1J100 HLT_j360_a10r_L1J100 HLT_j175 HLT_j260 HLT_j360
+JETCLEAN LooseBad
+LARGEJET_N 200000 >= 2
+LARGEJET_N 500000 >= 1
+MET < 250000
+SAVE

@@ -5,10 +5,6 @@ This README is a supplement to the [twiki documentation] (https://twiki.cern.ch/
 See 'setup_script.sh'. Due to variations between lxplus/local servers and different setups,
 it is not recommended to simply run this script, but follow it one line at a time, making the necessary changes.
 
-## GENERAL NOTES
-
-For clarity, any files/executables/classes with a name beginning with DMD/dmd ("Data Mc Dijets") are specific to this package.
-
 ## RUNNING LOCALLY
 NTuples may be produced locally with the following command:
 top-xaod grid/cuts/cuts_boosted_dijet_XXX.txt input.txt
@@ -79,7 +75,7 @@ Outlined here are the potential steps that would be taken in order to add/update
 
 ## DESCRIPTION OF CONTENTS
 
-#### DataMCdijetsTools/Root
+#### DataMCbackgroundTools/Root
 
 DataMCljetsEventSaver.cxx:
 create new variables to be saved in the output TTree. It also saves information for selected pre-recommendation top and W taggers.
@@ -100,21 +96,21 @@ A class for packaging together all the necessary histograms. This grouping toget
 exact 'pack' of plots with different event level cuts, if necessary.
 
 InputManager.cxx:
-This tool takes the input file given to dmd-control-plots and loads all branches into TChains to be processed by DMDSelector
+This tool takes the input file given to dmd-control-plots and loads all branches into TChains to be processed by DataMCbackgroundSelector
 
 DMDHistoTagged.cxx:
 A utility class for making it easy to fill combinations of tagged/vetoed/inclusive plots without much boilerplate code.
 
-DMDSelector.cxx:
+DataMCbackgroundSelector.cxx:
 The meat of the package that creates the final control plots. This is derived from a TSelector.
 
 WeightTool.cxx:
 This tool performs two main tasks:
 1. Loading the cross sections, filter efficiencies, and number of events in each MC sample
-    as gathered by grid/get_xsection.py and listed in DataMCdijetsTools/data/sample_weights.txt
-2. Veto bugged high-weight events (pulled from DataMCdijetsTools/data/bugged_events.txt)
+    as gathered by grid/get_xsection.py and listed in DataMCbackgroundTools/data/sample_weights.txt
+2. Veto bugged high-weight events (pulled from DataMCbackgroundTools/data/bugged_events.txt)
 
-#### DataMCdijetsTools/util
+#### DataMCbackgroundTools/util
 
 dmd-control-plots.cxx:
 Produces raw histograms for control plots.
@@ -136,7 +132,7 @@ plot_loader.py:
 A utility for conveniently loading nominal/systematic histograms from root files.
 
 plot_dmd.py:
-A collection of functions/classes that are entirely specific to this package (DataMCdijets).
+A collection of functions/classes that are entirely specific to this package (DataMCbackground).
 
 plot_systematics.py:
 A class that holds a nominal histogram along with a dictionary of systematics histograms. Furthermore it can compute errors in different ways

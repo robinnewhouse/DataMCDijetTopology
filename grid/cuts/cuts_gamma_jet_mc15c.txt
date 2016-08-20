@@ -1,0 +1,98 @@
+LibraryNames libTopEventSelectionTools libTopEventReconstructionTools libDataMCbackgroundTools libBoostedJetTaggers libJetSubStructureUtils libShowerDeconstruction
+
+############################
+### Pileup Configuration ###
+############################
+
+PRWConfigFiles DataMCbackgroundTools/PRW.410000.mc15c.r7725_r7676.root
+PRWLumiCalcFiles DataMCbackgroundTools/ilumicalc_histograms_None_297730-301973.root
+PRWDefaultChannel 410000
+
+#######################
+### Custom Settings ###
+#######################
+
+DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass
+
+HTTConfigs def,sjcalib1030,sjcalib0970,sjcalib1045,sjcalib1015,sjcalib0985,sjcalib0955
+RunHTT True
+
+RunShowerDeconstruction False
+SaveTrackAssistedMass True
+
+#################################
+### Systematics Configuration ###
+#################################
+
+LargeRJESUncertaintyConfig MultiTagging
+#Systematics AllJets
+#Systematics All
+Systematics Nominal
+#Systematics LARGERJET_Medium_JET_Rtrk_Baseline_Kin__1down,LARGERJET_Medium_JET_Rtrk_Baseline_Kin__1up,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1down,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1up,LARGERJET_Medium_JET_Rtrk_Modelling_Kin__1down,LARGERJET_Medium_JET_Rtrk_Modelling_Kin__1up,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1down,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1up,LARGERJET_Medium_JET_Rtrk_TotalStat_Kin__1down,LARGERJET_Medium_JET_Rtrk_TotalStat_Kin__1up,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1down,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1up,LARGERJET_Medium_JET_Rtrk_Tracking_Kin__1down,LARGERJET_Medium_JET_Rtrk_Tracking_Kin__1up,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1down,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1up,LARGERJET_Strong_JET_Rtrk_Baseline_All__1down,LARGERJET_Strong_JET_Rtrk_Baseline_All__1up,LARGERJET_Strong_JET_Rtrk_Modelling_All__1down,LARGERJET_Strong_JET_Rtrk_Modelling_All__1up,LARGERJET_Strong_JET_Rtrk_TotalStat_All__1down,LARGERJET_Strong_JET_Rtrk_TotalStat_All__1up,LARGERJET_Strong_JET_Rtrk_Tracking_All__1down,LARGERJET_Strong_JET_Rtrk_Tracking_All__1up
+
+##########################
+### Object Collections ###
+##########################
+
+ElectronCollectionName None
+MuonCollectionName None
+JetCollectionName AntiKt4EMTopoJets
+LargeJetCollectionName AntiKt10LCTopoTrimmedPtFrac5SmallR20Jets
+LargeJetSubstructure None
+TauCollectionName None
+PhotonCollectionName Photons
+METCollectionName MET_Reference_AntiKt4EMTopo
+TruthCollectionName TruthParticles
+TruthJetCollectionName AntiKt4TruthJets
+TruthLargeRJetCollectionName AntiKt10TruthTrimmedPtFrac5SmallR20Jets
+TruthLargeRJetEta 2.5
+TruthLargeRJetPt 25000
+TopPartonHistory None
+TruthBlockInfo False
+PDFInfo False
+
+#############################
+### General Configuration ###
+#############################
+
+#NEvents 100
+JetUncertainties_BunchSpacing 25ns
+
+OutputFileSetAutoFlushZero True
+
+ObjectSelectionName top::ObjectLoaderStandardCuts
+
+#OutputFormat top::EventSaverFlatNtuple
+OutputFormat top::DataMCbackgroundEventSaver
+
+OutputEvents SelectedEvents
+OutputFilename output.root
+PerfStats No
+
+### to retrieve the matrix-method weights from the TopFakes package if available - default is False
+FakesMMWeights False
+
+### handling scale-factors
+CalculateSF True
+BTaggingWP FixedCutBEff_70
+
+### to process the loose selection also for MC - default is False
+FakesControlRegionDoLooseMC True
+OverlapRemovalLeptonDef Tight
+ApplyElectronInJetSubtraction False
+
+####################
+### SELECTION(S) ###
+####################
+
+SELECTION gammajet
+INITIAL
+GRL
+GOODCALO
+PRIVTX
+TRIGDEC HLT_g140_loose
+PH_N 150000 == 1
+JETCLEAN LooseBad
+LARGEJET_N 150000 >= 1
+GAMMAJET
+SAVE
