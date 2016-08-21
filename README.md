@@ -4,21 +4,22 @@
 
 This package can be used to accomplish the following:
 
-* Produce flat ntuples from JETM8 DxAOD's for data and Monte Carlo, locally or on the grid
-* From the flat ntuples, produce sets of raw histograms with any combination of cuts
+* Produce flat ntuples of calibrated objects from JETM8 DxAOD's for data and Monte Carlo, locally or on the grid
+* From the flat ntuples, produce sets of raw histograms with optional offline cuts
 * From the raw histograms, produce publication quality plots
 
-This package was created primarily for evaluating the performance of jet-substructure-based W/Z/Top tagging in Data/MC. More details specific to this can be found in the [twiki documentation](https://twiki.cern.ch/twiki/bin/viewauth/AtlasProtected/TopBosonTagAnalysis2016#Dijet_Data_Study_Background_Effi) for this effort.
-
+This package was created primarily for evaluating the performance of jet-substructure-based W/Z/Top tagging in Data/MC.
+More details specific to this can be found in the [twiki documentation](https://twiki.cern.ch/twiki/bin/viewauth/AtlasProtected/TopBosonTagAnalysis2016#Dijet_Data_Study_Background_Effi) for this effort.
 With minimal modification/extension this package can perform the same tasks outlined above for any study centered around large-R jets and jet substructure.
 
-* * *
+This package is based on AnalysisTop. If you are not familiar, consider these resources:
+* Relase Notes: https://twiki.cern.ch/twiki/bin/view/AtlasProtected/AnalysisTop
+* Quick Start Guide: https://twiki.cern.ch/twiki/bin/view/AtlasProtected/TopxAODStartGuide
+* TopRun2WorkshopTutorial2016: https://twiki.cern.ch/twiki/bin/view/AtlasProtected/TopRun2WorkshopTutorial2016
 
 # SETUP
 
 See `setup_script.sh`. Due to variations between lxplus/local servers and different setups, it is not recommended to simply run this script, but to follow it one line at a time, making the necessary changes.
-
- * * *
 
 # NTUPLE PRODUCTION
 
@@ -33,7 +34,7 @@ The second argument, `input.txt`, is a simple text file with list of paths to lo
 
 The resulting file, `output.root`, will contain all variables specified/saved by `DataMCbackgroundEventSaver.cxx/h`
 
-## GRID
+## RUNNING ON THE GRID
 
 Everything related to grid job submission/downloading/merging is located in the `grid/` folder
 
@@ -57,9 +58,7 @@ The finished output from grid jobs may be downloaded with `download_from_grid.py
 
 The downloaded output from the grid can be merged by DSID with `merge_output.py`. Run 'python merge_output.py --help' for usage details.
 
-* * *
-
-# Custom EventSaver Configuration Options
+## Custom EventSaver Configuration Options
 
 In the `grid/cuts/cuts_XXX.txt` files, there exist some configuration options that are local to this package and not part of AnalysisTop:
 
@@ -68,8 +67,6 @@ In the `grid/cuts/cuts_XXX.txt` files, there exist some configuration options th
 * **RunShowerDeconstruction**:
 * **SaveTrackAssistedMass**:
 * **KeepNLargeRJets**:
-
-* * *
 
 # PILEUP REWEIGHTING
 Pileup reweighting is done automatically as defined in the configuration file `grid/cuts/cuts_XXX.txt`, using the files in `DataMCdijetTools/data/` , which contain PRW metadata for the MC samples used.
@@ -83,65 +80,56 @@ In order to run the script:
 3. modify the samples list inside `submit_pileupReweight.py`
 4. run the script to submit the PRW job
 
-* * *
-
 # DESCRIPTION OF CONTENTS
 
 What follows is a basic overview of the important files in this package. For a more detailed understanding, consult the documentation in the code itself.
 
 **DataMCbackgroundEventSaver.h/cxx**:
 
-create new variables to be saved in the output TTree. It also saves information for selected pre-recommendation top and W taggers.
-Additionally it saves all the variables of the normal "top:NtupleEventSaver" from AnaysisTop.
+This is the heart of what is compiled into the `top-xaod` executable and the place where all the variables stored in the ntuple are computed/defined.
 
 **DataMCbackgroundToolsLoader.h/cxx**:
 
-Loads the new selections required. They currently include only "LARGEJET_N". Details can be found in the RunI internal note on JMS/JMR in-situ measurement.
+Loads the custom event level selectors from this package (ex: LARGEJET_N, GAMMAJET). Any new event level selector will have to be loaded here to.
 
 **DataMCbackgroundSelector.h/cxx**:
 
-The meat of the package that creates the final control plots. This is derived from a TSelector.
+This is derived from a TSelector and is used by `histogram-factory` to produce the final control plots.
+see: https://root.cern.ch/developing-tselector
 
 **InputManager.h/cxx**:
 
-This tool takes the input file given to dmd-control-plots and loads all branches into TChains to be processed by DataMCbackgroundSelector
+This tool takes the input file given to `histogram-factory` and loads all the branches (nominal + systematics if requested) from all the files into appropriately grouped TChains. These TChains are then passed to DataMCbackgroundSelector.
 
 **WeightTool.h/cxx**:
 
 This tool performs two main tasks:
-1. Loading the cross sections, filter efficiencies, and number of events in each MC sample
-    as gathered by grid/get_xsection.py and listed in DataMCbackgroundTools/data/sample_weights.txt
-2. Veto bugged high-weight events (pulled from DataMCbackgroundTools/data/bugged_events.txt)
+1. Loads the cross sections, filter efficiencies, and number of events in each MC sample. These are gathered from `DataMCbackgroundTools/data/sample_weights.txt`, a text file which is produced by `grid/get_xsection.py`.
+2. Vetoes bugged high-weight events, pulled from the file `DataMCbackgroundTools/data/bugged_events.txt` which lists them in the form `DSID EVENT_NUMBER`
 
 **NLargeJetSelector.h/cxx**:
 
-Checks that there are at least N large jets with a specified minimum pT cut.
+Checks that there are at least N large jets in the event with a specified minimum pT cut.
 
 **TH1Tagged.h/cxx**:
 
-A utility class for making it easy to fill combinations of tagged/vetoed/inclusive plots without much boilerplate code.
+A utility class that extends a basic TH1 by making it easy to fill combinations of tagged/vetoed/inclusive plots without much boilerplate code.
 
 **HistoPack.h/cxx**:
 
-A class for packaging together all the necessary histograms. This grouping together is done so that it is possible to create the same
-exact 'pack' of plots with different event level cuts, if necessary.
+A class for packaging together all the necessary histograms. This is where all the raw histograms are defined and their properties set: x_min, x_max, n_bins, etc.
 
 **LocalTools.h/cxx**:
 
-Contains several helper functions for control plot histograms and inputs for fitting frameworks production.
-Each function is individualy documented (perhaps only in the header file)
+A generic dumping ground for functions that are either re-used or don't fit anywhere else.
 
 **util/histogram-factory.cxx**:
 
-Produces raw histograms for control plots via the executable `histogram-factory`.
+Produces raw histograms for control plots via the executable `histogram-factory`. Before using, run `histogram-factory` without arguments or view the util/histogram-factory.cxx source for **important** details regarding command line flags.
 
-The first argument passed to the `histogram-factory` executable should be a list of input ntuples, each with a corresponding label for grouping
-multiple DSID's together: see data/example-histogram-factory-input.txt
+The first argument passed to the `histogram-factory` executable should be a list of input ntuples, each with a corresponding label for grouping multiple DSID's together: see data/example-histogram-factory-input.txt
 
-Output is in the form of a single .root file with TDirectories for individual samples (i.e. data, pythia_dijet, herwig_wjets, etc).
-Inside each of these directories will be separate sub-directories corresponding to each systematic branch processed (if any).
-
-Before using, run `histogram-factory` without arguments or view the util/histogram-factory.cxx source for **important** details regarding command line flags.
+Output is in the form of a single .root file with TDirectories for individual samples (i.e. data, pythia_dijet, herwig_wjets, etc). Inside each of these directories will be separate sub-directories corresponding to each systematic branch processed (if any).
 
 **plotting/plot_base.py**:
 
@@ -165,33 +153,33 @@ A class that holds a nominal histogram along with a dictionary of systematics hi
 
 various re-usable utility functions (ex: histogram styles, set sane default style, etc)
 
-* * *
-
 # EXTENDING THIS PACKAGE
 
 ### Adding or modifying a dataset or MC sample
-Outlined here are the potential steps that would be taken in order to add/update MC samples:
+Outlined here are the steps that would be taken in order to add/update MC samples. It may not be necessary to perform all of them.
 
-1. add the relevant set of samples to grid/samples.py
-2. add the event generator file list to grid/get_xsection.py and update DataMCdijetTools/data/sample_weights.txt
-3. add a new submit script in the grid/ folder
-4. add the new files to data/samples_XXX.txt
-5. Run locally on a test file from the new sample before submitting grid jobs
-6. if necessary, submit new pileup reweighting jobs (if, for example, switching to a new MC campaign)
-7. if necessary, create a new AnalysisTop cuts/options file. This could be necessary if, for example, the added samples are
-    from a new derivation (not JETM8).
+1. Add the relevant set of JETM8/EVNT sample file names to grid/samples.py
+2. Update DataMCdijetTools/data/sample_weights.txt to include xsections/filter efficiencies/nevents for the new samples.
+3. Add a new submit script in the grid/ folder
+4. if necessary, submit new pileup reweighting jobs (if, for example, switching to a new MC campaign)
+5. if necessary, create a new AnalysisTop coniguraiton file in grid/cuts. This could be necessary if:
+    * the samples are from a new derivation (i.e. not JETM8)
+    * a new online cutflow is needed
+    * a new MC campaign is being used
+    * etc.
+6. Run locally on a test file from the new sample before submitting grid jobs
 
 ### Creating a new selection/cutflow
 
-If the new selection is too complicated to be represented by [built-in AnalysisTop cuts](http://epweb2.ph.bham.ac.uk/user/head/AnalysisTop-2.3.13/testpage.html), you must create a custom EventSelector for AnalysisTop. see `GammaJetSelector.h/cxx`.
+#### online (top-xaod)
+If the new selection is too complicated to be represented by [built-in AnalysisTop cuts](http://epweb2.ph.bham.ac.uk/user/head/AnalysisTop-2.3.13/testpage.html), you must create a custom EventSelector for AnalysisTop. see `GammaJetSelector.h/cxx` in this package for an example.
 
-### Adding a new variable the ntuples
-
-### Producing a new raw histogram
+#### offline (histogram-factory)
+For any additional offline selection, you must create a custom EventSelector function. See the top of DataMCbackgroundSelector for examples. This new selector must be given a name, and then passed to the histogram-factory executable with a command line flag. ex: `-E MY_FANCY_NEW_SELECTOR`
 
 # CREDIT
 
-Primary developer: Zac Meadows (zmeadows@physics.umass.edu)
+Primary developer/contact: Zac Meadows (zmeadows@physics.umass.edu)
 
 This package is based upon Davide Melini's framework for RunII JMS/JMR uncertanties study, with many further modifications and advice from Oliver Majersky.
 
