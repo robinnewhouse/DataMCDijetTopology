@@ -28,11 +28,41 @@
 #include "TMVA/Reader.h"
 #include "TMVA/MethodCuts.h"
 
+EventSelector NO_SELECTION = [](const DataMCbackgroundSelector* sel) {
+    return true;
+};
+
+EventSelector DIJET_LOOSE = [](const DataMCbackgroundSelector* sel) {
+    return true;
+};
+
+EventSelector DIJET_TIGHT = [](const DataMCbackgroundSelector* sel) {
+    return true;
+};
+
+EventSelector GAMMAJET_LOOSE = [](const DataMCbackgroundSelector* sel) {
+    return true;
+};
+
+EventSelector GAMMAJET_TIGHT = [](const DataMCbackgroundSelector* sel) {
+    return true;
+};
+
+const std::unordered_map<std::string, EventSelector>
+DataMCbackgroundSelector::available_event_selectors = {
+    { "NO_SELECTION", NO_SELECTION },
+    { "DIJET_LOOSE", DIJET_LOOSE },
+    { "DIJET_TIGHT", DIJET_TIGHT },
+    { "GAMMAJET_LOOSE", GAMMAJET_LOOSE },
+    { "GAMMAJET_TIGHT", GAMMAJET_TIGHT }
+};
+
 DataMCbackgroundSelector::DataMCbackgroundSelector(
         std::string output_filepath_,
         std::string root_dir_str_,
         std::string sub_dir_str_,
         std::string data_trigger_str_,
+        std::string event_selector_str_,
         float luminosity_
         )
     : fChain(nullptr),
@@ -59,6 +89,16 @@ DataMCbackgroundSelector::DataMCbackgroundSelector(
     TMVA::Tools::Instance();
     readerTOP = new TMVA::Reader( "!Color:!Silent" );
     readerW = nullptr;
+
+    try {
+        std::cout << "EVENT SELECTINO OFFLINE: " << event_selector_str_ << std::endl;
+        chosen_event_selector = available_event_selectors.at(event_selector_str_);
+    }
+    catch (const std::out_of_range& oor) {
+        std::cerr << "Out of Range error: " << oor.what() << '\n';
+        std::cout << "EventSelector: " << event_selector_str_ << " not available." << std::endl;
+        std::cout << "see DataMCbackgroundSelector.cxx for more details." << std::endl;
+    }
 }
 
 void DataMCbackgroundSelector::log(const std::string& line)
@@ -281,6 +321,10 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
     // events in data must pass the specified trigger
     if (!this->operating_on_mc && HLT_jet_trigger == 0)
+        return kFALSE;
+
+    // and all events must pass the specified offline cuts
+    if (!chosen_event_selector(this))
         return kFALSE;
 
     float weight;

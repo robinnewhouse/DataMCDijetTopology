@@ -6,7 +6,6 @@
 #include "DataMCbackgroundTools/WeightTool.h"
 
 #include "TopExamples/AnalysisTools.h"
-#include "TopDataPreparation/SampleXsection.h"
 
 #include <TROOT.h>
 #include <TH1F.h>
@@ -17,6 +16,7 @@
 #include <TLorentzVector.h>
 
 #include <vector>
+using std::vector;
 #include <array>
 #include <map>
 #include <memory>
@@ -27,7 +27,10 @@
 #include "TMVA/Reader.h"
 #include "TMVA/MethodCuts.h"
 
-using std::vector;
+
+class DataMCbackgroundSelector;
+
+typedef std::function<bool(const DataMCbackgroundSelector*)> EventSelector;
 
 class DataMCbackgroundSelector : public TSelector {
     public :
@@ -48,6 +51,10 @@ class DataMCbackgroundSelector : public TSelector {
         bool compute_d2;
 
         const float luminosity;
+
+        static const std::unordered_map<std::string, EventSelector>
+            available_event_selectors;
+        EventSelector chosen_event_selector;
 
         float max_weight;
         float SF_lumi_Fb;
@@ -306,6 +313,7 @@ class DataMCbackgroundSelector : public TSelector {
                 std::string root_dir_str_,
                 std::string sub_dir_str_,
                 std::string data_trigger_str_,
+                std::string event_selector_str_,
                 float luminosity_
                 );
 
@@ -634,7 +642,7 @@ void DataMCbackgroundSelector::Init(TTree *tree)
 
         const char* const rc = getenv("ROOTCOREBIN");
         readerTOP->BookMVA( "BDTG method", std::string(rc) +
-                "/data/DataMCbackgroundTools/BDT_WEIGHTS/TMVAClassification_BDTG.TOP_NvarM_pT200to2000GeV.weights.xml");
+                "/data/DataMCbackgroundTools/bdt_weights/TMVAClassification_BDTG.TOP_NvarM_pT200to2000GeV.weights.xml");
     }
 }
 
