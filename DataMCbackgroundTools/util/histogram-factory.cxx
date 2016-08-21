@@ -21,21 +21,29 @@ int
 main(int argc, char** argv)
 {
     if (argc < 2) {
-        std::cout << "USAGE: dmd-control-plots <path-to-input-file> [FLAG]..." << std::endl;
-        std::cout << "see README.txt or dmd-control-plots.cxx for details" << std::endl;
+        std::cout << "USAGE: histogram-factory <path-to-input-file> [FLAG]..." << std::endl;
+        std::cout << "where FLAG is one of:" << std::endl;
+        std::cout << "-o <output_file>: root file where the output will be stored. default: raw_histograms.root" << std::endl;
+        std::cout << "-t <trigger>: trigger to use for selecting events in data. ex: HLT_j420_a10r_L1J100" << std::endl;
+        std::cout << "-E <event_selector>: Offline event selection criteria to use, ex: NO_SELECTION" << std::endl;
+        std::cout << "-L <luminosity>: luminosity of dataset to scale to (in inverse femtobarns): ex: 3.20905" << std::endl;
+        std::cout << "-S: process all systematics trees (all trees ending with 1up/1down)" << std::endl;
+        std::cout << "see README.md or source code for more details" << std::endl;
         return EXIT_FAILURE;
     }
 
+    // if invalid file, InputManager will throw exception
     InputManager* input_manager = new InputManager(argv[1]);
 
-    std::string output_filepath       = "dmd_control_plots.root";
-    std::string data_trigger          = "HLT_j400_a10_lcw_L1J100";
-    float luminosity                  = 3.20905;
-    bool compute_systematics_branches = false;
+    std::string output_filepath = "raw_histograms.root";
+    std::string data_trigger    = "HLT_j400_a10_lcw_L1J100";
+    std::string event_selector  = "NO_SELECTION";
+    float luminosity            = 3.20905;
+    bool process_systematics    = false;
 
     int c;
     opterr = 0;
-    while ((c = getopt (argc, argv, "So:t:L:")) != -1) {
+    while ((c = getopt (argc, argv, "So:E:t:L:")) != -1) {
         switch (c)
         {
             case 'o':
@@ -44,11 +52,14 @@ main(int argc, char** argv)
             case 't':
                 data_trigger = std::string(optarg);
                 break;
+            case 'E':
+                event_selector = std::string(optarg);
+                break;
             case 'L':
                 luminosity = atof(optarg);
                 break;
             case 'S':
-                compute_systematics_branches = true;
+                process_systematics = true;
                 break;
             case '?':
                 if (optopt == 'o' || optopt == 't')
@@ -76,8 +87,6 @@ main(int argc, char** argv)
     //TProof* p = TProof::Open("lite://");
     //p->SetProgressDialog(0);
     //p->SetParallel(5);
-    //
-
 
     auto tchain_map = input_manager->get_tchain_map();
 
@@ -89,12 +98,9 @@ main(int argc, char** argv)
         for (auto& tchain : tchains) {
             std::string tchain_name = std::string(tchain->GetName());
 
-            if (compute_systematics_branches
-                    || tchain_name == "nominal"
-                    || tchain_name == "Nominal") {
-
+            if (process_systematics || tchain_name == "nominal" || tchain_name == "Nominal") {
                 dmd_selector = new DataMCbackgroundSelector(output_filepath, gen_name,
-                        tchain_name, data_trigger, luminosity);
+                        tchain_name, data_trigger, event_selector ,luminosity);
 
                 //tchain->SetProof();
                 tchain->Process(dmd_selector);
