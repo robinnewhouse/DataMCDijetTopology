@@ -43,20 +43,6 @@ namespace top {
         bool m_runSD;
         bool m_saveTAmass;
 
-
-        class VarSaver {
-            public:
-                VarSaver() = 0;
-            private:
-                const std::function<void(void)> update_function;
-                float var_value;
-                const float default_value;
-        }
-
-        class Var<T>
-
-
-
         /***********/
         /* TAGGERS */
         /***********/
