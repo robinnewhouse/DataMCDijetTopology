@@ -38,23 +38,21 @@ public:
     vector<unique_ptr<TH1Tagged>> h_rljet_m_ta;
     vector<unique_ptr<TH1Tagged>> h_rljet_m_ta_nocalib;
 
-    vector<unique_ptr<TH1Tagged>> h_rljet_split12;
-    vector<unique_ptr<TH1Tagged>> h_rljet_split23;
-    vector<unique_ptr<TH1Tagged>> h_rljet_split34;
-    vector<unique_ptr<TH1Tagged>> h_rljet_tau1;
-    vector<unique_ptr<TH1Tagged>> h_rljet_tau2;
-    vector<unique_ptr<TH1Tagged>> h_rljet_tau3;
-    vector<unique_ptr<TH1Tagged>> h_rljet_tau21;
-    vector<unique_ptr<TH1Tagged>> h_rljet_tau32;
-    vector<unique_ptr<TH1Tagged>> h_rljet_ecf1;
-    vector<unique_ptr<TH1Tagged>> h_rljet_ecf2;
-    vector<unique_ptr<TH1Tagged>> h_rljet_ecf3;
-    vector<unique_ptr<TH1Tagged>> h_rljet_d2;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Split12;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Split23;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Split34;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Tau1;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Tau2;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Tau3;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Tau21;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Tau32;
+    vector<unique_ptr<TH1Tagged>> h_rljet_ECF1;
+    vector<unique_ptr<TH1Tagged>> h_rljet_ECF2;
+    vector<unique_ptr<TH1Tagged>> h_rljet_ECF3;
+    vector<unique_ptr<TH1Tagged>> h_rljet_D2;
 
-    vector<unique_ptr<TH1Tagged>> h_rljet_ntrimsubjets;
-    vector<unique_ptr<TH1Tagged>> h_rljet_width;
-    vector<unique_ptr<TH1Tagged>> h_rljet_area;
-    vector<unique_ptr<TH1Tagged>> h_rljet_ungroomed_pdgid;
+    vector<unique_ptr<TH1Tagged>> h_rljet_NTrimSubjets;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Width;
     vector<unique_ptr<TH1Tagged>> h_rljet_ungroomed_ntrk500;
 
     // truth/trigger jet separation
@@ -83,7 +81,7 @@ public:
     vector<unique_ptr<TH1Tagged>> h_htt_m23m123;
     vector<unique_ptr<TH1Tagged>> h_htt_atan1312;
 
-    unique_ptr<TH1Tagged> h_rl_dijet_m;
+    unique_ptr<TH1Tagged> h_rljet_mjj;
     unique_ptr<TH1Tagged> h_mu;
 
     unique_ptr<TH1Tagged> h_BDT_TopTag;

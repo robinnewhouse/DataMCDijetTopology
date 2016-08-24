@@ -47,8 +47,8 @@ class DataMCbackgroundSelector : public TSelector {
 
         const bool operating_on_mc;
         const bool on_nominal_branch;
-        bool compute_tau32;
-        bool compute_d2;
+        bool compute_Tau32;
+        bool compute_D2;
 
         const float luminosity;
 
@@ -91,37 +91,32 @@ class DataMCbackgroundSelector : public TSelector {
 
         Char_t          HLT_jet_trigger;
 
-        Int_t           rljet_N;
+        Int_t           rljet_count;
         vector<float>   *rljet_pt;
         vector<float>   *rljet_eta;
         vector<float>   *rljet_phi;
-        vector<float>   *rljet_e;
         vector<float>   *rljet_m;
         vector<float>   *rljet_m_ta;
         vector<float>   *rljet_m_ta_nocalib;
-        Float_t         rl_dijet_m;
+        Float_t         rljet_mjj;
 
-        vector<float>   *rljet_tau1;
-        vector<float>   *rljet_tau2;
-        vector<float>   *rljet_tau3;
-        vector<float>   *rljet_tau1_wta;
-        vector<float>   *rljet_tau2_wta;
-        vector<float>   *rljet_tau3_wta;
-        vector<float>   *rljet_tau32_wta;
-        vector<float>   *rljet_split12;
-        vector<float>   *rljet_split23;
-        vector<float>   *rljet_split34;
-        vector<float>   *rljet_qw;
-        vector<float>   *rljet_ecf1;
-        vector<float>   *rljet_ecf2;
-        vector<float>   *rljet_ecf3;
-        vector<float>   *rljet_d2;
+        vector<float>   *rljet_Tau1_wta;
+        vector<float>   *rljet_Tau2_wta;
+        vector<float>   *rljet_Tau3_wta;
+        vector<float>   *rljet_Tau32_wta;
+        vector<float>   *rljet_Split12;
+        vector<float>   *rljet_Split23;
+        vector<float>   *rljet_Split34;
+        vector<float>   *rljet_Qw;
+        vector<float>   *rljet_ECF1;
+        vector<float>   *rljet_ECF2;
+        vector<float>   *rljet_ECF3;
+        vector<float>   *rljet_D2;
 
-        float rljet_tau21_wta;
+        float rljet_Tau21_wta;
 
-		vector<int>     *rljet_ntrimsubjets;
-		vector<float>   *rljet_width;
-		vector<float>   *rljet_area;
+		vector<int>     *rljet_NTrimSubjets;
+		vector<float>   *rljet_Width;
 		vector<int>     *rljet_ungroomed_ntrk500;
 
         vector<float>   *tljet_pt;
@@ -130,14 +125,14 @@ class DataMCbackgroundSelector : public TSelector {
         vector<float>   *tljet_m;
         vector<float>   *tljet_dR;
 
-        Int_t           hltjet_N;
+        Int_t           hltjet_count;
         vector<float>   *hltjet_m;
         vector<float>   *hltjet_pt;
         vector<float>   *hltjet_eta;
         vector<float>   *hltjet_phi;
         vector<float>   *hltjet_dR;
 
-        Int_t           caJet_N;
+        Int_t           caJet_count;
         // ungroomed C/A 1.5 jets
         vector<float>   *htt_caJet_pt;
         vector<float>   *htt_caJet_eta;
@@ -209,16 +204,15 @@ class DataMCbackgroundSelector : public TSelector {
 
         TBranch        *b_HLT_jet_trigger;  //!
 
-        TBranch        *b_rljet_N;   //!
+        TBranch        *b_rljet_count;   //!
         TBranch        *b_rljet_pt;   //!
         TBranch        *b_rljet_eta;   //!
         TBranch        *b_rljet_phi;   //!
         TBranch        *b_rljet_m;   //!
-        TBranch        *b_rljet_e;   //!
 
         TBranch        *b_rljet_m_ta;   //!
         TBranch        *b_rljet_m_ta_nocalib;   //!
-        TBranch        *b_rl_dijet_m;   //!
+        TBranch        *b_rljet_mjj;   //!
 
         TBranch        *b_tljet_pt;   //!
         TBranch        *b_tljet_eta;   //!
@@ -226,7 +220,7 @@ class DataMCbackgroundSelector : public TSelector {
         TBranch        *b_tljet_m;   //!
         TBranch        *b_tljet_dR;   //!
 
-        TBranch        *b_hltjet_N;   //!
+        TBranch        *b_hltjet_count;   //!
         TBranch        *b_hltjet_m;   //!
         TBranch        *b_hltjet_pt;   //!
         TBranch        *b_hltjet_eta;   //!
@@ -247,31 +241,27 @@ class DataMCbackgroundSelector : public TSelector {
         vector<TBranch*> b_htt_nTagCands; //!
         vector<TBranch*> b_htt_tag; //!
 
-        TBranch        *b_caJet_N;   //!
+        TBranch        *b_caJet_count;   //!
         vector<TBranch*> b_htt_caGroomJet_pt; //!
         vector<TBranch*> b_htt_caGroomJet_eta; //!
         vector<TBranch*> b_htt_caGroomJet_phi; //!
         vector<TBranch*> b_htt_caGroomJet_m; //!
 
-        TBranch        *b_rljet_tau1;   //!
-        TBranch        *b_rljet_tau2;   //!
-        TBranch        *b_rljet_tau3;   //!
-        TBranch        *b_rljet_tau1_wta;   //!
-        TBranch        *b_rljet_tau2_wta;   //!
-        TBranch        *b_rljet_tau3_wta;   //!
-        TBranch        *b_rljet_tau32_wta;   //!
-        TBranch        *b_rljet_split12;   //!
-        TBranch        *b_rljet_split23;   //!
-        TBranch        *b_rljet_split34;   //!
-        TBranch        *b_rljet_qw;   //!
-        TBranch        *b_rljet_ecf1;   //!
-        TBranch        *b_rljet_ecf2;   //!
-        TBranch        *b_rljet_ecf3;   //!
-        TBranch        *b_rljet_d2;   //!
+        TBranch        *b_rljet_Tau1_wta;   //!
+        TBranch        *b_rljet_Tau2_wta;   //!
+        TBranch        *b_rljet_Tau3_wta;   //!
+        TBranch        *b_rljet_Tau32_wta;   //!
+        TBranch        *b_rljet_Split12;   //!
+        TBranch        *b_rljet_Split23;   //!
+        TBranch        *b_rljet_Split34;   //!
+        TBranch        *b_rljet_Qw;   //!
+        TBranch        *b_rljet_ECF1;   //!
+        TBranch        *b_rljet_ECF2;   //!
+        TBranch        *b_rljet_ECF3;   //!
+        TBranch        *b_rljet_D2;   //!
 
-		TBranch        *b_rljet_ntrimsubjets; //!
-		TBranch        *b_rljet_width; //!
-		TBranch        *b_rljet_area; //!
+		TBranch        *b_rljet_NTrimSubjets; //!
+		TBranch        *b_rljet_Width; //!
 		TBranch        *b_rljet_ungroomed_ntrk500; //!
 
         TBranch        *b_rljet_smoothMassTag50eff;   //!
@@ -354,31 +344,26 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     rljet_pt = 0;
     rljet_eta = 0;
     rljet_phi = 0;
-    rljet_e = 0;
     rljet_m = 0;
     rljet_m_ta = 0;
     rljet_m_ta_nocalib = 0;
 
-    rljet_tau1 = 0;
-    rljet_tau2 = 0;
-    rljet_tau3 = 0;
-    rljet_tau1_wta = 0;
-    rljet_tau2_wta = 0;
-    rljet_tau3_wta = 0;
-    rljet_tau32_wta = 0;
-    rljet_tau21_wta = 0;
-    rljet_split12 = 0;
-    rljet_split23 = 0;
-    rljet_split34 = 0;
-    rljet_qw = 0;
-    rljet_ecf1 = 0;
-    rljet_ecf2 = 0;
-    rljet_ecf3 = 0;
-    rljet_d2 = 0;
+    rljet_Tau1_wta = 0;
+    rljet_Tau2_wta = 0;
+    rljet_Tau3_wta = 0;
+    rljet_Tau32_wta = 0;
+    rljet_Tau21_wta = 0;
+    rljet_Split12 = 0;
+    rljet_Split23 = 0;
+    rljet_Split34 = 0;
+    rljet_Qw = 0;
+    rljet_ECF1 = 0;
+    rljet_ECF2 = 0;
+    rljet_ECF3 = 0;
+    rljet_D2 = 0;
 
-    rljet_ntrimsubjets = 0;
-    rljet_width = 0;
-    rljet_area = 0;
+    rljet_NTrimSubjets = 0;
+    rljet_Width = 0;
     rljet_ungroomed_ntrk500 = 0;
 
     tljet_pt = 0;
@@ -454,16 +439,16 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     fChain->SetBranchAddress("rljet_phi" , &rljet_phi , &b_rljet_phi);
     fChain->SetBranchAddress("rljet_m"   , &rljet_m   , &b_rljet_m);
 
-    if (fChain->GetListOfBranches()->FindObject("rljet_tau32_wta")) {
-        fChain->SetBranchAddress("rljet_tau32_wta", &rljet_tau32_wta, &b_rljet_tau32_wta);
+    if (fChain->GetListOfBranches()->FindObject("rljet_Tau32_wta")) {
+        fChain->SetBranchAddress("rljet_Tau32_wta", &rljet_Tau32_wta, &b_rljet_Tau32_wta);
     } else {
-        compute_tau32 = true;
+        compute_Tau32 = true;
     }
 
-    if (fChain->GetListOfBranches()->FindObject("rljet_d2")) {
-        fChain->SetBranchAddress("rljet_d2", &rljet_d2, &b_rljet_d2);
+    if (fChain->GetListOfBranches()->FindObject("rljet_D2")) {
+        fChain->SetBranchAddress("rljet_D2", &rljet_D2, &b_rljet_D2);
     } else {
-        compute_d2 = true;
+        compute_D2 = true;
     }
 
     fChain->SetBranchAddress("rljet_smoothMassTag50eff"      , &rljet_smoothMassTag50eff      , &b_rljet_smoothMassTag50eff);
@@ -489,31 +474,26 @@ void DataMCbackgroundSelector::Init(TTree *tree)
 
         fChain->SetBranchAddress(this->data_trigger_str.c_str(), &HLT_jet_trigger, &b_HLT_jet_trigger);
 
-        fChain->SetBranchAddress("rljet_N"    , &rljet_N    , &b_rljet_N);
-        fChain->SetBranchAddress("rljet_e"    , &rljet_e    , &b_rljet_e);
-        fChain->SetBranchAddress("rl_dijet_m" , &rl_dijet_m , &b_rl_dijet_m);
+        fChain->SetBranchAddress("rljet_count"    , &rljet_count    , &b_rljet_count);
+        fChain->SetBranchAddress("rljet_mjj" , &rljet_mjj , &b_rljet_mjj);
 
         fChain->SetBranchAddress("rljet_m_ta"         , &rljet_m_ta         , &b_rljet_m_ta);
         fChain->SetBranchAddress("rljet_m_ta_nocalib" , &rljet_m_ta_nocalib , &b_rljet_m_ta_nocalib);
 
-        fChain->SetBranchAddress("rljet_tau1"     , &rljet_tau1     , &b_rljet_tau1);
-        fChain->SetBranchAddress("rljet_tau2"     , &rljet_tau2     , &b_rljet_tau2);
-        fChain->SetBranchAddress("rljet_tau3"     , &rljet_tau3     , &b_rljet_tau3);
-        fChain->SetBranchAddress("rljet_tau1_wta" , &rljet_tau1_wta , &b_rljet_tau1_wta);
-        fChain->SetBranchAddress("rljet_tau2_wta" , &rljet_tau2_wta , &b_rljet_tau2_wta);
-        fChain->SetBranchAddress("rljet_tau3_wta" , &rljet_tau3_wta , &b_rljet_tau3_wta);
+        fChain->SetBranchAddress("rljet_Tau1_wta" , &rljet_Tau1_wta , &b_rljet_Tau1_wta);
+        fChain->SetBranchAddress("rljet_Tau2_wta" , &rljet_Tau2_wta , &b_rljet_Tau2_wta);
+        fChain->SetBranchAddress("rljet_Tau3_wta" , &rljet_Tau3_wta , &b_rljet_Tau3_wta);
 
-        fChain->SetBranchAddress("rljet_split12" , &rljet_split12 , &b_rljet_split12);
-        fChain->SetBranchAddress("rljet_split23" , &rljet_split23 , &b_rljet_split23);
-        fChain->SetBranchAddress("rljet_split34" , &rljet_split34 , &b_rljet_split34);
-        fChain->SetBranchAddress("rljet_qw"      , &rljet_qw      , &b_rljet_qw);
-        fChain->SetBranchAddress("rljet_ecf1"    , &rljet_ecf1    , &b_rljet_ecf1);
-        fChain->SetBranchAddress("rljet_ecf2"    , &rljet_ecf2    , &b_rljet_ecf2);
-        fChain->SetBranchAddress("rljet_ecf3"    , &rljet_ecf3    , &b_rljet_ecf3);
+        fChain->SetBranchAddress("rljet_Split12" , &rljet_Split12 , &b_rljet_Split12);
+        fChain->SetBranchAddress("rljet_Split23" , &rljet_Split23 , &b_rljet_Split23);
+        fChain->SetBranchAddress("rljet_Split34" , &rljet_Split34 , &b_rljet_Split34);
+        fChain->SetBranchAddress("rljet_Qw"      , &rljet_Qw      , &b_rljet_Qw);
+        fChain->SetBranchAddress("rljet_ECF1"    , &rljet_ECF1    , &b_rljet_ECF1);
+        fChain->SetBranchAddress("rljet_ECF2"    , &rljet_ECF2    , &b_rljet_ECF2);
+        fChain->SetBranchAddress("rljet_ECF3"    , &rljet_ECF3    , &b_rljet_ECF3);
 
-		fChain->SetBranchAddress("rljet_ntrimsubjets"      , &rljet_ntrimsubjets      , &b_rljet_ntrimsubjets);
-		fChain->SetBranchAddress("rljet_width"             , &rljet_width             , &b_rljet_width);
-		fChain->SetBranchAddress("rljet_area"              , &rljet_area              , &b_rljet_area);
+		fChain->SetBranchAddress("rljet_NTrimSubjets"      , &rljet_NTrimSubjets      , &b_rljet_NTrimSubjets);
+		fChain->SetBranchAddress("rljet_Width"             , &rljet_Width             , &b_rljet_Width);
 		fChain->SetBranchAddress("rljet_ungroomed_ntrk500" , &rljet_ungroomed_ntrk500 , &b_rljet_ungroomed_ntrk500);
 
         if (this->operating_on_mc) {
@@ -524,14 +504,14 @@ void DataMCbackgroundSelector::Init(TTree *tree)
             fChain->SetBranchAddress("tljet_dR"  , &tljet_dR  , &b_tljet_dR);
         }
 
-        fChain->SetBranchAddress("hltjet_N"   , &hltjet_N   , &b_hltjet_N);
+        fChain->SetBranchAddress("hltjet_count"   , &hltjet_count   , &b_hltjet_count);
         fChain->SetBranchAddress("hltjet_m"   , &hltjet_m   , &b_hltjet_m);
         fChain->SetBranchAddress("hltjet_pt"  , &hltjet_pt  , &b_hltjet_pt);
         fChain->SetBranchAddress("hltjet_eta" , &hltjet_eta , &b_hltjet_eta);
         fChain->SetBranchAddress("hltjet_phi" , &hltjet_phi , &b_hltjet_phi);
         fChain->SetBranchAddress("hltjet_dR"  , &hltjet_dR  , &b_hltjet_dR);
 
-        fChain->SetBranchAddress("caJet_N"       , &caJet_N       , &b_caJet_N);
+        fChain->SetBranchAddress("caJet_count"       , &caJet_count       , &b_caJet_count);
         fChain->SetBranchAddress("htt_caJet_pt"  , &htt_caJet_pt  , &b_htt_caJet_pt);
         fChain->SetBranchAddress("htt_caJet_eta" , &htt_caJet_eta , &b_htt_caJet_eta);
         fChain->SetBranchAddress("htt_caJet_phi" , &htt_caJet_phi , &b_htt_caJet_phi);
@@ -625,20 +605,20 @@ void DataMCbackgroundSelector::Init(TTree *tree)
         }
 
 
-        b_rljet_tau32_wta->GetEntry(0);
-        b_rljet_qw->GetEntry(0);
-        b_rljet_ecf3->GetEntry(0);
-        b_rljet_d2->GetEntry(0);
-        b_rljet_ecf1->GetEntry(0);
-        b_rljet_split12->GetEntry(0);
+        b_rljet_Tau32_wta->GetEntry(0);
+        b_rljet_Qw->GetEntry(0);
+        b_rljet_ECF3->GetEntry(0);
+        b_rljet_D2->GetEntry(0);
+        b_rljet_ECF1->GetEntry(0);
+        b_rljet_Split12->GetEntry(0);
 
-        readerTOP->AddVariable( "fjet_Tau32_wta" , &rljet_tau32_wta->at(0) );
-        readerTOP->AddVariable( "fjet_Qw"        , &rljet_qw->at(0)        );
-        readerTOP->AddVariable( "fjet_ECF3"      , &rljet_ecf3->at(0)      );
-        readerTOP->AddVariable( "fjet_D2"        , &rljet_d2->at(0)        );
-        readerTOP->AddVariable( "fjet_Tau21_wta" , &rljet_tau21_wta        );
-        readerTOP->AddVariable( "fjet_ECF1"      , &rljet_ecf1->at(0)      );
-        readerTOP->AddVariable( "fjet_Split12"   , &rljet_split12->at(0)   );
+        readerTOP->AddVariable( "fjet_Tau32_wta" , &rljet_Tau32_wta->at(0) );
+        readerTOP->AddVariable( "fjet_Qw"        , &rljet_Qw->at(0)        );
+        readerTOP->AddVariable( "fjet_ECF3"      , &rljet_ECF3->at(0)      );
+        readerTOP->AddVariable( "fjet_D2"        , &rljet_D2->at(0)        );
+        readerTOP->AddVariable( "fjet_Tau21_wta" , &rljet_Tau21_wta        );
+        readerTOP->AddVariable( "fjet_ECF1"      , &rljet_ECF1->at(0)      );
+        readerTOP->AddVariable( "fjet_Split12"   , &rljet_Split12->at(0)   );
 
         const char* const rc = getenv("ROOTCOREBIN");
         readerTOP->BookMVA( "BDTG method", std::string(rc) +
