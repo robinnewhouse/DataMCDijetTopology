@@ -24,36 +24,38 @@ for sample_name, sample_files in samples_EVNT.iteritems():
 
     print("# " + sample_name)
 
-    for pattern in sample_files:
-        resDict = api.list_datasets(client, patterns = pattern, fields = fields)
+    for f in sample_files:
+        res_dict = api.get_dataset_info(client, f)
 
-        numFiles = 0.0
-        numEvents = 0.0
-        avgFiltEff = 0.0
-        avgXSec = 0.0
-        dsid = 0
-        genName = ""
+        if len(res_dict) == 0:
+            print "WARNING: could not find file: ", f
 
-        # loop over files in dataset, calculate avg filter efficiency
-        for results in resDict:
-            numFiles = (float)(results['nfiles'])
-            if (results['generator_name'] != 'Null'): genName = results['generator_name']
-            if (results['dataset_number'] != 'Null'): dsid = (int) (results['dataset_number'])
-            if (results['files_gen_filt_eff'] != 'NULL'): avgFiltEff += (float) (results['files_gen_filt_eff'])
-            if (results['files_cross_section'] != 'NULL'): avgXSec += (float) (results['files_cross_section'])
-            if (results['files_events'] != 'NULL'): numEvents += (float) (results['files_events'])
-            pass # end loop over files
+        if len(res_dict) > 1:
+            print "WARNING: result dictionary length greater than one. shouldn't happen."
+            sys.exit(1)
 
-        if(numFiles != 0):
-            avgFiltEff = avgFiltEff/numFiles
-            avgXSec = avgXSec/numFiles
+        total_events = res_dict[0]["totalEvents"]
+        filt_eff_mean = res_dict[0]["GenFiltEff_mean"]
+        xsection_mean = res_dict[0]["crossSection_mean"]
+        dsid = res_dict[0]["datasetNumber"]
+        generator_name = res_dict[0]["generatorName"]
 
-        dmd_weights_str = ' '.join(map(str, [dsid, numEvents, 1e6 * avgXSec, avgFiltEff, genName]))
+        if (res_dict[0]["crossSection_unit"] == "nano barn"):
+            xsection_mean = str(float(xsection_mean) * 1e6)
+        elif (res_dict[0]["crossSection_unit"] == "pico barn"):
+            xsection_mean = str(float(xsection_mean) * 1e3)
+        elif (res_dict[0]["crossSection_unit"] == "femto barn"):
+            pass
+        else:
+            print "unrecognized cross section unit: ", res_dict[0]["crossSection_unit"]
+            sys.exit(1)
+
+        dmd_weights_str = ' '.join([dsid, total_events, xsection_mean, filt_eff_mean, generator_name])
         dmd_weights_file.write(dmd_weights_str + "\n")
-
         print dmd_weights_str
 
-        analysis_top_xsection_str = ' '.join(map(str, [dsid, 1e3 * avgXSec * avgFiltEff, 1.0, genName]))
+        analysis_top_xsection_str = ' '.join([
+            dsid, str(1e3 * float(xsection_mean) * float(filt_eff_mean)), "1.0", generator_name])
         analysis_top_weights_file.write(analysis_top_xsection_str + "\n")
 
 dmd_weights_file.close()
