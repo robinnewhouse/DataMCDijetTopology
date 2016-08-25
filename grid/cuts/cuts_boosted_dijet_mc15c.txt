@@ -4,9 +4,9 @@ LibraryNames libTopEventSelectionTools libTopEventReconstructionTools libDataMCb
 ### Pileup Configuration ###
 ############################
 
-PRWConfigFiles DataMCbackgroundTools/prw.dijet.mc15c.root
+PRWConfigFiles DataMCbackgroundTools/PRW.410000.mc15c.r7725_r7676.root
 PRWLumiCalcFiles DataMCbackgroundTools/ilumicalc_histograms_None_297730-301973.root
-PRWDefaultChannel 361024
+PRWDefaultChannel 410000
 
 #######################
 ### Custom Settings ###
@@ -55,7 +55,7 @@ PDFInfo False
 ### General Configuration ###
 #############################
 
-#NEvents 100
+NEvents 1000
 JetUncertainties_BunchSpacing 25ns
 
 OutputFileSetAutoFlushZero True
