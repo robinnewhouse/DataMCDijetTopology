@@ -711,6 +711,8 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
             double rljet_btag0, rljet_btag1;
             this->get_trackjet_btags(rljets[i], rljet_btag0, rljet_btag1);
 
+            const double BTAG_CUT = 0.6455;
+
             m_rljet_btag_double[i]     = rljet_btag0 > BTAG_CUT && rljet_btag1 > BTAG_CUT;
             m_rljet_btag_single[i]     = rljet_btag0 > BTAG_CUT || rljet_btag1 > BTAG_CUT;
             m_rljet_btag_leading_pt[i] = rljet_btag0 > BTAG_CUT;

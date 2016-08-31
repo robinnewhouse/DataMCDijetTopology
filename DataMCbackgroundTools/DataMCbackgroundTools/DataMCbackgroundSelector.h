@@ -52,8 +52,7 @@ class DataMCbackgroundSelector : public TSelector {
 
         const float luminosity;
 
-        static const std::unordered_map<std::string, EventSelector>
-            available_event_selectors;
+        static const std::unordered_map<std::string, EventSelector> available_event_selectors;
         EventSelector chosen_event_selector;
 
         float max_weight;

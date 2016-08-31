@@ -25,8 +25,12 @@ namespace top {
 		~DataMCbackgroundEventSaver();
 
 		// Run once at the start of the job
-		void initialize(std::shared_ptr<top::TopConfig> config, TFile* file, const std::vector<std::string>& extraBranches);
-        StatusCode initialize(){return StatusCode::SUCCESS;}
+		void initialize(std::shared_ptr<top::TopConfig> config, TFile* file,
+                const std::vector<std::string>& extraBranches);
+
+        StatusCode initialize() {
+            return StatusCode::SUCCESS;
+        }
 
 		// Run for every event (in every systematic) that needs saving
 		void saveEvent(const top::Event& event);
@@ -36,7 +40,6 @@ namespace top {
 		std::shared_ptr<top::TopConfig> m_config;
 
         static const int NUM_FATJETS_KEEP = 1;
-        constexpr static double BTAG_CUT = 0.6455;
 
         // variables corresponding to DynamicKeys from AnalysisTop cuts file
         bool m_runHTT;
@@ -85,7 +88,6 @@ namespace top {
         void runSDandFillTree(const xAOD::Jet* jet);
 
         // set all the relevant variables to sane default values
-        // separated into its own function to clear up saveEvent
         void reset_containers(const bool on_nominal_branch);
 
         // HEPTopTagger
