@@ -280,17 +280,32 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
         if (this->operating_on_mc) {
             const ULong64_t nevents_skimmed = getTotalEventsSample(current_file);
-            const float sum_weights = get_sum_weights_sample(current_file);
+            float sum_weights = get_sum_weights_sample(current_file);
             float xsection  = weight_tool.get_xsection(mcChannelNumber);
             float nevents   = weight_tool.get_nevents(mcChannelNumber);
             float filtereff = weight_tool.get_filtereff(mcChannelNumber);
+
+            // TEMPORARY FIX FOR BUGGED ALL-HAD TTBAR WEIGHTS
+            if (mcChannelNumber == 303722) {
+                sum_weights = 3.396948e-01;
+            } else if (mcChannelNumber == 303723) {
+                sum_weights = 1.467807e-01;
+            } else if (mcChannelNumber == 303724) {
+                sum_weights = 6.405792e-02;
+            } else if (mcChannelNumber == 303725) {
+                sum_weights = 4.490201e-02;
+            } else if (mcChannelNumber == 303726) {
+                sum_weights = 2.736783e-02;
+            }
 
             this->log("TOTAL EVENTS (SKIMMED): "   + std::to_string(nevents_skimmed));
             this->log("TOTAL EVENTS (UNSKIMMED): " + std::to_string(nevents));
             this->log("SUM WEIGHTS (UNSKIMMED): "  + std::to_string(sum_weights));
 
-            const bool is_pythia_JZXW_slice = mcChannelNumber >= 361020 && mcChannelNumber <= 361032;
-            const bool is_herwig_JZXW_slice = mcChannelNumber >= 426040 && mcChannelNumber <= 426052;
+            const bool is_pythia_JZXW_slice = mcChannelNumber >= 361020
+                && mcChannelNumber <= 361032;
+            const bool is_herwig_JZXW_slice = mcChannelNumber >= 426040
+                && mcChannelNumber <= 426052;
 
             if (is_pythia_JZXW_slice || is_herwig_JZXW_slice) {
                 this->SF_lumi_Fb = xsection * filtereff / nevents;
