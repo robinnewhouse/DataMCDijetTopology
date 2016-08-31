@@ -2,7 +2,7 @@ import pyAMI.client
 import pyAMI.atlas.api as api
 import json
 import sys
-from samples import samples_EVNT
+from samples import samples_AOD
 
 dmd_weights_file = open("sample_weights.txt", 'w')
 analysis_top_weights_file = open("sample_weights_ANALYSISTOP.txt", 'w')
