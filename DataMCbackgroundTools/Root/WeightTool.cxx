@@ -35,7 +35,6 @@ WeightTool::read_weights_file(const std::string& filepath)
 				m_nevents_map[dsid]   = nevents;
 				m_xsection_map[dsid]  = xsection;
 				m_filtereff_map[dsid] = filtereff;
-                std::cout << dsid << " " << xsection << " " << filtereff << std::endl;
 			}
 		}
 	}
