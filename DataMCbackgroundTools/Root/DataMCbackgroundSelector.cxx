@@ -117,6 +117,11 @@ void DataMCbackgroundSelector::SlaveBegin(TTree * /*tree*/)
     TString option = GetOption();
 
     this->hp = new HistoPack();
+
+    for (unsigned i = 0; i < hp->h_rljet_pt.size(); i++) {
+        hp->h_rljet_pt.at(i)->set_fill_veto(true);
+        hp->h_rljet_m.at(i)->set_fill_veto(true);
+    }
 }
 
 Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
@@ -327,7 +332,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
     float weight;
     if (this->operating_on_mc) {
-
         weight = weight_mc * weight_pileup * weight_jvt * weight_bTagSF_70 * this->SF_lumi_Fb * this->luminosity;
 
         if (weight > max_weight) {
@@ -352,7 +356,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             this->log(ss.str());
             return kFALSE;
         }
-
     } else { // if event is data
         weight = 1.;
     }
