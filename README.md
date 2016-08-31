@@ -69,7 +69,7 @@ In the `grid/cuts/cuts_XXX.txt` files, there exist some configuration options th
 * **KeepNLargeRJets**:
 
 # PILEUP REWEIGHTING
-Pileup reweighting is done automatically as defined in the configuration file `grid/cuts/cuts_XXX.txt`, using the files in `DataMCdijetTools/data/` , which contain PRW metadata for the MC samples used.
+Pileup reweighting is done automatically as defined in the configuration file `grid/cuts/cuts_XXX.txt`, using the files in `DataMCbackgroundTools/data/` , which contain PRW metadata for the MC samples used.
 
 In case you need to rerun pileup reweighting (for instance because of different run number, new pileup profile, MC campaign, etc.), use the script `submit_pileupReweight.py` in grid/ folder.  This script needs a list of MC samples. You can use any derivation, as long it is UNSKIMMED (e.g. not EXOT4, JETM8, etc.). It is often easiest to simply use the AOD.
 
@@ -159,7 +159,7 @@ various re-usable utility functions (ex: histogram styles, set sane default styl
 Outlined here are the steps that would be taken in order to add/update MC samples. It may not be necessary to perform all of them.
 
 1. Add the relevant set of JETM8/EVNT sample file names to grid/samples.py
-2. Update DataMCdijetTools/data/sample_weights.txt to include xsections/filter efficiencies/nevents for the new samples.
+2. Update DataMCbackgroundTools/data/sample_weights.txt to include xsections/filter efficiencies/nevents for the new samples.
 3. Add a new submit script in the grid/ folder
 4. if necessary, submit new pileup reweighting jobs (if, for example, switching to a new MC campaign)
 5. if necessary, create a new AnalysisTop coniguraiton file in grid/cuts. This could be necessary if:
