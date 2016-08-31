@@ -4,13 +4,18 @@
 This script submits pileup-reweighting job for a list of datasets imported.
 """
 
-import os
+import os,sys,inspect
 from subprocess import call
+
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir)
+
 from samples import samples_AOD
 
 jobPrefix = 'user.zmeadows.prw'
-date = '25Aug2016'
-cmdbase = r'pathena generatePRW_jobOptions.py --forceStaged --inDS='
+date = '29Aug2016'
+cmdbase = r'pathena PileupReweighting/generatePRW_jobOptions.py --forceStaged --inDS='
 sampleListName = 'TopBosonTag_mc15c'
 
 samples = ''
