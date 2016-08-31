@@ -24,10 +24,6 @@
 
 #include "TopExamples/AnalysisTools.h"
 
-#include "TMVA/Tools.h"
-#include "TMVA/Reader.h"
-#include "TMVA/MethodCuts.h"
-
 EventSelector NO_SELECTION = [](const DataMCbackgroundSelector* sel) {
     return true;
 };
@@ -86,12 +82,8 @@ DataMCbackgroundSelector::DataMCbackgroundSelector(
     if (!weight_tool.read_bugged_events_file(bugged_events_file))
         exit(1);
 
-    TMVA::Tools::Instance();
-    readerTOP = new TMVA::Reader( "!Color:!Silent" );
-    readerW = nullptr;
-
     try {
-        std::cout << "EVENT SELECTINO OFFLINE: " << event_selector_str_ << std::endl;
+        std::cout << "OFFLINE EVENT SELECTION SPECIFIED: " << event_selector_str_ << std::endl;
         chosen_event_selector = available_event_selectors.at(event_selector_str_);
     }
     catch (const std::out_of_range& oor) {
@@ -276,8 +268,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         }
     }
 
-    const bool is_ttbar_slice = mcChannelNumber >= 303722 && mcChannelNumber <= 303726;
-
     // calculate luminosity SF only once per file
     if (entry == 0) {
         TFile* current_file = this->fChain->GetCurrentFile();
@@ -285,14 +275,8 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         this->log("PROCESSING FILE: " + std::string(current_file->GetName()));
         this->log("BRANCH: " + std::string(fChain->GetName()));
 
-        if (is_ttbar_slice) {
-            std::cout << "working on ttbar slice..." << std::endl;
-        }
-
         this->SF_lumi_Fb = 1.0;
         this->max_weight = 0.;
-
-        num_bdt_rejects = 0;
 
         if (this->operating_on_mc) {
             const ULong64_t nevents_skimmed = getTotalEventsSample(current_file);
@@ -308,7 +292,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             const bool is_pythia_JZXW_slice = mcChannelNumber >= 361020 && mcChannelNumber <= 361032;
             const bool is_herwig_JZXW_slice = mcChannelNumber >= 426040 && mcChannelNumber <= 426052;
 
-            if (is_pythia_JZXW_slice || is_herwig_JZXW_slice || is_ttbar_slice) {
+            if (is_pythia_JZXW_slice || is_herwig_JZXW_slice) {
                 this->SF_lumi_Fb = xsection * filtereff / nevents;
             } else {
                 this->SF_lumi_Fb = xsection * filtereff / sum_weights;
@@ -329,12 +313,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     float weight;
     if (this->operating_on_mc) {
 
-        if (!is_ttbar_slice) {
-            weight = weight_mc * weight_pileup * weight_jvt * weight_bTagSF_70 * this->SF_lumi_Fb * this->luminosity;
-        } else { // temporary sloppy workaround. TODO: fixme
-            weight = 1.0 * weight_pileup * weight_jvt * weight_bTagSF_70 * this->SF_lumi_Fb * this->luminosity;
-            if (weight_mc < 0) weight *= -1.0;
-        }
+        weight = weight_mc * weight_pileup * weight_jvt * weight_bTagSF_70 * this->SF_lumi_Fb * this->luminosity;
 
         if (weight > max_weight) {
             max_weight = weight;
@@ -358,17 +337,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             this->log(ss.str());
             return kFALSE;
         }
-
-        //if (rljet_pt->at(0) / 1000. > 2400 && weight > 20) {
-        //    std::stringstream ss;
-        //    ss << "SKIPPING EVENT WITH WEIGHT: " << weight << " ";
-        //    ss << std::fixed;
-        //    ss << "EVENT NUMBER: " << eventNumber << " ";
-        //    ss << std::scientific;
-        //    ss << "AND LEAD JET pT: " << rljet_pt->at(0);
-        //    this->log(ss.str());
-        //    return kFALSE;
-        //}
 
     } else { // if event is data
         weight = 1.;
@@ -480,6 +448,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_Width.at(i)->fill(rljet_Width->at(i), weight);
         hp->h_rljet_ungroomed_ntrk500.at(i)->fill(rljet_ungroomed_ntrk500->at(i), weight);
 
+        /*
         const bool D2W50wp = rljet_smoothWTag50eff->at(i) == 1
             || rljet_smoothWTag50eff->at(i) == 3;
 
@@ -533,6 +502,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_rljet_pt.at(i)->fill_tagged(itag.first, rljet_pt->at(i)/1000., weight, itag.second);
             hp->h_rljet_m.at(i)->fill_tagged(itag.first, rljet_m->at(i)/1000., weight, itag.second);
         }
+        */
 
         // SD log(chi) variables
         if (ranSD) {
@@ -580,33 +550,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
                 }
             }
         } // end of saving systematic branch SD-tagged variables
-
-        /*******/
-        /* BDT */
-        /*******/
-
-        rljet_Tau21_wta = rljet_Tau2_wta->at(i) / rljet_Tau1_wta->at(i);
-
-        bool is_good_jet_for_BDT =
-            rljet_D2->at(i) > 0
-            && rljet_Tau32_wta->at(i) > 0
-            && rljet_Qw->at(i) > 0
-            && rljet_ECF3->at(i) > 0
-            && rljet_Tau21_wta > 0
-            && rljet_ECF1->at(i) > 0
-            && rljet_Split12->at(i) > 0;
-
-        if (i == 0 && is_good_jet_for_BDT) {
-            Float_t BDT_TopTag = this->readerTOP->EvaluateMVA( "BDTG method" );
-
-            hp->h_BDT_TopTag->fill(BDT_TopTag, weight);
-
-            hp->h_BDT_TopTag->fill_tagged("mass_gt100", BDT_TopTag, weight,
-                    (rljet_m->at(i) / 1000.) > 100.);
-
-        } else {
-            num_bdt_rejects++;
-        }
     } // end of saving all anti-kt R = 1.0 distributions
 
     if (n_rljets_recorded >= 2)
@@ -687,9 +630,5 @@ void DataMCbackgroundSelector::Terminate()
     this->log(ss.str());
 
     delete hp;
-
-    TMVA::Tools::DestroyInstance();
-
-    std::cout << "BDT REJECTS: " << num_bdt_rejects << std::endl;
 }
 

@@ -23,11 +23,6 @@ using std::vector;
 #include <iostream>
 #include <fstream>
 
-#include "TMVA/Tools.h"
-#include "TMVA/Reader.h"
-#include "TMVA/MethodCuts.h"
-
-
 class DataMCbackgroundSelector;
 
 typedef std::function<bool(const DataMCbackgroundSelector*)> EventSelector;
@@ -58,8 +53,6 @@ class DataMCbackgroundSelector : public TSelector {
         float max_weight;
         float SF_lumi_Fb;
 
-        int num_bdt_rejects;
-
         vector<std::string> htt_config_strings;
 
         std::ofstream output_log;
@@ -68,9 +61,6 @@ class DataMCbackgroundSelector : public TSelector {
         std::unordered_map<std::string, bool> SD_nominal_tag_map;
         std::unordered_map<std::string, bool> SD_systematic_tag_map;
         std::unordered_map<std::string, bool> nominal_tag_map;
-
-        TMVA::Reader *readerTOP;
-        TMVA::Reader *readerW;
 
         // Declaration of leaf types
         Float_t   weight_mc;
@@ -602,26 +592,6 @@ void DataMCbackgroundSelector::Init(TTree *tree)
             fChain->SetBranchAddress("rljet_SDt_win50_btag0_DOWN", &rljet_SDt_win50_btag0_DOWN, &b_rljet_SDt_win50_btag0_DOWN);
             fChain->SetBranchAddress("rljet_SDt_win55_btag0_DOWN", &rljet_SDt_win55_btag0_DOWN, &b_rljet_SDt_win55_btag0_DOWN);
         }
-
-
-        b_rljet_Tau32_wta->GetEntry(0);
-        b_rljet_Qw->GetEntry(0);
-        b_rljet_ECF3->GetEntry(0);
-        b_rljet_D2->GetEntry(0);
-        b_rljet_ECF1->GetEntry(0);
-        b_rljet_Split12->GetEntry(0);
-
-        readerTOP->AddVariable( "fjet_Tau32_wta" , &rljet_Tau32_wta->at(0) );
-        readerTOP->AddVariable( "fjet_Qw"        , &rljet_Qw->at(0)        );
-        readerTOP->AddVariable( "fjet_ECF3"      , &rljet_ECF3->at(0)      );
-        readerTOP->AddVariable( "fjet_D2"        , &rljet_D2->at(0)        );
-        readerTOP->AddVariable( "fjet_Tau21_wta" , &rljet_Tau21_wta        );
-        readerTOP->AddVariable( "fjet_ECF1"      , &rljet_ECF1->at(0)      );
-        readerTOP->AddVariable( "fjet_Split12"   , &rljet_Split12->at(0)   );
-
-        const char* const rc = getenv("ROOTCOREBIN");
-        readerTOP->BookMVA( "BDTG method", std::string(rc) +
-                "/data/DataMCbackgroundTools/bdt_weights/TMVAClassification_BDTG.TOP_NvarM_pT200to2000GeV.weights.xml");
     }
 }
 
