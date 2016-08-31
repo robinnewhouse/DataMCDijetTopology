@@ -7,8 +7,7 @@
 
 namespace top {
 
-GammaJetSelector::GammaJetSelector(void) : EventSelectorBase()
-{ }
+GammaJetSelector::GammaJetSelector(void) : EventSelectorBase() {}
 
 
 std::string GammaJetSelector::name(void) const {
@@ -29,11 +28,11 @@ bool GammaJetSelector::apply(const top::Event& event) const {
             event.m_photons.begin(), event.m_photons.end(), pt_sort_func);
 
     xAOD::JetContainer rljets = event.m_largeJets;
+    rljets.sort(pt_sort_func);
 
-    rljets.sort(
-            [](const xAOD::Jet* j1, const xAOD::Jet* j2) -> bool {
-                return j1->pt() > j2->pt();
-            });
+    if (rljets.size() == 0) {
+        return false;
+    }
 
     if (deltaPhi(*lead_photon, *rljets[0]) < 2.9) {
         return false;
