@@ -419,18 +419,17 @@ DataMCbackgroundEventSaver::initializeSD(void)
     /* INITIALIZE SUBJET CALIBRATION TOOL FOR SD */
     /*********************************************/
 
-    m_jetCalibration_subjet = nullptr;
     //string describing the current thread, for logging
     const std::string name_thread = "DataMCbackgroundEventSaver";
 
     //String describing your jet collection, for example AntiKt4EMTopo or AntiKt4LCTopo (see below)
-    TString jetAlgo_subjet = "CamKt020LCTopo" ;
+    TString jetAlgo_subjet = "CamKt020LCTopo";
 
     //Path to global config used to initialize the tool (see below)
     TString config_subjetcalib = "CamKt2LCTopoActiveAreaCalib_JES_HTTmodified.config";
 
     // may need to change this?
-    TString calibSeq_subjet = "EtaJES_DEV" ; //String describing the calibration sequence to apply (see below)
+    TString calibSeq_subjet = "EtaJES_DEV"; //String describing the calibration sequence to apply (see below)
     // Old calibration
     //  TString config_subjetcalib = "CamKt_JES_HTT.config"; //Path to global config used to initialize the tool (see below)
     //  TString calibSeq_subjet = "Origin_EtaJES" ; //String describing the calibration sequence to apply (see below)
@@ -438,10 +437,11 @@ DataMCbackgroundEventSaver::initializeSD(void)
     bool is_data = !m_config->isMC();
 
     //The default constructor can also be used if the arguments are set with python configuration instead
-    m_jetCalibration_subjet = new JetCalibrationTool(name_thread, jetAlgo_subjet, config_subjetcalib, calibSeq_subjet, is_data);
+    m_jet_calib_tool = make_unique<JetCalibrationTool>(name_thread, jetAlgo_subjet,
+            config_subjetcalib, calibSeq_subjet, is_data);
 
     //Initialize the tool
-    top::check ( m_jetCalibration_subjet->initializeTool(name_thread), "FAILURE");
+    top::check ( m_jet_calib_tool->initializeTool(name_thread), "FAILURE");
 }
 
 void
@@ -983,7 +983,7 @@ void DataMCbackgroundEventSaver::runSDandFillTree(const xAOD::Jet* jet)
         xAOD::Jet * jet = 0;
 
         // SATUS CODE
-        top::check ( m_jetCalibration_subjet->calibratedCopy(*isubjet,jet), "FAILURE "); //make a calibrated copy, assuming a copy hasn't been made already
+        top::check (m_jet_calib_tool->calibratedCopy(*isubjet,jet), "FAILURE "); //make a calibrated copy, assuming a copy hasn't been made already
         // Here is your calibrated subjet: "jet"
 
         fastjet::PseudoJet p(0,0,0,0);

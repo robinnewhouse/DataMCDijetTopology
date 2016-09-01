@@ -87,7 +87,7 @@ namespace top {
         ShowerDeconstruction* tagger_SDt_win55_btag0;
 
 		// CA2 Subjet calibration tool
-		JetCalibrationTool* m_jetCalibration_subjet;
+        std::unique_ptr<JetCalibrationTool> m_jet_calib_tool;
 
         void initializeSD(void);
         void runSDandFillTree(const xAOD::Jet* jet);
