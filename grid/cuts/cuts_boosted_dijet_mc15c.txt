@@ -12,7 +12,7 @@ PRWDefaultChannel 361025
 ### Custom Settings ###
 #######################
 
-DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass,NumFatjetsKeep
+DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass,NumFatjetsKeep,DebugLevel
 
 HTTConfigs def,sjcalib1030,sjcalib0970,sjcalib1045,sjcalib1015,sjcalib0985,sjcalib0955
 RunHTT True
@@ -21,6 +21,7 @@ RunShowerDeconstruction False
 SaveTrackAssistedMass True
 
 NumFatjetsKeep 1
+DebugLevel 0
 
 #################################
 ### Systematics Configuration ###
