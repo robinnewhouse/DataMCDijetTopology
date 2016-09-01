@@ -7,9 +7,12 @@
 #include "BoostedJetTaggers/SubstructureTopTaggerHelpers.h"
 #include "ShowerDeconstruction/ShowerDeconstruction.h"
 
+#include "JetRec/JetRecTool.h"
 #include "JetCalibTools/JetCalibrationTool.h"
 #include "JetSubStructureUtils/BosonTag.h"
-#include "JetRec/JetRecTool.h"
+#include "JetSubStructureUtils/JSSWTopTaggerBDT.h"
+
+#include "DataMCbackgroundTools/TruthMatchTool.h"
 
 #include <vector>
 #include <utility>
@@ -39,12 +42,14 @@ namespace top {
 		// to load the AnalysisTop configuration
 		std::shared_ptr<top::TopConfig> m_config;
 
-        static const int NUM_FATJETS_KEEP = 1;
+        static const int NUM_FATJETS_KEEP = 2;
 
         // variables corresponding to DynamicKeys from AnalysisTop cuts file
         bool m_runHTT;
         bool m_runSD;
         bool m_saveTAmass;
+
+        TruthMatchTool* m_truth_match_tool;
 
         /***********/
         /* TAGGERS */
@@ -96,6 +101,9 @@ namespace top {
 		std::vector<std::string> m_httConfigs;
 		JetRecTool* m_httTool;
 		void runHTTAndFillTree(void);
+
+        // BDT
+        std::unique_ptr<JSSWTopTaggerBDT> m_bdt_tool;
 
         /*************************/
         /* LARGE-R JET VARIABLES */
@@ -207,6 +215,10 @@ namespace top {
         // prerec Z tags (reco)
         std::vector<int> m_rljet_smoothZTag50eff;
 		std::vector<int> m_rljet_smoothZTag25eff;
+
+        // BDT
+        std::vector<float> m_rljet_BDT_Top_Score;
+        std::vector<float> m_rljet_BDT_W_Score;
 
         // Shower Deconstruction tags
         std::vector<double> m_rljet_SDw_win20_btag0;

@@ -152,6 +152,10 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
         systematicTree->makeOutputVariable(m_rljet_smoothZTag50eff , "rljet_smoothZTag50eff");
         systematicTree->makeOutputVariable(m_rljet_smoothZTag25eff , "rljet_smoothZTag25eff");
 
+        // BDT tagger output variables
+        systematicTree->makeOutputVariable(m_rljet_BDT_Top_Score , "rljet_BDT_Top_Score");
+        systematicTree->makeOutputVariable(m_rljet_BDT_W_Score   , "rljet_BDT_W_Score");
+
         /*************************************/
         /* PARAMETERS SAVED ONLY FOR NOMINAL */
         /*************************************/
@@ -298,6 +302,11 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
     // smooth Z taggers
 	zTagger_smooth_50eff = new JetSubStructureUtils::BosonTag("medium", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Ztagging_MC15_Prerecommendations_20150809.dat", false, false);
 	zTagger_smooth_25eff = new JetSubStructureUtils::BosonTag("tight", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Ztagging_MC15_Prerecommendations_20150809.dat", false, false);
+
+    m_bdt_tool = std::unique_ptr<JSSWTopTaggerBDT>(new JSSWTopTaggerBDT(true,true,"NvarM"));
+    m_bdt_tool->initialize();
+
+    m_truth_match_tool = new TruthMatchTool();
 }
 
 void
@@ -434,6 +443,9 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
     m_rljet_smoothZTag50eff . assign(NUM_FATJETS_KEEP, 0);
     m_rljet_smoothZTag25eff . assign(NUM_FATJETS_KEEP, 0);
 
+    m_rljet_BDT_Top_Score . assign(NUM_FATJETS_KEEP, -1000. );
+    m_rljet_BDT_W_Score   . assign(NUM_FATJETS_KEEP, -1000. );
+
     if (on_nominal_branch) {
         m_rljet_count = 0;
         m_rljet_mjj = -1000;
@@ -544,20 +556,64 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
     const bool on_nominal_branch = event.m_hashValue == m_config->nominalHashValue();
     this->reset_containers(on_nominal_branch);
 
-    // make a copy of the large-R jet container
-    xAOD::JetContainer rljets = event.m_largeJets;
+    const xAOD::JetContainer* reco_large_jets = nullptr;
+    const xAOD::JetContainer* truth_large_jets = nullptr;
+    const xAOD::TruthParticleContainer* truth_particles = nullptr;
 
-    // and sort it by pT
-    rljets.sort(
-            [](const xAOD::Jet* j1, const xAOD::Jet* j2) -> bool {
-                return j1->pt() > j2->pt();
-            });
+    top::check(evtStore()->retrieve(reco_large_jets,
+                m_config->sgKeyLargeRJets()), "FAILURE" );
+
+    auto reco_large_jets_sorted = sort_container_pt(reco_large_jets);
+
+    if(m_config->isMC()) {
+
+        top::check( evtStore()->retrieve(truth_large_jets,
+                    m_config->sgKeyTruthLargeRJets()), "FAILURE" );
+
+        auto truth_large_jets_sorted = sort_container_pt(truth_large_jets);
+
+        top::check( evtStore()->retrieve(truth_particles,
+                    m_config->sgKeyMCParticle()), "FAILURE" );
+
+        auto truth_particles_sorted = sort_container_pt(truth_particles);
+
+        m_truth_match_tool->execute(
+                reco_large_jets,
+                truth_large_jets,
+                truth_particles
+                );
+    }
+
+    // make a copy of the large-R jet container
+    const xAOD::JetContainer rljets = *reco_large_jets;
 
     // const xAOD::PhotonContainer* photons = nullptr;
     // top::check( evtStore()->retrieve(photons, m_config->sgKeyPhotons()), "FAILURE" );
     // std::cout << "NUM PHOTONS: " << photons->size();
 
     for (unsigned i = 0; i < NUM_FATJETS_KEEP && i < rljets.size(); i++) {
+
+        std::cout << std::endl;
+        if (rljets[i]->isAvailable<int>("dRmatched_particle_flavor")) {
+            std::cout << "dRmatched_particle_flavor: " <<
+                rljets[i]->auxdata<int>("dRmatched_particle_flavor") << std::endl;
+        }
+        if (rljets[i]->isAvailable<int>("dRmatched_reco_truth")) {
+            std::cout << "dRmatched_reco_truth: " <<
+                rljets[i]->auxdata<int>("dRmatched_reco_truth") << std::endl;
+        }
+        if (rljets[i]->isAvailable<int>("dRmatched_maxEParton_flavor")) {
+            std::cout << "dRmatched_maxEParton_flavor: " <<
+                rljets[i]->auxdata<int>("dRmatched_maxEParton_flavor") << std::endl;
+        }
+        if (rljets[i]->isAvailable<int>("dRmatched_nQuarkChildren")) {
+            std::cout << "dRmatched_nQuarkChildren: " <<
+                rljets[i]->auxdata<int>("dRmatched_nQuarkChildren") << std::endl;
+        }
+        if (rljets[i]->isAvailable<int>("dRmatched_topBChild")) {
+            std::cout << "dRmatched_topBChild: " <<
+                rljets[i]->auxdata<int>("dRmatched_topBChild") << std::endl;
+        }
 
         // basic kinematic variables
         m_rljet_pt[i]  = rljets[i]->pt();
@@ -619,12 +675,18 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
         m_rljet_smoothZTag50eff[i] = zTagger_smooth_50eff->result(*rljets[i]);
         m_rljet_smoothZTag25eff[i] = zTagger_smooth_25eff->result(*rljets[i]);
 
+        // BDT
+        m_rljet_BDT_Top_Score[i] = m_bdt_tool->score(*rljets[i], "toptag");
+        m_rljet_BDT_W_Score[i] = m_bdt_tool->score(*rljets[i], "wtag");
+
         if (on_nominal_branch) {
             m_rljet_count    = rljets.size();
 
             if(m_saveTAmass) {
-                m_rljet_m_ta[i]         = rljets[i]->auxdata<float>("JetTrackAssistedMassCalibrated");
-                m_rljet_m_ta_nocalib[i] = rljets[i]->auxdata<float>("JetTrackAssistedMassUnCalibrated");
+                if(rljets[i]->isAvailable<float>("JetTrackAssistedMassCalibrated"))
+                    m_rljet_m_ta[i] = rljets[i]->auxdata<float>("JetTrackAssistedMassCalibrated");
+                if(rljets[i]->isAvailable<float>("JetTrackAssistedMassUnCalibrated"))
+                    m_rljet_m_ta_nocalib[i] = rljets[i]->auxdata<float>("JetTrackAssistedMassUnCalibrated");
             }
 
             // substructure variables
