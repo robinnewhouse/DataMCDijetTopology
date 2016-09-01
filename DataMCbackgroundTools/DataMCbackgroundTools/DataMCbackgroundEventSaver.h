@@ -49,7 +49,32 @@ namespace top {
         unsigned m_num_fatjets_keep;
         unsigned m_debug_level;
 
+        /*********/
+        /* TOOLS */
+        /*********/
+
         std::unique_ptr<TruthMatchTool> m_truth_match_tool;
+
+        std::unique_ptr<JSSWTopTaggerBDT> m_bdt_tool;
+
+        /***********/
+        /* METHODS */
+        /***********/
+
+        // grabs the btag weights for the leading two track jets
+        // of the ungroomed parent large-R calorimeter reco jet
+        void get_trackjet_btags(const xAOD::Jet* jet, double& jet_btag0, double& jet_btag1);
+
+        // grabs the ungroomed parent large-R calorimeter reco jet
+        const xAOD::Jet* get_parent_ungroomed(const xAOD::Jet* jet);
+
+        // set all the relevant variables to sane default values
+        void reset_containers(const bool on_nominal_branch);
+
+        void initializeSD(void);
+        void runSDandFillTree(const xAOD::Jet* jet);
+
+		void runHTTAndFillTree(void);
 
         /***********/
         /* TAGGERS */
@@ -71,13 +96,6 @@ namespace top {
 		std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger_smooth_50eff;
 		std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger_smooth_25eff;
 
-        // grabs the btag weights for the leading two track jets
-        // of the ungroomed parent large-R calorimeter reco jet
-        void get_trackjet_btags(const xAOD::Jet* jet, double& jet_btag0, double& jet_btag1);
-
-        // grabs the ungroomed parent large-R calorimeter reco jet
-        const xAOD::Jet* get_parent_ungroomed(const xAOD::Jet* jet);
-
         // Shower Deconstruction (SD)
         ShowerDeconstruction* tagger_SDw_win20_btag0;
         ShowerDeconstruction* tagger_SDw_win25_btag0;
@@ -89,21 +107,11 @@ namespace top {
 		// CA2 Subjet calibration tool
         std::unique_ptr<JetCalibrationTool> m_jet_calib_tool;
 
-        void initializeSD(void);
-        void runSDandFillTree(const xAOD::Jet* jet);
-
-        // set all the relevant variables to sane default values
-        void reset_containers(const bool on_nominal_branch);
-
         // HEPTopTagger
 		int m_nHttTools;
 		std::string m_httJetContainerPrefix;
 		std::vector<std::string> m_httConfigs;
 		JetRecTool* m_httTool;
-		void runHTTAndFillTree(void);
-
-        // BDT
-        std::unique_ptr<JSSWTopTaggerBDT> m_bdt_tool;
 
         /*************************/
         /* LARGE-R JET VARIABLES */
@@ -169,9 +177,9 @@ namespace top {
         std::vector<float> m_hltjet_m;
         std::vector<float> m_hltjet_dR;
 
-        /*************************/
-        /* C/A 1.5 jets from HTT */
-        /*************************/
+        /*****************/
+        /* HTT VARIABLES */
+        /*****************/
 
         // nominal (independent of HTT config)
         int m_cajet_count;
