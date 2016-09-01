@@ -122,6 +122,21 @@ DataMCbackgroundEventSaver::DataMCbackgroundEventSaver(void)
         std::cout << "Defaulting to saving only the leading pT large R jet" << std::endl;
 		std::cout << "add 'NumFatjetsKeep X', where X = 1,2,3,..., to cuts file to enable." << std::endl;
     }
+
+    m_debug_level = 0;
+    try {
+        std::string debug_level_str = config_settings->value("DebugLevel");
+        int debug_level_desired = std::stoi(debug_level_str);
+        if (debug_level_desired < 0) {
+            std::cout << "WARNING: invalid DebugLevel value: " << debug_level_desired << std::endl;
+            throw;
+        } else {
+            m_debug_level = (unsigned) debug_level_desired;
+            std::cout << "DataMCbackgroundEventSaver: DebugLevel set to " << m_debug_level << std::endl;
+        }
+    } catch (...) {
+        std::cout << "DataMCbackgroundEventSaver: Defaulting to DebugLevel 0" << std::endl;
+    }
 }
 
 DataMCbackgroundEventSaver::~DataMCbackgroundEventSaver(void) {}
@@ -563,6 +578,19 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
 void
 DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
 {
+    if (!event.m_saveEvent && m_config->saveOnlySelectedEvents()) {
+        // if the event did not pass the given cuts, don't bother processing it
+        return;
+    }
+
+    if (m_debug_level >= 3) {
+        std::cout << std::endl <<
+            "==============================================" << std::endl <<
+            "RUN NUMBER: " << event.m_info->runNumber() << std::endl <<
+            "EVENT NUMBER: " << event.m_info->eventNumber() << std::endl <<
+            "==============================================" << std::endl;
+    }
+
     const bool on_nominal_branch = event.m_hashValue == m_config->nominalHashValue();
     this->reset_containers(on_nominal_branch);
 
@@ -573,19 +601,13 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
     top::check(evtStore()->retrieve(reco_large_jets,
                 m_config->sgKeyLargeRJets()), "FAILURE" );
 
-    auto reco_large_jets_sorted = sort_container_pt(reco_large_jets);
-
     if(m_config->isMC()) {
 
         top::check( evtStore()->retrieve(truth_large_jets,
                     m_config->sgKeyTruthLargeRJets()), "FAILURE" );
 
-        auto truth_large_jets_sorted = sort_container_pt(truth_large_jets);
-
         top::check( evtStore()->retrieve(truth_particles,
                     m_config->sgKeyMCParticle()), "FAILURE" );
-
-        auto truth_particles_sorted = sort_container_pt(truth_particles);
 
         m_truth_match_tool->execute(
                 reco_large_jets,
@@ -595,7 +617,7 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
     }
 
     // make a copy of the large-R jet container
-    const xAOD::JetContainer rljets = *reco_large_jets;
+    const xAOD::JetContainer rljets = sort_container_pt(reco_large_jets);
 
     // const xAOD::PhotonContainer* photons = nullptr;
     // top::check( evtStore()->retrieve(photons, m_config->sgKeyPhotons()), "FAILURE" );
@@ -603,26 +625,32 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
 
     for (unsigned i = 0; i < m_num_fatjets_keep && i < rljets.size(); i++) {
 
-        std::cout << std::endl;
-        if (rljets[i]->isAvailable<int>("dRmatched_particle_flavor")) {
-            std::cout << "dRmatched_particle_flavor: " <<
-                rljets[i]->auxdata<int>("dRmatched_particle_flavor") << std::endl;
+        if (m_debug_level >= 3) {
+            if (i > 0) std::cout << std::endl;
+            std::cout << "### LARGE-R JET NO. " << i << " ###" << std::endl;
         }
-        if (rljets[i]->isAvailable<int>("dRmatched_reco_truth")) {
-            std::cout << "dRmatched_reco_truth: " <<
-                rljets[i]->auxdata<int>("dRmatched_reco_truth") << std::endl;
-        }
-        if (rljets[i]->isAvailable<int>("dRmatched_maxEParton_flavor")) {
-            std::cout << "dRmatched_maxEParton_flavor: " <<
-                rljets[i]->auxdata<int>("dRmatched_maxEParton_flavor") << std::endl;
-        }
-        if (rljets[i]->isAvailable<int>("dRmatched_nQuarkChildren")) {
-            std::cout << "dRmatched_nQuarkChildren: " <<
-                rljets[i]->auxdata<int>("dRmatched_nQuarkChildren") << std::endl;
-        }
-        if (rljets[i]->isAvailable<int>("dRmatched_topBChild")) {
-            std::cout << "dRmatched_topBChild: " <<
-                rljets[i]->auxdata<int>("dRmatched_topBChild") << std::endl;
+
+        if (m_debug_level >= 3) {
+            if (rljets[i]->isAvailable<int>("dRmatched_particle_flavor")) {
+                std::cout << "dRmatched_particle_flavor: " <<
+                    rljets[i]->auxdata<int>("dRmatched_particle_flavor") << std::endl;
+            }
+            if (rljets[i]->isAvailable<int>("dRmatched_reco_truth")) {
+                std::cout << "dRmatched_reco_truth: " <<
+                    rljets[i]->auxdata<int>("dRmatched_reco_truth") << std::endl;
+            }
+            if (rljets[i]->isAvailable<int>("dRmatched_maxEParton_flavor")) {
+                std::cout << "dRmatched_maxEParton_flavor: " <<
+                    rljets[i]->auxdata<int>("dRmatched_maxEParton_flavor") << std::endl;
+            }
+            if (rljets[i]->isAvailable<int>("dRmatched_nQuarkChildren")) {
+                std::cout << "dRmatched_nQuarkChildren: " <<
+                    rljets[i]->auxdata<int>("dRmatched_nQuarkChildren") << std::endl;
+            }
+            if (rljets[i]->isAvailable<int>("dRmatched_topBChild")) {
+                std::cout << "dRmatched_topBChild: " <<
+                    rljets[i]->auxdata<int>("dRmatched_topBChild") << std::endl;
+            }
         }
 
         // basic kinematic variables

@@ -48,6 +48,7 @@ namespace top {
         bool m_runSD;
         bool m_saveTAmass;
         unsigned m_num_fatjets_keep;
+        unsigned m_debug_level;
 
         TruthMatchTool* m_truth_match_tool;
 
