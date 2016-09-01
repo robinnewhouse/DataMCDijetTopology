@@ -321,17 +321,17 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
 	tagger_smoothTau32_80eff     = STTHelpers::configSubstTagger("SmoothTau32CutOnly80eff", std::vector<std::string>{"SmoothTau32Cut_80"});
 
 	// smooth W taggers
-	wTagger_smooth_50eff = new JetSubStructureUtils::BosonTag("medium", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Wtagging_MC15_Prerecommendations_20150809.dat", false, false);
-	wTagger_smooth_25eff = new JetSubStructureUtils::BosonTag("tight", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Wtagging_MC15_Prerecommendations_20150809.dat", false, false);
+	wTagger_smooth_50eff = make_unique<JetSubStructureUtils::BosonTag>("medium", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Wtagging_MC15_Prerecommendations_20150809.dat", false, false);
+	wTagger_smooth_25eff = make_unique<JetSubStructureUtils::BosonTag>("tight", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Wtagging_MC15_Prerecommendations_20150809.dat", false, false);
 
     // smooth Z taggers
-	zTagger_smooth_50eff = new JetSubStructureUtils::BosonTag("medium", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Ztagging_MC15_Prerecommendations_20150809.dat", false, false);
-	zTagger_smooth_25eff = new JetSubStructureUtils::BosonTag("tight", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Ztagging_MC15_Prerecommendations_20150809.dat", false, false);
+	zTagger_smooth_50eff = make_unique<JetSubStructureUtils::BosonTag>("medium", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Ztagging_MC15_Prerecommendations_20150809.dat", false, false);
+	zTagger_smooth_25eff = make_unique<JetSubStructureUtils::BosonTag>("tight", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Ztagging_MC15_Prerecommendations_20150809.dat", false, false);
 
-    m_bdt_tool = std::unique_ptr<JSSWTopTaggerBDT>(new JSSWTopTaggerBDT(true,true,"NvarM"));
+    m_bdt_tool = std::unique_ptr<JSSWTopTaggerBDT>( new JSSWTopTaggerBDT(true,true,"NvarM") );
     m_bdt_tool->initialize();
 
-    m_truth_match_tool = new TruthMatchTool();
+    m_truth_match_tool = make_unique<TruthMatchTool>();
 }
 
 void

@@ -42,7 +42,6 @@ namespace top {
 		// to load the AnalysisTop configuration
 		std::shared_ptr<top::TopConfig> m_config;
 
-
         // variables corresponding to DynamicKeys from AnalysisTop cuts file
         bool m_runHTT;
         bool m_runSD;
@@ -50,7 +49,7 @@ namespace top {
         unsigned m_num_fatjets_keep;
         unsigned m_debug_level;
 
-        TruthMatchTool* m_truth_match_tool;
+        std::unique_ptr<TruthMatchTool> m_truth_match_tool;
 
         /***********/
         /* TAGGERS */
@@ -65,12 +64,12 @@ namespace top {
 		SubstructureTopTagger *tagger_smoothTau32_80eff;
 
 		// simple/smoothed W taggers
-		JetSubStructureUtils::BosonTag *wTagger_smooth_50eff;
-		JetSubStructureUtils::BosonTag *wTagger_smooth_25eff;
+        std::unique_ptr<JetSubStructureUtils::BosonTag> wTagger_smooth_50eff;
+		std::unique_ptr<JetSubStructureUtils::BosonTag> wTagger_smooth_25eff;
 
 		// simple/smoothed Z taggers
-		JetSubStructureUtils::BosonTag *zTagger_smooth_50eff;
-		JetSubStructureUtils::BosonTag *zTagger_smooth_25eff;
+		std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger_smooth_50eff;
+		std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger_smooth_25eff;
 
         // grabs the btag weights for the leading two track jets
         // of the ungroomed parent large-R calorimeter reco jet
