@@ -30,5 +30,8 @@ cp data/SubjetCalibration/CamKt2LCTopoAreaCalib_JES_HTTmodified.config JetCalibT
 # ShowerDeconstruction tagger
 svn co svn+ssh://svn.cern.ch/reps/atlas-dferreir/dferreir/ShowerDeconstruction/trunk ShowerDeconstruction
 
+# get the BDT tool by Daniel Marley (will eventually be moved to official ATLAS repo)
+git clone https://gitlab.cern.ch/dmarley/JetSubstructureTools.git
+
 rc find_packages
 rc compile
