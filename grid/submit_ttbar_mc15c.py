@@ -15,5 +15,5 @@ config.mergeType     = 'Default' #'None', 'Default' or 'xAOD'
 config.destSE        = '' #This is the default (anywhere), or try e.g. 'UKI-SOUTHGRID-BHAM-HEP_LOCALGROUPDISK'
 
 datasetsName = 'ttbar_allhad_mc15c'
-TopExamples.grid.Add(datasetsName).datasets = samples.samples[datasetsName]
+TopExamples.grid.Add(datasetsName).datasets = samples.samples_JETM8[datasetsName]
 TopExamples.grid.submit(config, TopExamples.grid.Samples([datasetsName]))
