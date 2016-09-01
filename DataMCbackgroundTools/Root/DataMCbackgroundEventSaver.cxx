@@ -80,9 +80,9 @@ DataMCbackgroundEventSaver::DataMCbackgroundEventSaver(void)
 	}
 
     if (m_nHttTools != 0 && m_runHTT) {
-        m_httTool = buildFullHTTagger("", m_httJetContainerPrefix, m_httConfigs);
+        m_httTool = std::unique_ptr<JetRecTool>(buildFullHTTagger("",
+                    m_httJetContainerPrefix, m_httConfigs));
     }
-
 
     // configuration switch for shower deconstruction tagging
 	m_runSD = false;
@@ -228,6 +228,13 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
                 systematicTree->makeOutputVariable(m_tljet_phi   , "tljet_phi");
                 systematicTree->makeOutputVariable(m_tljet_m     , "tljet_m");
                 systematicTree->makeOutputVariable(m_tljet_dR    , "tljet_dR");
+
+                systematicTree->makeOutputVariable(m_rljet_dRmatched_reco_truth, "rljet_dRmatched_reco_truth");
+                systematicTree->makeOutputVariable(m_rljet_dRmatched_particle_flavor, "rljet_dRmatched_particle_flavor");
+                systematicTree->makeOutputVariable(m_rljet_dRmatched_maxEParton_flavor, "rljet_dRmatched_maxEParton_flavor");
+                systematicTree->makeOutputVariable(m_rljet_dRmatched_topBChild, "rljet_dRmatched_topBChild");
+                systematicTree->makeOutputVariable(m_rljet_dRmatched_nQuarkChildren, "rljet_dRmatched_nQuarkChildren");
+
             }
 
             //trigger jet
@@ -280,25 +287,16 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
 
             // Shower Deconstruction tagger output variables
             systematicTree->makeOutputVariable(m_rljet_SDw_win20_btag0, "rljet_SDw_win20_btag0");
-            systematicTree->makeOutputVariable(m_rljet_SDw_win25_btag0, "rljet_SDw_win25_btag0");
             systematicTree->makeOutputVariable(m_rljet_SDz_win20_btag0, "rljet_SDz_win20_btag0");
-            systematicTree->makeOutputVariable(m_rljet_SDz_win25_btag0, "rljet_SDz_win25_btag0");
             systematicTree->makeOutputVariable(m_rljet_SDt_win50_btag0, "rljet_SDt_win50_btag0");
-            systematicTree->makeOutputVariable(m_rljet_SDt_win55_btag0, "rljet_SDt_win55_btag0");
 
             systematicTree->makeOutputVariable(m_rljet_SDw_win20_btag0_UP, "rljet_SDw_win20_btag0_UP");
-            systematicTree->makeOutputVariable(m_rljet_SDw_win25_btag0_UP, "rljet_SDw_win25_btag0_UP");
             systematicTree->makeOutputVariable(m_rljet_SDz_win20_btag0_UP, "rljet_SDz_win20_btag0_UP");
-            systematicTree->makeOutputVariable(m_rljet_SDz_win25_btag0_UP, "rljet_SDz_win25_btag0_UP");
             systematicTree->makeOutputVariable(m_rljet_SDt_win50_btag0_UP, "rljet_SDt_win50_btag0_UP");
-            systematicTree->makeOutputVariable(m_rljet_SDt_win55_btag0_UP, "rljet_SDt_win55_btag0_UP");
 
             systematicTree->makeOutputVariable(m_rljet_SDw_win20_btag0_DOWN, "rljet_SDw_win20_btag0_DOWN");
-            systematicTree->makeOutputVariable(m_rljet_SDw_win25_btag0_DOWN, "rljet_SDw_win25_btag0_DOWN");
             systematicTree->makeOutputVariable(m_rljet_SDz_win20_btag0_DOWN, "rljet_SDz_win20_btag0_DOWN");
-            systematicTree->makeOutputVariable(m_rljet_SDz_win25_btag0_DOWN, "rljet_SDz_win25_btag0_DOWN");
             systematicTree->makeOutputVariable(m_rljet_SDt_win50_btag0_DOWN, "rljet_SDt_win50_btag0_DOWN");
-            systematicTree->makeOutputVariable(m_rljet_SDt_win55_btag0_DOWN, "rljet_SDt_win55_btag0_DOWN");
 
             systematicTree->makeOutputVariable(m_rljet_btag_double     , "rljet_btag_double");
             systematicTree->makeOutputVariable(m_rljet_btag_single     , "rljet_btag_single");
@@ -337,8 +335,8 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
 void
 DataMCbackgroundEventSaver::initializeSD(void)
 {
-    tagger_SDw_win20_btag0 = new ShowerDeconstruction("SD_W_win20_Btag0");
-    top::check( tagger_SDw_win20_btag0->setProperty("mode", "w/q"), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE");
+    tagger_SDw_win20_btag0 = make_unique<ShowerDeconstruction>("SD_W_win20_Btag0");
+    top::check (tagger_SDw_win20_btag0->setProperty("mode", "w/q"), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE");
     top::check (tagger_SDw_win20_btag0->setProperty("R", 1.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE");
     top::check (tagger_SDw_win20_btag0->setProperty("topMass", 170), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE");
     top::check (tagger_SDw_win20_btag0->setProperty("topMassWindow", 40.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE");
@@ -350,20 +348,7 @@ DataMCbackgroundEventSaver::initializeSD(void)
     top::check (tagger_SDw_win20_btag0->setProperty("useBtag", 0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE");
     top::check (tagger_SDw_win20_btag0->initialize(), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
 
-    tagger_SDw_win25_btag0 = new ShowerDeconstruction("SD_W_win25_Btag0");
-    top::check (tagger_SDw_win25_btag0->setProperty("mode", "w/q"), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDw_win25_btag0->setProperty("R", 1.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDw_win25_btag0->setProperty("topMass", 170), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDw_win25_btag0->setProperty("topMassWindow", 50.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDw_win25_btag0->setProperty("wMass", 80.403), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDw_win25_btag0->setProperty("wMassWindow", 25.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDw_win25_btag0->setProperty("hMass", 125.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDw_win25_btag0->setProperty("hMassWindow", 20.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDw_win25_btag0->setProperty("maxNjets", 9), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDw_win25_btag0->setProperty("useBtag", 0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDw_win25_btag0->initialize(), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-
-    tagger_SDz_win20_btag0 = new ShowerDeconstruction("SD_Z_win20_Btag0");
+    tagger_SDz_win20_btag0 = make_unique<ShowerDeconstruction>("SD_Z_win20_Btag0");
     top::check (tagger_SDz_win20_btag0->setProperty("mode", "w/q"), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
     top::check (tagger_SDz_win20_btag0->setProperty("R", 1.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
     top::check (tagger_SDz_win20_btag0->setProperty("topMass", 170), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
@@ -376,20 +361,7 @@ DataMCbackgroundEventSaver::initializeSD(void)
     top::check (tagger_SDz_win20_btag0->setProperty("useBtag", 0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
     top::check (tagger_SDz_win20_btag0->initialize(), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
 
-    tagger_SDz_win25_btag0 = new ShowerDeconstruction("SD_Z_win25_Btag0");
-    top::check (tagger_SDz_win25_btag0->setProperty("mode", "w/q"), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDz_win25_btag0->setProperty("R", 1.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDz_win25_btag0->setProperty("topMass", 170), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDz_win25_btag0->setProperty("topMassWindow", 50.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDz_win25_btag0->setProperty("wMass", 90.2), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDz_win25_btag0->setProperty("wMassWindow", 25.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDz_win25_btag0->setProperty("hMass", 125.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDz_win25_btag0->setProperty("hMassWindow", 20.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDz_win25_btag0->setProperty("maxNjets", 9), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDz_win25_btag0->setProperty("useBtag", 0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDz_win25_btag0->initialize(), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-
-    tagger_SDt_win50_btag0 = new ShowerDeconstruction("SD_T_win50_Btag0");
+    tagger_SDt_win50_btag0 = make_unique<ShowerDeconstruction>("SD_T_win50_Btag0");
     top::check (tagger_SDt_win50_btag0->setProperty("mode", "t/g"), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
     top::check (tagger_SDt_win50_btag0->setProperty("R", 1.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
     top::check (tagger_SDt_win50_btag0->setProperty("topMass", 168), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
@@ -402,19 +374,6 @@ DataMCbackgroundEventSaver::initializeSD(void)
     top::check (tagger_SDt_win50_btag0->setProperty("useBtag", 0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
     top::check (tagger_SDt_win50_btag0->initialize(), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
 
-    tagger_SDt_win55_btag0 = new ShowerDeconstruction("SD_T_win55_Btag0");
-    top::check (tagger_SDt_win55_btag0->setProperty("mode", "t/q"), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDt_win55_btag0->setProperty("R", 1.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDt_win55_btag0->setProperty("topMass", 168), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDt_win55_btag0->setProperty("topMassWindow", 55.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDt_win55_btag0->setProperty("wMass", 80.403), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDt_win55_btag0->setProperty("wMassWindow", 25.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDt_win55_btag0->setProperty("hMass", 125.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDt_win55_btag0->setProperty("hMassWindow", 20.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDt_win55_btag0->setProperty("maxNjets", 9), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDt_win55_btag0->setProperty("useBtag", 0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDt_win55_btag0->initialize(), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-
     /*********************************************/
     /* INITIALIZE SUBJET CALIBRATION TOOL FOR SD */
     /*********************************************/
@@ -426,7 +385,7 @@ DataMCbackgroundEventSaver::initializeSD(void)
     TString jetAlgo_subjet = "CamKt020LCTopo";
 
     //Path to global config used to initialize the tool (see below)
-    TString config_subjetcalib = "CamKt2LCTopoActiveAreaCalib_JES_HTTmodified.config";
+    TString config_subjetcalib = "CamKt2LCTopoAreaCalib_JES_HTTmodified.config";
 
     // may need to change this?
     TString calibSeq_subjet = "EtaJES_DEV"; //String describing the calibration sequence to apply (see below)
@@ -513,6 +472,13 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
             m_tljet_phi . assign(m_num_fatjets_keep, -1000.);
             m_tljet_m   . assign(m_num_fatjets_keep, -1000.);
             m_tljet_dR  . assign(m_num_fatjets_keep, -1000.);
+
+            m_rljet_dRmatched_reco_truth        . assign(m_num_fatjets_keep, -1000);
+            m_rljet_dRmatched_particle_flavor   . assign(m_num_fatjets_keep, -1000);
+            m_rljet_dRmatched_maxEParton_flavor . assign(m_num_fatjets_keep, -1000);
+            m_rljet_dRmatched_topBChild         . assign(m_num_fatjets_keep, -1000);
+            m_rljet_dRmatched_nQuarkChildren    . assign(m_num_fatjets_keep, -1000);
+
 		}
 
         m_rljet_btag_double     . assign(m_num_fatjets_keep, false);
@@ -528,25 +494,16 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
 
         if (m_runSD) {
             m_rljet_SDw_win20_btag0      . assign(m_num_fatjets_keep, -1000.);
-            m_rljet_SDw_win25_btag0      . assign(m_num_fatjets_keep, -1000.);
             m_rljet_SDz_win20_btag0      . assign(m_num_fatjets_keep, -1000.);
-            m_rljet_SDz_win25_btag0      . assign(m_num_fatjets_keep, -1000.);
             m_rljet_SDt_win50_btag0      . assign(m_num_fatjets_keep, -1000.);
-            m_rljet_SDt_win55_btag0      . assign(m_num_fatjets_keep, -1000.);
 
             m_rljet_SDw_win20_btag0_UP   . assign(m_num_fatjets_keep, -1000.);
-            m_rljet_SDw_win25_btag0_UP   . assign(m_num_fatjets_keep, -1000.);
             m_rljet_SDz_win20_btag0_UP   . assign(m_num_fatjets_keep, -1000.);
-            m_rljet_SDz_win25_btag0_UP   . assign(m_num_fatjets_keep, -1000.);
             m_rljet_SDt_win50_btag0_UP   . assign(m_num_fatjets_keep, -1000.);
-            m_rljet_SDt_win55_btag0_UP   . assign(m_num_fatjets_keep, -1000.);
 
             m_rljet_SDw_win20_btag0_DOWN . assign(m_num_fatjets_keep, -1000.);
-            m_rljet_SDw_win25_btag0_DOWN . assign(m_num_fatjets_keep, -1000.);
             m_rljet_SDz_win20_btag0_DOWN . assign(m_num_fatjets_keep, -1000.);
-            m_rljet_SDz_win25_btag0_DOWN . assign(m_num_fatjets_keep, -1000.);
             m_rljet_SDt_win50_btag0_DOWN . assign(m_num_fatjets_keep, -1000.);
-            m_rljet_SDt_win55_btag0_DOWN . assign(m_num_fatjets_keep, -1000.);
         }
 
         if (m_runHTT) {
@@ -595,13 +552,13 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
     this->reset_containers(on_nominal_branch);
 
     const xAOD::JetContainer* reco_large_jets = nullptr;
-    const xAOD::JetContainer* truth_large_jets = nullptr;
-    const xAOD::TruthParticleContainer* truth_particles = nullptr;
 
     top::check(evtStore()->retrieve(reco_large_jets,
                 m_config->sgKeyLargeRJets()), "FAILURE" );
 
     if(m_config->isMC()) {
+        const xAOD::JetContainer* truth_large_jets = nullptr;
+        const xAOD::TruthParticleContainer* truth_particles = nullptr;
 
         top::check( evtStore()->retrieve(truth_large_jets,
                     m_config->sgKeyTruthLargeRJets()), "FAILURE" );
@@ -616,7 +573,7 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
                 );
     }
 
-    // make a copy of the large-R jet container
+    // make a pt-sorted copy of the large-R jet container
     const xAOD::JetContainer rljets = sort_container_pt(reco_large_jets);
 
     // const xAOD::PhotonContainer* photons = nullptr;
@@ -630,34 +587,50 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
             std::cout << "### LARGE-R JET NO. " << i << " ###" << std::endl;
         }
 
-        if (m_debug_level >= 3) {
-            if (rljets[i]->isAvailable<int>("dRmatched_particle_flavor")) {
-                std::cout << "dRmatched_particle_flavor: " <<
-                    rljets[i]->auxdata<int>("dRmatched_particle_flavor") << std::endl;
-            }
-            if (rljets[i]->isAvailable<int>("dRmatched_reco_truth")) {
-                std::cout << "dRmatched_reco_truth: " <<
-                    rljets[i]->auxdata<int>("dRmatched_reco_truth") << std::endl;
-            }
-            if (rljets[i]->isAvailable<int>("dRmatched_maxEParton_flavor")) {
-                std::cout << "dRmatched_maxEParton_flavor: " <<
-                    rljets[i]->auxdata<int>("dRmatched_maxEParton_flavor") << std::endl;
-            }
-            if (rljets[i]->isAvailable<int>("dRmatched_nQuarkChildren")) {
-                std::cout << "dRmatched_nQuarkChildren: " <<
-                    rljets[i]->auxdata<int>("dRmatched_nQuarkChildren") << std::endl;
-            }
-            if (rljets[i]->isAvailable<int>("dRmatched_topBChild")) {
-                std::cout << "dRmatched_topBChild: " <<
-                    rljets[i]->auxdata<int>("dRmatched_topBChild") << std::endl;
-            }
-        }
+        /***********************/
+        /* KINEMATIC VARIABLES */
+        /***********************/
 
-        // basic kinematic variables
         m_rljet_pt[i]  = rljets[i]->pt();
         m_rljet_eta[i] = rljets[i]->eta();
         m_rljet_phi[i] = rljets[i]->phi();
         m_rljet_m[i]   = rljets[i]->m();
+
+        /****************************/
+        /* TRUTH-MATCHING VARIABLES */
+        /****************************/
+
+        if (m_config->isMC()) {
+            if (rljets[i]->isAvailable<int>("dRmatched_reco_truth")) {
+                m_rljet_dRmatched_reco_truth[i] = rljets[i]->auxdata<int>("dRmatched_reco_truth");
+                if (m_debug_level >= 3)
+                    std::cout << "dRmatched_reco_truth: " << m_rljet_dRmatched_reco_truth[i] << std::endl;
+            }
+
+            if (rljets[i]->isAvailable<int>("dRmatched_particle_flavor")) {
+                m_rljet_dRmatched_particle_flavor[i] = rljets[i]->auxdata<int>("dRmatched_particle_flavor");
+                if (m_debug_level >= 3)
+                    std::cout << "dRmatched_particle_flavor: " << m_rljet_dRmatched_particle_flavor[i] << std::endl;
+            }
+
+            if (rljets[i]->isAvailable<int>("dRmatched_maxEParton_flavor")) {
+                m_rljet_dRmatched_maxEParton_flavor[i] = rljets[i]->auxdata<int>("dRmatched_maxEParton_flavor");
+                if (m_debug_level >= 3)
+                    std::cout << "dRmatched_maxEParton_flavor: " << m_rljet_dRmatched_maxEParton_flavor[i] << std::endl;
+            }
+
+            if (rljets[i]->isAvailable<int>("dRmatched_topBChild")) {
+                m_rljet_dRmatched_topBChild[i] = rljets[i]->auxdata<int>("dRmatched_topBChild");
+                if (m_debug_level >= 3)
+                    std::cout << "dRmatched_topBChild: " << m_rljet_dRmatched_topBChild[i] << std::endl;
+            }
+
+            if (rljets[i]->isAvailable<int>("dRmatched_nQuarkChildren")) {
+                m_rljet_dRmatched_nQuarkChildren[i] = rljets[i]->auxdata<int>("dRmatched_nQuarkChildren");
+                if (m_debug_level >= 3)
+                    std::cout << "dRmatched_nQuarkChildren: " << m_rljet_dRmatched_nQuarkChildren[i] << std::endl;
+            }
+        } // end of saving truth-matching information
 
         /******/
         /* D2 */
@@ -801,9 +774,6 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
                 }
             } // end of saving trigger jet variables
 
-            if (m_runSD && !event.m_isLoose && on_nominal_branch)
-                this->runSDandFillTree(rljets[i]);
-
             /*************/
             /* B-TAGGING */
             /*************/
@@ -830,6 +800,9 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
 
     if (m_runHTT != 0 && !event.m_isLoose && on_nominal_branch)
         this->runHTTAndFillTree();
+
+    if (m_runSD && !event.m_isLoose && on_nominal_branch)
+        this->runSDandFillTree();
 
     // Oh yeah, we want to set all the original variables too and the call fill on the TTree
     EventSaverFlatNtuple::saveEvent(event);
@@ -920,122 +893,120 @@ void DataMCbackgroundEventSaver::runHTTAndFillTree(void) {
     } // end loop over C/A 1.5 jets
 }
 
-void DataMCbackgroundEventSaver::runSDandFillTree(const xAOD::Jet* jet)
+void DataMCbackgroundEventSaver::runSDandFillTree(void)
 {
-    // Obtain ungroomed parent jet
-    const xAOD::Jet* ungroomed_fatjet = this->get_parent_ungroomed(jet);
+    const xAOD::JetContainer* reco_large_jets = nullptr;
 
-    xAOD::JetConstituentVector AssociatedClusters_forSD = ungroomed_fatjet->getConstituents();
-    std::vector<fastjet::PseudoJet> constituents;
+    top::check(evtStore()->retrieve(reco_large_jets,
+                m_config->sgKeyLargeRJets()), "FAILURE" );
 
-    // Get constituents in fastjet format
-    for ( const auto* con : AssociatedClusters_forSD){
-        fastjet::PseudoJet p(0,0,0,0);
-        float pt = con->pt();
-        float y = con->rapidity();
-        float phi = con->phi();
-        float m = con->m();
-        if (y != y) {
-            continue; // null vectors cause NaNs
-        } else {
-            p.reset_PtYPhiM(pt, y, phi, m);
-            constituents.push_back(p);
+    // make a pt-sorted copy of the large-R jet container
+    const xAOD::JetContainer rljets = sort_container_pt(reco_large_jets);
+
+    for (unsigned i = 0; i < m_num_fatjets_keep && i < rljets.size(); i++) {
+        // Obtain ungroomed parent jet
+        const xAOD::Jet* ungroomed_fatjet = this->get_parent_ungroomed(rljets[i]);
+
+        xAOD::JetConstituentVector ungroomed_clusters = ungroomed_fatjet->getConstituents();
+        std::vector<fastjet::PseudoJet> constituents;
+
+        // Get constituents in fastjet format
+        for ( const auto* con : ungroomed_clusters){
+            fastjet::PseudoJet p(0,0,0,0);
+            float pt = con->pt();
+            float y = con->rapidity();
+            float phi = con->phi();
+            float m = con->m();
+            if (y != y) {
+                continue; // null vectors cause NaNs
+            } else {
+                p.reset_PtYPhiM(pt, y, phi, m);
+                constituents.push_back(p);
+            }
         }
-    }
 
-    // Generate CA R = 0.2 subjets from constuents
+        fastjet::JetDefinition microjet_def(fastjet::cambridge_algorithm, 0.2);
+        fastjet::ClusterSequence subjet_cs(constituents, microjet_def);
 
-    fastjet::JetDefinition microjet_def(fastjet::cambridge_algorithm, 0.2);
-    fastjet::ClusterSequence subjet_cs(constituents, microjet_def);
-    float pt_cut = 20e3; // 20 GeV pt cut
-    std::vector<fastjet::PseudoJet> subjets = fastjet::sorted_by_pt(subjet_cs.inclusive_jets(pt_cut));
+        const float pt_cut = 20e3; // 20 GeV pt cut
+        std::vector<fastjet::PseudoJet> subjets = fastjet::sorted_by_pt(subjet_cs.inclusive_jets(pt_cut));
 
-    // Calibrate subjets
+        // Calibrate subjets
 
-    // Create a subjet container for calibration
-    xAOD::JetContainer* subjet_container = new xAOD::JetContainer();
-    subjet_container->setStore(new xAOD::JetAuxContainer);
+        // Create a subjet container for calibration
+        xAOD::JetContainer* subjet_container = new xAOD::JetContainer();
+        subjet_container->setStore(new xAOD::JetAuxContainer);
 
-    top::check ( evtStore()->record(subjet_container, "subjet_container_name"), "FAILURE" );
-    top::check ( evtStore()->record(dynamic_cast<xAOD::JetAuxContainer*>(subjet_container->getStore()), "subjet_container_nameAux."), "FAILURE");
+        top::check ( evtStore()->record(subjet_container, "subjet_container_name"), "FAILURE" );
+        top::check ( evtStore()->record(dynamic_cast<xAOD::JetAuxContainer*>(subjet_container->getStore()), "subjet_container_nameAux."), "FAILURE");
 
-    // Create xAOD::Jet's
-    std::vector<const xAOD::Jet *> subj_ptrs_const;
-    std::vector<xAOD::Jet *> subj_ptrs;
-    for(auto it = subjets.begin(); it != subjets.end(); it++) {
-        xAOD::Jet *subj = new xAOD::Jet();
-        subjet_container->push_back(subj);
-        subj_ptrs.push_back(subj);
-        subj_ptrs_const.push_back(subj);
-        // Set 4-mom
-        subj->setJetP4(xAOD::JetFourMom_t(it->pt(), it->eta(), it->phi(), it->m()));
-        subj->setJetP4(xAOD::JetConstitScaleMomentum, subj->jetP4());
-        subj->setAttribute<xAOD::JetFourMom_t>("JetPileupScaleMomentum", subj->jetP4()); // This is to workaound JetCalibTools issue
-    }
+        // Create xAOD::Jet's
+        std::vector<const xAOD::Jet *> subj_ptrs_const;
+        std::vector<xAOD::Jet *> subj_ptrs;
+        for(auto it = subjets.begin(); it != subjets.end(); it++) {
+            xAOD::Jet *subj = new xAOD::Jet();
+            subjet_container->push_back(subj);
+            subj_ptrs.push_back(subj);
+            subj_ptrs_const.push_back(subj);
+            // Set 4-mom
+            subj->setJetP4(xAOD::JetFourMom_t(it->pt(), it->eta(), it->phi(), it->m()));
+            subj->setJetP4(xAOD::JetConstitScaleMomentum, subj->jetP4());
+            subj->setAttribute<xAOD::JetFourMom_t>("JetPileupScaleMomentum", subj->jetP4()); // This is to workaound JetCalibTools issue
+        }
 
-    // To hold the callibrated subjets
-    std::vector<fastjet::PseudoJet> calib_subjets;
-    std::vector<fastjet::PseudoJet> calib_subjets_UP;
-    std::vector<fastjet::PseudoJet> calib_subjets_DOWN;
+        // To hold the calibrated subjets
+        std::vector<fastjet::PseudoJet> calib_subjets;
+        std::vector<fastjet::PseudoJet> calib_subjets_UP;
+        std::vector<fastjet::PseudoJet> calib_subjets_DOWN;
 
-    // Now calibrate the subjets of the container
-    for ( auto isubjet : *subjet_container) {
-        xAOD::Jet * jet = 0;
+        // Now calibrate the subjets of the container
+        for ( auto isubjet : *subjet_container) {
+            xAOD::Jet* jet = nullptr;
 
-        // SATUS CODE
-        top::check (m_jet_calib_tool->calibratedCopy(*isubjet,jet), "FAILURE "); //make a calibrated copy, assuming a copy hasn't been made already
-        // Here is your calibrated subjet: "jet"
+            top::check (m_jet_calib_tool->calibratedCopy(*isubjet,jet), "FAILURE ");
 
-        fastjet::PseudoJet p(0,0,0,0);
-        float pt = jet->pt();
-        float y = jet->rapidity();
-        float phi = jet->phi();
-        float m = jet->m();
-        if (y != y) {
+            fastjet::PseudoJet p(0,0,0,0);
+            float pt = jet->pt();
+            float y = jet->rapidity();
+            float phi = jet->phi();
+            float m = jet->m();
+            if (y != y) {
+                // Clean
+                delete jet;
+                continue; // null vectors cause NaNs
+            } else {
+                p.reset_PtYPhiM(pt, y, phi, m);
+                calib_subjets.push_back(p);
+
+                p *= 1.03;
+                calib_subjets_UP.push_back(p);
+
+                p *= 0.97/1.03;
+                calib_subjets_DOWN.push_back(p);
+            } // remember: push_back makes a copy of non-pointer objects
+
             // Clean
             delete jet;
-            continue; // null vectors cause NaNs
-        } else {
-            p.reset_PtYPhiM(pt, y, phi, m);
-            calib_subjets.push_back(p);
+        }
 
-            p *= 1.03;
-            calib_subjets_UP.push_back(p);
+        top::check ( evtStore()->tds()->remove("subjet_container_name"), "FAILURE" );
+        top::check ( evtStore()->tds()->remove("subjet_container_nameAux."), "FAILURE" );
 
-            p *= 0.97/1.03;
-            calib_subjets_DOWN.push_back(p);
-        } // remember: push_back makes a copy of non-pointer objects
+        // not using b-tagging for these studies
+        std::vector<int> btag(calib_subjets.size(), 0);
 
-        // Clean
-        delete jet;
+        m_rljet_SDw_win20_btag0[i] = tagger_SDw_win20_btag0->tagJetFromSubjets(calib_subjets, btag);
+        m_rljet_SDz_win20_btag0[i] = tagger_SDz_win20_btag0->tagJetFromSubjets(calib_subjets, btag);
+        m_rljet_SDt_win50_btag0[i] = tagger_SDt_win50_btag0->tagJetFromSubjets(calib_subjets, btag);
+
+        m_rljet_SDw_win20_btag0_UP[i] = tagger_SDw_win20_btag0->tagJetFromSubjets(calib_subjets_UP, btag);
+        m_rljet_SDz_win20_btag0_UP[i] = tagger_SDz_win20_btag0->tagJetFromSubjets(calib_subjets_UP, btag);
+        m_rljet_SDt_win50_btag0_UP[i] = tagger_SDt_win50_btag0->tagJetFromSubjets(calib_subjets_UP, btag);
+
+        m_rljet_SDw_win20_btag0_DOWN[i] = tagger_SDw_win20_btag0->tagJetFromSubjets(calib_subjets_DOWN, btag);
+        m_rljet_SDz_win20_btag0_DOWN[i] = tagger_SDz_win20_btag0->tagJetFromSubjets(calib_subjets_DOWN, btag);
+        m_rljet_SDt_win50_btag0_DOWN[i] = tagger_SDt_win50_btag0->tagJetFromSubjets(calib_subjets_DOWN, btag);
     }
-
-    top::check ( evtStore()->tds()->remove("subjet_container_name"), "FAILURE" );
-    top::check ( evtStore()->tds()->remove("subjet_container_nameAux."), "FAILURE" );
-
-    // not using b-tagging for these studies
-    std::vector<int> btag(calib_subjets.size(), 0);
-
-    m_rljet_SDw_win20_btag0 . push_back( tagger_SDw_win20_btag0->tagJetFromSubjets(calib_subjets, btag) );
-    m_rljet_SDw_win25_btag0 . push_back( tagger_SDw_win25_btag0->tagJetFromSubjets(calib_subjets, btag) );
-    m_rljet_SDz_win20_btag0 . push_back( tagger_SDz_win20_btag0->tagJetFromSubjets(calib_subjets, btag) );
-    m_rljet_SDz_win25_btag0 . push_back( tagger_SDz_win25_btag0->tagJetFromSubjets(calib_subjets, btag) );
-    m_rljet_SDt_win50_btag0 . push_back( tagger_SDt_win50_btag0->tagJetFromSubjets(calib_subjets, btag) );
-    m_rljet_SDt_win55_btag0 . push_back( tagger_SDt_win55_btag0->tagJetFromSubjets(calib_subjets, btag) );
-
-    m_rljet_SDw_win20_btag0_UP . push_back( tagger_SDw_win20_btag0->tagJetFromSubjets(calib_subjets_UP, btag) );
-    m_rljet_SDw_win25_btag0_UP . push_back( tagger_SDw_win25_btag0->tagJetFromSubjets(calib_subjets_UP, btag) );
-    m_rljet_SDz_win20_btag0_UP . push_back( tagger_SDz_win20_btag0->tagJetFromSubjets(calib_subjets_UP, btag) );
-    m_rljet_SDz_win25_btag0_UP . push_back( tagger_SDz_win25_btag0->tagJetFromSubjets(calib_subjets_UP, btag) );
-    m_rljet_SDt_win50_btag0_UP . push_back( tagger_SDt_win50_btag0->tagJetFromSubjets(calib_subjets_UP, btag) );
-    m_rljet_SDt_win55_btag0_UP . push_back( tagger_SDt_win55_btag0->tagJetFromSubjets(calib_subjets_UP, btag) );
-
-    m_rljet_SDw_win20_btag0_DOWN . push_back( tagger_SDw_win20_btag0->tagJetFromSubjets(calib_subjets_DOWN, btag) );
-    m_rljet_SDw_win25_btag0_DOWN . push_back( tagger_SDw_win25_btag0->tagJetFromSubjets(calib_subjets_DOWN, btag) );
-    m_rljet_SDz_win20_btag0_DOWN . push_back( tagger_SDz_win20_btag0->tagJetFromSubjets(calib_subjets_DOWN, btag) );
-    m_rljet_SDz_win25_btag0_DOWN . push_back( tagger_SDz_win25_btag0->tagJetFromSubjets(calib_subjets_DOWN, btag) );
-    m_rljet_SDt_win50_btag0_DOWN . push_back( tagger_SDt_win50_btag0->tagJetFromSubjets(calib_subjets_DOWN, btag) );
-    m_rljet_SDt_win55_btag0_DOWN . push_back( tagger_SDt_win55_btag0->tagJetFromSubjets(calib_subjets_DOWN, btag) );
 }
 
 const xAOD::Jet*

@@ -54,7 +54,6 @@ namespace top {
         /*********/
 
         std::unique_ptr<TruthMatchTool> m_truth_match_tool;
-
         std::unique_ptr<JSSWTopTaggerBDT> m_bdt_tool;
 
         /***********/
@@ -72,7 +71,7 @@ namespace top {
         void reset_containers(const bool on_nominal_branch);
 
         void initializeSD(void);
-        void runSDandFillTree(const xAOD::Jet* jet);
+        void runSDandFillTree(void);
 
 		void runHTTAndFillTree(void);
 
@@ -97,12 +96,9 @@ namespace top {
 		std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger_smooth_25eff;
 
         // Shower Deconstruction (SD)
-        ShowerDeconstruction* tagger_SDw_win20_btag0;
-        ShowerDeconstruction* tagger_SDw_win25_btag0;
-        ShowerDeconstruction* tagger_SDz_win20_btag0;
-        ShowerDeconstruction* tagger_SDz_win25_btag0;
-        ShowerDeconstruction* tagger_SDt_win50_btag0;
-        ShowerDeconstruction* tagger_SDt_win55_btag0;
+        std::unique_ptr<ShowerDeconstruction> tagger_SDw_win20_btag0;
+        std::unique_ptr<ShowerDeconstruction> tagger_SDz_win20_btag0;
+        std::unique_ptr<ShowerDeconstruction> tagger_SDt_win50_btag0;
 
 		// CA2 Subjet calibration tool
         std::unique_ptr<JetCalibrationTool> m_jet_calib_tool;
@@ -111,7 +107,7 @@ namespace top {
 		int m_nHttTools;
 		std::string m_httJetContainerPrefix;
 		std::vector<std::string> m_httConfigs;
-		JetRecTool* m_httTool;
+        std::unique_ptr<JetRecTool> m_httTool;
 
         /*************************/
         /* LARGE-R JET VARIABLES */
@@ -168,6 +164,13 @@ namespace top {
 		std::vector<float> m_tljet_phi;
         std::vector<float> m_tljet_m;
         std::vector<float> m_tljet_dR;
+
+        // truth parton matching information
+        std::vector<int> m_rljet_dRmatched_reco_truth;
+        std::vector<int> m_rljet_dRmatched_particle_flavor;
+        std::vector<int> m_rljet_dRmatched_maxEParton_flavor;
+        std::vector<int> m_rljet_dRmatched_topBChild;
+        std::vector<int> m_rljet_dRmatched_nQuarkChildren;
 
         // matched trigger jets
         int m_hltjet_count;
@@ -230,26 +233,17 @@ namespace top {
 
         // Shower Deconstruction tags
         std::vector<double> m_rljet_SDw_win20_btag0;
-        std::vector<double> m_rljet_SDw_win25_btag0;
         std::vector<double> m_rljet_SDz_win20_btag0;
-        std::vector<double> m_rljet_SDz_win25_btag0;
         std::vector<double> m_rljet_SDt_win50_btag0;
-        std::vector<double> m_rljet_SDt_win55_btag0;
 
         // Shower Deconstruction systematics
         std::vector<double> m_rljet_SDw_win20_btag0_UP;
-        std::vector<double> m_rljet_SDw_win25_btag0_UP;
         std::vector<double> m_rljet_SDz_win20_btag0_UP;
-        std::vector<double> m_rljet_SDz_win25_btag0_UP;
         std::vector<double> m_rljet_SDt_win50_btag0_UP;
-        std::vector<double> m_rljet_SDt_win55_btag0_UP;
 
         std::vector<double> m_rljet_SDw_win20_btag0_DOWN;
-        std::vector<double> m_rljet_SDw_win25_btag0_DOWN;
         std::vector<double> m_rljet_SDz_win20_btag0_DOWN;
-        std::vector<double> m_rljet_SDz_win25_btag0_DOWN;
         std::vector<double> m_rljet_SDt_win50_btag0_DOWN;
-        std::vector<double> m_rljet_SDt_win55_btag0_DOWN;
 
         // b-tagging
         std::vector<bool> m_rljet_btag_double;
