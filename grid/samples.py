@@ -4,7 +4,7 @@ samples_JETM8 = {}
 
 # {{{ DATA
 
-samples_JETM8['data_2016_25ns_JETM8'] = [ # 3.49756/fb
+samples_JETM8['data_2016_25ns'] = [ # 3.49756/fb
 	"data16_13TeV.00297730.physics_Main.merge.DAOD_JETM8.f694_m1583_p2667",
 	"data16_13TeV.00298591.physics_Main.merge.DAOD_JETM8.f695_m1588_p2667",
 	"data16_13TeV.00298595.physics_Main.merge.DAOD_JETM8.f698_m1594_p2667",
@@ -49,7 +49,7 @@ samples_JETM8['data_2016_25ns_JETM8'] = [ # 3.49756/fb
 	"data16_13TeV.00301973.physics_Main.merge.DAOD_JETM8.f709_m1611_p2667"
         ]
 
-samples_JETM8['data_2015_25ns_rel20p1_JETM8'] = [ # 3.20905/fb
+samples_JETM8['data_2015_25ns_rel20p1'] = [ # 3.20905/fb
 	"data15_13TeV.00276262.physics_Main.merge.DAOD_JETM8.f620_m1480_p2528",
 	"data15_13TeV.00276329.physics_Main.merge.DAOD_JETM8.f620_m1480_p2528",
 	"data15_13TeV.00276336.physics_Main.merge.DAOD_JETM8.f620_m1480_p2528",
@@ -117,7 +117,7 @@ samples_JETM8['data_2015_25ns_rel20p1_JETM8'] = [ # 3.20905/fb
 	"data15_13TeV.00284484.physics_Main.merge.DAOD_JETM8.f644_m1518_p2528"
 ]
 
-samples_JETM8['data_2015_25ns_rel20p7_JETM8'] = [ # 3.19368/fb
+samples_JETM8['data_2015_25ns_rel20p7'] = [ # 3.19368/fb
 	"data15_13TeV.00276262.physics_Main.merge.DAOD_JETM8.r7562_p2521_p2667",
 	"data15_13TeV.00276329.physics_Main.merge.DAOD_JETM8.r7562_p2521_p2667",
 	"data15_13TeV.00276330.physics_Main.merge.DAOD_JETM8.r7562_p2521_p2667",
