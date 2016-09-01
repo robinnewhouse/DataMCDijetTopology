@@ -28,6 +28,12 @@ class TruthMatchTool {
                 const xAOD::TruthParticleContainer* truth_particles
                 );
 
+        void set_dRmax(int val)                { this->dRmax = val; }
+        void set_truthjet_ptmin(int val)       { this->truthjet_ptmin = val; }
+        void set_truthjet_etamax(int val)      { this->truthjet_etamax = val; }
+        void set_truthpartile_ptmin(int val)   { this->truthparticle_ptmin = val; }
+        void set_truthparticle_etamax(int val) { this->truthparticle_etamax = val; }
+
     private:
         // cuts
         float dRmax;
