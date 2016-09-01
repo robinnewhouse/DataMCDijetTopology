@@ -6,17 +6,6 @@
 #include "xAODTruth/TruthParticle.h"
 #include "xAODTruth/TruthParticleContainer.h"
 
-const xAOD::TruthParticle* GetHadronicWParticle(const xAOD::TruthParticle* inputParticle);
-const xAOD::TruthParticle* GetHadronicZParticle(const xAOD::TruthParticle* inputParticle);
-const xAOD::TruthParticle* GetHadronicTopParticle(const xAOD::TruthParticle* inputParticle);
-const xAOD::TruthParticle* GetParticleAfterFSR(const xAOD::TruthParticle* inputParticle);
-
-int QuarkGluonLabelJet(const xAOD::TruthParticleContainer* truthparticles,
-        const xAOD::Jet* fatjet, double dRmax);
-
-int CharacterizeHadronicTopJet(const xAOD::TruthParticle* truthtop,
-        const xAOD::Jet* fatjet, double dRmax);
-
 class TruthMatchTool {
     public:
         TruthMatchTool();
@@ -43,5 +32,16 @@ class TruthMatchTool {
         float truthparticle_etamax;
 
 };
+
+const xAOD::TruthParticle* GetHadronicWParticle(const xAOD::TruthParticle* inputParticle);
+const xAOD::TruthParticle* GetHadronicZParticle(const xAOD::TruthParticle* inputParticle);
+const xAOD::TruthParticle* GetHadronicTopParticle(const xAOD::TruthParticle* inputParticle);
+const xAOD::TruthParticle* GetParticleAfterFSR(const xAOD::TruthParticle* inputParticle);
+
+int QuarkGluonLabelJet(const xAOD::TruthParticleContainer* truthparticles,
+        const xAOD::Jet* fatjet, double dRmax);
+
+int CharacterizeHadronicTopJet(const xAOD::TruthParticle* truthtop,
+        const xAOD::Jet* fatjet, double dRmax);
 
 #endif // #ifdef TruthMatchTool_h

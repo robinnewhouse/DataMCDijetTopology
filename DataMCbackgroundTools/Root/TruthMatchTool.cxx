@@ -1,26 +1,14 @@
 #include "DataMCbackgroundTools/TruthMatchTool.h"
 
-// returns pdgid of highest energy parton the jet can be matched to
-int QuarkGluonLabelJet(const xAOD::TruthParticleContainer* truthparticles,
-        const xAOD::Jet* fatjet, double dRmax)
+const xAOD::TruthParticle* GetHadronicWParticle(const xAOD::TruthParticle* inputParticle)
 {
-    double Emax = 0;
-    TLorentzVector fatjet_vector;
-    fatjet_vector.SetPtEtaPhiM(fatjet->pt(), fatjet->eta(), fatjet->phi(), fatjet->m());
-    int label = 0;
+    if( !inputParticle || (inputParticle->absPdgId() != 24) ) return nullptr;
 
-    for(auto parton : *truthparticles){
-        if( parton->pt() < 5000) continue; // avoid errors for pt = 0 particles
-        if( parton->absPdgId() > 9 && parton->absPdgId() != 21 ) continue; // not quark or gluon(9 or 21)
-        if( parton->e() < Emax) continue; // want the one with the highest energy
-        TLorentzVector parton_vector;
-        parton_vector.SetPtEtaPhiM(parton->pt(), parton->eta(), parton->phi(), parton->m());
-        if( fatjet_vector.DeltaR(parton_vector) < dRmax ){
-            label = parton->pdgId();
-            Emax = parton->e();
-        }
-    }
-    return label;
+    const xAOD::TruthParticle* W_after_fsr = GetParticleAfterFSR(inputParticle);
+    if(W_after_fsr->nChildren()>0 && W_after_fsr->child(0)->absPdgId() < 7)
+        return W_after_fsr;
+    else
+        return nullptr;
 }
 
 const xAOD::TruthParticle* GetHadronicZParticle(const xAOD::TruthParticle* inputParticle)
@@ -30,17 +18,6 @@ const xAOD::TruthParticle* GetHadronicZParticle(const xAOD::TruthParticle* input
     const xAOD::TruthParticle* Z_after_fsr = GetParticleAfterFSR(inputParticle);
     if(Z_after_fsr->nChildren()>0 && Z_after_fsr->child(0)->absPdgId() < 7)
         return Z_after_fsr;
-    else
-        return nullptr;
-}
-
-const xAOD::TruthParticle* GetHadronicWParticle(const xAOD::TruthParticle* inputParticle)
-{
-    if( !inputParticle || (inputParticle->absPdgId() != 24) ) return nullptr;
-
-    const xAOD::TruthParticle* W_after_fsr = GetParticleAfterFSR(inputParticle);
-    if(W_after_fsr->nChildren()>0 && W_after_fsr->child(0)->absPdgId() < 7)
-        return W_after_fsr;
     else
         return nullptr;
 }
@@ -102,8 +79,52 @@ const xAOD::TruthParticle* GetHadronicTopParticle(const xAOD::TruthParticle* inp
         return nullptr;
 }
 
-//=======================================================
-//
+const xAOD::TruthParticle* GetParticleAfterFSR(const xAOD::TruthParticle* inputParticle){
+    // follow decay chain along X -> X (+ Y) until X decays into something else, return last X
+    if( !inputParticle ) return inputParticle;
+
+    const xAOD::TruthParticle* after_fsr = inputParticle;
+    int pid = inputParticle->pdgId();
+
+    bool fsr_loop = true;
+    while(fsr_loop){
+        fsr_loop = false; // only continue loop if we find suitable child...
+        for(unsigned int i_child=0; i_child<after_fsr->nChildren(); i_child++){
+            if( after_fsr->child(i_child)->pdgId() == pid ){
+                // child of same type, continue fsr loop child
+                fsr_loop = true;
+                after_fsr = after_fsr->child(i_child);
+                break;
+            }
+        }
+    }
+
+    return after_fsr;
+}
+
+// returns pdgid of highest energy parton the jet can be matched to
+int QuarkGluonLabelJet(const xAOD::TruthParticleContainer* truthparticles,
+        const xAOD::Jet* fatjet, double dRmax)
+{
+    double Emax = 0;
+    TLorentzVector fatjet_vector;
+    fatjet_vector.SetPtEtaPhiM(fatjet->pt(), fatjet->eta(), fatjet->phi(), fatjet->m());
+    int label = 0;
+
+    for(auto parton : *truthparticles){
+        if( parton->pt() < 5000) continue; // avoid errors for pt = 0 particles
+        if( parton->absPdgId() > 9 && parton->absPdgId() != 21 ) continue; // not quark or gluon(9 or 21)
+        if( parton->e() < Emax) continue; // want the one with the highest energy
+        TLorentzVector parton_vector;
+        parton_vector.SetPtEtaPhiM(parton->pt(), parton->eta(), parton->phi(), parton->m());
+        if( fatjet_vector.DeltaR(parton_vector) < dRmax ){
+            label = parton->pdgId();
+            Emax = parton->e();
+        }
+    }
+    return label;
+}
+
 //=======================================================
 // characterize matching between truth jet and hadronic top particle
 // 1. is jet dR matched to truth top particle         x 100
@@ -161,37 +182,13 @@ int CharacterizeHadronicTopJet(const  xAOD::TruthParticle* truthtop, const xAOD:
     return returnCode;
 }
 
-const xAOD::TruthParticle* GetParticleAfterFSR(const xAOD::TruthParticle* inputParticle){
-    // follow decay chain along X -> X (+ Y) until X decays into something else, return last X
-    if( !inputParticle ) return inputParticle;
-
-    const xAOD::TruthParticle* after_fsr = inputParticle;
-    int pid = inputParticle->pdgId();
-
-    bool fsr_loop = true;
-    while(fsr_loop){
-        fsr_loop = false; // only continue loop if we find suitable child...
-        for(unsigned int i_child=0; i_child<after_fsr->nChildren(); i_child++){
-            if( after_fsr->child(i_child)->pdgId() == pid ){
-                // child of same type, continue fsr loop child
-                fsr_loop = true;
-                after_fsr = after_fsr->child(i_child);
-                break;
-            }
-        }
-    }
-
-    return after_fsr;
-}
-
-TruthMatchTool::TruthMatchTool(void)
-{
-    dRmax = 0.75;
-    truthjet_ptmin = 5000;
-    truthjet_etamax = 6;
-    truthparticle_ptmin = 5000;
-    truthparticle_etamax = 6;
-}
+TruthMatchTool::TruthMatchTool(void) :
+    dRmax(0.75),
+    truthjet_ptmin(5000),
+    truthjet_etamax(6),
+    truthparticle_ptmin(5000),
+    truthparticle_etamax(6)
+{ }
 
 int TruthMatchTool::execute(
         const xAOD::JetContainer* inFatJets,
@@ -372,6 +369,3 @@ int TruthMatchTool::execute(
 
     return 0;
 }
-
-
-
