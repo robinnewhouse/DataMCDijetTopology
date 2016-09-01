@@ -11,13 +11,15 @@ GRLFile data15_13TeV.periodAllYear_DetStatus-v79-repro20-02_DQDefects-00-02-02_P
 ### Custom Settings ###
 #######################
 
-DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass
+DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass,NumFatjetsKeep
 
 HTTConfigs def
 RunHTT True
 
 RunShowerDeconstruction False
 SaveTrackAssistedMass True
+
+NumFatjetsKeep 1
 
 ##########################
 ### Object Collections ###

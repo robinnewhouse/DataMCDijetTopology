@@ -42,12 +42,12 @@ namespace top {
 		// to load the AnalysisTop configuration
 		std::shared_ptr<top::TopConfig> m_config;
 
-        static const int NUM_FATJETS_KEEP = 2;
 
         // variables corresponding to DynamicKeys from AnalysisTop cuts file
         bool m_runHTT;
         bool m_runSD;
         bool m_saveTAmass;
+        unsigned m_num_fatjets_keep;
 
         TruthMatchTool* m_truth_match_tool;
 

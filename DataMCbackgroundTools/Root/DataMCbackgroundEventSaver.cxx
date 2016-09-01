@@ -1,39 +1,32 @@
 #include "DataMCbackgroundTools/DataMCbackgroundEventSaver.h"
-
 #include "DataMCbackgroundTools/LocalTools.h"
 
-#include "AthContainers/AuxTypeRegistry.h"
+#include <xAODJet/JetAuxContainer.h>
 
+#include "AthContainers/AuxTypeRegistry.h"
 #include "BoostedJetTaggers/configHTT_Run2perf.h"
 
 #include "TopAnalysis/EventSaverFlatNtuple.h"
-
-#include "TopConfiguration/TopConfig.h"
 #include "TopConfiguration/ConfigurationSettings.h"
-
+#include "TopConfiguration/TopConfig.h"
 #include "TopEvent/Event.h"
-#include "TopEventSelectionTools/TreeManager.h"
 #include "TopEvent/Event.h"
 #include "TopEvent/EventTools.h"
-
 #include "TopEventSelectionTools/TreeManager.h"
-
+#include "TopEventSelectionTools/TreeManager.h"
 #include "TopFakes/TopFakesxAODUtils.h"
-
 #include "TopParticleLevel/ParticleLevelEvent.h"
 
 #include "TFile.h"
 #include "TLorentzVector.h"
 
-#include <xAODJet/JetAuxContainer.h>
-
-#include <iostream>
-#include <sstream>
-#include <vector>
-#include <string>
 #include <algorithm>
+#include <iostream>
 #include <iterator>
 #include <numeric>
+#include <sstream>
+#include <string>
+#include <vector>
 
 namespace top {
 
@@ -111,6 +104,23 @@ DataMCbackgroundEventSaver::DataMCbackgroundEventSaver(void)
     } catch (...) {
         std::cout << "WARNING: Not saving track-assisted mass (option not set)" << std::endl;
 		std::cout << "add 'SaveTrackAssistedMass True' to cuts file to enable." << std::endl;
+    }
+
+    m_num_fatjets_keep = 1;
+    try {
+        std::string fatjets_keep_str = config_settings->value("NumFatjetsKeep");
+        int fatjets_keep_desired = std::stoi(fatjets_keep_str);
+        if (fatjets_keep_desired > 3 || fatjets_keep_desired < 1) {
+            std::cout << "WARNING: invalid NumFatjetsKeep value: " << fatjets_keep_desired << std::endl;
+            throw;
+        } else {
+            m_num_fatjets_keep = (unsigned) fatjets_keep_desired;
+            std::cout << "DataMCbackgroundEventSaver: Keeping " << m_num_fatjets_keep
+                << " Large-R jets." << std::endl;
+        }
+    } catch (...) {
+        std::cout << "Defaulting to saving only the leading pT large R jet" << std::endl;
+		std::cout << "add 'NumFatjetsKeep X', where X = 1,2,3,..., to cuts file to enable." << std::endl;
     }
 }
 
@@ -422,129 +432,129 @@ DataMCbackgroundEventSaver::initializeSD(void)
 void
 DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
 {
-	m_rljet_pt  . assign(NUM_FATJETS_KEEP, -1000.);
-	m_rljet_eta . assign(NUM_FATJETS_KEEP, -1000.);
-	m_rljet_phi . assign(NUM_FATJETS_KEEP, -1000.);
-	m_rljet_m   . assign(NUM_FATJETS_KEEP, -1000.);
+	m_rljet_pt  . assign(m_num_fatjets_keep, -1000.);
+	m_rljet_eta . assign(m_num_fatjets_keep, -1000.);
+	m_rljet_phi . assign(m_num_fatjets_keep, -1000.);
+	m_rljet_m   . assign(m_num_fatjets_keep, -1000.);
 
-	m_rljet_D2        . assign(NUM_FATJETS_KEEP, -1000. );
-	m_rljet_Tau32_wta . assign(NUM_FATJETS_KEEP, -1000. );
+	m_rljet_D2        . assign(m_num_fatjets_keep, -1000. );
+	m_rljet_Tau32_wta . assign(m_num_fatjets_keep, -1000. );
 
-	m_rljet_smoothMassTag50eff      . assign(NUM_FATJETS_KEEP, false);
-	m_rljet_smoothMassTag80eff      . assign(NUM_FATJETS_KEEP, false);
-	m_rljet_smoothTau32Tag50eff     . assign(NUM_FATJETS_KEEP, false);
-	m_rljet_smoothTau32Tag80eff     . assign(NUM_FATJETS_KEEP, false);
-	m_rljet_smoothMassTau32Tag50eff . assign(NUM_FATJETS_KEEP, false);
-	m_rljet_smoothMassTau32Tag80eff . assign(NUM_FATJETS_KEEP, false);
+	m_rljet_smoothMassTag50eff      . assign(m_num_fatjets_keep, false);
+	m_rljet_smoothMassTag80eff      . assign(m_num_fatjets_keep, false);
+	m_rljet_smoothTau32Tag50eff     . assign(m_num_fatjets_keep, false);
+	m_rljet_smoothTau32Tag80eff     . assign(m_num_fatjets_keep, false);
+	m_rljet_smoothMassTau32Tag50eff . assign(m_num_fatjets_keep, false);
+	m_rljet_smoothMassTau32Tag80eff . assign(m_num_fatjets_keep, false);
 
-	m_rljet_smoothWTag50eff . assign(NUM_FATJETS_KEEP, 0);
-	m_rljet_smoothWTag25eff . assign(NUM_FATJETS_KEEP, 0);
+	m_rljet_smoothWTag50eff . assign(m_num_fatjets_keep, 0);
+	m_rljet_smoothWTag25eff . assign(m_num_fatjets_keep, 0);
 
-    m_rljet_smoothZTag50eff . assign(NUM_FATJETS_KEEP, 0);
-    m_rljet_smoothZTag25eff . assign(NUM_FATJETS_KEEP, 0);
+    m_rljet_smoothZTag50eff . assign(m_num_fatjets_keep, 0);
+    m_rljet_smoothZTag25eff . assign(m_num_fatjets_keep, 0);
 
-    m_rljet_BDT_Top_Score . assign(NUM_FATJETS_KEEP, -1000. );
-    m_rljet_BDT_W_Score   . assign(NUM_FATJETS_KEEP, -1000. );
+    m_rljet_BDT_Top_Score . assign(m_num_fatjets_keep, -1000. );
+    m_rljet_BDT_W_Score   . assign(m_num_fatjets_keep, -1000. );
 
     if (on_nominal_branch) {
         m_rljet_count = 0;
         m_rljet_mjj = -1000;
 
         if (m_saveTAmass) {
-            m_rljet_m_ta         . assign(NUM_FATJETS_KEEP, -1000.);
-            m_rljet_m_ta_nocalib . assign(NUM_FATJETS_KEEP, -1000.);
+            m_rljet_m_ta         . assign(m_num_fatjets_keep, -1000.);
+            m_rljet_m_ta_nocalib . assign(m_num_fatjets_keep, -1000.);
         }
 
-        m_rljet_Tau1_wta    . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_Tau2_wta    . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_Tau3_wta    . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_ECF1        . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_ECF2        . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_ECF3        . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_FoxWolfram0 . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_FoxWolfram2 . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_Qw          . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_Angularity  . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_Aplanarity  . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_Dip12       . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_KtDR        . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_Mu12        . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_PlanarFlow  . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_Sphericity  . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_Split12     . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_Split23     . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_Split34     . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_ThrustMaj   . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_ThrustMin   . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_ZCut12      . assign(NUM_FATJETS_KEEP, -1000. );
+        m_rljet_Tau1_wta    . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_Tau2_wta    . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_Tau3_wta    . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_ECF1        . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_ECF2        . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_ECF3        . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_FoxWolfram0 . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_FoxWolfram2 . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_Qw          . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_Angularity  . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_Aplanarity  . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_Dip12       . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_KtDR        . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_Mu12        . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_PlanarFlow  . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_Sphericity  . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_Split12     . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_Split23     . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_Split34     . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_ThrustMaj   . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_ThrustMin   . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_ZCut12      . assign(m_num_fatjets_keep, -1000. );
 
-        m_rljet_NTrimSubjets          . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_Width                 . assign(NUM_FATJETS_KEEP, -1000. );
-        m_rljet_ungroomed_ntrk500     . assign(NUM_FATJETS_KEEP, -1000. );
+        m_rljet_NTrimSubjets          . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_Width                 . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_ungroomed_ntrk500     . assign(m_num_fatjets_keep, -1000. );
 
         if (m_config->isMC()) {
-            m_tljet_pt  . assign(NUM_FATJETS_KEEP, -1000.);
-            m_tljet_eta . assign(NUM_FATJETS_KEEP, -1000.);
-            m_tljet_phi . assign(NUM_FATJETS_KEEP, -1000.);
-            m_tljet_m   . assign(NUM_FATJETS_KEEP, -1000.);
-            m_tljet_dR  . assign(NUM_FATJETS_KEEP, -1000.);
+            m_tljet_pt  . assign(m_num_fatjets_keep, -1000.);
+            m_tljet_eta . assign(m_num_fatjets_keep, -1000.);
+            m_tljet_phi . assign(m_num_fatjets_keep, -1000.);
+            m_tljet_m   . assign(m_num_fatjets_keep, -1000.);
+            m_tljet_dR  . assign(m_num_fatjets_keep, -1000.);
 		}
 
-        m_rljet_btag_double     . assign(NUM_FATJETS_KEEP, false);
-        m_rljet_btag_single     . assign(NUM_FATJETS_KEEP, false);
-        m_rljet_btag_leading_pt . assign(NUM_FATJETS_KEEP, false);
+        m_rljet_btag_double     . assign(m_num_fatjets_keep, false);
+        m_rljet_btag_single     . assign(m_num_fatjets_keep, false);
+        m_rljet_btag_leading_pt . assign(m_num_fatjets_keep, false);
 
-        m_hltjet_pt  . assign(NUM_FATJETS_KEEP, -1000. );
-        m_hltjet_eta . assign(NUM_FATJETS_KEEP, -1000. );
-        m_hltjet_phi . assign(NUM_FATJETS_KEEP, -1000. );
-        m_hltjet_m   . assign(NUM_FATJETS_KEEP, -1000. );
-        m_hltjet_dR  . assign(NUM_FATJETS_KEEP, -1000. );
+        m_hltjet_pt  . assign(m_num_fatjets_keep, -1000. );
+        m_hltjet_eta . assign(m_num_fatjets_keep, -1000. );
+        m_hltjet_phi . assign(m_num_fatjets_keep, -1000. );
+        m_hltjet_m   . assign(m_num_fatjets_keep, -1000. );
+        m_hltjet_dR  . assign(m_num_fatjets_keep, -1000. );
         m_hltjet_count = 0;
 
         if (m_runSD) {
-            m_rljet_SDw_win20_btag0      . assign(NUM_FATJETS_KEEP, -1000.);
-            m_rljet_SDw_win25_btag0      . assign(NUM_FATJETS_KEEP, -1000.);
-            m_rljet_SDz_win20_btag0      . assign(NUM_FATJETS_KEEP, -1000.);
-            m_rljet_SDz_win25_btag0      . assign(NUM_FATJETS_KEEP, -1000.);
-            m_rljet_SDt_win50_btag0      . assign(NUM_FATJETS_KEEP, -1000.);
-            m_rljet_SDt_win55_btag0      . assign(NUM_FATJETS_KEEP, -1000.);
+            m_rljet_SDw_win20_btag0      . assign(m_num_fatjets_keep, -1000.);
+            m_rljet_SDw_win25_btag0      . assign(m_num_fatjets_keep, -1000.);
+            m_rljet_SDz_win20_btag0      . assign(m_num_fatjets_keep, -1000.);
+            m_rljet_SDz_win25_btag0      . assign(m_num_fatjets_keep, -1000.);
+            m_rljet_SDt_win50_btag0      . assign(m_num_fatjets_keep, -1000.);
+            m_rljet_SDt_win55_btag0      . assign(m_num_fatjets_keep, -1000.);
 
-            m_rljet_SDw_win20_btag0_UP   . assign(NUM_FATJETS_KEEP, -1000.);
-            m_rljet_SDw_win25_btag0_UP   . assign(NUM_FATJETS_KEEP, -1000.);
-            m_rljet_SDz_win20_btag0_UP   . assign(NUM_FATJETS_KEEP, -1000.);
-            m_rljet_SDz_win25_btag0_UP   . assign(NUM_FATJETS_KEEP, -1000.);
-            m_rljet_SDt_win50_btag0_UP   . assign(NUM_FATJETS_KEEP, -1000.);
-            m_rljet_SDt_win55_btag0_UP   . assign(NUM_FATJETS_KEEP, -1000.);
+            m_rljet_SDw_win20_btag0_UP   . assign(m_num_fatjets_keep, -1000.);
+            m_rljet_SDw_win25_btag0_UP   . assign(m_num_fatjets_keep, -1000.);
+            m_rljet_SDz_win20_btag0_UP   . assign(m_num_fatjets_keep, -1000.);
+            m_rljet_SDz_win25_btag0_UP   . assign(m_num_fatjets_keep, -1000.);
+            m_rljet_SDt_win50_btag0_UP   . assign(m_num_fatjets_keep, -1000.);
+            m_rljet_SDt_win55_btag0_UP   . assign(m_num_fatjets_keep, -1000.);
 
-            m_rljet_SDw_win20_btag0_DOWN . assign(NUM_FATJETS_KEEP, -1000.);
-            m_rljet_SDw_win25_btag0_DOWN . assign(NUM_FATJETS_KEEP, -1000.);
-            m_rljet_SDz_win20_btag0_DOWN . assign(NUM_FATJETS_KEEP, -1000.);
-            m_rljet_SDz_win25_btag0_DOWN . assign(NUM_FATJETS_KEEP, -1000.);
-            m_rljet_SDt_win50_btag0_DOWN . assign(NUM_FATJETS_KEEP, -1000.);
-            m_rljet_SDt_win55_btag0_DOWN . assign(NUM_FATJETS_KEEP, -1000.);
+            m_rljet_SDw_win20_btag0_DOWN . assign(m_num_fatjets_keep, -1000.);
+            m_rljet_SDw_win25_btag0_DOWN . assign(m_num_fatjets_keep, -1000.);
+            m_rljet_SDz_win20_btag0_DOWN . assign(m_num_fatjets_keep, -1000.);
+            m_rljet_SDz_win25_btag0_DOWN . assign(m_num_fatjets_keep, -1000.);
+            m_rljet_SDt_win50_btag0_DOWN . assign(m_num_fatjets_keep, -1000.);
+            m_rljet_SDt_win55_btag0_DOWN . assign(m_num_fatjets_keep, -1000.);
         }
 
         if (m_runHTT) {
-            m_htt_caJet_pt  . assign(NUM_FATJETS_KEEP, -1000.);
-            m_htt_caJet_eta . assign(NUM_FATJETS_KEEP, -1000.);
-            m_htt_caJet_phi . assign(NUM_FATJETS_KEEP, -1000.);
-            m_htt_caJet_m   . assign(NUM_FATJETS_KEEP, -1000.);
+            m_htt_caJet_pt  . assign(m_num_fatjets_keep, -1000.);
+            m_htt_caJet_eta . assign(m_num_fatjets_keep, -1000.);
+            m_htt_caJet_phi . assign(m_num_fatjets_keep, -1000.);
+            m_htt_caJet_m   . assign(m_num_fatjets_keep, -1000.);
             m_cajet_count = 0;
 
             for (int i = 0; i < m_nHttTools; i++) {
-                m_htt_tag[i]       . assign(NUM_FATJETS_KEEP, 0);
-                m_htt_pt[i]        . assign(NUM_FATJETS_KEEP, -1000.);
-                m_htt_eta[i]       . assign(NUM_FATJETS_KEEP, -1000.);
-                m_htt_phi[i]       . assign(NUM_FATJETS_KEEP, -1000.);
-                m_htt_m[i]         . assign(NUM_FATJETS_KEEP, -1000.);
-                m_htt_m23m123[i]   . assign(NUM_FATJETS_KEEP, -1000.);
-                m_htt_atan1312[i]  . assign(NUM_FATJETS_KEEP, -1000.);
-                m_htt_nTagCands[i] . assign(NUM_FATJETS_KEEP, 0);
+                m_htt_tag[i]       . assign(m_num_fatjets_keep, 0);
+                m_htt_pt[i]        . assign(m_num_fatjets_keep, -1000.);
+                m_htt_eta[i]       . assign(m_num_fatjets_keep, -1000.);
+                m_htt_phi[i]       . assign(m_num_fatjets_keep, -1000.);
+                m_htt_m[i]         . assign(m_num_fatjets_keep, -1000.);
+                m_htt_m23m123[i]   . assign(m_num_fatjets_keep, -1000.);
+                m_htt_atan1312[i]  . assign(m_num_fatjets_keep, -1000.);
+                m_htt_nTagCands[i] . assign(m_num_fatjets_keep, 0);
 
-                m_htt_caGroomJet_pt[i]  . assign(NUM_FATJETS_KEEP, -1000.);
-                m_htt_caGroomJet_eta[i] . assign(NUM_FATJETS_KEEP, -1000.);
-                m_htt_caGroomJet_phi[i] . assign(NUM_FATJETS_KEEP, -1000.);
-                m_htt_caGroomJet_m[i]   . assign(NUM_FATJETS_KEEP, -1000.);
+                m_htt_caGroomJet_pt[i]  . assign(m_num_fatjets_keep, -1000.);
+                m_htt_caGroomJet_eta[i] . assign(m_num_fatjets_keep, -1000.);
+                m_htt_caGroomJet_phi[i] . assign(m_num_fatjets_keep, -1000.);
+                m_htt_caGroomJet_m[i]   . assign(m_num_fatjets_keep, -1000.);
             }
         }
     }
@@ -591,7 +601,7 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
     // top::check( evtStore()->retrieve(photons, m_config->sgKeyPhotons()), "FAILURE" );
     // std::cout << "NUM PHOTONS: " << photons->size();
 
-    for (unsigned i = 0; i < NUM_FATJETS_KEEP && i < rljets.size(); i++) {
+    for (unsigned i = 0; i < m_num_fatjets_keep && i < rljets.size(); i++) {
 
         std::cout << std::endl;
         if (rljets[i]->isAvailable<int>("dRmatched_particle_flavor")) {
@@ -829,7 +839,7 @@ void DataMCbackgroundEventSaver::runHTTAndFillTree(void) {
             pt_sorted_ca15jets[1]->pt() / 1000. <= 200.)
         return;
 
-    for (unsigned ijet = 0; ijet < NUM_FATJETS_KEEP && ijet < pt_sorted_ca15jets.size(); ijet++) {
+    for (unsigned ijet = 0; ijet < m_num_fatjets_keep && ijet < pt_sorted_ca15jets.size(); ijet++) {
         // save the corresponding C/A 1.5 jet variables (ungroomed, nominal)
         m_htt_caJet_pt[ijet]  = pt_sorted_ca15jets[ijet]->pt();
         m_htt_caJet_eta[ijet] = pt_sorted_ca15jets[ijet]->eta();
