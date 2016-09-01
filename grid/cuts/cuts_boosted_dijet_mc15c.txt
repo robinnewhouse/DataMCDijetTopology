@@ -58,7 +58,7 @@ PDFInfo False
 ### General Configuration ###
 #############################
 
-NEvents 50
+#NEvents 50
 JetUncertainties_BunchSpacing 25ns
 
 OutputFileSetAutoFlushZero True

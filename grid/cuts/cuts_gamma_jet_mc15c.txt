@@ -4,9 +4,9 @@ LibraryNames libTopEventSelectionTools libTopEventReconstructionTools libDataMCb
 ### Pileup Configuration ###
 ############################
 
-PRWConfigFiles DataMCbackgroundTools/PRW.410000.mc15c.r7725_r7676.root
+PRWConfigFiles DataMCbackgroundTools/prw.08292016.mc15c.root
 PRWLumiCalcFiles DataMCbackgroundTools/ilumicalc_histograms_None_297730-301973.root
-PRWDefaultChannel 410000
+PRWDefaultChannel 361025
 
 #######################
 ### Custom Settings ###
