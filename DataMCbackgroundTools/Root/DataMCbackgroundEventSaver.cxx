@@ -246,6 +246,7 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
             systematicTree->makeOutputVariable(m_hltjet_dR    , "hltjet_dR");
 
             // have to resize in order to makeOutputVariable below
+            m_htt_tag       . resize(m_nHttTools);
             m_htt_pt        . resize(m_nHttTools);
             m_htt_eta       . resize(m_nHttTools);
             m_htt_phi       . resize(m_nHttTools);
@@ -253,7 +254,9 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
             m_htt_m23m123   . resize(m_nHttTools);
             m_htt_atan1312  . resize(m_nHttTools);
             m_htt_nTagCands . resize(m_nHttTools);
-            m_htt_tag       . resize(m_nHttTools);
+            m_htt_pts1      . resize(m_nHttTools);
+            m_htt_pts2      . resize(m_nHttTools);
+            m_htt_pts3      . resize(m_nHttTools);
 
             for (int i=0; i<m_nHttTools; i++) {
                 systematicTree->makeOutputVariable(m_htt_pt[i]        , getHTTBranchName("pt"        , m_httConfigs[i]));
@@ -264,6 +267,9 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
                 systematicTree->makeOutputVariable(m_htt_atan1312[i]  , getHTTBranchName("atan1312"  , m_httConfigs[i]));
                 systematicTree->makeOutputVariable(m_htt_nTagCands[i] , getHTTBranchName("nTagCands" , m_httConfigs[i]));
                 systematicTree->makeOutputVariable(m_htt_tag[i]       , getHTTBranchName("tag"       , m_httConfigs[i]));
+                systematicTree->makeOutputVariable(m_htt_pts1[i]       , getHTTBranchName("pts1"       , m_httConfigs[i]));
+                systematicTree->makeOutputVariable(m_htt_pts2[i]       , getHTTBranchName("pts2"       , m_httConfigs[i]));
+                systematicTree->makeOutputVariable(m_htt_pts3[i]       , getHTTBranchName("pts3"       , m_httConfigs[i]));
             }
 
             systematicTree->makeOutputVariable(m_htt_caJet_pt  , getHTTBranchName("caJet_pt"  , ""));
@@ -522,6 +528,9 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
                 m_htt_m23m123[i]   . assign(m_num_fatjets_keep, -1000.);
                 m_htt_atan1312[i]  . assign(m_num_fatjets_keep, -1000.);
                 m_htt_nTagCands[i] . assign(m_num_fatjets_keep, 0);
+                m_htt_pts1[i]      . assign(m_num_fatjets_keep, -1000.);
+                m_htt_pts2[i]      . assign(m_num_fatjets_keep, -1000.);
+                m_htt_pts3[i]      . assign(m_num_fatjets_keep, -1000.);
 
                 m_htt_caGroomJet_pt[i]  . assign(m_num_fatjets_keep, -1000.);
                 m_htt_caGroomJet_eta[i] . assign(m_num_fatjets_keep, -1000.);
@@ -798,7 +807,7 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
         m_rljet_mjj = (v_jet0 + v_jet1).M();
     }
 
-    if (m_runHTT != 0 && !event.m_isLoose && on_nominal_branch)
+    if (m_runHTT && !event.m_isLoose && on_nominal_branch)
         this->runHTTAndFillTree();
 
     if (m_runSD && !event.m_isLoose && on_nominal_branch)
@@ -836,7 +845,7 @@ void DataMCbackgroundEventSaver::runHTTAndFillTree(void) {
     if ( pt_sorted_ca15jets.size() < 2 ||
             pt_sorted_ca15jets[0] == nullptr ||
             pt_sorted_ca15jets[1] == nullptr ||
-            pt_sorted_ca15jets[0]->pt() / 1000. <= 500. ||
+            pt_sorted_ca15jets[0]->pt() / 1000. <= 450. ||
             pt_sorted_ca15jets[1]->pt() / 1000. <= 200.)
         return;
 
@@ -888,6 +897,15 @@ void DataMCbackgroundEventSaver::runHTTAndFillTree(void) {
 
                 if( topCandidate->isAvailable<int>("n_top_cands") )
                     m_htt_nTagCands[ihtt][ijet] = topCandidate->getAttribute<int>("n_top_cands");
+
+                if( topCandidate->isAvailable<float>("ptSub1") )
+                    m_htt_pts1[ihtt][ijet] = topCandidate->getAttribute<float>("ptSub1");
+
+                if( topCandidate->isAvailable<float>("ptSub2") )
+                    m_htt_pts2[ihtt][ijet] = topCandidate->getAttribute<float>("ptSub2");
+
+                if( topCandidate->isAvailable<float>("ptSub3") )
+                    m_htt_pts3[ihtt][ijet] = topCandidate->getAttribute<float>("ptSub3");
             } // end of saving HTT tagging vars for this config
         } // end loop over all HTT configs
     } // end loop over C/A 1.5 jets

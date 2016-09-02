@@ -198,7 +198,7 @@ namespace top {
         std::vector<std::vector<float>> m_htt_caGroomJet_m;
 
         // tagged HTT jets (NOT independent of HTT config)
-        std::vector<std::vector<int>>  m_htt_tag;
+        std::vector<std::vector<int>> m_htt_tag;
         std::vector<std::vector<float>> m_htt_pt;
         std::vector<std::vector<float>> m_htt_eta;
         std::vector<std::vector<float>> m_htt_phi;
@@ -206,6 +206,9 @@ namespace top {
         std::vector<std::vector<float>> m_htt_m23m123;
         std::vector<std::vector<float>> m_htt_atan1312;
         std::vector<std::vector<int>> m_htt_nTagCands;
+        std::vector<std::vector<float>> m_htt_pts1;
+        std::vector<std::vector<float>> m_htt_pts2;
+        std::vector<std::vector<float>> m_htt_pts3;
 
         /********************/
 		/* TAGGER VARIABLES */
