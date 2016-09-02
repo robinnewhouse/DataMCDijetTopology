@@ -20,12 +20,12 @@ rc checkout_pkg $(rc version | grep "JetCalibTools")
 mkdir -p JetCalibTools/share/JetCalibTools
 cd JetCalibTools/share/JetCalibTools
 # Copy CalibArea tag you are using
-cp -r /afs/cern.ch/atlas/www/GROUPS/DATABASE/GroupData/JetCalibTools/CalibArea-00-04-65 .
+cp -r /afs/cern.ch/atlas/www/GROUPS/DATABASE/GroupData/JetCalibTools/CalibArea-00-04-67 .
 # Go back to the working dir:
 cd ../../../
 # Put the configuration files at the right place
-cp data/SubjetCalibration/CamKt2LCTopoAreaCalib_361000_weighted_EtaJES_consts.config JetCalibTools/share/JetCalibTools/CalibArea-00-04-65/CalibrationFactors/
-cp data/SubjetCalibration/CamKt2LCTopoAreaCalib_JES_HTTmodified.config JetCalibTools/share/JetCalibTools/CalibArea-00-04-65/CalibrationConfigs/
+cp data/SubjetCalibration/CamKt2LCTopoAreaCalib_361000_weighted_EtaJES_consts.config JetCalibTools/share/JetCalibTools/CalibArea-00-04-67/CalibrationFactors/
+cp data/SubjetCalibration/CamKt2LCTopoAreaCalib_JES_HTTmodified.config JetCalibTools/share/JetCalibTools/CalibArea-00-04-67/CalibrationConfigs/
 
 # ShowerDeconstruction tagger
 svn co svn+ssh://svn.cern.ch/reps/atlas-dferreir/dferreir/ShowerDeconstruction/trunk ShowerDeconstruction
