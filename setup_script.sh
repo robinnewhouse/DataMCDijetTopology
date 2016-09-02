@@ -2,7 +2,7 @@
 rcSetup Top,2.4.18
 
 # for simple cut-based taggers and HEPTopTagger (svn tag 00-00-21 includes the Tau32_wta systematics fix from P-A)
-svn co svn+ssh://svn.cern.ch/reps/atlasoff/Reconstruction/Jet/BoostedJetTaggers/tags/BoostedJetTaggers-00-00-21 BoostedJetTaggers
+svn co svn+ssh://svn.cern.ch/reps/atlasoff/Reconstruction/Jet/BoostedJetTaggers/tags/BoostedJetTaggers-00-00-23 BoostedJetTaggers
 
 # not all of the necessary dijet background study samples are included in TopDataPreparation xsection lists
 # this is only needed for letting AnalysisTop compute the b-tag scale factors, since we use xsections/filter efficiencies/nEvents
@@ -16,7 +16,8 @@ sed -i -- 's/DFCommonPhotonsIsEMLoose/Loose/g' TopObjectSelectionTools/Root/Phot
 sed -i -- 's/DFCommonPhotonsIsEMTight/Tight/g' TopObjectSelectionTools/Root/PhotonMC15.cxx
 
 # Copy the JetCalibTools to your local area
-rc checkout_pkg $(rc version | grep "JetCalibTools")
+svn co svn+ssh://svn.cern.ch/reps/atlasoff/Reconstruction/Jet/JetCalibTools/tags/JetCalibTools-00-04-67 JetCalibTools
+
 mkdir -p JetCalibTools/share/JetCalibTools
 cd JetCalibTools/share/JetCalibTools
 # Copy CalibArea tag you are using
