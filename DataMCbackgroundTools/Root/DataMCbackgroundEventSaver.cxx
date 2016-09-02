@@ -344,7 +344,7 @@ DataMCbackgroundEventSaver::initializeSD(void)
     top::check (tagger_SDw_win20_btag0->setProperty("wMassWindow", 20.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE");
     top::check (tagger_SDw_win20_btag0->setProperty("hMass", 125.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE");
     top::check (tagger_SDw_win20_btag0->setProperty("hMassWindow", 20.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE");
-    top::check (tagger_SDw_win20_btag0->setProperty("maxNjets", 9), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE");
+    top::check (tagger_SDw_win20_btag0->setProperty("maxNjets", 7), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE");
     top::check (tagger_SDw_win20_btag0->setProperty("useBtag", 0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE");
     top::check (tagger_SDw_win20_btag0->initialize(), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
 
@@ -357,7 +357,7 @@ DataMCbackgroundEventSaver::initializeSD(void)
     top::check (tagger_SDz_win20_btag0->setProperty("wMassWindow", 20.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
     top::check (tagger_SDz_win20_btag0->setProperty("hMass", 125.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
     top::check (tagger_SDz_win20_btag0->setProperty("hMassWindow", 20.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDz_win20_btag0->setProperty("maxNjets", 9), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
+    top::check (tagger_SDz_win20_btag0->setProperty("maxNjets", 7), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
     top::check (tagger_SDz_win20_btag0->setProperty("useBtag", 0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
     top::check (tagger_SDz_win20_btag0->initialize(), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
 
@@ -370,7 +370,7 @@ DataMCbackgroundEventSaver::initializeSD(void)
     top::check (tagger_SDt_win50_btag0->setProperty("wMassWindow", 25.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
     top::check (tagger_SDt_win50_btag0->setProperty("hMass", 125.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
     top::check (tagger_SDt_win50_btag0->setProperty("hMassWindow", 20.0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
-    top::check (tagger_SDt_win50_btag0->setProperty("maxNjets", 9), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
+    top::check (tagger_SDt_win50_btag0->setProperty("maxNjets", 7), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
     top::check (tagger_SDt_win50_btag0->setProperty("useBtag", 0), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
     top::check (tagger_SDt_win50_btag0->initialize(), "SHOWER DECONSTRUCTION INITIALIZATION FAILURE" );
 
