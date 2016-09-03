@@ -16,7 +16,7 @@ DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass,NumF
 RunHTT True
 HTTConfigs def
 
-RunShowerDeconstruction False
+RunShowerDeconstruction True
 SaveTrackAssistedMass True
 
 NumFatjetsKeep 1
