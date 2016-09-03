@@ -177,9 +177,14 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
         systematicTree->makeOutputVariable(m_rljet_smoothZTag50eff , "rljet_smoothZTag50eff");
         systematicTree->makeOutputVariable(m_rljet_smoothZTag25eff , "rljet_smoothZTag25eff");
 
-        // BDT tagger output variables
-        systematicTree->makeOutputVariable(m_rljet_BDT_Top_Score , "rljet_BDT_Top_Score");
-        systematicTree->makeOutputVariable(m_rljet_BDT_W_Score   , "rljet_BDT_W_Score");
+
+        if (m_config->isMC()) {
+            systematicTree->makeOutputVariable(m_rljet_dRmatched_reco_truth, "rljet_dRmatched_reco_truth");
+            systematicTree->makeOutputVariable(m_rljet_dRmatched_particle_flavor, "rljet_dRmatched_particle_flavor");
+            systematicTree->makeOutputVariable(m_rljet_dRmatched_maxEParton_flavor, "rljet_dRmatched_maxEParton_flavor");
+            systematicTree->makeOutputVariable(m_rljet_dRmatched_topBChild, "rljet_dRmatched_topBChild");
+            systematicTree->makeOutputVariable(m_rljet_dRmatched_nQuarkChildren, "rljet_dRmatched_nQuarkChildren");
+        }
 
         /*************************************/
         /* PARAMETERS SAVED ONLY FOR NOMINAL */
@@ -189,6 +194,7 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
             // more large-R jet kinematic variables
             systematicTree->makeOutputVariable(m_rljet_count        , "rljet_count");
             systematicTree->makeOutputVariable(m_rljet_mjj          , "rljet_mjj");
+            systematicTree->makeOutputVariable(m_rljet_ptasym       , "rljet_ptasym");
             systematicTree->makeOutputVariable(m_rljet_m_ta         , "rljet_m_ta");
             systematicTree->makeOutputVariable(m_rljet_m_ta_nocalib , "rljet_m_ta_nocalib");
 
@@ -217,7 +223,6 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
             systematicTree->makeOutputVariable(m_rljet_ZCut12      , "rljet_ZCut12");
 
             systematicTree->makeOutputVariable(m_rljet_NTrimSubjets      , "rljet_NTrimSubjets");
-            systematicTree->makeOutputVariable(m_rljet_Width             , "rljet_Width");
             systematicTree->makeOutputVariable(m_rljet_ungroomed_ntrk500 , "rljet_ungroomed_ntrk500");
 
             if (m_config->isMC()) {
@@ -228,13 +233,6 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
                 systematicTree->makeOutputVariable(m_tljet_phi   , "tljet_phi");
                 systematicTree->makeOutputVariable(m_tljet_m     , "tljet_m");
                 systematicTree->makeOutputVariable(m_tljet_dR    , "tljet_dR");
-
-                systematicTree->makeOutputVariable(m_rljet_dRmatched_reco_truth, "rljet_dRmatched_reco_truth");
-                systematicTree->makeOutputVariable(m_rljet_dRmatched_particle_flavor, "rljet_dRmatched_particle_flavor");
-                systematicTree->makeOutputVariable(m_rljet_dRmatched_maxEParton_flavor, "rljet_dRmatched_maxEParton_flavor");
-                systematicTree->makeOutputVariable(m_rljet_dRmatched_topBChild, "rljet_dRmatched_topBChild");
-                systematicTree->makeOutputVariable(m_rljet_dRmatched_nQuarkChildren, "rljet_dRmatched_nQuarkChildren");
-
             }
 
             //trigger jet
@@ -304,11 +302,16 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
             systematicTree->makeOutputVariable(m_rljet_SDz_win20_btag0_DOWN, "rljet_SDz_win20_btag0_DOWN");
             systematicTree->makeOutputVariable(m_rljet_SDt_win50_btag0_DOWN, "rljet_SDt_win50_btag0_DOWN");
 
+            // b-tagging output variables
             systematicTree->makeOutputVariable(m_rljet_btag_double     , "rljet_btag_double");
             systematicTree->makeOutputVariable(m_rljet_btag_single     , "rljet_btag_single");
             systematicTree->makeOutputVariable(m_rljet_btag_leading_pt , "rljet_btag_leading_pt");
-        }
-    }
+
+            // BDT tagger output variables
+            systematicTree->makeOutputVariable(m_rljet_BDT_Top_Score , "rljet_BDT_Top_Score");
+            systematicTree->makeOutputVariable(m_rljet_BDT_W_Score   , "rljet_BDT_W_Score");
+        } // end making nominal branch only output variables
+    } // end making all output variables
 
     /************************/
 	/* SUBSTRUCTURE TAGGERS */
@@ -433,12 +436,16 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
     m_rljet_smoothZTag50eff . assign(m_num_fatjets_keep, 0);
     m_rljet_smoothZTag25eff . assign(m_num_fatjets_keep, 0);
 
-    m_rljet_BDT_Top_Score . assign(m_num_fatjets_keep, -1000. );
-    m_rljet_BDT_W_Score   . assign(m_num_fatjets_keep, -1000. );
+    m_rljet_dRmatched_reco_truth        . assign(m_num_fatjets_keep, -1000);
+    m_rljet_dRmatched_particle_flavor   . assign(m_num_fatjets_keep, -1000);
+    m_rljet_dRmatched_maxEParton_flavor . assign(m_num_fatjets_keep, -1000);
+    m_rljet_dRmatched_topBChild         . assign(m_num_fatjets_keep, -1000);
+    m_rljet_dRmatched_nQuarkChildren    . assign(m_num_fatjets_keep, -1000);
 
     if (on_nominal_branch) {
         m_rljet_count = 0;
-        m_rljet_mjj = -1000;
+        m_rljet_mjj = -1000.;
+        m_rljet_ptasym = -1000.;
 
         if (m_saveTAmass) {
             m_rljet_m_ta         . assign(m_num_fatjets_keep, -1000.);
@@ -469,7 +476,6 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
         m_rljet_ZCut12      . assign(m_num_fatjets_keep, -1000. );
 
         m_rljet_NTrimSubjets          . assign(m_num_fatjets_keep, -1000. );
-        m_rljet_Width                 . assign(m_num_fatjets_keep, -1000. );
         m_rljet_ungroomed_ntrk500     . assign(m_num_fatjets_keep, -1000. );
 
         if (m_config->isMC()) {
@@ -479,17 +485,14 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
             m_tljet_m   . assign(m_num_fatjets_keep, -1000.);
             m_tljet_dR  . assign(m_num_fatjets_keep, -1000.);
 
-            m_rljet_dRmatched_reco_truth        . assign(m_num_fatjets_keep, -1000);
-            m_rljet_dRmatched_particle_flavor   . assign(m_num_fatjets_keep, -1000);
-            m_rljet_dRmatched_maxEParton_flavor . assign(m_num_fatjets_keep, -1000);
-            m_rljet_dRmatched_topBChild         . assign(m_num_fatjets_keep, -1000);
-            m_rljet_dRmatched_nQuarkChildren    . assign(m_num_fatjets_keep, -1000);
-
 		}
 
         m_rljet_btag_double     . assign(m_num_fatjets_keep, false);
         m_rljet_btag_single     . assign(m_num_fatjets_keep, false);
         m_rljet_btag_leading_pt . assign(m_num_fatjets_keep, false);
+
+        m_rljet_BDT_Top_Score . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_BDT_W_Score   . assign(m_num_fatjets_keep, -1000. );
 
         m_hltjet_pt  . assign(m_num_fatjets_keep, -1000. );
         m_hltjet_eta . assign(m_num_fatjets_keep, -1000. );
@@ -695,10 +698,6 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
         m_rljet_smoothZTag50eff[i] = zTagger_smooth_50eff->result(*rljets[i]);
         m_rljet_smoothZTag25eff[i] = zTagger_smooth_25eff->result(*rljets[i]);
 
-        // BDT
-        m_rljet_BDT_Top_Score[i] = m_bdt_tool->score(*rljets[i], "toptag");
-        m_rljet_BDT_W_Score[i] = m_bdt_tool->score(*rljets[i], "wtag");
-
         if (on_nominal_branch) {
             m_rljet_count    = rljets.size();
 
@@ -734,7 +733,6 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
             m_rljet_ZCut12[i]       = rljets[i]->auxdata<float>("ZCut12");
 
             m_rljet_NTrimSubjets[i] = rljets[i]->auxdata<int>("NTrimSubjets");
-            m_rljet_Width[i]        = rljets[i]->auxdata<float>("Width");
 
             const xAOD::Jet* rljet_ungroomed = this->get_parent_ungroomed(rljets[i]);
 
@@ -783,6 +781,10 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
                 }
             } // end of saving trigger jet variables
 
+            // BDT
+            m_rljet_BDT_Top_Score[i] = m_bdt_tool->score(*rljets[i], "toptag");
+            m_rljet_BDT_W_Score[i] = m_bdt_tool->score(*rljets[i], "wtag");
+
             /*************/
             /* B-TAGGING */
             /*************/
@@ -796,6 +798,8 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
             m_rljet_btag_single[i]     = rljet_btag0 > BTAG_CUT || rljet_btag1 > BTAG_CUT;
             m_rljet_btag_leading_pt[i] = rljet_btag0 > BTAG_CUT;
 
+
+
         } // end of saving nominal branch large-R jet variables
     } // end of saving individual large-R jet variables
 
@@ -805,6 +809,8 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
         v_jet0.SetPtEtaPhiM(rljets[0]->pt(), rljets[0]->eta(), rljets[0]->phi(), rljets[0]->m());
         v_jet1.SetPtEtaPhiM(rljets[1]->pt(), rljets[1]->eta(), rljets[1]->phi(), rljets[1]->m());
         m_rljet_mjj = (v_jet0 + v_jet1).M();
+
+        m_rljet_ptasym = ( rljets[0]->pt() - rljets[1]->pt() ) / ( rljets[0]->pt() + rljets[1]->pt() );
     }
 
     if (m_runHTT && !event.m_isLoose && on_nominal_branch)
@@ -830,7 +836,7 @@ void DataMCbackgroundEventSaver::runHTTAndFillTree(void) {
     // mimick eta < 2.0 selection from anti-kt R=1.0 trimmed jets collection
     std::copy_if(ca15jets_HTT->begin(), ca15jets_HTT->end(), std::back_inserter(pt_sorted_ca15jets),
             [](const xAOD::Jet* j) {
-                return fabs(j->eta()) <= 2.0;
+                return fabs(j->eta()) < 2.0;
             });
 
     m_cajet_count = pt_sorted_ca15jets.size();
@@ -845,8 +851,8 @@ void DataMCbackgroundEventSaver::runHTTAndFillTree(void) {
     if ( pt_sorted_ca15jets.size() < 2 ||
             pt_sorted_ca15jets[0] == nullptr ||
             pt_sorted_ca15jets[1] == nullptr ||
-            pt_sorted_ca15jets[0]->pt() / 1000. <= 450. ||
-            pt_sorted_ca15jets[1]->pt() / 1000. <= 200.)
+            pt_sorted_ca15jets[0]->pt() / 1000. < 450. ||
+            pt_sorted_ca15jets[1]->pt() / 1000. < 200.)
         return;
 
     for (unsigned ijet = 0; ijet < m_num_fatjets_keep && ijet < pt_sorted_ca15jets.size(); ijet++) {
@@ -863,10 +869,10 @@ void DataMCbackgroundEventSaver::runHTTAndFillTree(void) {
             const xAOD::Jet* groomed_ca15jet=nullptr;
 
             if (m_httConfigs[ihtt] != "def") {
-                pt_sorted_ca15jets[ijet]->getAssociatedObject("groomedFatJet" + m_httConfigs[ihtt],
+                pt_sorted_ca15jets[ijet]->getAssociatedObject("groomedFatJetFiltR30N5" + m_httConfigs[ihtt],
                         groomed_ca15jet);
             } else {
-                pt_sorted_ca15jets[ijet]->getAssociatedObject("groomedFatJet", groomed_ca15jet);
+                pt_sorted_ca15jets[ijet]->getAssociatedObject("groomedFatJetFiltR30N5", groomed_ca15jet);
             }
 
             if (groomed_ca15jet != nullptr) {
@@ -874,15 +880,13 @@ void DataMCbackgroundEventSaver::runHTTAndFillTree(void) {
                 m_htt_caGroomJet_eta[ihtt][ijet] = groomed_ca15jet->eta();
                 m_htt_caGroomJet_phi[ihtt][ijet] = groomed_ca15jet->phi();
                 m_htt_caGroomJet_m[ihtt][ijet]   = groomed_ca15jet->m();
-            } else {
-                std::cout << m_httConfigs[ihtt] << std::endl;
             }
 
             // now save the actual HTT tagging information
             const xAOD::Jet* topCandidate = nullptr;
             bool tagged = pt_sorted_ca15jets[ijet]->getAssociatedObject("HTT_" + m_httConfigs[ihtt], topCandidate);
 
-            if( topCandidate != nullptr ) {
+            if( tagged && topCandidate != nullptr ) {
                 m_htt_tag[ihtt][ijet] = tagged;
                 m_htt_pt[ihtt][ijet]  = topCandidate->pt();
                 m_htt_eta[ihtt][ijet] = topCandidate->eta();
