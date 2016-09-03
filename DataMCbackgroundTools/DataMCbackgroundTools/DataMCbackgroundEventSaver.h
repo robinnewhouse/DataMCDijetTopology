@@ -123,6 +123,9 @@ namespace top {
         // dijet mass = mass(leading + subleading)
         float m_rljet_mjj;
 
+        // pt asymmetry (pt1 - pt2) / (pt1 + pt2)
+        float m_rljet_ptasym;
+
         // track assisted masses
         std::vector<float> m_rljet_m_ta;
         std::vector<float> m_rljet_m_ta_nocalib;
@@ -154,7 +157,6 @@ namespace top {
         std::vector<float> m_rljet_ZCut12;
 
 		std::vector<int> m_rljet_NTrimSubjets;
-		std::vector<float> m_rljet_Width;
 		std::vector<int> m_rljet_ungroomed_ntrk500;
 
 		// matched truth jets
