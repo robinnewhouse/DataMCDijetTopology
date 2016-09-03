@@ -123,6 +123,9 @@ namespace top {
         // dijet mass = mass(leading + subleading)
         float m_rljet_mjj;
 
+        // pt asymmetry (pt1 - pt2) / (pt1 + pt2)
+        float m_rljet_ptasym;
+
         // track assisted masses
         std::vector<float> m_rljet_m_ta;
         std::vector<float> m_rljet_m_ta_nocalib;
@@ -154,7 +157,6 @@ namespace top {
         std::vector<float> m_rljet_ZCut12;
 
 		std::vector<int> m_rljet_NTrimSubjets;
-		std::vector<float> m_rljet_Width;
 		std::vector<int> m_rljet_ungroomed_ntrk500;
 
 		// matched truth jets
@@ -198,7 +200,7 @@ namespace top {
         std::vector<std::vector<float>> m_htt_caGroomJet_m;
 
         // tagged HTT jets (NOT independent of HTT config)
-        std::vector<std::vector<int>>  m_htt_tag;
+        std::vector<std::vector<int>> m_htt_tag;
         std::vector<std::vector<float>> m_htt_pt;
         std::vector<std::vector<float>> m_htt_eta;
         std::vector<std::vector<float>> m_htt_phi;
@@ -206,6 +208,9 @@ namespace top {
         std::vector<std::vector<float>> m_htt_m23m123;
         std::vector<std::vector<float>> m_htt_atan1312;
         std::vector<std::vector<int>> m_htt_nTagCands;
+        std::vector<std::vector<float>> m_htt_pts1;
+        std::vector<std::vector<float>> m_htt_pts2;
+        std::vector<std::vector<float>> m_htt_pts3;
 
         /********************/
 		/* TAGGER VARIABLES */

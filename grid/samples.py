@@ -334,6 +334,19 @@ samples_JETM8['herwig_dijet_mc15c'] = [
 # {{{ W/Z + jets
 
 samples_EVNT["V+jets_mc15c"] = [
+    "mc15_13TeV.304307.Sherpa_CT10_Wqq_Pt280_500.evgen.EVNT.e4692",
+    "mc15_13TeV.304308.Sherpa_CT10_Wqq_Pt500_1000.evgen.EVNT.e4692",
+    "mc15_13TeV.304309.Sherpa_CT10_Wqq_Pt1000.evgen.EVNT.e4692",
+    "mc15_13TeV.304623.Pythia8EvtGen_A14NNPDF23LO_WHad_280_500.evgen.EVNT.e4581",
+    "mc15_13TeV.304624.Pythia8EvtGen_A14NNPDF23LO_WHad_500_700.evgen.EVNT.e4581",
+    "mc15_13TeV.304625.Pythia8EvtGen_A14NNPDF23LO_WHad_700_1000.evgen.EVNT.e4581",
+    "mc15_13TeV.304626.Pythia8EvtGen_A14NNPDF23LO_WHad_1000_1400.evgen.EVNT.e4581",
+    "mc15_13TeV.304627.Pythia8EvtGen_A14NNPDF23LO_WHad_1400.evgen.EVNT.e4581",
+    "mc15_13TeV.304628.Pythia8EvtGen_A14NNPDF23LO_ZHad_280_500.evgen.EVNT.e4581",
+    "mc15_13TeV.304629.Pythia8EvtGen_A14NNPDF23LO_ZHad_500_700.evgen.EVNT.e4581",
+    "mc15_13TeV.304630.Pythia8EvtGen_A14NNPDF23LO_ZHad_700_1000.evgen.EVNT.e4581",
+    "mc15_13TeV.304631.Pythia8EvtGen_A14NNPDF23LO_ZHad_1000_1400.evgen.EVNT.e4581",
+    "mc15_13TeV.304632.Pythia8EvtGen_A14NNPDF23LO_ZHad_1400.evgen.EVNT.e4581",
     "mc15_13TeV.304673.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_280_500.evgen.EVNT.e4571",
     "mc15_13TeV.304674.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_500_700.evgen.EVNT.e4571",
     "mc15_13TeV.304675.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_700_1000.evgen.EVNT.e4571",
@@ -344,22 +357,9 @@ samples_EVNT["V+jets_mc15c"] = [
     "mc15_13TeV.304680.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_700_1000.evgen.EVNT.e4571",
     "mc15_13TeV.304681.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_1000_1400.evgen.EVNT.e4571",
     "mc15_13TeV.304682.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_1400.evgen.EVNT.e4571",
-    "mc15_13TeV.304630.Pythia8EvtGen_A14NNPDF23LO_ZHad_700_1000.evgen.EVNT.e4581",
-    "mc15_13TeV.304623.Pythia8EvtGen_A14NNPDF23LO_WHad_280_500.evgen.EVNT.e4581",
-    "mc15_13TeV.304625.Pythia8EvtGen_A14NNPDF23LO_WHad_700_1000.evgen.EVNT.e4581",
-    "mc15_13TeV.304626.Pythia8EvtGen_A14NNPDF23LO_WHad_1000_1400.evgen.EVNT.e4581",
-    "mc15_13TeV.304631.Pythia8EvtGen_A14NNPDF23LO_ZHad_1000_1400.evgen.EVNT.e4581",
-    "mc15_13TeV.304628.Pythia8EvtGen_A14NNPDF23LO_ZHad_280_500.evgen.EVNT.e4581",
-    "mc15_13TeV.304629.Pythia8EvtGen_A14NNPDF23LO_ZHad_500_700.evgen.EVNT.e4581",
-    "mc15_13TeV.304624.Pythia8EvtGen_A14NNPDF23LO_WHad_500_700.evgen.EVNT.e4581",
-    "mc15_13TeV.304632.Pythia8EvtGen_A14NNPDF23LO_ZHad_1400.evgen.EVNT.e4581",
-    "mc15_13TeV.304627.Pythia8EvtGen_A14NNPDF23LO_WHad_1400.evgen.EVNT.e4581",
     "mc15_13TeV.304707.Sherpa_CT10_Zqq_Pt280_500.evgen.EVNT.e4692",
-    "mc15_13TeV.304307.Sherpa_CT10_Wqq_Pt280_500.evgen.EVNT.e4692",
     "mc15_13TeV.304708.Sherpa_CT10_Zqq_Pt500_1000.evgen.EVNT.e4692",
-    "mc15_13TeV.304309.Sherpa_CT10_Wqq_Pt1000.evgen.EVNT.e4692",
-    "mc15_13TeV.304709.Sherpa_CT10_Zqq_Pt1000.evgen.EVNT.e4692",
-    "mc15_13TeV.304308.Sherpa_CT10_Wqq_Pt500_1000.evgen.EVNT.e4692"
+    "mc15_13TeV.304709.Sherpa_CT10_Zqq_Pt1000.evgen.EVNT.e4692"
 ]
 
 samples_AOD["V+jets_mc15c"] = [
