@@ -2,8 +2,11 @@
 import TopExamples.grid
 
 scope      = 'user.zmeadows'
-dir_data16 = '/titan_rw/atlas/common/zmeadows/TopBosonTagging/gamma_jet/08222016_data16_pythia_mc15c_first_attempt/data16'
-dir_mc15c  = '/titan_rw/atlas/common/zmeadows/TopBosonTagging/gamma_jet/08222016_data16_pythia_mc15c_first_attempt/mc15c'
+dir_data16 = '/titan_rw/atlas/common/zmeadows/TopBosonTagging/dijet/09072016/data16'
+dir_mc15c  = '/titan_rw/atlas/common/zmeadows/TopBosonTagging/dijet/09072016/mc15c'
 
-TopExamples.grid.download(scope , '*data16_gammajet_08222016_v0_output.root' , dir_data16)
-TopExamples.grid.download(scope , '*pythia_gammajet_08222016_v0_output.root' , dir_mc15c)
+TopExamples.grid.download(scope , '*data16_dijet_0907_v0_output.root' , dir_data16)
+TopExamples.grid.download(scope , '*wz_plus_jets_0907_v0_output.root' , dir_mc15c)
+TopExamples.grid.download(scope , '*ttbar_0907_v0_output.root'        , dir_mc15c)
+TopExamples.grid.download(scope , '*herwig_dijet_0907_v0_output.root' , dir_mc15c)
+TopExamples.grid.download(scope , '*pythia_dijet_0907_v0_output.root' , dir_mc15c)
