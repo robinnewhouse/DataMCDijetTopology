@@ -5,7 +5,7 @@ LibraryNames libTopEventSelectionTools libTopEventReconstructionTools libDataMCb
 #########################
 
 GRLDir DataMCbackgroundTools
-GRLFile data16_13TeV.periodAllYear_DetStatus-v79-pro20-05_DQDefects-00-02-02_PHYS_StandardGRL_All_Good_25ns.xml
+GRLFile data16_13TeV.periodAllYear_DetStatus-v79-pro20-06_DQDefects-00-02-02_PHYS_StandardGRL_All_Good_25ns.xml
 
 #######################
 ### Custom Settings ###
@@ -47,7 +47,7 @@ PDFInfo False
 ### General Configuration ###
 #############################
 
-#NEvents 100
+#NEvents 1000
 JetUncertainties_BunchSpacing 25ns
 
 OutputFileSetAutoFlushZero True
