@@ -125,6 +125,8 @@ namespace top {
 
         // pt asymmetry (pt1 - pt2) / (pt1 + pt2)
         float m_rljet_ptasym;
+        float m_rljet_dy;
+        float m_rljet_dR;
 
         // track assisted masses
         std::vector<float> m_rljet_m_ta;
@@ -166,6 +168,9 @@ namespace top {
 		std::vector<float> m_tljet_phi;
         std::vector<float> m_tljet_m;
         std::vector<float> m_tljet_dR;
+
+        std::vector<float> m_tljet_D2;
+        std::vector<float> m_tljet_Tau32_wta;
 
         // truth parton matching information
         std::vector<int> m_rljet_dRmatched_reco_truth;

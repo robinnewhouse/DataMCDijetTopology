@@ -195,6 +195,8 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
             systematicTree->makeOutputVariable(m_rljet_count        , "rljet_count");
             systematicTree->makeOutputVariable(m_rljet_mjj          , "rljet_mjj");
             systematicTree->makeOutputVariable(m_rljet_ptasym       , "rljet_ptasym");
+            systematicTree->makeOutputVariable(m_rljet_dy           , "rljet_dy");
+            systematicTree->makeOutputVariable(m_rljet_dR           , "rljet_dR");
             systematicTree->makeOutputVariable(m_rljet_m_ta         , "rljet_m_ta");
             systematicTree->makeOutputVariable(m_rljet_m_ta_nocalib , "rljet_m_ta_nocalib");
 
@@ -233,6 +235,9 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
                 systematicTree->makeOutputVariable(m_tljet_phi   , "tljet_phi");
                 systematicTree->makeOutputVariable(m_tljet_m     , "tljet_m");
                 systematicTree->makeOutputVariable(m_tljet_dR    , "tljet_dR");
+
+                systematicTree->makeOutputVariable(m_tljet_D2        , "tljet_D2");
+                systematicTree->makeOutputVariable(m_tljet_Tau32_wta , "tljet_Tau32_wta");
             }
 
             //trigger jet
@@ -443,9 +448,11 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
     m_rljet_dRmatched_nQuarkChildren    . assign(m_num_fatjets_keep, -1000);
 
     if (on_nominal_branch) {
-        m_rljet_count = 0;
-        m_rljet_mjj = -1000.;
+        m_rljet_count  = 0;
+        m_rljet_mjj    = -1000.;
         m_rljet_ptasym = -1000.;
+        m_rljet_dy     = -1000.;
+        m_rljet_dR     = -1000.;
 
         if (m_saveTAmass) {
             m_rljet_m_ta         . assign(m_num_fatjets_keep, -1000.);
@@ -485,7 +492,9 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
             m_tljet_m   . assign(m_num_fatjets_keep, -1000.);
             m_tljet_dR  . assign(m_num_fatjets_keep, -1000.);
 
-		}
+            m_tljet_Tau32_wta . assign(m_num_fatjets_keep, -1000. );
+            m_tljet_D2        . assign(m_num_fatjets_keep, -1000. );
+        }
 
         m_rljet_btag_double     . assign(m_num_fatjets_keep, false);
         m_rljet_btag_single     . assign(m_num_fatjets_keep, false);
@@ -668,7 +677,6 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
 
         if(rljets[i]->isAvailable<float>("Tau32_wta")) {
             m_rljet_Tau32_wta[i] = rljets[i]->auxdata<float>("Tau32_wta");
-
         } else {
             m_rljet_Tau32_wta[i] = fabs(tau2) > 1.e-6 ? tau3 / tau2 : -999.;
         }
@@ -736,9 +744,13 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
 
             const xAOD::Jet* rljet_ungroomed = this->get_parent_ungroomed(rljets[i]);
 
-            std::vector<int> tjet_ntrks = rljet_ungroomed->auxdata<std::vector<int>>("NumTrkPt500");
-            m_rljet_ungroomed_ntrk500[i] = std::accumulate(tjet_ntrks.begin(),
-                    tjet_ntrks.end(), 0);
+            // std::vector<int> tjet_ntrks = rljet_ungroomed->auxdata<std::vector<int>>("NumTrkPt500");
+            // m_rljet_ungroomed_ntrk500[i] = std::accumulate(tjet_ntrks.begin(),
+            //         tjet_ntrks.end(), 0);
+
+            std::vector<int> ntrk_tmp;
+            rljet_ungroomed-> getAttribute(xAOD::JetAttribute::NumTrkPt500, ntrk_tmp);
+            m_rljet_ungroomed_ntrk500[i] = ntrk_tmp[0];
 
             if(m_config->isMC())
             { // save corresponding truth jet variables
@@ -757,6 +769,21 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
                     m_tljet_eta[i] = tljet_near->eta();
                     m_tljet_phi[i] = tljet_near->phi();
                     m_tljet_dR[i]  = top::deltaR(*rljets[i], *tljet_near);
+
+                    const float ecf1 = tljet_near->auxdata<float>("ECF1");
+                    const float ecf2 = tljet_near->auxdata<float>("ECF2");
+                    const float ecf3 = tljet_near->auxdata<float>("ECF3");
+
+                    m_tljet_D2[i] = fabs(ecf2) > 1.e-6 ? pow(ecf1/ecf2,3)*ecf3 : -1000.;
+
+                    /*********/
+                    /* TAU32 */
+                    /*********/
+
+                    const float tau2 = tljet_near->auxdata<float>("Tau2_wta");
+                    const float tau3 = tljet_near->auxdata<float>("Tau3_wta");
+
+                    m_tljet_Tau32_wta[i] = fabs(tau2) > 1.e-6 ? tau3 / tau2 : -1000.;
                 }
 
             } // end of saving truth jet variables
@@ -803,7 +830,7 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
         } // end of saving nominal branch large-R jet variables
     } // end of saving individual large-R jet variables
 
-    // compute dijet mass
+    // compute lead/sublead jet quantities
     if (on_nominal_branch && rljets.size() >= 2) {
         TLorentzVector v_jet0, v_jet1;
         v_jet0.SetPtEtaPhiM(rljets[0]->pt(), rljets[0]->eta(), rljets[0]->phi(), rljets[0]->m());
@@ -811,6 +838,8 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
         m_rljet_mjj = (v_jet0 + v_jet1).M();
 
         m_rljet_ptasym = ( rljets[0]->pt() - rljets[1]->pt() ) / ( rljets[0]->pt() + rljets[1]->pt() );
+        m_rljet_dy = rljets[0]->rapidity() - rljets[1]->rapidity();
+        m_rljet_dR = top::deltaR(*rljets[0], *rljets[1]);
     }
 
     if (m_runHTT && !event.m_isLoose && on_nominal_branch)
