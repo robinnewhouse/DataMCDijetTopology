@@ -4,7 +4,7 @@ samples_JETM8 = {}
 
 # {{{ DATA
 
-samples_JETM8['data_2016_25ns'] = [ # 3.49756/fb
+samples_JETM8['data_2016_25ns'] = [ # 4.87734/fb
 	"data16_13TeV.00297730.physics_Main.merge.DAOD_JETM8.f694_m1583_p2667",
 	"data16_13TeV.00298591.physics_Main.merge.DAOD_JETM8.f695_m1588_p2667",
 	"data16_13TeV.00298595.physics_Main.merge.DAOD_JETM8.f698_m1594_p2667",
@@ -46,7 +46,15 @@ samples_JETM8['data_2016_25ns'] = [ # 3.49756/fb
 	"data16_13TeV.00301915.physics_Main.merge.DAOD_JETM8.f709_m1611_p2667",
 	"data16_13TeV.00301918.physics_Main.merge.DAOD_JETM8.f709_m1611_p2667",
 	"data16_13TeV.00301932.physics_Main.merge.DAOD_JETM8.f709_m1611_p2667",
-	"data16_13TeV.00301973.physics_Main.merge.DAOD_JETM8.f709_m1611_p2667"
+	"data16_13TeV.00301973.physics_Main.merge.DAOD_JETM8.f709_m1611_p2667",
+        "data16_13TeV.00302053.physics_Main.merge.DAOD_JETM8.f709_m1611_p2689",
+        "data16_13TeV.00302137.physics_Main.merge.DAOD_JETM8.f709_m1620_p2689",
+        "data16_13TeV.00302265.physics_Main.merge.DAOD_JETM8.f709_m1620_p2689",
+        "data16_13TeV.00302269.physics_Main.merge.DAOD_JETM8.f709_m1620_p2689",
+        "data16_13TeV.00302300.physics_Main.merge.DAOD_JETM8.f711_m1620_p2689",
+        "data16_13TeV.00302347.physics_Main.merge.DAOD_JETM8.f711_m1620_p2689",
+        "data16_13TeV.00302380.physics_Main.merge.DAOD_JETM8.f711_m1620_p2689",
+        "data16_13TeV.00302391.physics_Main.merge.DAOD_JETM8.f711_m1620_p2689"
         ]
 
 samples_JETM8['data_2015_25ns_rel20p1'] = [ # 3.20905/fb
