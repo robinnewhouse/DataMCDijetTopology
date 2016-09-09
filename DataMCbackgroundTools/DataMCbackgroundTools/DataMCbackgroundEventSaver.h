@@ -168,7 +168,6 @@ namespace top {
 		std::vector<float> m_tljet_phi;
         std::vector<float> m_tljet_m;
         std::vector<float> m_tljet_dR;
-
         std::vector<float> m_tljet_D2;
         std::vector<float> m_tljet_Tau32_wta;
 

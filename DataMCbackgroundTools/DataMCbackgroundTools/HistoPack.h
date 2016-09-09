@@ -15,7 +15,7 @@ using std::unique_ptr;
 
 class HistoPack {
 public:
-    HistoPack(void);
+    HistoPack(unsigned num_fatjets_keep);
 
     virtual ~HistoPack(void) { };
 
@@ -24,45 +24,48 @@ public:
     vector<unique_ptr<TH1Tagged>> h_rljet_phi;
     vector<unique_ptr<TH1Tagged>> h_rljet_m;
 
-    // delta R matched truth jets
-    vector<unique_ptr<TH1Tagged>> h_tljet_pt;
-    vector<unique_ptr<TH1Tagged>> h_tljet_eta;
-    vector<unique_ptr<TH1Tagged>> h_tljet_phi;
-    vector<unique_ptr<TH1Tagged>> h_tljet_m;
+    // lead/sublead jet variables
+    unique_ptr<TH1Tagged> h_rljet_mjj;
+    unique_ptr<TH1Tagged> h_rljet_ptasym;
+    unique_ptr<TH1Tagged> h_rljet_dy;
+    unique_ptr<TH1Tagged> h_rljet_dR;
 
     // mass/energy response
-    vector<unique_ptr<TH1Tagged>> h_rljet_Rm;
-    vector<unique_ptr<TH1Tagged>> h_rljet_RpT;
+    vector<unique_ptr<TH1Tagged>> h_rljet_RES_m;
+    vector<unique_ptr<TH1Tagged>> h_rljet_RES_pT;
+    vector<unique_ptr<TH1Tagged>> h_rljet_RES_D2;
+    vector<unique_ptr<TH1Tagged>> h_rljet_RES_Tau32_wta;
 
-    // track-assisted mass
-    vector<unique_ptr<TH1Tagged>> h_rljet_m_ta;
-    vector<unique_ptr<TH1Tagged>> h_rljet_m_ta_nocalib;
-
-    vector<unique_ptr<TH1Tagged>> h_rljet_Split12;
-    vector<unique_ptr<TH1Tagged>> h_rljet_Split23;
-    vector<unique_ptr<TH1Tagged>> h_rljet_Split34;
-    vector<unique_ptr<TH1Tagged>> h_rljet_Tau1;
-    vector<unique_ptr<TH1Tagged>> h_rljet_Tau2;
-    vector<unique_ptr<TH1Tagged>> h_rljet_Tau3;
-    vector<unique_ptr<TH1Tagged>> h_rljet_Tau21;
-    vector<unique_ptr<TH1Tagged>> h_rljet_Tau32;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Tau1_wta;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Tau2_wta;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Tau3_wta;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Tau21_wta;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Tau32_wta;
     vector<unique_ptr<TH1Tagged>> h_rljet_ECF1;
     vector<unique_ptr<TH1Tagged>> h_rljet_ECF2;
     vector<unique_ptr<TH1Tagged>> h_rljet_ECF3;
+    vector<unique_ptr<TH1Tagged>> h_rljet_C2;
     vector<unique_ptr<TH1Tagged>> h_rljet_D2;
+    vector<unique_ptr<TH1Tagged>> h_rljet_FoxWolfram0;
+    vector<unique_ptr<TH1Tagged>> h_rljet_FoxWolfram2;
+    vector<unique_ptr<TH1Tagged>> h_rljet_FoxWolfram20;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Qw;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Angularity;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Aplanarity;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Dip12;
+    vector<unique_ptr<TH1Tagged>> h_rljet_KtDR;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Mu12;
+    vector<unique_ptr<TH1Tagged>> h_rljet_PlanarFlow;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Sphericity;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Split12;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Split23;
+    vector<unique_ptr<TH1Tagged>> h_rljet_Split34;
+    vector<unique_ptr<TH1Tagged>> h_rljet_ThrustMaj;
+    vector<unique_ptr<TH1Tagged>> h_rljet_ThrustMin;
+    vector<unique_ptr<TH1Tagged>> h_rljet_ZCut12;
 
     vector<unique_ptr<TH1Tagged>> h_rljet_NTrimSubjets;
-    vector<unique_ptr<TH1Tagged>> h_rljet_Width;
     vector<unique_ptr<TH1Tagged>> h_rljet_ungroomed_ntrk500;
-
-    // truth/trigger jet separation
-    vector<unique_ptr<TH1Tagged>> h_hltjet_dR;
-    vector<unique_ptr<TH1Tagged>> h_tljet_dR;
-
-    vector<unique_ptr<TH1Tagged>> h_rljet_SDw_win20_btag0_logchi;
-    vector<unique_ptr<TH1Tagged>> h_rljet_SDw_win25_btag0_logchi;
-    vector<unique_ptr<TH1Tagged>> h_rljet_SDt_win50_btag0_logchi;
-    vector<unique_ptr<TH1Tagged>> h_rljet_SDt_win55_btag0_logchi;
 
     vector<unique_ptr<TH1Tagged>> h_htt_caJet_pt;
     vector<unique_ptr<TH1Tagged>> h_htt_caJet_eta;
@@ -80,11 +83,16 @@ public:
     vector<unique_ptr<TH1Tagged>> h_htt_m;
     vector<unique_ptr<TH1Tagged>> h_htt_m23m123;
     vector<unique_ptr<TH1Tagged>> h_htt_atan1312;
+    vector<unique_ptr<TH1Tagged>> h_htt_pts1;
+    vector<unique_ptr<TH1Tagged>> h_htt_pts2;
+    vector<unique_ptr<TH1Tagged>> h_htt_pts3;
 
-    unique_ptr<TH1Tagged> h_rljet_mjj;
-    unique_ptr<TH1Tagged> h_mu;
+    vector<unique_ptr<TH1Tagged>> h_rljet_SDw_win20_btag0_logchi;
+    vector<unique_ptr<TH1Tagged>> h_rljet_SDz_win20_btag0_logchi;
+    vector<unique_ptr<TH1Tagged>> h_rljet_SDt_win50_btag0_logchi;
 
-    unique_ptr<TH1Tagged> h_BDT_TopTag;
+    vector<unique_ptr<TH1Tagged>> h_rljet_BDT_Top_Score;
+    vector<unique_ptr<TH1Tagged>> h_rljet_BDT_W_Score;
 
     void WriteCommonHistograms() const;
     void WriteNominalOnlyHistograms() const;
