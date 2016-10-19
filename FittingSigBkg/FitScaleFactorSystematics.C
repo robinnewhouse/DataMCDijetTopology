@@ -56,23 +56,47 @@ const map<Tagger,TString> TAGGER_TO_TSTRING = {
 class HistoFitSet {
 public:
     HistoFitSet(void) {};
-    HistoFitSet(const HistoFitSet* hfs, const TString suffix);
+    // HistoFitSet(const HistoFitSet* hfs, const TString suffix);
 
     TH1D* data_pass;
     TH1D* data_pass_mw;
-    TH1D* signal_matched_pass;
-    TH1D* signal_matched_pass_mw;
-    TH1D* signal_unmatched_pass;
-    TH1D* signal_unmatched_pass_mw;
-
     TH1D* data_fail;
     TH1D* data_fail_mw;
-    TH1D* signal_matched_fail;
-    TH1D* signal_matched_fail_mw;
-    TH1D* signal_unmatched_fail;
-    TH1D* signal_unmatched_fail_mw;
+
+    TH1D* wjet_matched_pass;
+    TH1D* wjet_matched_pass_mw;
+    TH1D* wjet_matched_fail;
+    TH1D* wjet_matched_fail_mw;
+
+    TH1D* wjet_unmatched_pass;
+    TH1D* wjet_unmatched_pass_mw;
+    TH1D* wjet_unmatched_fail;
+    TH1D* wjet_unmatched_fail_mw;
+
+    TH1D* ttbar_matched_pass;
+    TH1D* ttbar_matched_pass_mw;
+    TH1D* ttbar_matched_fail;
+    TH1D* ttbar_matched_fail_mw;
+
+    TH1D* ttbar_unmatched_pass;
+    TH1D* ttbar_unmatched_pass_mw;
+    TH1D* ttbar_unmatched_fail;
+    TH1D* ttbar_unmatched_fail_mw;
+
+    // all dijet samples unmatched
+    TH1D* dijet_pass;
+    TH1D* dijet_pass_mw;
+    TH1D* dijet_fail;
+    TH1D* dijet_fail_mw;
+
+    // all z+jets samples unmatched
+    TH1D* zjets_pass;
+    TH1D* zjets_pass_mw;
+    TH1D* zjets_fail;
+    TH1D* zjets_fail_mw;
 };
 
+/*
 HistoFitSet::HistoFitSet(const HistoFitSet* hfs, const TString suffix)
 {
     this->data_pass    = (TH1D*) hfs->data_pass->Clone(data_pass->GetName() + suffix);
@@ -91,6 +115,7 @@ HistoFitSet::HistoFitSet(const HistoFitSet* hfs, const TString suffix)
     this->signal_unmatched_fail    = (TH1D*) hfs->signal_unmatched_fail->Clone(signal_unmatched_fail->GetName() + suffix);
     this->signal_unmatched_fail_mw = (TH1D*) hfs->signal_unmatched_fail_mw->Clone(signal_unmatched_fail_mw->GetName() + suffix);
 }
+*/
 
 vector<TString> get_systematics_directories(Channel channel) {
     vector <TString> x = {};
@@ -103,15 +128,16 @@ get_histogram_set(
         const Channel chan,
         const Tagger tagger,
         const TString directory,
-        int nsmooth
+        int nsmooth,
+        int rebin
         )
 {
     HistoFitSet* histo_set = new HistoFitSet();
 
     if (chan == Channel::Dijet) {
         if (tagger == Tagger::SmoothD2) {
-            const TString passed_jss_cut      = "h_rljet0_m_w_prerec_50eff_d2cut";
-            const TString passed_jss_mass_cut = "h_rljet0_m_w_prerec_50eff_d2masscut";
+            const TString passed_jss_cut      = "h_rljet0_m_t_prerec_50eff_tau32cut";
+            const TString passed_jss_mass_cut = "h_rljet0_m_t_prerec_50eff_tau32masscut";
             const TString failed_jss_cut      = passed_jss_cut + "_VETO";
             const TString failed_jss_mass_cut = passed_jss_mass_cut + "_VETO";
 
@@ -120,6 +146,7 @@ get_histogram_set(
                 TDirectory* sys_dir = (TDirectory*) sample_dir->Get(directory);
                 TH1D* h_tmp = (TH1D*) sys_dir->Get(tagged_histogram_name)->Clone();
                 h_tmp->Smooth(nsmooth);
+                h_tmp->Rebin(rebin);
                 if (h_tmp == nullptr) throw;
                 return h_tmp;
             };
@@ -144,10 +171,10 @@ get_histogram_set(
             histo_set->signal_unmatched_fail    = load_dijet_histo("pythia_dijet", failed_jss_cut);
             histo_set->signal_unmatched_fail_mw = load_dijet_histo("pythia_dijet", failed_jss_mass_cut);
 
-            histo_set->signal_unmatched_pass->Scale(0.6);
-            histo_set->signal_unmatched_pass_mw->Scale(0.6);
-            histo_set->signal_unmatched_fail->Scale(0.6);
-            histo_set->signal_unmatched_fail_mw->Scale(0.6);
+            histo_set->signal_unmatched_pass->Scale(0.5);
+            histo_set->signal_unmatched_pass_mw->Scale(0.5);
+            histo_set->signal_unmatched_fail->Scale(0.5);
+            histo_set->signal_unmatched_fail_mw->Scale(0.5);
 
             const vector<string> non_signal_samples = { "pythia_zjets" , "ttbar_allhad" };
             for (auto const& sample_str : non_signal_samples)
@@ -694,7 +721,7 @@ void FitScaleFactorSystematics(void) {
 
     const Channel CHANNEL = Channel::Dijet;
 
-    const TString OUTPUT_DIR = "/home/zmeadows/ana/TopBosonTagBackground/DataMCbackground/fitting/08012016/";
+    const TString OUTPUT_DIR = "/home/zmeadows/ana/TopBosonTagBackground/DataMCbackground/FittingSigBkg/output/08012016/";
     gSystem->MakeDirectory(OUTPUT_DIR);
 
     vector<TString> directories = { "nominal" };
@@ -704,10 +731,10 @@ void FitScaleFactorSystematics(void) {
 
     const vector<Tagger> TAGGERS_TO_USE = { Tagger::SmoothD2 };
 
-    const int REBIN_AMOUNT      = 5;
+    const int REBIN_AMOUNT      = 4;
     const int SMOOTH_AMOUNT     = 1;
-    const float MASS_LOW_BOUND  = 50.;
-    const float MASS_HIGH_BOUND = 250.;
+    const float MASS_LOW_BOUND  = 0.;
+    const float MASS_HIGH_BOUND = 300.;
 
     /************************/
     /* END MACRO PARAMETERS */
@@ -717,12 +744,11 @@ void FitScaleFactorSystematics(void) {
 
     for (auto const TAGGER : TAGGERS_TO_USE) {
         for (auto const DIRECTORY : directories) {
-            HistoFitSet* histo_set = get_histogram_set(INPUT_FILE, CHANNEL, TAGGER, DIRECTORY, SMOOTH_AMOUNT);
+            HistoFitSet* histo_set = get_histogram_set(INPUT_FILE, CHANNEL, TAGGER, DIRECTORY, SMOOTH_AMOUNT, REBIN_AMOUNT);
 
             TString systtype = "DEF";
             TString vname = TAGGER_TO_TSTRING.at(TAGGER);
             TString ptBin = "500ex";
-
 
             label = "TESTTEST";
 
@@ -778,8 +804,8 @@ void FitScaleFactorSystematics(void) {
             //------ MC Efficiency ----
             const double passN       = histo_set->signal_matched_pass->Integral(LOW_MASS_BIN, HIGH_MASS_BIN);
             const double failN       = histo_set->signal_matched_fail->Integral(LOW_MASS_BIN, HIGH_MASS_BIN);
-            const double totBckgFail = histo_set->signal_unmatched_fail->Integral(LOW_MASS_BIN, HIGH_MASS_BIN);
-            const double totBckgPass = histo_set->signal_unmatched_pass->Integral(LOW_MASS_BIN, HIGH_MASS_BIN);
+            const double totBckgFail = histo_set->signal_unmatched_fail->Integral();
+            const double totBckgPass = histo_set->signal_unmatched_pass->Integral();
 
             const double dataPassN = histo_set->data_pass->Integral(LOW_MASS_BIN, HIGH_MASS_BIN);
             const double dataFailN = histo_set->data_fail->Integral(LOW_MASS_BIN, HIGH_MASS_BIN);
@@ -787,7 +813,7 @@ void FitScaleFactorSystematics(void) {
             // Now define some efficiency/yield variables
             RooRealVar* eff = new RooRealVar("eff","eff", 0.5, 0., 1. );
 
-            RooRealVar* numSignal   = new RooRealVar("numSignal"   , "numSignal"           , passN+failN     , 100.0           , 15000.0);
+            RooRealVar* numSignal   = new RooRealVar("numSignal"   , "numSignal"           , passN+failN     , 0.0           , 100000.0);
             RooFormulaVar* nSigPass = new RooFormulaVar("nSigPass" , "eff*numSignal"       , RooArgList(*eff , *numSignal));
             RooFormulaVar* nSigFail = new RooFormulaVar("nSigFail" , "(1.0-eff)*numSignal" , RooArgList(*eff , *numSignal));
 
@@ -867,8 +893,6 @@ void FitScaleFactorSystematics(void) {
             histo_set->signal_matched_pass_mw->Scale(scalesig);
             histo_set->signal_unmatched_pass->Scale(scalebkg);
             histo_set->signal_unmatched_pass_mw->Scale(scalebkg);
-
-            histo_set->signal_matched_pass->Draw("hist");
 
             label=("D2_SpectraPostFitpass_"+string(DIRECTORY)).c_str();
             DrawHistFitPlot(systtype, vname, ptBin,
