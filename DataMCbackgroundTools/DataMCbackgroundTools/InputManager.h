@@ -15,7 +15,7 @@ const struct InputPack EMPTY_INPUT_PACK = { {} , {} };
 
 class InputManager {
 public:
-    InputManager(const std::string input_list_filepath);
+    InputManager(const std::string input_filepath);
 
     virtual ~InputManager(void) { };
 
