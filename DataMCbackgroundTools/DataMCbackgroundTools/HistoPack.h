@@ -36,6 +36,8 @@ public:
     vector<unique_ptr<TH1Tagged>> h_rljet_RES_D2;
     vector<unique_ptr<TH1Tagged>> h_rljet_RES_Tau32_wta;
 
+    vector<unique_ptr<TH1Tagged>> h_rljet_pdgid;
+
     vector<unique_ptr<TH1Tagged>> h_rljet_Tau1_wta;
     vector<unique_ptr<TH1Tagged>> h_rljet_Tau2_wta;
     vector<unique_ptr<TH1Tagged>> h_rljet_Tau3_wta;
