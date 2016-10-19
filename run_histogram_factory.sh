@@ -1,16 +1,15 @@
 #!/bin/bash
 
-INPUT_FILEPATH=/home/zmeadows/ana/TopBosonTagBackground/DataMCbackground/plotting/raw/inputs/08012016_all_inputs.txt
-OUTPUT_FILEPATH=/home/zmeadows/ana/TopBosonTagBackground/DataMCbackground/plotting/raw/dijet/08012016_nominal_only.root
+INPUT_FILEPATH=/home/zmeadows/ana/TopBosonTagBackground/DataMCbackground/plotting/raw/inputs/09072016_all_inputs.txt
+OUTPUT_FILEPATH_ROOT=/home/zmeadows/ana/TopBosonTagBackground/DataMCbackground/plotting/raw/dijet
 DATA_TRIGGER=HLT_j420_a10r_L1J100
-EVENT_SELECTOR=NO_SELECTION
-LUMINOSITY=3.49756
-PROCESS_SYSTEMATICS=false
+LUMINOSITY=4.87734
 
-histogram-factory $INPUT_FILEPATH -o $OUTPUT_FILEPATH -t $DATA_TRIGGER -L $LUMINOSITY -E $EVENT_SELECTOR
+declare -a OUTPUT_FILEPATHS=('pT_GT450GeV' 'pT_GT500GeV')
+declare -a EVENT_SELECTORS=('DIJET_LOOSE' 'DIJET_TIGHT')
 
-#if [ $PROCESS_SYSTEMATICS ]; then
-#    histogram-factory $INPUT_FILEPATH -o $OUTPUT_FILEPATH -t $DATA_TRIGGER -L $LUMINOSITY -E $EVENT_SELECTOR -S
-#else
-#    histogram-factory $INPUT_FILEPATH -o $OUTPUT_FILEPATH -t $DATA_TRIGGER -L $LUMINOSITY -E $EVENT_SELECTOR
-#fi
+for ((i=0; i < ${#OUTPUT_FILEPATHS[@]}; i++))
+do
+    histogram-factory $INPUT_FILEPATH -o $OUTPUT_FILEPATH_ROOT/09072016_${OUTPUT_FILEPATHS[$i]}.nominal.root -t $DATA_TRIGGER -L $LUMINOSITY -E ${EVENT_SELECTORS[$i]}
+done
+
