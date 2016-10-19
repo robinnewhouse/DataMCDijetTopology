@@ -2,10 +2,10 @@ import pyAMI.client
 import pyAMI.atlas.api as api
 import json
 import sys
-from samples import samples_AOD
+from samples import samples_EVNT
 
-dmd_weights_file = open("sample_weights.txt", 'w')
-analysis_top_weights_file = open("sample_weights_ANALYSISTOP.txt", 'w')
+my_weights_file = open("sample_weights.txt", 'w')
+analysis_top_weights_file = open("sample_weights_AnalysisTopFormat.txt", 'w')
 
 # INIT ATLAS API
 api.init()
@@ -15,11 +15,11 @@ client = pyAMI.client.Client('atlas')
 
 fields = 'files.cross_section,files.gen_filt_eff,nfiles,files.events,dataset_number,generator_name'
 
-dmd_weights_file.write("# DSID NUM_EVENTS X_SECTION(fb) FILTER_EFFICIENCY GENERATOR\n")
+my_weights_file.write("# DSID NUM_EVENTS X_SECTION(fb) FILTER_EFFICIENCY GENERATOR\n")
 
 for sample_name, sample_files in samples_EVNT.iteritems():
 
-    dmd_weights_file.write("# " + sample_name + "\n")
+    my_weights_file.write("# " + sample_name + "\n")
     analysis_top_weights_file.write("# " + sample_name + "\n")
 
     print("# " + sample_name)
@@ -50,13 +50,13 @@ for sample_name, sample_files in samples_EVNT.iteritems():
             print "unrecognized cross section unit: ", res_dict[0]["crossSection_unit"]
             sys.exit(1)
 
-        dmd_weights_str = ' '.join([dsid, total_events, xsection_mean, filt_eff_mean, generator_name])
-        dmd_weights_file.write(dmd_weights_str + "\n")
-        print dmd_weights_str
+        my_weights_str = ' '.join([dsid, total_events, xsection_mean, filt_eff_mean, generator_name])
+        my_weights_file.write(my_weights_str + "\n")
+        print my_weights_str
 
         analysis_top_xsection_str = ' '.join([
             dsid, str(1e3 * float(xsection_mean) * float(filt_eff_mean)), "1.0", generator_name])
         analysis_top_weights_file.write(analysis_top_xsection_str + "\n")
 
-dmd_weights_file.close()
+my_weights_file.close()
 analysis_top_weights_file.close()
