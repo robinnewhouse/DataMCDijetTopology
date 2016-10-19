@@ -10,7 +10,7 @@
 #include "JetRec/JetRecTool.h"
 #include "JetCalibTools/JetCalibrationTool.h"
 #include "JetSubStructureUtils/BosonTag.h"
-#include "JetSubStructureUtils/JSSWTopTaggerBDT.h"
+//#include "JetSubStructureUtils/JSSWTopTaggerBDT.h"
 
 #include "DataMCbackgroundTools/TruthMatchTool.h"
 
@@ -18,29 +18,29 @@
 #include <utility>
 
 namespace top {
-	class DataMCbackgroundEventSaver : public top::EventSaverFlatNtuple {
+    class DataMCbackgroundEventSaver : public top::EventSaverFlatNtuple {
 
-	public:
-		// Default - so root can load based on a name
-		DataMCbackgroundEventSaver();
+    public:
+        // Default - so root can load based on a name
+        DataMCbackgroundEventSaver();
 
-		// Default - so we can clean up
-		~DataMCbackgroundEventSaver();
+        // Default - so we can clean up
+        ~DataMCbackgroundEventSaver();
 
-		// Run once at the start of the job
-		void initialize(std::shared_ptr<top::TopConfig> config, TFile* file,
+        // Run once at the start of the job
+        void initialize(std::shared_ptr<top::TopConfig> config, TFile* file,
                 const std::vector<std::string>& extraBranches);
 
         StatusCode initialize() {
             return StatusCode::SUCCESS;
         }
 
-		// Run for every event (in every systematic) that needs saving
-		void saveEvent(const top::Event& event);
+        // Run for every event (in every systematic) that needs saving
+        void saveEvent(const top::Event& event);
 
-	private:
-		// to load the AnalysisTop configuration
-		std::shared_ptr<top::TopConfig> m_config;
+    private:
+        // to load the AnalysisTop configuration
+        std::shared_ptr<top::TopConfig> m_config;
 
         // variables corresponding to DynamicKeys from AnalysisTop cuts file
         bool m_runHTT;
@@ -54,7 +54,7 @@ namespace top {
         /*********/
 
         std::unique_ptr<TruthMatchTool> m_truth_match_tool;
-        std::unique_ptr<JSSWTopTaggerBDT> m_bdt_tool;
+        // std::unique_ptr<JSSWTopTaggerBDT> m_bdt_tool;
 
         /***********/
         /* METHODS */
@@ -73,66 +73,68 @@ namespace top {
         void initializeSD(void);
         void runSDandFillTree(void);
 
-		void runHTTAndFillTree(void);
+        void runHTTAndFillTree(void);
 
         /***********/
         /* TAGGERS */
         /***********/
 
-		// simple/smoothed top taggers
-		SubstructureTopTagger *tagger_smoothMassTau32_50eff;
-		SubstructureTopTagger *tagger_smoothMassTau32_80eff;
-		SubstructureTopTagger *tagger_smoothMass_50eff;
-		SubstructureTopTagger *tagger_smoothMass_80eff;
-		SubstructureTopTagger *tagger_smoothTau32_50eff;
-		SubstructureTopTagger *tagger_smoothTau32_80eff;
+        // simple/smoothed top taggers
+        SubstructureTopTagger *tagger_smoothMassTau32_50eff;
+        SubstructureTopTagger *tagger_smoothMassTau32_80eff;
+        SubstructureTopTagger *tagger_smoothMass_50eff;
+        SubstructureTopTagger *tagger_smoothMass_80eff;
+        SubstructureTopTagger *tagger_smoothTau32_50eff;
+        SubstructureTopTagger *tagger_smoothTau32_80eff;
 
-		// simple/smoothed W taggers
+        // simple/smoothed W taggers
         std::unique_ptr<JetSubStructureUtils::BosonTag> wTagger_smooth_50eff;
-		std::unique_ptr<JetSubStructureUtils::BosonTag> wTagger_smooth_25eff;
+        std::unique_ptr<JetSubStructureUtils::BosonTag> wTagger_smooth_25eff;
 
-		// simple/smoothed Z taggers
-		std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger_smooth_50eff;
-		std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger_smooth_25eff;
+        // simple/smoothed Z taggers
+        std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger_smooth_50eff;
+        std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger_smooth_25eff;
 
         // Shower Deconstruction (SD)
         std::unique_ptr<ShowerDeconstruction> tagger_SDw_win20_btag0;
         std::unique_ptr<ShowerDeconstruction> tagger_SDz_win20_btag0;
         std::unique_ptr<ShowerDeconstruction> tagger_SDt_win50_btag0;
 
-		// CA2 Subjet calibration tool
+        // CA2 Subjet calibration tool
         std::unique_ptr<JetCalibrationTool> m_jet_calib_tool;
 
         // HEPTopTagger
-		int m_nHttTools;
-		std::string m_httJetContainerPrefix;
-		std::vector<std::string> m_httConfigs;
+        int m_nHttTools;
+        std::string m_httJetContainerPrefix;
+        std::vector<std::string> m_httConfigs;
         std::unique_ptr<JetRecTool> m_httTool;
 
         /*************************/
         /* LARGE-R JET VARIABLES */
         /*************************/
 
-		// reco large leading jets
+        // reco large leading jets
         int m_rljet_count;
         std::vector<float> m_rljet_pt;
-		std::vector<float> m_rljet_eta;
-		std::vector<float> m_rljet_phi;
+        std::vector<float> m_rljet_eta;
+        std::vector<float> m_rljet_phi;
         std::vector<float> m_rljet_m;
 
         // dijet mass = mass(leading + subleading)
         float m_rljet_mjj;
 
-        // pt asymmetry (pt1 - pt2) / (pt1 + pt2)
+        // lead vs. sub-lead jet variables
         float m_rljet_ptasym;
-        float m_rljet_dy;
+        float m_rljet_dy; // rapidity
         float m_rljet_dR;
+        float m_rljet_dphi;
+        float m_rljet_deta; // pseudorapidity
 
         // track assisted masses
         std::vector<float> m_rljet_m_ta;
         std::vector<float> m_rljet_m_ta_nocalib;
 
-		// substructure variables
+        // substructure variables
         std::vector<float> m_rljet_Tau1_wta;
         std::vector<float> m_rljet_Tau2_wta;
         std::vector<float> m_rljet_Tau3_wta;
@@ -158,14 +160,14 @@ namespace top {
         std::vector<float> m_rljet_ThrustMin;
         std::vector<float> m_rljet_ZCut12;
 
-		std::vector<int> m_rljet_NTrimSubjets;
-		std::vector<int> m_rljet_ungroomed_ntrk500;
+        std::vector<int> m_rljet_NTrimSubjets;
+        std::vector<int> m_rljet_ungroomed_ntrk500;
 
-		// matched truth jets
+        // matched truth jets
         int m_tljet_count;
-		std::vector<float> m_tljet_pt;
-		std::vector<float> m_tljet_eta;
-		std::vector<float> m_tljet_phi;
+        std::vector<float> m_tljet_pt;
+        std::vector<float> m_tljet_eta;
+        std::vector<float> m_tljet_phi;
         std::vector<float> m_tljet_m;
         std::vector<float> m_tljet_dR;
         std::vector<float> m_tljet_D2;
@@ -217,28 +219,28 @@ namespace top {
         std::vector<std::vector<float>> m_htt_pts3;
 
         /********************/
-		/* TAGGER VARIABLES */
+        /* TAGGER VARIABLES */
         /********************/
 
-		// prerec top tags (reco)
+        // prerec top tags (reco)
         std::vector<bool> m_rljet_smoothMassTag50eff;
         std::vector<bool> m_rljet_smoothMassTag80eff;
-		std::vector<bool> m_rljet_smoothTau32Tag50eff;
-		std::vector<bool> m_rljet_smoothTau32Tag80eff;
-		std::vector<bool> m_rljet_smoothMassTau32Tag50eff;
-		std::vector<bool> m_rljet_smoothMassTau32Tag80eff;
+        std::vector<bool> m_rljet_smoothTau32Tag50eff;
+        std::vector<bool> m_rljet_smoothTau32Tag80eff;
+        std::vector<bool> m_rljet_smoothMassTau32Tag50eff;
+        std::vector<bool> m_rljet_smoothMassTau32Tag80eff;
 
-		// prerec W tags (reco)
+        // prerec W tags (reco)
         std::vector<int> m_rljet_smoothWTag50eff;
-		std::vector<int> m_rljet_smoothWTag25eff;
+        std::vector<int> m_rljet_smoothWTag25eff;
 
         // prerec Z tags (reco)
         std::vector<int> m_rljet_smoothZTag50eff;
-		std::vector<int> m_rljet_smoothZTag25eff;
+        std::vector<int> m_rljet_smoothZTag25eff;
 
         // BDT
-        std::vector<float> m_rljet_BDT_Top_Score;
-        std::vector<float> m_rljet_BDT_W_Score;
+        // std::vector<float> m_rljet_BDT_Top_Score;
+        // std::vector<float> m_rljet_BDT_W_Score;
 
         // Shower Deconstruction tags
         std::vector<double> m_rljet_SDw_win20_btag0;
@@ -255,12 +257,12 @@ namespace top {
         std::vector<double> m_rljet_SDt_win50_btag0_DOWN;
 
         // b-tagging
-        std::vector<bool> m_rljet_btag_double;
-        std::vector<bool> m_rljet_btag_single;
-        std::vector<bool> m_rljet_btag_leading_pt;
+        // std::vector<bool> m_rljet_btag_double;
+        // std::vector<bool> m_rljet_btag_single;
+        // std::vector<bool> m_rljet_btag_leading_pt;
 
-		ClassDef(top::DataMCbackgroundEventSaver, 0);
-	};
+        ClassDef(top::DataMCbackgroundEventSaver, 0);
+    };
 }
 
 #endif

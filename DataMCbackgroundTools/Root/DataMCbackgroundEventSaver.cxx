@@ -2,6 +2,7 @@
 #include "DataMCbackgroundTools/LocalTools.h"
 
 #include <xAODJet/JetAuxContainer.h>
+#include <xAODCaloEvent/CaloClusterContainer.h>
 
 #include "AthContainers/AuxTypeRegistry.h"
 #include "BoostedJetTaggers/configHTT_Run2perf.h"
@@ -9,7 +10,6 @@
 #include "TopAnalysis/EventSaverFlatNtuple.h"
 #include "TopConfiguration/ConfigurationSettings.h"
 #include "TopConfiguration/TopConfig.h"
-#include "TopEvent/Event.h"
 #include "TopEvent/Event.h"
 #include "TopEvent/EventTools.h"
 #include "TopEventSelectionTools/TreeManager.h"
@@ -32,11 +32,11 @@ namespace top {
 
 DataMCbackgroundEventSaver::DataMCbackgroundEventSaver(void)
 {
-	top::ConfigurationSettings* config_settings = top::ConfigurationSettings::get();
+    top::ConfigurationSettings* config_settings = top::ConfigurationSettings::get();
 
-    /******************************/
-    /* CUSTOM CUTS FILE VARIABLES */
-    /******************************/
+    /*************************************************/
+    /* CUSTOM ANALYSISTOP CONFIG/CUTS FILE VARIABLES */
+    /*************************************************/
 
     // read in HTT configurations from cuts file
     try {
@@ -69,15 +69,15 @@ DataMCbackgroundEventSaver::DataMCbackgroundEventSaver(void)
     }
 
     // configuration switch for HTT
-	m_runHTT = false;
-	try {
-		std::string HTTswitchString = config_settings->value("RunHTT");
-		if(HTTswitchString.compare("True") == 0)
-			m_runHTT = true;
-	} catch (...) {
-		std::cout << "Not running HTT because option not set..." << std::endl;
-		std::cout << "add 'RunHTT True' to cuts file to enable." << std::endl;
-	}
+    m_runHTT = false;
+    try {
+        std::string HTTswitchString = config_settings->value("RunHTT");
+        if(HTTswitchString.compare("True") == 0)
+            m_runHTT = true;
+    } catch (...) {
+        std::cout << "Not running HTT because option not set..." << std::endl;
+        std::cout << "add 'RunHTT True' to cuts file to enable." << std::endl;
+    }
 
     if (m_nHttTools != 0 && m_runHTT) {
         m_httTool = std::unique_ptr<JetRecTool>(buildFullHTTagger("",
@@ -85,15 +85,15 @@ DataMCbackgroundEventSaver::DataMCbackgroundEventSaver(void)
     }
 
     // configuration switch for shower deconstruction tagging
-	m_runSD = false;
-	try {
-		std::string SDswitchString = config_settings->value("RunShowerDeconstruction");
-		if(SDswitchString.compare("True") == 0)
-			m_runSD = true;
-	} catch (...) {
-		std::cout << "Not running Shower Deconstruction because option not set..." << std::endl;
-		std::cout << "add 'RunShowerDeconstruction True' to cuts file to enable." << std::endl;
-	}
+    m_runSD = false;
+    try {
+        std::string SDswitchString = config_settings->value("RunShowerDeconstruction");
+        if(SDswitchString.compare("True") == 0)
+            m_runSD = true;
+    } catch (...) {
+        std::cout << "Not running Shower Deconstruction because option not set..." << std::endl;
+        std::cout << "add 'RunShowerDeconstruction True' to cuts file to enable." << std::endl;
+    }
 
     // configuration switch for track-assisted mass
     m_saveTAmass = false;
@@ -103,7 +103,7 @@ DataMCbackgroundEventSaver::DataMCbackgroundEventSaver(void)
             m_saveTAmass = true;
     } catch (...) {
         std::cout << "WARNING: Not saving track-assisted mass (option not set)" << std::endl;
-		std::cout << "add 'SaveTrackAssistedMass True' to cuts file to enable." << std::endl;
+        std::cout << "add 'SaveTrackAssistedMass True' to cuts file to enable." << std::endl;
     }
 
     m_num_fatjets_keep = 1;
@@ -120,7 +120,7 @@ DataMCbackgroundEventSaver::DataMCbackgroundEventSaver(void)
         }
     } catch (...) {
         std::cout << "Defaulting to saving only the leading pT large R jet" << std::endl;
-		std::cout << "add 'NumFatjetsKeep X', where X = 1,2,3,..., to cuts file to enable." << std::endl;
+        std::cout << "add 'NumFatjetsKeep X', where X = 1,2,3,..., to cuts file to enable." << std::endl;
     }
 
     m_debug_level = 0;
@@ -143,9 +143,9 @@ DataMCbackgroundEventSaver::~DataMCbackgroundEventSaver(void) {}
 
 void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> config, TFile* file,const std::vector<std::string>& extraBranches)
 {
-	EventSaverFlatNtuple::initialize(config, file, extraBranches);
+    EventSaverFlatNtuple::initialize(config, file, extraBranches);
 
-	m_config = config;
+    m_config = config;
 
     for(auto systematicTree : treeManagers()) {
 
@@ -197,6 +197,8 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
             systematicTree->makeOutputVariable(m_rljet_ptasym       , "rljet_ptasym");
             systematicTree->makeOutputVariable(m_rljet_dy           , "rljet_dy");
             systematicTree->makeOutputVariable(m_rljet_dR           , "rljet_dR");
+            systematicTree->makeOutputVariable(m_rljet_dphi         , "rljet_dphi");
+            systematicTree->makeOutputVariable(m_rljet_deta         , "rljet_deta");
             systematicTree->makeOutputVariable(m_rljet_m_ta         , "rljet_m_ta");
             systematicTree->makeOutputVariable(m_rljet_m_ta_nocalib , "rljet_m_ta_nocalib");
 
@@ -308,40 +310,40 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
             systematicTree->makeOutputVariable(m_rljet_SDt_win50_btag0_DOWN, "rljet_SDt_win50_btag0_DOWN");
 
             // b-tagging output variables
-            systematicTree->makeOutputVariable(m_rljet_btag_double     , "rljet_btag_double");
-            systematicTree->makeOutputVariable(m_rljet_btag_single     , "rljet_btag_single");
-            systematicTree->makeOutputVariable(m_rljet_btag_leading_pt , "rljet_btag_leading_pt");
+            // systematicTree->makeOutputVariable(m_rljet_btag_double     , "rljet_btag_double");
+            // systematicTree->makeOutputVariable(m_rljet_btag_single     , "rljet_btag_single");
+            // systematicTree->makeOutputVariable(m_rljet_btag_leading_pt , "rljet_btag_leading_pt");
 
             // BDT tagger output variables
-            systematicTree->makeOutputVariable(m_rljet_BDT_Top_Score , "rljet_BDT_Top_Score");
-            systematicTree->makeOutputVariable(m_rljet_BDT_W_Score   , "rljet_BDT_W_Score");
+            // systematicTree->makeOutputVariable(m_rljet_BDT_Top_Score , "rljet_BDT_Top_Score");
+            // systematicTree->makeOutputVariable(m_rljet_BDT_W_Score   , "rljet_BDT_W_Score");
         } // end making nominal branch only output variables
     } // end making all output variables
 
     /************************/
-	/* SUBSTRUCTURE TAGGERS */
+    /* SUBSTRUCTURE TAGGERS */
     /************************/
 
-	if (m_runSD) this->initializeSD();
+    if (m_runSD) this->initializeSD();
 
-	// smooth top taggers
-	tagger_smoothMassTau32_50eff = STTHelpers::configSubstTagger("SmoothCut50eff", "SmoothCut_50");
-	tagger_smoothMassTau32_80eff = STTHelpers::configSubstTagger("SmoothCut80eff", "SmoothCut_80");
-	tagger_smoothMass_50eff      = STTHelpers::configSubstTagger("SmoothMassCutOnly50eff", std::vector<std::string>{"SmoothMassCut_50"});
-	tagger_smoothMass_80eff      = STTHelpers::configSubstTagger("SmoothMassCutOnly80eff", std::vector<std::string>{"SmoothMassCut_80"});
-	tagger_smoothTau32_50eff     = STTHelpers::configSubstTagger("SmoothTau32CutOnly50eff", std::vector<std::string>{"SmoothTau32Cut_50"});
-	tagger_smoothTau32_80eff     = STTHelpers::configSubstTagger("SmoothTau32CutOnly80eff", std::vector<std::string>{"SmoothTau32Cut_80"});
+    // smooth top taggers
+    tagger_smoothMassTau32_50eff = STTHelpers::configSubstTagger("SmoothCut50eff", "SmoothCut_50");
+    tagger_smoothMassTau32_80eff = STTHelpers::configSubstTagger("SmoothCut80eff", "SmoothCut_80");
+    tagger_smoothMass_50eff      = STTHelpers::configSubstTagger("SmoothMassCutOnly50eff", std::vector<std::string>{"SmoothMassCut_50"});
+    tagger_smoothMass_80eff      = STTHelpers::configSubstTagger("SmoothMassCutOnly80eff", std::vector<std::string>{"SmoothMassCut_80"});
+    tagger_smoothTau32_50eff     = STTHelpers::configSubstTagger("SmoothTau32CutOnly50eff", std::vector<std::string>{"SmoothTau32Cut_50"});
+    tagger_smoothTau32_80eff     = STTHelpers::configSubstTagger("SmoothTau32CutOnly80eff", std::vector<std::string>{"SmoothTau32Cut_80"});
 
-	// smooth W taggers
-	wTagger_smooth_50eff = make_unique<JetSubStructureUtils::BosonTag>("medium", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Wtagging_MC15_Prerecommendations_20150809.dat", false, false);
-	wTagger_smooth_25eff = make_unique<JetSubStructureUtils::BosonTag>("tight", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Wtagging_MC15_Prerecommendations_20150809.dat", false, false);
+    // smooth W taggers
+    wTagger_smooth_50eff = make_unique<JetSubStructureUtils::BosonTag>("medium", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Wtagging_MC15_Prerecommendations_20150809.dat", false, false);
+    wTagger_smooth_25eff = make_unique<JetSubStructureUtils::BosonTag>("tight", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Wtagging_MC15_Prerecommendations_20150809.dat", false, false);
 
     // smooth Z taggers
-	zTagger_smooth_50eff = make_unique<JetSubStructureUtils::BosonTag>("medium", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Ztagging_MC15_Prerecommendations_20150809.dat", false, false);
-	zTagger_smooth_25eff = make_unique<JetSubStructureUtils::BosonTag>("tight", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Ztagging_MC15_Prerecommendations_20150809.dat", false, false);
+    zTagger_smooth_50eff = make_unique<JetSubStructureUtils::BosonTag>("medium", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Ztagging_MC15_Prerecommendations_20150809.dat", false, false);
+    zTagger_smooth_25eff = make_unique<JetSubStructureUtils::BosonTag>("tight", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Ztagging_MC15_Prerecommendations_20150809.dat", false, false);
 
-    m_bdt_tool = std::unique_ptr<JSSWTopTaggerBDT>( new JSSWTopTaggerBDT(true,true,"NvarM") );
-    m_bdt_tool->initialize();
+    // m_bdt_tool = std::unique_ptr<JSSWTopTaggerBDT>( new JSSWTopTaggerBDT(true,true,"NvarM") );
+    // m_bdt_tool->initialize();
 
     m_truth_match_tool = make_unique<TruthMatchTool>();
 }
@@ -420,23 +422,23 @@ DataMCbackgroundEventSaver::initializeSD(void)
 void
 DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
 {
-	m_rljet_pt  . assign(m_num_fatjets_keep, -1000.);
-	m_rljet_eta . assign(m_num_fatjets_keep, -1000.);
-	m_rljet_phi . assign(m_num_fatjets_keep, -1000.);
-	m_rljet_m   . assign(m_num_fatjets_keep, -1000.);
+    m_rljet_pt  . assign(m_num_fatjets_keep, -1000.);
+    m_rljet_eta . assign(m_num_fatjets_keep, -1000.);
+    m_rljet_phi . assign(m_num_fatjets_keep, -1000.);
+    m_rljet_m   . assign(m_num_fatjets_keep, -1000.);
 
-	m_rljet_D2        . assign(m_num_fatjets_keep, -1000. );
-	m_rljet_Tau32_wta . assign(m_num_fatjets_keep, -1000. );
+    m_rljet_D2        . assign(m_num_fatjets_keep, -1000. );
+    m_rljet_Tau32_wta . assign(m_num_fatjets_keep, -1000. );
 
-	m_rljet_smoothMassTag50eff      . assign(m_num_fatjets_keep, false);
-	m_rljet_smoothMassTag80eff      . assign(m_num_fatjets_keep, false);
-	m_rljet_smoothTau32Tag50eff     . assign(m_num_fatjets_keep, false);
-	m_rljet_smoothTau32Tag80eff     . assign(m_num_fatjets_keep, false);
-	m_rljet_smoothMassTau32Tag50eff . assign(m_num_fatjets_keep, false);
-	m_rljet_smoothMassTau32Tag80eff . assign(m_num_fatjets_keep, false);
+    m_rljet_smoothMassTag50eff      . assign(m_num_fatjets_keep, false);
+    m_rljet_smoothMassTag80eff      . assign(m_num_fatjets_keep, false);
+    m_rljet_smoothTau32Tag50eff     . assign(m_num_fatjets_keep, false);
+    m_rljet_smoothTau32Tag80eff     . assign(m_num_fatjets_keep, false);
+    m_rljet_smoothMassTau32Tag50eff . assign(m_num_fatjets_keep, false);
+    m_rljet_smoothMassTau32Tag80eff . assign(m_num_fatjets_keep, false);
 
-	m_rljet_smoothWTag50eff . assign(m_num_fatjets_keep, 0);
-	m_rljet_smoothWTag25eff . assign(m_num_fatjets_keep, 0);
+    m_rljet_smoothWTag50eff . assign(m_num_fatjets_keep, 0);
+    m_rljet_smoothWTag25eff . assign(m_num_fatjets_keep, 0);
 
     m_rljet_smoothZTag50eff . assign(m_num_fatjets_keep, 0);
     m_rljet_smoothZTag25eff . assign(m_num_fatjets_keep, 0);
@@ -453,6 +455,8 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
         m_rljet_ptasym = -1000.;
         m_rljet_dy     = -1000.;
         m_rljet_dR     = -1000.;
+        m_rljet_dphi     = -1000.;
+        m_rljet_deta     = -1000.;
 
         if (m_saveTAmass) {
             m_rljet_m_ta         . assign(m_num_fatjets_keep, -1000.);
@@ -496,12 +500,12 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
             m_tljet_D2        . assign(m_num_fatjets_keep, -1000. );
         }
 
-        m_rljet_btag_double     . assign(m_num_fatjets_keep, false);
-        m_rljet_btag_single     . assign(m_num_fatjets_keep, false);
-        m_rljet_btag_leading_pt . assign(m_num_fatjets_keep, false);
+        // m_rljet_btag_double     . assign(m_num_fatjets_keep, false);
+        // m_rljet_btag_single     . assign(m_num_fatjets_keep, false);
+        // m_rljet_btag_leading_pt . assign(m_num_fatjets_keep, false);
 
-        m_rljet_BDT_Top_Score . assign(m_num_fatjets_keep, -1000. );
-        m_rljet_BDT_W_Score   . assign(m_num_fatjets_keep, -1000. );
+        // m_rljet_BDT_Top_Score . assign(m_num_fatjets_keep, -1000. );
+        // m_rljet_BDT_W_Score   . assign(m_num_fatjets_keep, -1000. );
 
         m_hltjet_pt  . assign(m_num_fatjets_keep, -1000. );
         m_hltjet_eta . assign(m_num_fatjets_keep, -1000. );
@@ -572,10 +576,7 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
     const bool on_nominal_branch = event.m_hashValue == m_config->nominalHashValue();
     this->reset_containers(on_nominal_branch);
 
-    const xAOD::JetContainer* reco_large_jets = nullptr;
-
-    top::check(evtStore()->retrieve(reco_large_jets,
-                m_config->sgKeyLargeRJets()), "FAILURE" );
+    xAOD::JetContainer rljets = sort_container_pt(&event.m_largeJets);
 
     if(m_config->isMC()) {
         const xAOD::JetContainer* truth_large_jets = nullptr;
@@ -587,19 +588,8 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
         top::check( evtStore()->retrieve(truth_particles,
                     m_config->sgKeyMCParticle()), "FAILURE" );
 
-        m_truth_match_tool->execute(
-                reco_large_jets,
-                truth_large_jets,
-                truth_particles
-                );
+        m_truth_match_tool->execute(&rljets, truth_large_jets, truth_particles);
     }
-
-    // make a pt-sorted copy of the large-R jet container
-    const xAOD::JetContainer rljets = sort_container_pt(reco_large_jets);
-
-    // const xAOD::PhotonContainer* photons = nullptr;
-    // top::check( evtStore()->retrieve(photons, m_config->sgKeyPhotons()), "FAILURE" );
-    // std::cout << "NUM PHOTONS: " << photons->size();
 
     for (unsigned i = 0; i < m_num_fatjets_keep && i < rljets.size(); i++) {
 
@@ -809,24 +799,21 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
             } // end of saving trigger jet variables
 
             // BDT
-            m_rljet_BDT_Top_Score[i] = m_bdt_tool->score(*rljets[i], "toptag");
-            m_rljet_BDT_W_Score[i] = m_bdt_tool->score(*rljets[i], "wtag");
+            // m_rljet_BDT_Top_Score[i] = m_bdt_tool->score(*rljets[i], "toptag");
+            // m_rljet_BDT_W_Score[i] = m_bdt_tool->score(*rljets[i], "wtag");
 
             /*************/
             /* B-TAGGING */
             /*************/
 
-            double rljet_btag0, rljet_btag1;
-            this->get_trackjet_btags(rljets[i], rljet_btag0, rljet_btag1);
+            // double rljet_btag0, rljet_btag1;
+            // this->get_trackjet_btags(rljets[i], rljet_btag0, rljet_btag1);
 
-            const double BTAG_CUT = 0.6455;
+            // const double BTAG_CUT = 0.6455;
 
-            m_rljet_btag_double[i]     = rljet_btag0 > BTAG_CUT && rljet_btag1 > BTAG_CUT;
-            m_rljet_btag_single[i]     = rljet_btag0 > BTAG_CUT || rljet_btag1 > BTAG_CUT;
-            m_rljet_btag_leading_pt[i] = rljet_btag0 > BTAG_CUT;
-
-
-
+            // m_rljet_btag_double[i]     = rljet_btag0 > BTAG_CUT && rljet_btag1 > BTAG_CUT;
+            // m_rljet_btag_single[i]     = rljet_btag0 > BTAG_CUT || rljet_btag1 > BTAG_CUT;
+            // m_rljet_btag_leading_pt[i] = rljet_btag0 > BTAG_CUT;
         } // end of saving nominal branch large-R jet variables
     } // end of saving individual large-R jet variables
 
@@ -840,6 +827,8 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
         m_rljet_ptasym = ( rljets[0]->pt() - rljets[1]->pt() ) / ( rljets[0]->pt() + rljets[1]->pt() );
         m_rljet_dy = rljets[0]->rapidity() - rljets[1]->rapidity();
         m_rljet_dR = top::deltaR(*rljets[0], *rljets[1]);
+        m_rljet_dphi = rljets[0]->phi() - rljets[1]->phi();
+        m_rljet_deta = rljets[0]->eta() - rljets[1]->eta();
     }
 
     if (m_runHTT && !event.m_isLoose && on_nominal_branch)
@@ -853,6 +842,10 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
 }
 
 void DataMCbackgroundEventSaver::runHTTAndFillTree(void) {
+    const xAOD::CaloClusterContainer *caloCalClusters = nullptr;
+    top::check(evtStore()->retrieve(caloCalClusters, "CaloCalTopoClusters"), "FAILURE");
+    fakeClusterEMScale(caloCalClusters); // a little hack for filling in the missing (unused) rawM variable
+
     if(! evtStore()->contains<xAOD::JetContainer>(m_httJetContainerPrefix)) {
         m_httTool->execute(); // produce a CA15 HTT container for the event
     }
@@ -1106,3 +1099,4 @@ DataMCbackgroundEventSaver::get_trackjet_btags(const xAOD::Jet* jet,
 }
 
 }
+
