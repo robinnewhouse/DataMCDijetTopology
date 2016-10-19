@@ -229,52 +229,52 @@ def make_htt_pt_efficiency_plot(rejection = True, **kwargs):
 
 breakdown_plots = [
         make_pt_efficiency_plot(
-            "w_prerec_50eff_d2masscut",
+            "w_prerec_50eff_D2masscut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth D_{2}-Tagged", "#epsilon_{sig} = 50%" ],
             y_max = 150
             ),
 
         make_pt_efficiency_plot(
-            "w_prerec_25eff_d2masscut",
+            "w_prerec_25eff_D2masscut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth D_{2}-Tagged", "#epsilon_{sig} = 25%" ],
             y_max = 600
             ),
 
         make_pt_efficiency_plot(
-            "t_prerec_50eff_tau32masscut",
+            "t_prerec_50eff_Tau32masscut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth #tau_{32}-Tagged", "#epsilon_{sig} = 50%" ],
             y_max = 35
             ),
 
         make_pt_efficiency_plot(
-            "t_prerec_80eff_tau32masscut",
+            "t_prerec_80eff_Tau32masscut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth #tau_{32}-Tagged", "#epsilon_{sig} = 80%" ],
             y_max = 10
             ),
 
         make_pt_efficiency_plot(
-            "w_prerec_50eff_d2masscut",
+            "w_prerec_50eff_D2masscut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth D_{2}-Tagged", "#epsilon_{sig} = 50%" ],
             rejection = False,
             y_max = 0.1
             ),
 
         make_pt_efficiency_plot(
-            "w_prerec_25eff_d2masscut",
+            "w_prerec_25eff_D2masscut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth D_{2}-Tagged", "#epsilon_{sig} = 25%" ],
             rejection = False,
             y_max = 0.015
             ),
 
         make_pt_efficiency_plot(
-            "t_prerec_50eff_tau32masscut",
+            "t_prerec_50eff_Tau32masscut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth #tau_{32}-Tagged", "#epsilon_{sig} = 50%" ],
             rejection = False,
             y_max = 0.3
             ),
 
         make_pt_efficiency_plot(
-            "t_prerec_80eff_tau32masscut",
+            "t_prerec_80eff_Tau32masscut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth #tau_{32}-Tagged", "#epsilon_{sig} = 80%" ],
             rejection = False,
             y_max = 0.5
