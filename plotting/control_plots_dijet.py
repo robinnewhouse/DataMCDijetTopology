@@ -29,8 +29,10 @@ make_dir(OUTPUT_DIR)
 
 LOG_FILE = open(OUTPUT_DIR + "/control_plots.log", 'w')
 
-#SYSTEMATICS = SYSTEMATICS_MC15C_MEDIUM_SUBSTRUCTURE + SYSTEMATICS_MC15C_MEDIUM_KINEMATIC
-SYSTEMATICS = [ ]
+SYSTEMATICS = SYSTEMATICS_MC15C_MEDIUM_SUBSTRUCTURE + SYSTEMATICS_MC15C_MEDIUM_KINEMATIC
+#SYSTEMATICS = [ ]
+
+print SYSTEMATICS
 
 class PlotDataPythiaHerwig(PlotBase):
     def __init__(self, var_name, is_htt = False, plot_systematics = True, **kwargs):
@@ -39,7 +41,7 @@ class PlotDataPythiaHerwig(PlotBase):
             plot_systematics = False
 
         super(PlotDataPythiaHerwig, self).__init__(
-                lumi_val = "3.5",
+                lumi_val = "4.9",
                 width = 600,
                 name = var_name,
                 atlas_mod = "Internal",
@@ -316,7 +318,6 @@ class PlotDataPythiaHerwig(PlotBase):
         self.h_pythia_net.Add(self.h_zjets)
         self.h_pythia_net.Add(self.h_ttbar)
 
-
         self.h_pythia_net.SetFillStyle(3005)
         self.h_pythia_net.SetFillColor(1)
 
@@ -379,7 +380,7 @@ class PlotDataPythiaHerwig(PlotBase):
 
 DEF_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", "Dijet Selection" ]
 
-MASS_PLOT_REBIN = 4
+MASS_PLOT_REBIN = 8
 
 data_mc_plots = [
         PlotDataPythiaHerwig("h_rljet0_m",
@@ -399,6 +400,7 @@ data_mc_plots = [
 
         PlotDataPythiaHerwig("h_rljet0_phi",
             empty_scale = 1.7,
+            rebin = 4,
             extra_legend_lines = DEF_LINES
             ),
 
@@ -406,40 +408,36 @@ data_mc_plots = [
             empty_scale = 1.7,
             extra_legend_lines = DEF_LINES,
             log_scale = True,
-            x_min = 500,
-            x_max = 3000
+            x_min = 450,
+            rebin = 4,
             ),
 
-        #PlotDataPythiaHerwig("h_rljet0_area",
-        #    empty_scale = 1.9,
-        #    x_units = "",
-        #    x_max = 1.5,
-        #    plot_systematics = False
-        #    ),
-
-        PlotDataPythiaHerwig("h_rljet0_ecf1",
+        PlotDataPythiaHerwig("h_rljet0_ECF1",
             empty_scale = 1.9,
             x_units = "",
             x_min = 0.5,
             y_min = 0.01,
+            log_scale = True,
             plot_systematics = False
             ),
 
-        PlotDataPythiaHerwig("h_rljet0_ecf2",
+        PlotDataPythiaHerwig("h_rljet0_ECF2",
             empty_scale = 1.9,
             x_units = "",
             rebin = 2,
+            log_scale = True,
             plot_systematics = False
             ),
 
-        PlotDataPythiaHerwig("h_rljet0_ecf3",
+        PlotDataPythiaHerwig("h_rljet0_ECF3",
             empty_scale = 1.9,
             x_units = "",
             rebin = 2,
+            log_scale = True,
             plot_systematics = False
             ),
 
-        PlotDataPythiaHerwig("h_rljet0_ntrimsubjets",
+        PlotDataPythiaHerwig("h_rljet0_NTrimSubjets",
             empty_scale = 1.4,
             x_units = "",
             x_max = 10,
@@ -447,94 +445,124 @@ data_mc_plots = [
             plot_systematics = False
             ),
 
-        PlotDataPythiaHerwig("h_rljet0_width",
+        PlotDataPythiaHerwig("h_rljet0_Split12",
             empty_scale = 1.9,
             x_units = "",
-            x_max = 0.5,
+            log_scale = True,
+            x_max = 0.8e3,
             plot_systematics = False
             ),
 
-        PlotDataPythiaHerwig("h_rljet0_split12",
+        PlotDataPythiaHerwig("h_rljet0_Split23",
             empty_scale = 1.9,
             x_units = "",
+            log_scale = True,
+            x_max = 300e3,
             plot_systematics = False
             ),
 
-        PlotDataPythiaHerwig("h_rljet0_split23",
-            empty_scale = 1.9,
-            x_units = "",
-            plot_systematics = False
-            ),
-
-        PlotDataPythiaHerwig("h_rljet0_split34",
+        PlotDataPythiaHerwig("h_rljet0_Split34",
             empty_scale = 1.9,
             x_units = "",
             plot_systematics = False
             ),
 
-        PlotDataPythiaHerwig("h_rljet0_tau1",
+        PlotDataPythiaHerwig("h_rljet0_Tau1_wta",
             empty_scale = 1.5,
             x_units = "",
             x_max = 0.9,
+            rebin = 4,
             plot_systematics = False
             ),
 
-        PlotDataPythiaHerwig("h_rljet0_tau2",
+        PlotDataPythiaHerwig("h_rljet0_Tau2_wta",
             empty_scale = 1.5,
             x_units = "",
             x_max = 0.5,
+            rebin = 4,
             plot_systematics = False
             ),
 
-        PlotDataPythiaHerwig("h_rljet0_tau3",
+        PlotDataPythiaHerwig("h_rljet0_Tau3_wta",
             empty_scale = 1.5,
             x_units = "",
             x_max = 0.3,
+            rebin = 4,
             plot_systematics = False
             ),
 
-        #PlotDataPythiaHerwig("h_rljet0_ungroomed_ntrk500",
-        #    empty_scale = 1.9,
-        #    x_units = "",
-        #    plot_systematics = False
-        #    ),
+        PlotDataPythiaHerwig("h_rljet0_ungroomed_ntrk500",
+            empty_scale = 1.9,
+            x_units = "",
+            x_max = 80,
+            plot_systematics = False
+            ),
 
-        PlotDataPythiaHerwig("h_rljet0_d2",
+        PlotDataPythiaHerwig("h_rljet0_C2",
+            empty_scale = 1.9,
+            x_max = 0.5,
+            x_units = "",
+            plot_systematics = False
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_D2",
             empty_scale = 1.9,
             extra_legend_lines = DEF_LINES + ["m_{calo} > 50 GeV"],
             y_min = 0.01,
             x_units = "",
+            rebin = 4,
             x_max = 4.0
             ),
 
-        PlotDataPythiaHerwig("h_rljet0_m_w_prerec_50eff_d2cut",
+        PlotDataPythiaHerwig("h_rljet0_m_w_prerec_50eff_D2cut",
             empty_scale = 1.9,
             extra_legend_lines = DEF_LINES + ["Smooth D_{2}-tagged (50% wp)"],
             y_min = 0.01,
-            x_min = 20.1,
-            x_max = 200,
-            rebin = 2,
+            x_min = 50,
+            x_max = 250,
+            rebin = 5,
             ),
 
-        PlotDataPythiaHerwig("h_rljet0_m_w_prerec_25eff_d2cut",
+        PlotDataPythiaHerwig("h_rljet0_m_w_prerec_25eff_ntrkLT30_D2cut",
+            empty_scale = 1.9,
+            extra_legend_lines = DEF_LINES + ["Smooth D_{2}-tagged (25% wp)"],
+            plot_systematics = False,
+            y_min = 0.01,
+            x_min = 50,
+            x_max = 250,
+            rebin = 5,
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_m_w_prerec_50eff_ntrkLT30_D2cut",
+            plot_systematics = False,
+            empty_scale = 1.9,
+            extra_legend_lines = DEF_LINES + ["Smooth D_{2}-tagged (50% wp)"],
+            y_min = 0.01,
+            x_min = 50,
+            x_max = 250,
+            rebin = 5,
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_m_w_prerec_25eff_D2cut",
             empty_scale = 1.9,
             extra_legend_lines = DEF_LINES + ["Smooth D_{2}-tagged (25% wp)"],
             y_min = 0.01,
-            x_min = 20.1,
-            x_max = 200,
-            rebin = 2,
+            x_min = 50,
+            x_max = 250,
+            rebin = 5,
             ),
 
-        PlotDataPythiaHerwig("h_rljet0_tau32",
+        PlotDataPythiaHerwig("h_rljet0_Tau32_wta",
             empty_scale = 1.9,
             extra_legend_lines = DEF_LINES + ["m_{calo} > 100 GeV"],
             x_units = "",
             x_min = 0.01,
             y_min = 0.01,
-            x_max = 0.9
+            x_max = 0.9,
+            rebin = 4
             ),
 
-        PlotDataPythiaHerwig("h_rljet0_m_t_prerec_50eff_tau32cut",
+        PlotDataPythiaHerwig("h_rljet0_m_t_prerec_50eff_Tau32cut",
             empty_scale = 1.9,
             extra_legend_lines = DEF_LINES + ["Smooth #tau_{32}-tagged"],
             x_max = 400,
@@ -542,7 +570,7 @@ data_mc_plots = [
             rebin = MASS_PLOT_REBIN,
             ),
 
-        PlotDataPythiaHerwig("h_rljet0_m_t_prerec_80eff_tau32cut",
+        PlotDataPythiaHerwig("h_rljet0_m_t_prerec_80eff_Tau32cut",
             empty_scale = 1.9,
             extra_legend_lines = DEF_LINES + ["Smooth #tau_{32}-tagged"],
             x_max = 400,
@@ -550,7 +578,7 @@ data_mc_plots = [
             rebin = MASS_PLOT_REBIN,
             ),
 
-        PlotDataPythiaHerwig("h_rljet0_m_t_prerec_80eff_tau32cut",
+        PlotDataPythiaHerwig("h_rljet0_m_t_prerec_80eff_Tau32cut",
             empty_scale = 3.5,
             extra_legend_lines = DEF_LINES + ["Smooth #tau_{32}-tagged"],
             x_max = 400,
@@ -559,7 +587,7 @@ data_mc_plots = [
             rebin = MASS_PLOT_REBIN,
             ),
 
-        PlotDataPythiaHerwig("h_rljet0_m_t_prerec_50eff_tau32cut",
+        PlotDataPythiaHerwig("h_rljet0_m_t_prerec_50eff_Tau32cut",
             empty_scale = 3.5,
             extra_legend_lines = DEF_LINES + ["Smooth #tau_{32}-tagged"],
             x_max = 400,
@@ -574,6 +602,7 @@ data_mc_plots = [
             x_max = 0.8,
             x_units = "",
             y_min = 0.01,
+            rebin = 2,
             extra_legend_lines = ["HTT Top Candidate"],
             empty_scale = 1.5
             ),
@@ -593,6 +622,7 @@ data_mc_plots = [
             x_min = 140,
             x_max = 210,
             extra_legend_lines = ["HTT Top Candidate"],
+            rebin = 2,
             empty_scale = 1.9
             ),
 
@@ -601,12 +631,13 @@ data_mc_plots = [
             x_min = -2,
             x_max = 2,
             extra_legend_lines = ["HTT-tagged"],
+            rebin = 4,
             empty_scale = 1.9
             ),
 
         PlotDataPythiaHerwig("h_htt0_phi",
             is_htt = True,
-            rebin = 2,
+            rebin = 4,
             x_min = -3.14,
             x_max = 3.14,
             extra_legend_lines = ["HTT-tagged"],
@@ -615,78 +646,251 @@ data_mc_plots = [
 
         PlotDataPythiaHerwig("h_htt0_pt",
             is_htt = True,
-            x_min = 500,
-            x_max = 1500,
+            x_min = 450,
+            x_max = 2000,
             log_scale = True,
+            rebin = 2,
             extra_legend_lines = ["HTT-tagged"],
             empty_scale = 1.9
             ),
 
-        #PlotDataPythiaHerwig("h_htt_caGroomJet0_m",
-        #    is_htt = True,
-        #    rebin = 4,
-        #    x_max = 500,
-        #    empty_scale = 1.9
-        #    ),
+        PlotDataPythiaHerwig("h_htt_caGroomJet0_m",
+            is_htt = True,
+            rebin = 8,
+            x_max = 600,
+            empty_scale = 1.9
+            ),
 
-        #PlotDataPythiaHerwig("h_htt_caGroomJet0_eta",
-        #    is_htt = True,
-        #    x_min = -2,
-        #    x_max = 2,
-        #    x_units = "",
-        #    empty_scale = 1.9
-        #    ),
+        PlotDataPythiaHerwig("h_htt_caGroomJet0_eta",
+            is_htt = True,
+            x_min = -2,
+            x_max = 2,
+            x_units = "",
+            empty_scale = 1.9,
+            rebin = 2
+            ),
 
-        #PlotDataPythiaHerwig("h_htt_caGroomJet0_phi",
-        #    is_htt = True,
-        #    rebin = 2,
-        #    x_min = -3.14,
-        #    x_max = 3.14,
-        #    x_units = "",
-        #    empty_scale = 1.9
-        #    ),
+        PlotDataPythiaHerwig("h_htt_caGroomJet0_phi",
+            is_htt = True,
+            x_min = -3.2,
+            x_max = 3.2,
+            x_units = "",
+            rebin = 4,
+            empty_scale = 1.9
+            ),
 
-        #PlotDataPythiaHerwig("h_htt_caGroomJet0_pt",
-        #    is_htt = True,
-        #    x_min = 0,
-        #    x_max = 1500,
-        #    empty_scale = 1.9
-        #    ),
+        PlotDataPythiaHerwig("h_htt_caGroomJet0_pt",
+            is_htt = True,
+            x_min = 400,
+            rebin = 2,
+            log_scale = True,
+            empty_scale = 1.9
+            ),
 
-        PlotDataPythiaHerwig("h_BDT_TopTag",
+        PlotDataPythiaHerwig("h_rljet0_BDT_Top_Score",
             plot_systematics = False,
             extra_legend_lines = DEF_LINES,
             x_min = -1,
             x_max = 1,
             rebin = 4,
-            log_scale = True,
             y_min = 10**3,
             x_units = "",
             empty_scale = 1.3
             ),
 
-        PlotDataPythiaHerwig("h_BDT_TopTag_mass_gt100",
-            plot_systematics = False,
-            extra_legend_lines = DEF_LINES + ["m_{calo} > 100 GeV"],
-            x_min = -1,
-            x_max = 1,
-            rebin = 4,
-            log_scale = True,
-            y_min = 10**3,
-            x_units = "",
-            empty_scale = 1.3
-            ),
-
-        PlotDataPythiaHerwig("h_BDT_TopTag",
+        PlotDataPythiaHerwig("h_rljet0_BDT_W_Score",
             plot_systematics = False,
             extra_legend_lines = DEF_LINES,
             x_min = -1,
             x_max = 1,
             rebin = 4,
-            y_min = 0.01,
+            y_min = 10**3,
             x_units = "",
             empty_scale = 1.3
-            )
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_FoxWolfram0",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            rebin = 2,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_FoxWolfram2",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            rebin = 4,
+            x_min = -0.1,
+            x_max = 0.45,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_FoxWolfram20",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            rebin = 2,
+            x_min = -0.4,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_Qw",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            log_scale = True,
+            x_max = 500,
+            rebin = 4,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_Angularity",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            rebin = 2,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_Aplanarity",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            rebin = 2,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_Dip12",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            rebin = 4,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_KtDR",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            log_scale = True,
+            rebin = 4,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_Mu12",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            rebin = 4,
+            x_max = 0.9,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_PlanarFlow",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            rebin = 4,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_Sphericity",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            rebin = 2,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_ThrustMaj",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            x_min = 0.5,
+            rebin = 2,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_ThrustMin",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            rebin = 4,
+            x_max = 0.8,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_ZCut12",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            rebin = 4,
+            x_max = 0.5,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_SDw_win20_btag0_logchi",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            rebin = 2,
+            x_min = -5,
+            x_max = 6,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_SDz_win20_btag0_logchi",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            rebin = 2,
+            x_units = "",
+            x_min = -5,
+            x_max = 6,
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_SDt_win50_btag0_logchi",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            rebin = 4,
+            x_units = "",
+            x_min = -10,
+            x_max = 10,
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_m_SDw_win20_btag0",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            x_min = 0,
+            x_max = 150,
+            rebin = 2,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_m_SDz_win20_btag0",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            x_min = 0,
+            x_max = 150,
+            rebin = 2,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_m_SDt_win50_btag0",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES,
+            x_min = 50,
+            x_max = 250,
+            rebin = 2,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
         ]
 
 for plot in data_mc_plots:
