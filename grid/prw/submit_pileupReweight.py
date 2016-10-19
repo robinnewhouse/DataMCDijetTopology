@@ -14,7 +14,7 @@ sys.path.insert(0,parentdir)
 from samples import samples_AOD
 
 jobPrefix = 'user.zmeadows.prw'
-date = '03Oct2016'
+date = '19Oct2016'
 cmdbase = r'pathena PileupReweighting/generatePRW_jobOptions.py --forceStaged --inDS='
 sampleListName = 'TopBosonTag_mc15c'
 
