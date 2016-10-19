@@ -21,8 +21,9 @@ int
 main(int argc, char** argv)
 {
     if (argc < 2) {
-        std::cout << "USAGE: histogram-factory <path-to-input-file> [FLAG]..." << std::endl;
+        std::cout << "USAGE: histogram-factory [FLAG]..." << std::endl;
         std::cout << "where FLAG is one of:" << std::endl;
+        std::cout << "-i <input_file>: path to ntuple produced by AnalysisTop." << std::endl;
         std::cout << "-o <output_file>: root file where the output will be stored. default: raw_histograms.root" << std::endl;
         std::cout << "-t <trigger>: trigger to use for selecting events in data. ex: HLT_j420_a10r_L1J100" << std::endl;
         std::cout << "-E <event_selector>: Offline event selection criteria to use, ex: NO_SELECTION" << std::endl;
@@ -32,20 +33,23 @@ main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
+    // ZM: OCT 18 2016: No longer using InputManager in favour of batch system
     // if invalid file, InputManager will throw exception
-    InputManager* input_manager = new InputManager(argv[1]);
+    // InputManager* input_manager = new InputManager(argv[1]);
 
-    std::string output_filepath = "raw_histograms.root";
-    std::string data_trigger    = "HLT_j400_a10_lcw_L1J100";
-    std::string event_selector  = "NO_SELECTION";
-    float luminosity            = 3.20905;
+    std::string input_filepath, output_filepath,
+        data_trigger, event_selector, sample_type;
+    float luminosity            = -1.;
     bool process_systematics    = false;
 
     int c;
     opterr = 0;
-    while ((c = getopt (argc, argv, "So:E:t:L:")) != -1) {
+    while ((c = getopt (argc, argv, "Si:o:E:t:L:p:")) != -1) {
         switch (c)
         {
+            case 'i':
+                input_filepath = std::string(optarg);
+                break;
             case 'o':
                 output_filepath = std::string(optarg);
                 break;
@@ -54,6 +58,9 @@ main(int argc, char** argv)
                 break;
             case 'E':
                 event_selector = std::string(optarg);
+                break;
+            case 'p':
+                sample_type = std::string(optarg);
                 break;
             case 'L':
                 luminosity = atof(optarg);
@@ -74,9 +81,39 @@ main(int argc, char** argv)
         }
     }
 
+    if (input_filepath.empty()) {
+        std::cout << "ERROR: no input file specified" << std::endl;
+        std::cout << "EXITING..." << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    if (output_filepath.empty()) {
+        std::cout << "ERROR: no output file specified" << std::endl;
+        std::cout << "EXITING..." << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    if (data_trigger.empty()) {
+        std::cout << "ERROR: no output file specified" << std::endl;
+        std::cout << "EXITING..." << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    if (event_selector.empty()) {
+        std::cout << "ERROR: no output file specified" << std::endl;
+        std::cout << "EXITING..." << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    if (luminosity <= 0) {
+        std::cout << "ERROR: no luminosity specified" << std::endl;
+        std::cout << "EXITING..." << std::endl;
+        return EXIT_FAILURE;
+    }
+
     std::ifstream outfile_test(output_filepath, std::ifstream::in);
     if (outfile_test.good()) {
-        std::cout << "WARNING: output file " << output_filepath << " already exists." << std::endl;
+        std::cout << "ERROR: output file " << output_filepath << " already exists." << std::endl;
         std::cout << "EXITING..." << std::endl;
         outfile_test.close();
         return EXIT_FAILURE;
@@ -84,29 +121,27 @@ main(int argc, char** argv)
         outfile_test.close();
     }
 
+    // ZM: OCT 18 2016: No longer trying PROOF in favor of Titan batch system
     //TProof* p = TProof::Open("lite://");
     //p->SetProgressDialog(0);
     //p->SetParallel(5);
 
-    auto tchain_map = input_manager->get_tchain_map();
+    std::cout << "attempting to load input file: " << input_filepath << std::endl;
+    std::vector<TChain*> tchains = get_branch_tchains(input_filepath);
 
     TSelector* dmd_selector;
-    for (auto& x : tchain_map) {
-        std::string gen_name = x.first;
-        std::vector<TChain*> tchains = x.second;
+    for (auto& t : tchains) {
+        const std::string tchain_name = std::string(t->GetName());
+        const bool is_a_desired_tchain = process_systematics
+                || tchain_name == "nominal" || tchain_name == "Nominal";
+        if (is_a_desired_tchain) {
+            dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
+                            tchain_name, data_trigger, event_selector, luminosity);
 
-        for (auto& tchain : tchains) {
-            std::string tchain_name = std::string(tchain->GetName());
+            //tchain->SetProof();
+            t->Process(dmd_selector);
 
-            if (process_systematics || tchain_name == "nominal" || tchain_name == "Nominal") {
-                dmd_selector = new DataMCbackgroundSelector(output_filepath, gen_name,
-                        tchain_name, data_trigger, event_selector ,luminosity);
-
-                //tchain->SetProof();
-                tchain->Process(dmd_selector);
-
-                delete dmd_selector;
-            }
+            delete dmd_selector;
         }
     }
 
