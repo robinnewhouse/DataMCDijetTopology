@@ -2,7 +2,10 @@
 
 #include "TLorentzVector.h"
 #include "TopEvent/EventTools.h"
-#include <TTree.h>
+#include "TTree.h"
+#include "TFile.h"
+#include "TChain.h"
+#include "TKey.h"
 
 BinManager::BinManager(const std::vector<float>& bin_boundaries_)
     : bin_boundaries(bin_boundaries_) { }
@@ -92,4 +95,50 @@ std::string getHTTBranchName(const std::string &var, const std::string &config){
   if(! config.empty())
     brName += "_" + config;
   return brName;
+}
+
+void fakeClusterEMScale(const xAOD::CaloClusterContainer* cont)
+{
+    if(cont->isAvailable<float>("rawM")) return;
+    static SG::AuxElement::Decorator<float> rawMDec("rawM");
+    static SG::AuxElement::Decorator<float> rawEDec("rawE");
+    static SG::AuxElement::Decorator<float> rawEtaDec("rawEta");
+    static SG::AuxElement::Decorator<float> rawPhiDec("rawPhi");
+    for(const xAOD::CaloCluster* clust : *cont) {
+        rawMDec( *clust ) = 0;
+        rawEDec( *clust ) = 0;
+        rawEtaDec( *clust ) = 0;
+        rawPhiDec( *clust ) = 0;
+    }
+}
+
+std::vector<TChain*> get_branch_tchains(const std::string input_filepath)
+{
+        TFile* tmp_tfile = TFile::Open(input_filepath.c_str(), "READ");
+        TIter next_key(tmp_tfile->GetListOfKeys());
+
+        std::vector<std::string> tree_names;
+
+        while (auto tmp_key = (TKey*) next_key()) {
+
+                std::string tmp_key_title(tmp_key->GetTitle());
+                std::string tmp_key_name(tmp_key->GetName());
+
+                bool is_tree = tmp_key_title == "tree";
+
+                bool is_relevant_tree = tmp_key_name == "nominal" ||
+                        has_suffix(tmp_key_name, "1up") ||
+                        has_suffix(tmp_key_name, "1down");
+
+                if (is_tree && is_relevant_tree)
+                        tree_names.push_back(tmp_key_name);
+        }
+
+        std::vector<TChain*> tchains;
+        for (auto const& n : tree_names)
+                tchains.push_back(new TChain(n.c_str()));
+        for (auto& t : tchains)
+                t->Add(input_filepath.c_str(), 0);
+
+        return tchains;
 }

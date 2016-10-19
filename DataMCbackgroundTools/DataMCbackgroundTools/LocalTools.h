@@ -3,8 +3,13 @@
 
 #include "xAODJet/Jet.h"
 #include "xAODJet/JetContainer.h"
+#include <xAODCaloEvent/CaloClusterContainer.h>
+#include <xAODCaloEvent/CaloCluster.h>
+#include "xAODCore/ShallowCopy.h"
+#include "xAODCore/ShallowAuxContainer.h"
 
 #include <TFile.h>
+#include "TChain.h"
 #include <memory>
 
 #include <vector>
@@ -25,14 +30,14 @@ const xAOD::Jet* get_nearest_jet_in_collection(const xAOD::Jet* ref_jet,
 
 /** Get sum of weight from sumWeights tree
   * in file produced by AnalysisTop.
-	* This gives info on the sum of weights of the original AOD,
-	* from which a DAOD was produced (i.e. without skimming) */
+    * This gives info on the sum of weights of the original AOD,
+    * from which a DAOD was produced (i.e. without skimming) */
 float get_sum_weights_sample(TFile* inputFile);
 
 /** Get total number of events from sumWeights tree
   * in file produced by AnalysisTop.
-	* This gives info on the number of events in the original AOD,
-	* from which a DAOD was produced. */
+    * This gives info on the number of events in the original AOD,
+    * from which a DAOD was produced. */
 ULong64_t getTotalEventsSample(TFile* inputFile);
 
 template<typename T, typename ...Args>
@@ -84,5 +89,11 @@ const T sort_container_pt(const T* inCont){
     std::sort(sortedCont.begin(), sortedCont.end(), pt_sort());
     return *sortedCont.asDataVector();
 }
+
+// fills rawM variable with nonsense, used to avoid segfaults
+// when algorithms check for it (but don't use it)
+void fakeClusterEMScale(const xAOD::CaloClusterContainer* cont);
+
+std::vector<TChain*> get_branch_tchains(const std::string input_filepath);
 
 #endif
