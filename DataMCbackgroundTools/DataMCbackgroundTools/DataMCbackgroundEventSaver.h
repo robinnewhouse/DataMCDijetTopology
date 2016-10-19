@@ -10,7 +10,6 @@
 #include "JetRec/JetRecTool.h"
 #include "JetCalibTools/JetCalibrationTool.h"
 #include "JetSubStructureUtils/BosonTag.h"
-//#include "JetSubStructureUtils/JSSWTopTaggerBDT.h"
 
 #include "DataMCbackgroundTools/TruthMatchTool.h"
 
@@ -109,6 +108,8 @@ namespace top {
         std::vector<std::string> m_httConfigs;
         std::unique_ptr<JetRecTool> m_httTool;
 
+        int m_NPV;
+
         /*************************/
         /* LARGE-R JET VARIABLES */
         /*************************/
@@ -162,6 +163,7 @@ namespace top {
 
         std::vector<int> m_rljet_NTrimSubjets;
         std::vector<int> m_rljet_ungroomed_ntrk500;
+        std::vector<int> m_rljet_pdgid;
 
         // matched truth jets
         int m_tljet_count;
@@ -174,11 +176,13 @@ namespace top {
         std::vector<float> m_tljet_Tau32_wta;
 
         // truth parton matching information
+        /*
         std::vector<int> m_rljet_dRmatched_reco_truth;
         std::vector<int> m_rljet_dRmatched_particle_flavor;
         std::vector<int> m_rljet_dRmatched_maxEParton_flavor;
         std::vector<int> m_rljet_dRmatched_topBChild;
         std::vector<int> m_rljet_dRmatched_nQuarkChildren;
+        */
 
         // matched trigger jets
         int m_hltjet_count;

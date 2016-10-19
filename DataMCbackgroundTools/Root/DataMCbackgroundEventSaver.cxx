@@ -3,8 +3,12 @@
 
 #include <xAODJet/JetAuxContainer.h>
 #include <xAODCaloEvent/CaloClusterContainer.h>
+#include <xAODTruth/TruthParticle.h>
+#include <xAODTruth/TruthParticleContainer.h>
+#include <xAODBase/IParticle.h>
+#include <AthContainers/AuxTypeRegistry.h>
+#include <xAODCore/AuxContainerBase.h>
 
-#include "AthContainers/AuxTypeRegistry.h"
 #include "BoostedJetTaggers/configHTT_Run2perf.h"
 
 #include "TopAnalysis/EventSaverFlatNtuple.h"
@@ -179,11 +183,7 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
 
 
         if (m_config->isMC()) {
-            systematicTree->makeOutputVariable(m_rljet_dRmatched_reco_truth, "rljet_dRmatched_reco_truth");
-            systematicTree->makeOutputVariable(m_rljet_dRmatched_particle_flavor, "rljet_dRmatched_particle_flavor");
-            systematicTree->makeOutputVariable(m_rljet_dRmatched_maxEParton_flavor, "rljet_dRmatched_maxEParton_flavor");
-            systematicTree->makeOutputVariable(m_rljet_dRmatched_topBChild, "rljet_dRmatched_topBChild");
-            systematicTree->makeOutputVariable(m_rljet_dRmatched_nQuarkChildren, "rljet_dRmatched_nQuarkChildren");
+            systematicTree->makeOutputVariable(m_rljet_pdgid             , "rljet_pdgid");
         }
 
         /*************************************/
@@ -191,6 +191,8 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
         /*************************************/
 
         if (systematicTree->name() == "nominal") {
+            systematicTree->makeOutputVariable(m_NPV, "NPV");
+
             // more large-R jet kinematic variables
             systematicTree->makeOutputVariable(m_rljet_count        , "rljet_count");
             systematicTree->makeOutputVariable(m_rljet_mjj          , "rljet_mjj");
@@ -443,13 +445,11 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
     m_rljet_smoothZTag50eff . assign(m_num_fatjets_keep, 0);
     m_rljet_smoothZTag25eff . assign(m_num_fatjets_keep, 0);
 
-    m_rljet_dRmatched_reco_truth        . assign(m_num_fatjets_keep, -1000);
-    m_rljet_dRmatched_particle_flavor   . assign(m_num_fatjets_keep, -1000);
-    m_rljet_dRmatched_maxEParton_flavor . assign(m_num_fatjets_keep, -1000);
-    m_rljet_dRmatched_topBChild         . assign(m_num_fatjets_keep, -1000);
-    m_rljet_dRmatched_nQuarkChildren    . assign(m_num_fatjets_keep, -1000);
+    m_rljet_pdgid . assign(m_num_fatjets_keep, -1000 );
 
     if (on_nominal_branch) {
+        m_NPV = -1000;
+
         m_rljet_count  = 0;
         m_rljet_mjj    = -1000.;
         m_rljet_ptasym = -1000.;
@@ -486,8 +486,8 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
         m_rljet_ThrustMin   . assign(m_num_fatjets_keep, -1000. );
         m_rljet_ZCut12      . assign(m_num_fatjets_keep, -1000. );
 
-        m_rljet_NTrimSubjets          . assign(m_num_fatjets_keep, -1000. );
-        m_rljet_ungroomed_ntrk500     . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_NTrimSubjets          . assign(m_num_fatjets_keep, -1000 );
+        m_rljet_ungroomed_ntrk500     . assign(m_num_fatjets_keep, -1000 );
 
         if (m_config->isMC()) {
             m_tljet_pt  . assign(m_num_fatjets_keep, -1000.);
@@ -577,19 +577,52 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
     this->reset_containers(on_nominal_branch);
 
     xAOD::JetContainer rljets = sort_container_pt(&event.m_largeJets);
+    if (rljets.size() >= m_num_fatjets_keep) rljets.resize(m_num_fatjets_keep);
+
+    /******************/
+    /* TRUTH MATCHING */
+    /******************/
 
     if(m_config->isMC()) {
-        const xAOD::JetContainer* truth_large_jets = nullptr;
-        const xAOD::TruthParticleContainer* truth_particles = nullptr;
+            const xAOD::JetContainer* truth_large_jets = nullptr;
+            const xAOD::TruthParticleContainer* truth_particles = nullptr;
 
-        top::check( evtStore()->retrieve(truth_large_jets,
-                    m_config->sgKeyTruthLargeRJets()), "FAILURE" );
+            top::check( evtStore()->retrieve(truth_large_jets,
+                                    m_config->sgKeyTruthLargeRJets()), "FAILURE" );
 
-        top::check( evtStore()->retrieve(truth_particles,
-                    m_config->sgKeyMCParticle()), "FAILURE" );
+            top::check( evtStore()->retrieve(truth_particles,
+                                    m_config->sgKeyMCParticle()), "FAILURE" );
 
-        m_truth_match_tool->execute(&rljets, truth_large_jets, truth_particles);
+            m_truth_match_tool->execute(&rljets, truth_large_jets, truth_particles);
     }
+
+    /* code for Arthur's version
+    if(m_config->isMC()) {
+        const double dRMax = 0.75;
+        const int topPdgId = 6;
+        const int wPdgId = 24;
+        const int zPdgId = 23;
+        const int bPdgId = 5;
+        std::cout << __LINE__ << std::endl;
+        m_truth_match_tool->DecorateMatchJets(rljets, rljets, 0.,
+                        "deltaRMatchedTruthJet", "deltaRMatchedRecoJet");
+        std::cout << __LINE__ << std::endl;
+
+        m_truth_match_tool->DecorateMatchTruth(tljets, truth_particles,
+                        topPdgId, dRMax, "dRMatchedTop", true);
+        std::cout << __LINE__ << std::endl;
+        m_truth_match_tool->DecorateMatchTruth(tljets, truth_particles,
+                        wPdgId, dRMax, "dRMatchedW", true);
+        std::cout << __LINE__ << std::endl;
+        m_truth_match_tool->DecorateMatchTruth(tljets, truth_particles,
+                        zPdgId, dRMax, "dRMatchedZ", true);
+        std::cout << __LINE__ << std::endl;
+        m_truth_match_tool->DecorateMatchTruth(tljets, truth_particles,
+                        bPdgId, dRMax, "dRMatchedB", true);
+        std::cout << __LINE__ << std::endl;
+
+    }
+    */
 
     for (unsigned i = 0; i < m_num_fatjets_keep && i < rljets.size(); i++) {
 
@@ -606,42 +639,6 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
         m_rljet_eta[i] = rljets[i]->eta();
         m_rljet_phi[i] = rljets[i]->phi();
         m_rljet_m[i]   = rljets[i]->m();
-
-        /****************************/
-        /* TRUTH-MATCHING VARIABLES */
-        /****************************/
-
-        if (m_config->isMC()) {
-            if (rljets[i]->isAvailable<int>("dRmatched_reco_truth")) {
-                m_rljet_dRmatched_reco_truth[i] = rljets[i]->auxdata<int>("dRmatched_reco_truth");
-                if (m_debug_level >= 3)
-                    std::cout << "dRmatched_reco_truth: " << m_rljet_dRmatched_reco_truth[i] << std::endl;
-            }
-
-            if (rljets[i]->isAvailable<int>("dRmatched_particle_flavor")) {
-                m_rljet_dRmatched_particle_flavor[i] = rljets[i]->auxdata<int>("dRmatched_particle_flavor");
-                if (m_debug_level >= 3)
-                    std::cout << "dRmatched_particle_flavor: " << m_rljet_dRmatched_particle_flavor[i] << std::endl;
-            }
-
-            if (rljets[i]->isAvailable<int>("dRmatched_maxEParton_flavor")) {
-                m_rljet_dRmatched_maxEParton_flavor[i] = rljets[i]->auxdata<int>("dRmatched_maxEParton_flavor");
-                if (m_debug_level >= 3)
-                    std::cout << "dRmatched_maxEParton_flavor: " << m_rljet_dRmatched_maxEParton_flavor[i] << std::endl;
-            }
-
-            if (rljets[i]->isAvailable<int>("dRmatched_topBChild")) {
-                m_rljet_dRmatched_topBChild[i] = rljets[i]->auxdata<int>("dRmatched_topBChild");
-                if (m_debug_level >= 3)
-                    std::cout << "dRmatched_topBChild: " << m_rljet_dRmatched_topBChild[i] << std::endl;
-            }
-
-            if (rljets[i]->isAvailable<int>("dRmatched_nQuarkChildren")) {
-                m_rljet_dRmatched_nQuarkChildren[i] = rljets[i]->auxdata<int>("dRmatched_nQuarkChildren");
-                if (m_debug_level >= 3)
-                    std::cout << "dRmatched_nQuarkChildren: " << m_rljet_dRmatched_nQuarkChildren[i] << std::endl;
-            }
-        } // end of saving truth-matching information
 
         /******/
         /* D2 */
@@ -696,8 +693,49 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
         m_rljet_smoothZTag50eff[i] = zTagger_smooth_50eff->result(*rljets[i]);
         m_rljet_smoothZTag25eff[i] = zTagger_smooth_25eff->result(*rljets[i]);
 
+        /*****************************/
+        /* PDGID FROM TRUTH MATCHING */
+        /*****************************/
+
+        if (m_config->isMC()) {
+            bool was_matched_to_truth_jet    = false;
+            int z_w_top_id                   = -1;
+            int num_quarks_contained         = -1;
+            bool top_child_b_quark_contained = false;
+            int maxE_parton                  = -1;
+
+            if (rljets[i]->isAvailable<int>("dRmatched_reco_truth"))
+                was_matched_to_truth_jet = rljets[i]->auxdata<int>("dRmatched_reco_truth") == 1;
+
+            if (rljets[i]->isAvailable<int>("dRmatched_particle_flavor"))
+                z_w_top_id = abs(rljets[i]->auxdata<int>("dRmatched_particle_flavor"));
+
+            if (rljets[i]->isAvailable<int>("dRmatched_maxEParton_flavor"))
+                maxE_parton = abs(rljets[i]->auxdata<int>("dRmatched_maxEParton_flavor"));
+
+            if (rljets[i]->isAvailable<int>("dRmatched_topBChild"))
+                top_child_b_quark_contained = rljets[i]->auxdata<int>("dRmatched_topBChild") == 1;
+
+            if (rljets[i]->isAvailable<int>("dRmatched_nQuarkChildren"))
+                num_quarks_contained = rljets[i]->auxdata<int>("dRmatched_nQuarkChildren");
+
+            if (was_matched_to_truth_jet) {
+                if (z_w_top_id == 0)
+                    m_rljet_pdgid[i] = maxE_parton;
+
+                else if (z_w_top_id == 6 && top_child_b_quark_contained && num_quarks_contained >= 3)
+                    m_rljet_pdgid[i] = 6;
+
+                else if (z_w_top_id == 23 && num_quarks_contained >= 2)
+                    m_rljet_pdgid[i] = 23;
+
+                else if (z_w_top_id == 24 && num_quarks_contained >= 2)
+                    m_rljet_pdgid[i] = 24;
+            }
+        }
+
         if (on_nominal_branch) {
-            m_rljet_count    = rljets.size();
+            m_rljet_count = event.m_largeJets.size();
 
             if(m_saveTAmass) {
                 if(rljets[i]->isAvailable<float>("JetTrackAssistedMassCalibrated"))
@@ -734,48 +772,43 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
 
             const xAOD::Jet* rljet_ungroomed = this->get_parent_ungroomed(rljets[i]);
 
-            // std::vector<int> tjet_ntrks = rljet_ungroomed->auxdata<std::vector<int>>("NumTrkPt500");
-            // m_rljet_ungroomed_ntrk500[i] = std::accumulate(tjet_ntrks.begin(),
-            //         tjet_ntrks.end(), 0);
-
             std::vector<int> ntrk_tmp;
-            rljet_ungroomed-> getAttribute(xAOD::JetAttribute::NumTrkPt500, ntrk_tmp);
+            rljet_ungroomed->getAttribute(xAOD::JetAttribute::NumTrkPt500, ntrk_tmp);
             m_rljet_ungroomed_ntrk500[i] = ntrk_tmp[0];
 
             if(m_config->isMC())
             { // save corresponding truth jet variables
                 const xAOD::JetContainer* truth_large_jets = nullptr;
+                top::check( evtStore()->retrieve(truth_large_jets, m_config->sgKeyTruthLargeRJets()), "FAILURE" );
 
-                top::check( evtStore()->retrieve(truth_large_jets,
-                            m_config->sgKeyTruthLargeRJets()), "FAILURE" );
+                const xAOD::Jet* matched_tljet = get_nearest_jet_in_collection(rljets[i], truth_large_jets);
 
-                const xAOD::Jet* tljet_near =
-                    get_nearest_jet_in_collection(rljets[i], truth_large_jets);
+                if (matched_tljet != nullptr) {
+                    const float dR = top::deltaR(*rljets[i], *matched_tljet);
 
-                // not yet veto-ing on deltaR(reco,truth), so this must be cut on later
-                if (tljet_near != nullptr) {
-                    m_tljet_m[i]   = tljet_near->m();
-                    m_tljet_pt[i]  = tljet_near->pt();
-                    m_tljet_eta[i] = tljet_near->eta();
-                    m_tljet_phi[i] = tljet_near->phi();
-                    m_tljet_dR[i]  = top::deltaR(*rljets[i], *tljet_near);
+                    if (dR < 0.4) {
+                        m_tljet_m[i]   = matched_tljet->m();
+                        m_tljet_pt[i]  = matched_tljet->pt();
+                        m_tljet_eta[i] = matched_tljet->eta();
+                        m_tljet_phi[i] = matched_tljet->phi();
+                        m_tljet_dR[i]  = dR;
 
-                    const float ecf1 = tljet_near->auxdata<float>("ECF1");
-                    const float ecf2 = tljet_near->auxdata<float>("ECF2");
-                    const float ecf3 = tljet_near->auxdata<float>("ECF3");
+                        const float ecf1 = matched_tljet->auxdata<float>("ECF1");
+                        const float ecf2 = matched_tljet->auxdata<float>("ECF2");
+                        const float ecf3 = matched_tljet->auxdata<float>("ECF3");
 
-                    m_tljet_D2[i] = fabs(ecf2) > 1.e-6 ? pow(ecf1/ecf2,3)*ecf3 : -1000.;
+                        m_tljet_D2[i] = fabs(ecf2) > 1.e-6 ? pow(ecf1/ecf2,3)*ecf3 : -1000.;
 
-                    /*********/
-                    /* TAU32 */
-                    /*********/
+                        /*********/
+                        /* TAU32 */
+                        /*********/
 
-                    const float tau2 = tljet_near->auxdata<float>("Tau2_wta");
-                    const float tau3 = tljet_near->auxdata<float>("Tau3_wta");
+                        const float tau2 = matched_tljet->auxdata<float>("Tau2_wta");
+                        const float tau3 = matched_tljet->auxdata<float>("Tau3_wta");
 
-                    m_tljet_Tau32_wta[i] = fabs(tau2) > 1.e-6 ? tau3 / tau2 : -1000.;
+                        m_tljet_Tau32_wta[i] = fabs(tau2) > 1.e-6 ? tau3 / tau2 : -1000.;
+                    }
                 }
-
             } // end of saving truth jet variables
 
             // save corresponding trigger jet
@@ -817,8 +850,12 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
         } // end of saving nominal branch large-R jet variables
     } // end of saving individual large-R jet variables
 
+    // save NPV
+    if (on_nominal_branch)
+            m_NPV = event.m_primaryVertices->size();
+
     // compute lead/sublead jet quantities
-    if (on_nominal_branch && rljets.size() >= 2) {
+    if (on_nominal_branch && event.m_largeJets.size() >= 2) {
         TLorentzVector v_jet0, v_jet1;
         v_jet0.SetPtEtaPhiM(rljets[0]->pt(), rljets[0]->eta(), rljets[0]->phi(), rljets[0]->m());
         v_jet1.SetPtEtaPhiM(rljets[1]->pt(), rljets[1]->eta(), rljets[1]->phi(), rljets[1]->m());
