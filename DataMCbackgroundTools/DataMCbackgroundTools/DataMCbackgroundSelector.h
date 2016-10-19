@@ -58,6 +58,7 @@ class DataMCbackgroundSelector : public TSelector {
         std::ofstream output_log;
 
         std::unordered_map<std::string, bool> prerec_tag_map;
+        std::unordered_map<std::string, bool> ntrk_prerec_tag_map;
         std::unordered_map<std::string, bool> SD_nominal_tag_map;
         std::unordered_map<std::string, bool> SD_systematic_tag_map;
         // std::unordered_map<std::string, bool> nominal_tag_map;
@@ -403,11 +404,11 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     tljet_D2 = 0;
     tljet_Tau32_wta = 0;
 
-    b_rljet_dRmatched_reco_truth = 0;
-    b_rljet_dRmatched_particle_flavor = 0;
-    b_rljet_dRmatched_maxEParton_flavor = 0;
-    b_rljet_dRmatched_topBChild = 0;
-    b_rljet_dRmatched_nQuarkChildren = 0;
+    rljet_dRmatched_reco_truth = 0;
+    rljet_dRmatched_particle_flavor = 0;
+    rljet_dRmatched_maxEParton_flavor = 0;
+    rljet_dRmatched_topBChild = 0;
+    rljet_dRmatched_nQuarkChildren = 0;
 
     hltjet_m = 0;
     hltjet_pt = 0;
@@ -493,6 +494,14 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     fChain->SetBranchAddress("rljet_smoothZTag50eff"         , &rljet_smoothZTag50eff         , &b_rljet_smoothZTag50eff);
     fChain->SetBranchAddress("rljet_smoothZTag25eff"         , &rljet_smoothZTag25eff         , &b_rljet_smoothZTag25eff);
 
+    if (this->operating_on_mc) {
+        fChain->SetBranchAddress("rljet_dRmatched_reco_truth"        , &rljet_dRmatched_reco_truth        , &b_rljet_dRmatched_reco_truth);
+        fChain->SetBranchAddress("rljet_dRmatched_particle_flavor"   , &rljet_dRmatched_particle_flavor   , &b_rljet_dRmatched_particle_flavor);
+        fChain->SetBranchAddress("rljet_dRmatched_maxEParton_flavor" , &rljet_dRmatched_maxEParton_flavor , &b_rljet_dRmatched_maxEParton_flavor);
+        fChain->SetBranchAddress("rljet_dRmatched_topBChild"         , &rljet_dRmatched_topBChild         , &b_rljet_dRmatched_topBChild);
+        fChain->SetBranchAddress("rljet_dRmatched_nQuarkChildren"    , &rljet_dRmatched_nQuarkChildren    , &b_rljet_dRmatched_nQuarkChildren);
+    }
+
     if (sub_dir_str == "nominal") {
         if (!this->operating_on_mc) {
             fChain->SetBranchAddress("mu_original_xAOD", &mu_original_xAOD, &b_mu_original_xAOD);
@@ -545,12 +554,6 @@ void DataMCbackgroundSelector::Init(TTree *tree)
             fChain->SetBranchAddress("tljet_dR"        , &tljet_dR        , &b_tljet_dR);
             fChain->SetBranchAddress("tljet_D2"        , &tljet_D2        , &b_tljet_D2);
             fChain->SetBranchAddress("tljet_Tau32_wta" , &tljet_Tau32_wta , &b_tljet_Tau32_wta);
-
-            fChain->SetBranchAddress("rljet_dRmatched_reco_truth"        , &rljet_dRmatched_reco_truth        , &b_rljet_dRmatched_reco_truth);
-            fChain->SetBranchAddress("rljet_dRmatched_particle_flavor"   , &rljet_dRmatched_particle_flavor   , &b_rljet_dRmatched_particle_flavor);
-            fChain->SetBranchAddress("rljet_dRmatched_maxEParton_flavor" , &rljet_dRmatched_maxEParton_flavor , &b_rljet_dRmatched_maxEParton_flavor);
-            fChain->SetBranchAddress("rljet_dRmatched_topBChild"         , &rljet_dRmatched_topBChild         , &b_rljet_dRmatched_topBChild);
-            fChain->SetBranchAddress("rljet_dRmatched_nQuarkChildren"    , &rljet_dRmatched_nQuarkChildren    , &b_rljet_dRmatched_nQuarkChildren);
         }
 
         fChain->SetBranchAddress("hltjet_count" , &hltjet_count , &b_hltjet_count);
@@ -567,15 +570,7 @@ void DataMCbackgroundSelector::Init(TTree *tree)
         fChain->SetBranchAddress("htt_caJet_m"   , &htt_caJet_m   , &b_htt_caJet_m);
 
         if (this->operating_on_mc) {
-            htt_config_strings = {
-                "def",
-                "sjcalib0955",
-                "sjcalib0970",
-                "sjcalib0985",
-                "sjcalib1015",
-                "sjcalib1030",
-                "sjcalib1045"
-            };
+            htt_config_strings = { "def", "sjcalib0970", "sjcalib1030" };
         } else {
             htt_config_strings = { "def" };
         }

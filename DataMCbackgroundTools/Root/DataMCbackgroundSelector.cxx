@@ -24,33 +24,53 @@
 
 #include "TopExamples/AnalysisTools.h"
 
-EventSelector NO_SELECTION = [](const DataMCbackgroundSelector* sel) {
+EventSelector NO_SELECTION = [](const DataMCbackgroundSelector* /* sel */) {
     return true;
 };
 
 EventSelector DIJET_LOOSE = [](const DataMCbackgroundSelector* sel) {
+    if (sel->rljet_pt->at(0)/1000. < 450.) return false;
+
     return true;
 };
 
 EventSelector DIJET_TIGHT = [](const DataMCbackgroundSelector* sel) {
+    if (sel->rljet_pt->at(0)/1000. < 500.)
+        return false;
+
+    if (sel->rljet_D2->at(0) <= 0.)
+        return false;
+
     return true;
 };
 
-EventSelector GAMMAJET_LOOSE = [](const DataMCbackgroundSelector* sel) {
+EventSelector VVJJ_SELECTION = [](const DataMCbackgroundSelector* sel ) {
+    if ( sel->rljet_pt->at(0) / 1000. < 450
+            || std::abs(sel->rljet_eta->at(0)) > 2.0
+            || std::abs(sel->rljet_dy) >= 1.2
+            || std::abs(sel->rljet_ptasym) >= 0.15
+            || sel->rljet_mjj / 1000. <= 1000
+            ) return false;
+
     return true;
 };
 
-EventSelector GAMMAJET_TIGHT = [](const DataMCbackgroundSelector* sel) {
+EventSelector GAMMAJET_LOOSE = [](const DataMCbackgroundSelector* /* sel */) {
+    return true;
+};
+
+EventSelector GAMMAJET_TIGHT = [](const DataMCbackgroundSelector* /* sel */) {
     return true;
 };
 
 const std::unordered_map<std::string, EventSelector>
 DataMCbackgroundSelector::available_event_selectors = {
-    { "NO_SELECTION"  , NO_SELECTION },
-    { "DIJET_LOOSE"   , DIJET_LOOSE },
-    { "DIJET_TIGHT"   , DIJET_TIGHT },
-    { "GAMMAJET_LOOSE", GAMMAJET_LOOSE },
-    { "GAMMAJET_TIGHT", GAMMAJET_TIGHT }
+    { "NO_SELECTION"   , NO_SELECTION   },
+    { "DIJET_LOOSE"    , DIJET_LOOSE    },
+    { "DIJET_TIGHT"    , DIJET_TIGHT    },
+    { "VVJJ_SELECTION" , VVJJ_SELECTION },
+    { "GAMMAJET_LOOSE" , GAMMAJET_LOOSE },
+    { "GAMMAJET_TIGHT" , GAMMAJET_TIGHT }
 };
 
 DataMCbackgroundSelector::DataMCbackgroundSelector(
@@ -117,6 +137,9 @@ void DataMCbackgroundSelector::SlaveBegin(TTree * /*tree*/)
     TString option = GetOption();
 
     this->hp = new HistoPack(1);
+
+    // save 'anti-tags' for the tagged mass spectra
+    this->hp->h_rljet_m.at(0)->set_fill_veto(true);
 }
 
 Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
@@ -167,6 +190,12 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         b_weight_pileup->GetEntry(entry);
         b_weight_jvt->GetEntry(entry);
         b_weight_bTagSF_70->GetEntry(entry);
+
+        b_rljet_dRmatched_reco_truth->GetEntry(entry);
+        b_rljet_dRmatched_particle_flavor->GetEntry(entry);
+        b_rljet_dRmatched_maxEParton_flavor->GetEntry(entry);
+        b_rljet_dRmatched_topBChild->GetEntry(entry);
+        b_rljet_dRmatched_nQuarkChildren->GetEntry(entry);
     }
 
     b_mcChannelNumber->GetEntry(entry);
@@ -221,12 +250,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             b_tljet_dR->GetEntry(entry);
             b_tljet_D2->GetEntry(entry);
             b_tljet_Tau32_wta->GetEntry(entry);
-
-            b_rljet_dRmatched_reco_truth->GetEntry(entry);
-            b_rljet_dRmatched_particle_flavor->GetEntry(entry);
-            b_rljet_dRmatched_maxEParton_flavor->GetEntry(entry);
-            b_rljet_dRmatched_topBChild->GetEntry(entry);
-            b_rljet_dRmatched_nQuarkChildren->GetEntry(entry);
         }
 
         b_HLT_jet_trigger->GetEntry(entry);
@@ -325,6 +348,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             const bool is_herwig_JZXW_slice = mcChannelNumber >= 426040
                 && mcChannelNumber <= 426052;
 
+            // TODO: check if this is even needed
             if (is_pythia_JZXW_slice || is_herwig_JZXW_slice) {
                 this->SF_lumi_Fb = xsection * filtereff / nevents;
             } else {
@@ -422,15 +446,57 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         prerec_tag_map["t_prerec_80eff_masscut"      ] = rljet_smoothMassTag80eff->at(i);
         prerec_tag_map["t_prerec_80eff_Tau32masscut" ] = rljet_smoothMassTau32Tag80eff->at(i);
 
+        if (this->operating_on_mc) {
+            int pdgid = -1;
+
+            const bool was_matched_to_truth_jet    = rljet_dRmatched_reco_truth->at(i) == 1;
+            const int z_w_top_id                   = abs(rljet_dRmatched_particle_flavor->at(i));
+            const int num_quarks_contained         = rljet_dRmatched_nQuarkChildren->at(i);
+            const bool top_child_b_quark_contained = rljet_dRmatched_topBChild->at(i) == 1;
+            const int maxE_parton                  = abs(rljet_dRmatched_maxEParton_flavor->at(i));
+
+            if (was_matched_to_truth_jet) {
+                if (z_w_top_id == 0)
+                    pdgid = maxE_parton;
+
+                else if (z_w_top_id == 6 && top_child_b_quark_contained && num_quarks_contained >= 3)
+                    pdgid = 6;
+
+                else if (z_w_top_id == 23 && num_quarks_contained >= 2)
+                    pdgid = 23;
+
+                else if (z_w_top_id == 24 && num_quarks_contained >= 2)
+                    pdgid = 24;
+            }
+
+            hp->h_rljet_pdgid.at(i)->fill(pdgid, weight);
+
+            if (pdgid == 24) {
+                prerec_tag_map["w_prerec_25eff_D2cut_WMatch"    ] = rljet_smoothWTag25eff->at(i) == 1 || rljet_smoothWTag25eff->at(i) == 3;
+                prerec_tag_map["w_prerec_25eff_masscut_WMatch"  ] = rljet_smoothWTag25eff->at(i) >= 2;
+                prerec_tag_map["w_prerec_25eff_D2masscut_WMatch"] = rljet_smoothWTag25eff->at(i) == 3;
+                prerec_tag_map["w_prerec_50eff_D2cut_WMatch"    ] = rljet_smoothWTag50eff->at(i) == 1 || rljet_smoothWTag50eff->at(i) == 3;
+                prerec_tag_map["w_prerec_50eff_masscut_WMatch"  ] = rljet_smoothWTag50eff->at(i) >= 2;
+                prerec_tag_map["w_prerec_50eff_D2masscut_WMatch"] = rljet_smoothWTag50eff->at(i) == 3;
+            } else {
+                prerec_tag_map["w_prerec_25eff_D2cut_WUnMatch"    ] = rljet_smoothWTag25eff->at(i) == 1 || rljet_smoothWTag25eff->at(i) == 3;
+                prerec_tag_map["w_prerec_25eff_masscut_WUnMatch"  ] = rljet_smoothWTag25eff->at(i) >= 2;
+                prerec_tag_map["w_prerec_25eff_D2masscut_WUnMatch"] = rljet_smoothWTag25eff->at(i) == 3;
+                prerec_tag_map["w_prerec_50eff_D2cut_WUnMatch"    ] = rljet_smoothWTag50eff->at(i) == 1 || rljet_smoothWTag50eff->at(i) == 3;
+                prerec_tag_map["w_prerec_50eff_masscut_WUnMatch"  ] = rljet_smoothWTag50eff->at(i) >= 2;
+                prerec_tag_map["w_prerec_50eff_D2masscut_WUnMatch"] = rljet_smoothWTag50eff->at(i) == 3;
+           }
+        } // end of MC truth match/unmatch tagging for prec smoothed taggers
+
         for (const auto& itag : prerec_tag_map) {
-            hp->h_rljet_m.at(i)->fill_tagged(itag.first, rljet_m->at(i)/1000.,
-                    weight, itag.second);
+            hp->h_rljet_m.at(i)->fill_tagged(itag.first, rljet_m->at(i)/1000., weight, itag.second);
+            hp->h_rljet_pt.at(i)->fill_tagged(itag.first, rljet_pt->at(i)/1000., weight, itag.second);
         }
     }
 
-    /******************************************************************/
-    /* BELOW HERE, ONLY SAVING VARIABLES RESTRICTED TO NOMINAL BRANCH */
-    /******************************************************************/
+    /*********************************************************/
+    /* BELOW HERE, ONLY SAVING VARIABLES FROM NOMINAL BRANCH */
+    /*********************************************************/
 
     if (!on_nominal_branch)
         return kTRUE;
@@ -445,9 +511,44 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     /* ANTI-KT 10 JETS */
     /*******************/
 
-    for (UInt_t i = 0; i < 3 && i < n_rljets_recorded; i++) {
-        // other substructure variables
+    for (UInt_t i = 0; i < n_rljets_recorded; i++) {
 
+        const bool pass_ntrk_cut =
+            rljet_ungroomed_ntrk500->at(i) >= 0 && rljet_ungroomed_ntrk500->at(i) < 30;
+
+        if (pass_ntrk_cut) {
+            ntrk_prerec_tag_map["w_prerec_25eff_ntrkLT30_D2cut"     ] = rljet_smoothWTag25eff->at(i) == 1 || rljet_smoothWTag25eff->at(i) == 3;
+            ntrk_prerec_tag_map["w_prerec_25eff_ntrkLT30_masscut"   ] = rljet_smoothWTag25eff->at(i) >= 2;
+            ntrk_prerec_tag_map["w_prerec_25eff_ntrkLT30_D2masscut" ] = rljet_smoothWTag25eff->at(i) == 3;
+            ntrk_prerec_tag_map["w_prerec_50eff_ntrkLT30_D2cut"     ] = rljet_smoothWTag50eff->at(i) == 1 || rljet_smoothWTag50eff->at(i) == 3;
+            ntrk_prerec_tag_map["w_prerec_50eff_ntrkLT30_masscut"   ] = rljet_smoothWTag50eff->at(i) >= 2;
+            ntrk_prerec_tag_map["w_prerec_50eff_ntrkLT30_D2masscut" ] = rljet_smoothWTag50eff->at(i) == 3;
+
+            for (const auto& itag : ntrk_prerec_tag_map) {
+                hp->h_rljet_m.at(i)->fill_tagged(itag.first, rljet_m->at(i)/1000., weight, itag.second);
+                hp->h_rljet_pt.at(i)->fill_tagged(itag.first, rljet_pt->at(i)/1000., weight, itag.second);
+            }
+        }
+
+        if (this->operating_on_mc
+                && tljet_dR->at(i) < 0.4
+                && tljet_pt->at(i) > 1e-6
+                && tljet_m->at(i) > 1e-6
+                && tljet_D2->at(i) > 1e-6
+                && tljet_Tau32_wta->at(i) > 1e-6
+                && rljet_pt->at(i) > 0
+                && rljet_m->at(i) > 0
+                && rljet_D2->at(i) > 0
+                && rljet_Tau32_wta->at(i) > 0
+                )
+        {
+            hp->h_rljet_RES_m.at(i)->fill(rljet_m->at(i) / tljet_m->at(i), weight);
+            hp->h_rljet_RES_pT.at(i)->fill(rljet_pt->at(i) / tljet_pt->at(i), weight);
+            hp->h_rljet_RES_D2.at(i)->fill(rljet_D2->at(i) / tljet_D2->at(i), weight);
+            hp->h_rljet_RES_Tau32_wta.at(i)->fill(rljet_Tau32_wta->at(i) / tljet_Tau32_wta->at(i), weight);
+        }
+
+        // other substructure variables
         const float Tau1_wta = rljet_Tau1_wta->at(i);
         const float Tau2_wta = rljet_Tau2_wta->at(i);
         const float Tau3_wta = rljet_Tau3_wta->at(i);
@@ -471,7 +572,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_C2.at(i)->fill(C2, weight);
 
         const float fw0 = rljet_FoxWolfram0->at(i);
-        const float fw2 = rljet_FoxWolfram0->at(i);
+        const float fw2 = rljet_FoxWolfram2->at(i);
         const float fw20 = fabs(fw0) > 1.e-6 ? fw2 / fw0 : -1000.;
 
         hp->h_rljet_FoxWolfram0.at(i)->fill(fw0, weight);
@@ -496,92 +597,49 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_NTrimSubjets.at(i)->fill(rljet_NTrimSubjets->at(i), weight);
         hp->h_rljet_ungroomed_ntrk500.at(i)->fill(rljet_ungroomed_ntrk500->at(i), weight);
 
-        /*
-        const bool D2W50wp = rljet_smoothWTag50eff->at(i) == 1
-            || rljet_smoothWTag50eff->at(i) == 3;
-
-        const bool D2Z50wp = rljet_smoothZTag50eff->at(i) == 1
-            || rljet_smoothZTag50eff->at(i) == 3;
-
-        const bool massD2W50wp = rljet_smoothWTag50eff->at(i) == 3;
-        const bool massD2Z50wp = rljet_smoothZTag50eff->at(i) == 3;
-
-        const bool massTau3250wp = rljet_smoothMassTau32Tag50eff->at(i);
-
-        nominal_tag_map["massD2W50wp_ntrk"]           = massD2W50wp && rljet_ungroomed_ntrk500->at(i) < 20;
-        nominal_tag_map["massD2W50wp_NTrimSubjets"]   = massD2W50wp && rljet_NTrimSubjets->at(i) < 2;
-        nominal_tag_map["massD2W50wp_Width"]          = massD2W50wp && rljet_Width->at(i) < 0.13;
-        nominal_tag_map["massTau3250wp_ntrk"]         = massTau3250wp && rljet_ungroomed_ntrk500->at(i) < 20;
-        nominal_tag_map["massTau3250wp_NTrimSubjets"] = massTau3250wp && rljet_NTrimSubjets->at(i) < 2;
-        nominal_tag_map["massTau3250wp_Width"]        = massTau3250wp && rljet_Width->at(i) < 0.2;
-
-        nominal_tag_map["massD2W50wp_ANTI_ntrk"]           = massD2W50wp && !(rljet_ungroomed_ntrk500->at(i) < 20);
-        nominal_tag_map["massD2W50wp_ANTI_NTrimSubjets"]   = massD2W50wp && !(rljet_NTrimSubjets->at(i) < 2);
-        nominal_tag_map["massD2W50wp_ANTI_Width"]          = massD2W50wp && !(rljet_Width->at(i) < 0.13);
-        nominal_tag_map["massTau3250wp_ANTI_ntrk"]         = massTau3250wp && !(rljet_ungroomed_ntrk500->at(i) < 20);
-        nominal_tag_map["massTau3250wp_ANTI_NTrimSubjets"] = massTau3250wp && !(rljet_NTrimSubjets->at(i) < 2);
-        nominal_tag_map["massTau3250wp_ANTI_Width"]        = massTau3250wp && !(rljet_Width->at(i) < 0.2);
-
-        // for in-situ JMR/JMS study with W+jets from dijets
-        nominal_tag_map["D2W50wp_btag_double"]      = D2W50wp && rljet_btag_double->at(i);
-        nominal_tag_map["D2W50wp_btag_single"]      = D2W50wp && rljet_btag_single->at(i);
-        nominal_tag_map["D2W50wp_btag_leading_pt"]  = D2W50wp && rljet_btag_leading_pt->at(i);
-        nominal_tag_map["D2Z50wp_btag_double"]      = D2Z50wp && rljet_btag_double->at(i);
-        nominal_tag_map["D2Z50wp_btag_single"]      = D2Z50wp && rljet_btag_single->at(i);
-        nominal_tag_map["D2Z50wp_btag_leading_pt"]  = D2Z50wp && rljet_btag_leading_pt->at(i);
-
-        // see https://indico.cern.ch/event/368266/contributions/870965/attachments/732236/1004635/JetEtmissPP_toptag.pdf
-        bool away_from_trigger = hltjet_dR->at(i) > 0.01;
-
-        nominal_tag_map["massD2W50wp_near_trigger"]   = massD2W50wp && !away_from_trigger;
-        nominal_tag_map["massD2W50wp_away_trigger"]   = massD2W50wp && away_from_trigger;
-        nominal_tag_map["massTau3250wp_near_trigger"] = massTau3250wp && !away_from_trigger;
-        nominal_tag_map["massTau3250wp_away_trigger"] = massTau3250wp && away_from_trigger;
-
-        if (this->operating_on_mc)
-        { // since we haven't yet required the MC event passed the same trigger as the data
-            nominal_tag_map["massD2W50wp_near_trigger"]   &= HLT_jet_trigger;
-            nominal_tag_map["massD2W50wp_away_trigger"]   &= HLT_jet_trigger;
-            nominal_tag_map["massTau3250wp_near_trigger"] &= HLT_jet_trigger;
-            nominal_tag_map["massTau3250wp_away_trigger"] &= HLT_jet_trigger;
-        }
-
-        for (const auto& itag : nominal_tag_map) {
-            hp->h_rljet_pt.at(i)->fill_tagged(itag.first, rljet_pt->at(i)/1000., weight, itag.second);
-            hp->h_rljet_m.at(i)->fill_tagged(itag.first, rljet_m->at(i)/1000., weight, itag.second);
-        }
-        */
-
         // SD log(chi) variables
         if (ranSD) {
             hp->h_rljet_SDw_win20_btag0_logchi.at(i)->fill(rljet_SDw_win20_btag0->at(i), weight);
+            hp->h_rljet_SDz_win20_btag0_logchi.at(i)->fill(rljet_SDz_win20_btag0->at(i), weight);
             hp->h_rljet_SDt_win50_btag0_logchi.at(i)->fill(rljet_SDt_win50_btag0->at(i), weight);
-        }
 
-        // SD-tagged distributions
-        if (ranSD) {
-            SD_nominal_tag_map["SDw_win20_btag0"] = rljet_SDw_win20_btag0->at(i) > 2.5 && rljet_m->at(i) / 1000. < 95 && rljet_m->at(i) / 1000. > 65;
-            SD_nominal_tag_map["SDt_win50_btag0"] = rljet_SDt_win50_btag0->at(i) > 1.0 && rljet_m->at(i) / 1000. < 210 && rljet_m->at(i) / 1000. > 140;
+            SD_nominal_tag_map["SDw_win20_btag0"] = rljet_SDw_win20_btag0->at(i) > 2.8;
+            SD_nominal_tag_map["SDz_win20_btag0"] = rljet_SDz_win20_btag0->at(i) > 2.8;
+            SD_nominal_tag_map["SDt_win50_btag0"] = rljet_SDt_win50_btag0->at(i) > 4.;
 
             for (const auto& itag : SD_nominal_tag_map) {
                 hp->h_rljet_m.at(i)->fill_tagged(itag.first, rljet_m->at(i)/1000., weight, itag.second);
+                hp->h_rljet_pt.at(i)->fill_tagged(itag.first, rljet_pt->at(i)/1000., weight, itag.second);
             }
+
+            if (this->operating_on_mc) {
+                SD_systematic_tag_map["SDw_win20_btag0_UP"] = rljet_SDw_win20_btag0_UP->at(i) > 2.8;
+                SD_systematic_tag_map["SDz_win20_btag0_UP"] = rljet_SDz_win20_btag0_UP->at(i) > 2.8;
+                SD_systematic_tag_map["SDt_win50_btag0_UP"] = rljet_SDt_win50_btag0_UP->at(i) > 4.;
+                SD_systematic_tag_map["SDw_win20_btag0_DOWN"] = rljet_SDw_win20_btag0_DOWN->at(i) > 2.8;
+                SD_systematic_tag_map["SDz_win20_btag0_DOWN"] = rljet_SDz_win20_btag0_DOWN->at(i) > 2.8;
+                SD_systematic_tag_map["SDt_win50_btag0_DOWN"] = rljet_SDt_win50_btag0_DOWN->at(i) > 4.;
+
+                for (const auto& itag : SD_systematic_tag_map) {
+                    hp->h_rljet_m.at(i)->fill_tagged(itag.first, rljet_m->at(i)/1000., weight, itag.second);
+                    hp->h_rljet_pt.at(i)->fill_tagged(itag.first, rljet_m->at(i)/1000., weight, itag.second);
+                }
+            } // end of saving systematic branch SD-tagged variables
+        } // end of saving SD-tagged variables
+
+        if (rljet_D2->at(i) > 0.) {
+            hp->h_rljet_BDT_Top_Score.at(i)->fill(rljet_BDT_Top_Score->at(i), weight);
+            hp->h_rljet_BDT_W_Score.at(i)->fill(rljet_BDT_W_Score->at(i), weight);
         }
 
-        if (ranSD && this->operating_on_mc) {
-            SD_systematic_tag_map["SDw_win20_btag0_UP"] = rljet_SDw_win20_btag0_UP->at(i) > 2.5 && rljet_m->at(i) / 1000. < 95 && rljet_m->at(i) / 1000. > 65;
-            SD_systematic_tag_map["SDt_win50_btag0_UP"] = rljet_SDt_win50_btag0_UP->at(i) > 1.0 && rljet_m->at(i) / 1000. < 210 && rljet_m->at(i) / 1000. > 140;
-            SD_systematic_tag_map["SDw_win20_btag0_DOWN"] = rljet_SDw_win20_btag0_DOWN->at(i) > 2.5 && rljet_m->at(i) / 1000. < 95 && rljet_m->at(i) / 1000. > 65;
-            SD_systematic_tag_map["SDt_win50_btag0_DOWN"] = rljet_SDt_win50_btag0_DOWN->at(i) > 1.0 && rljet_m->at(i) / 1000. < 210 && rljet_m->at(i) / 1000. > 140;
-
-            for (const auto& itag : SD_systematic_tag_map) {
-                hp->h_rljet_m.at(i)->fill_tagged(itag.first, rljet_m->at(i)/1000., weight, itag.second);
-            }
-        } // end of saving systematic branch SD-tagged variables
     } // end of saving all anti-kt R = 1.0 distributions
 
-    if (n_rljets_recorded >= 2)
+    if (rljet_count >= 2) {
         hp->h_rljet_mjj->fill(rljet_mjj/1000., weight);
+        hp->h_rljet_ptasym->fill(rljet_ptasym, weight);
+        hp->h_rljet_dy->fill(rljet_dy, weight);
+        hp->h_rljet_dR->fill(rljet_dR, weight);
+    }
 
     /**************************/
     /* C/A 15 JETS (FROM HTT) */
@@ -597,12 +655,17 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
         for (UInt_t ihtt = 0; ihtt < htt_config_strings.size(); ihtt++)
         {
-            hp->h_htt_pt.at(ijet)->fill_tagged(htt_config_strings[ihtt]       , htt_pt[ihtt]->at(ijet) / 1000. , weight , htt_tag[ihtt]->at(ijet));
-            hp->h_htt_eta.at(ijet)->fill_tagged(htt_config_strings[ihtt]      , htt_eta[ihtt]->at(ijet)        , weight , htt_tag[ihtt]->at(ijet));
-            hp->h_htt_phi.at(ijet)->fill_tagged(htt_config_strings[ihtt]      , htt_phi[ihtt]->at(ijet)        , weight , htt_tag[ihtt]->at(ijet));
-            hp->h_htt_m.at(ijet)->fill_tagged(htt_config_strings[ihtt]        , htt_m[ihtt]->at(ijet) / 1000.  , weight , htt_tag[ihtt]->at(ijet));
-            hp->h_htt_atan1312.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_atan1312[ihtt]->at(ijet)   , weight , htt_tag[ihtt]->at(ijet));
-            hp->h_htt_m23m123.at(ijet)->fill_tagged(htt_config_strings[ihtt]  , htt_m23m123[ihtt]->at(ijet)    , weight , htt_tag[ihtt]->at(ijet));
+            hp->h_htt_pt.at(ijet)->fill_tagged(htt_config_strings[ihtt]  , htt_pt[ihtt]->at(ijet) / 1000. , weight , htt_tag[ihtt]->at(ijet));
+            hp->h_htt_eta.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_eta[ihtt]->at(ijet)        , weight , htt_tag[ihtt]->at(ijet));
+            hp->h_htt_phi.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_phi[ihtt]->at(ijet)        , weight , htt_tag[ihtt]->at(ijet));
+            hp->h_htt_m.at(ijet)->fill_tagged(htt_config_strings[ihtt]   , htt_m[ihtt]->at(ijet) / 1000.  , weight , htt_tag[ihtt]->at(ijet));
+
+            hp->h_htt_atan1312.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_atan1312[ihtt]->at(ijet) , weight , htt_tag[ihtt]->at(ijet));
+            hp->h_htt_m23m123.at(ijet)->fill_tagged(htt_config_strings[ihtt]  , htt_m23m123[ihtt]->at(ijet)  , weight , htt_tag[ihtt]->at(ijet));
+
+            hp->h_htt_pts1.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_pts1[ihtt]->at(ijet) , weight , htt_tag[ihtt]->at(ijet));
+            hp->h_htt_pts2.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_pts2[ihtt]->at(ijet) , weight , htt_tag[ihtt]->at(ijet));
+            hp->h_htt_pts3.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_pts3[ihtt]->at(ijet) , weight , htt_tag[ihtt]->at(ijet));
 
             hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged(htt_config_strings[ihtt]  , htt_caGroomJet_pt[ihtt]->at(ijet) / 1000. , weight , htt_caGroomJet_pt[ihtt]->at(ijet) > -1000);
             hp->h_htt_caGroomJet_eta.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_caGroomJet_eta[ihtt]->at(ijet)        , weight , htt_caGroomJet_eta[ihtt]->at(ijet) > -1000);
@@ -628,6 +691,10 @@ void DataMCbackgroundSelector::Terminate()
     // a query. It always runs on the client, it can be used to present
     // the results graphically or save the results to file.
 
+    std::stringstream ss;
+    ss << "WRITING: " << this->output_filepath;
+    this->log(ss.str());
+
     TFile* output_file = new TFile(this->output_filepath.c_str(), "UPDATE");
 
     TDirectory* root_tdir = output_file->GetDirectory(this->root_dir_str.c_str());
@@ -652,7 +719,7 @@ void DataMCbackgroundSelector::Terminate()
 
     output_file->Close();
 
-    std::stringstream ss;
+    ss.str(std::string());
     ss << "FINISHED: " << root_dir_str << "/" << sub_dir_str;
 
     this->log(ss.str());
