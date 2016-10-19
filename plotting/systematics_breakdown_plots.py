@@ -117,14 +117,21 @@ breakdown_plots = [
             rebin = MASS_REBIN,
             ),
 
-        make_pythia_systematics_breakdown_plot("h_rljet0_d2",
+        make_pythia_systematics_breakdown_plot("h_rljet0_pt",
+            extra_legend_lines = DEF_LINES,
+            x_title = "Large-R Jet Mass",
+            x_max = 400,
+            rebin = MASS_REBIN,
+            ),
+
+        make_pythia_systematics_breakdown_plot("h_rljet0_D2",
             extra_legend_lines = DEF_LINES + ["m_{calo} > 50 GeV"],
             x_title = "Large-R Jet #it{D_{2}^{#beta = 1}}",
             x_units = "",
             x_max = 4.0
             ),
 
-        make_pythia_systematics_breakdown_plot("h_rljet0_m_w_prerec_50eff_d2cut",
+        make_pythia_systematics_breakdown_plot("h_rljet0_m_w_prerec_50eff_D2cut",
             empty_scale = 1.45,
             extra_legend_lines = DEF_LINES + ["Smooth D_{2}-tagged"],
             x_max = 400,
@@ -132,14 +139,14 @@ breakdown_plots = [
             x_title = "Large-R Jet Mass"
             ),
 
-        make_pythia_systematics_breakdown_plot("h_rljet0_tau32",
+        make_pythia_systematics_breakdown_plot("h_rljet0_Tau32_wta",
             extra_legend_lines = DEF_LINES + ["m_{calo} > 100 GeV"],
             x_title = "Large-R Jet #it{#tau_{32}^{WTA}}",
             x_units = "",
             x_max = 0.9,
             ),
 
-        make_pythia_systematics_breakdown_plot("h_rljet0_m_t_prerec_50eff_tau32cut",
+        make_pythia_systematics_breakdown_plot("h_rljet0_m_t_prerec_50eff_Tau32cut",
             extra_legend_lines = DEF_LINES + ["Smooth #tau_{32}-tagged"],
             x_max = 400,
             rebin = MASS_REBIN,
