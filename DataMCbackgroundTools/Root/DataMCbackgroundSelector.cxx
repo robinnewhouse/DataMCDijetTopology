@@ -16,6 +16,7 @@
 
 #include <TStyle.h>
 #include <TMath.h>
+
 #include <TLorentzVector.h>
 
 #include <iostream>
@@ -91,16 +92,25 @@ DataMCbackgroundSelector::DataMCbackgroundSelector(
     on_nominal_branch(sub_dir_str_ == "nominal"),
     compute_Tau32(false),
     compute_D2(false),
-    luminosity(luminosity_)
+    luminosity(luminosity_),
+    num_mva_rejected_jets(0)
 {
-    const char* const rc = getenv("ROOTCOREBIN");
-    std::string xsection_file = std::string(rc) + "/data/DataMCbackgroundTools/sample_weights.txt";
-    if (!weight_tool.read_weights_file(xsection_file))
+    const std::string rc = std::string(getenv("ROOTCOREBIN"));
+
+    weight_tool = make_unique<WeightTool>();
+
+    std::string xsection_file = rc + "/data/DataMCbackgroundTools/sample_weights.txt";
+    if (!weight_tool->read_weights_file(xsection_file))
         exit(1);
 
-    std::string bugged_events_file = std::string(rc) + "/data/DataMCbackgroundTools/bugged_events.txt";
-    if (!weight_tool.read_bugged_events_file(bugged_events_file))
+    std::string bugged_events_file = rc + "/data/DataMCbackgroundTools/bugged_events.txt";
+    if (!weight_tool->read_bugged_events_file(bugged_events_file))
         exit(1);
+
+    dnn_top_tagger = make_unique<DNNWTopTagger>(
+                    rc + "/data/DataMCbackgroundTools/dnn_weights/keras_top_dnn_2.json");
+
+    TMVA::Tools::Instance();
 
     try {
         std::cout << "OFFLINE EVENT SELECTION SPECIFIED: " << event_selector_str_ << std::endl;
@@ -111,6 +121,9 @@ DataMCbackgroundSelector::DataMCbackgroundSelector(
         std::cout << "EventSelector: " << event_selector_str_ << " not available." << std::endl;
         std::cout << "see DataMCbackgroundSelector.cxx for more details." << std::endl;
     }
+
+
+
 }
 
 void DataMCbackgroundSelector::log(const std::string& line)
@@ -135,6 +148,181 @@ void DataMCbackgroundSelector::SlaveBegin(TTree * /*tree*/)
     // When running with PROOF SlaveBegin() is called on each slave server.
     // The tree argument is deprecated (on PROOF 0 is passed).
     TString option = GetOption();
+
+    bdt_input_map.clear();
+
+    bdt_input_map["fjet_Angularity"]   = -1000.;
+    bdt_input_map["fjet_Aplanarity"]   = -1000.;
+    bdt_input_map["fjet_C2"]           = -1000.;
+    bdt_input_map["fjet_D2"]           = -1000.;
+    bdt_input_map["fjet_Dip12"]        = -1000.;
+    bdt_input_map["fjet_ECF1"]         = -1000.;
+    bdt_input_map["fjet_ECF2"]         = -1000.;
+    bdt_input_map["fjet_ECF3"]         = -1000.;
+    bdt_input_map["fjet_FoxWolfram20"] = -1000.;
+    bdt_input_map["fjet_KtDR"]         = -1000.;
+    bdt_input_map["fjet_PlanarFlow"]   = -1000.;
+    bdt_input_map["fjet_Qw"]           = -1000.;
+    bdt_input_map["fjet_Sphericity"]   = -1000.;
+    bdt_input_map["fjet_Split12"]      = -1000.;
+    bdt_input_map["fjet_Tau1_wta"]     = -1000.;
+    bdt_input_map["fjet_Tau2_wta"]     = -1000.;
+    bdt_input_map["fjet_Tau3_wta"]     = -1000.;
+    bdt_input_map["fjet_Tau21_wta"]    = -1000.;
+    bdt_input_map["fjet_Tau32_wta"]    = -1000.;
+    bdt_input_map["fjet_ThrustMaj"]    = -1000.;
+    bdt_input_map["fjet_ThrustMin"]    = -1000.;
+    bdt_input_map["fjet_ZCut12"]       = -1000.;
+
+    auto add_bdt_vars = [this](TMVA::Reader* reader,
+                    const std::vector<std::string>& bdt_vars) {
+            for (auto const& v : bdt_vars) reader->AddVariable(v, &this->bdt_input_map[v]);
+    };
+
+    // bdt_readers["W_NvarAll"] = make_unique<TMVA::Reader>("!Color:!Silent");
+    bdt_readers["W_NvarL"]   = make_unique<TMVA::Reader>("!Color:!Silent");
+    bdt_readers["W_NvarM"]   = make_unique<TMVA::Reader>("!Color:!Silent");
+    bdt_readers["W_NvarS"]   = make_unique<TMVA::Reader>("!Color:!Silent");
+
+    //bdt_readers["TOP3q_NvarAll"] = make_unique<TMVA::Reader>("!Color:!Silent");
+    bdt_readers["TOP3q_NvarL"]   = make_unique<TMVA::Reader>("!Color:!Silent");
+    bdt_readers["TOP3q_NvarM"]   = make_unique<TMVA::Reader>("!Color:!Silent");
+    bdt_readers["TOP3q_NvarS"]   = make_unique<TMVA::Reader>("!Color:!Silent");
+
+    bdt_readers["TOP_NvarM"] = make_unique<TMVA::Reader>("!Color:!Silent");
+
+    // add_bdt_vars(bdt_readers["W_NvarAll"].get(), {
+    //                 "fjet_D2",
+    //                 "fjet_C2",
+    //                 "fjet_ECF3",
+    //                 "fjet_KtDR",
+    //                 "fjet_ThrustMin",
+    //                 "fjet_Angularity",
+    //                 "fjet_PlanarFlow",
+    //                 "fjet_Tau21_wta",
+    //                 "fjet_Aplanarity",
+    //                 "fjet_FoxWolfram20",
+    //                 "fjet_Split12",
+    //                 "fjet_ZCut12",
+    //                 "fjet_ECF2",
+    //                 "fjet_Tau1_wta",
+    //                 "fjet_Sphericity",
+    //                 "fjet_Dip12",
+    //                 "fjet_ThrustMaj",
+    //                 "fjet_Tau2_wta",
+    //                 "fjet_ECF1"
+    //                 });
+
+    add_bdt_vars(bdt_readers["W_NvarL"].get(), {
+                    "fjet_D2",
+                    "fjet_ECF3",
+                    "fjet_C2",
+                    "fjet_ThrustMin",
+                    "fjet_Angularity",
+                    "fjet_PlanarFlow",
+                    "fjet_Tau21_wta",
+                    "fjet_Aplanarity",
+                    "fjet_FoxWolfram20",
+                    "fjet_Split12",
+                    "fjet_ZCut12",
+                    "fjet_KtDR",
+                    "fjet_ECF2",
+                    "fjet_Tau1_wta",
+                    "fjet_Sphericity",
+                    "fjet_Dip12"
+                    });
+
+    add_bdt_vars(bdt_readers["W_NvarM"].get(), {
+                    "fjet_D2",
+                    "fjet_ECF3",
+                    "fjet_C2",
+                    "fjet_ThrustMin",
+                    "fjet_Angularity",
+                    "fjet_PlanarFlow",
+                    "fjet_Tau21_wta",
+                    "fjet_Aplanarity",
+                    "fjet_FoxWolfram20",
+                    "fjet_Split12",
+                    "fjet_ZCut12",
+                    "fjet_KtDR",
+                    "fjet_ECF2"
+                    });
+
+    add_bdt_vars(bdt_readers["W_NvarS"].get(), {
+                    "fjet_D2",
+                    "fjet_ECF3",
+                    "fjet_C2",
+                    "fjet_ThrustMin",
+                    "fjet_Angularity",
+                    "fjet_PlanarFlow",
+                    "fjet_Tau21_wta"
+                    });
+
+    // add_bdt_vars(bdt_readers["TOP3q_NvarAll"].get(), {
+    //                 "fjet_Tau32_wta",
+    //                 "fjet_ECF3",
+    //                 "fjet_Qw",
+    //                 "fjet_D2",
+    //                 "fjet_ECF2",
+    //                 "fjet_Split23",
+    //                 "fjet_Tau21_wta",
+    //                 "fjet_Split12",
+    //                 "fjet_Tau3_wta",
+    //                 "fjet_ECF1",
+    //                 "fjet_C2",
+    //                 "fjet_Tau2_wta",
+    //                 "fjet_Tau1_wta"
+    //                 });
+
+    add_bdt_vars(bdt_readers["TOP3q_NvarL"].get(), {
+                    "fjet_Tau32_wta",
+                    "fjet_ECF3",
+                    "fjet_Qw",
+                    "fjet_D2",
+                    "fjet_ECF2",
+                    "fjet_Split23",
+                    "fjet_Tau21_wta",
+                    "fjet_Split12",
+                    "fjet_Tau3_wta"
+                    });
+
+    add_bdt_vars(bdt_readers["TOP3q_NvarM"].get(), {
+                    "fjet_Tau32_wta",
+                    "fjet_ECF3",
+                    "fjet_Qw",
+                    "fjet_D2",
+                    "fjet_ECF2",
+                    "fjet_Split23",
+                    "fjet_Tau21_wta"
+                    });
+
+    add_bdt_vars(bdt_readers["TOP3q_NvarS"].get(), {
+                    "fjet_Tau32_wta",
+                    "fjet_ECF3",
+                    "fjet_Qw",
+                    "fjet_D2",
+                    "fjet_ECF2",
+                    "fjet_Split23",
+                    "fjet_Tau21_wta"
+                    });
+
+    add_bdt_vars(bdt_readers["TOP_NvarM"].get(), {
+                    "fjet_Tau32_wta",
+                    "fjet_Qw",
+                    "fjet_ECF3",
+                    "fjet_D2",
+                    "fjet_Tau21_wta",
+                    "fjet_ECF1",
+                    "fjet_Split12"
+                    });
+
+    const std::string rc = std::string(getenv("ROOTCOREBIN"));
+
+    for (auto& r : bdt_readers) {
+            std::string weight_filepath = rc + "/data/DataMCbackgroundTools/bdt_weights/TMVAClassification_BDTG." + r.first + "_pT200to2000GeV.weights.xml";
+            r.second->BookMVA(r.first, rc +
+                "/data/DataMCbackgroundTools/bdt_weights/TMVAClassification_BDTG." + r.first + "_pT200to2000GeV.weights.xml");
+    }
 
     this->hp = new HistoPack(1);
 
@@ -190,18 +378,13 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         b_weight_pileup->GetEntry(entry);
         b_weight_jvt->GetEntry(entry);
         b_weight_bTagSF_70->GetEntry(entry);
-
-        b_rljet_dRmatched_reco_truth->GetEntry(entry);
-        b_rljet_dRmatched_particle_flavor->GetEntry(entry);
-        b_rljet_dRmatched_maxEParton_flavor->GetEntry(entry);
-        b_rljet_dRmatched_topBChild->GetEntry(entry);
-        b_rljet_dRmatched_nQuarkChildren->GetEntry(entry);
     }
 
     b_mcChannelNumber->GetEntry(entry);
     b_eventNumber->GetEntry(entry);
 
     if (this->on_nominal_branch) {
+        // TODO: figure out what I'm supposed to be saving here...
         if (this->operating_on_mc) {
             b_mu->GetEntry(entry);
         } else {
@@ -239,8 +422,8 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         b_rljet_ThrustMin->GetEntry(entry);
         b_rljet_ZCut12->GetEntry(entry);
 
-		b_rljet_NTrimSubjets->GetEntry(entry);
-		b_rljet_ungroomed_ntrk500->GetEntry(entry);
+        b_rljet_NTrimSubjets->GetEntry(entry);
+        b_rljet_ungroomed_ntrk500->GetEntry(entry);
 
         if (this->operating_on_mc) {
             b_tljet_pt->GetEntry(entry);
@@ -287,12 +470,9 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             b_htt_caGroomJet_m[i]->GetEntry(entry);
         }
 
-        b_rljet_BDT_Top_Score->GetEntry(entry);
-        b_rljet_BDT_W_Score->GetEntry(entry);
-
-        b_rljet_btag_double->GetEntry(entry);
-        b_rljet_btag_single->GetEntry(entry);
-        b_rljet_btag_leading_pt->GetEntry(entry);
+        // b_rljet_btag_double->GetEntry(entry);
+        // b_rljet_btag_single->GetEntry(entry);
+        // b_rljet_btag_leading_pt->GetEntry(entry);
 
         b_rljet_SDw_win20_btag0->GetEntry(entry);
         b_rljet_SDz_win20_btag0->GetEntry(entry);
@@ -322,9 +502,9 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         if (this->operating_on_mc) {
             const ULong64_t nevents_skimmed = getTotalEventsSample(current_file);
             float sum_weights = get_sum_weights_sample(current_file);
-            float xsection  = weight_tool.get_xsection(mcChannelNumber);
-            float nevents   = weight_tool.get_nevents(mcChannelNumber);
-            float filtereff = weight_tool.get_filtereff(mcChannelNumber);
+            float xsection  = weight_tool->get_xsection(mcChannelNumber);
+            float nevents   = weight_tool->get_nevents(mcChannelNumber);
+            float filtereff = weight_tool->get_filtereff(mcChannelNumber);
 
             // TEMPORARY FIX FOR BUGGED ALL-HAD TTBAR WEIGHTS
             if (mcChannelNumber == 303722) {
@@ -384,7 +564,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             this->log(ss.str());
         }
 
-        if (weight_tool.is_bugged_event(mcChannelNumber, eventNumber)) {
+        if (weight_tool->is_bugged_event(mcChannelNumber, eventNumber)) {
             std::stringstream ss;
             ss << std::fixed;
             ss << "REJECTING EVENT FROM BUGGED EVENT LIST: ";
@@ -448,26 +628,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
         if (this->operating_on_mc) {
             int pdgid = -1;
-
-            const bool was_matched_to_truth_jet    = rljet_dRmatched_reco_truth->at(i) == 1;
-            const int z_w_top_id                   = abs(rljet_dRmatched_particle_flavor->at(i));
-            const int num_quarks_contained         = rljet_dRmatched_nQuarkChildren->at(i);
-            const bool top_child_b_quark_contained = rljet_dRmatched_topBChild->at(i) == 1;
-            const int maxE_parton                  = abs(rljet_dRmatched_maxEParton_flavor->at(i));
-
-            if (was_matched_to_truth_jet) {
-                if (z_w_top_id == 0)
-                    pdgid = maxE_parton;
-
-                else if (z_w_top_id == 6 && top_child_b_quark_contained && num_quarks_contained >= 3)
-                    pdgid = 6;
-
-                else if (z_w_top_id == 23 && num_quarks_contained >= 2)
-                    pdgid = 23;
-
-                else if (z_w_top_id == 24 && num_quarks_contained >= 2)
-                    pdgid = 24;
-            }
 
             hp->h_rljet_pdgid.at(i)->fill(pdgid, weight);
 
@@ -568,12 +728,15 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         const float Tau21_wta = fabs(Tau1_wta) > 1.e-6 ? Tau2_wta / Tau1_wta : -1000.;
         hp->h_rljet_Tau21_wta.at(i)->fill(Tau21_wta, weight);
 
+        const float Tau32_wta = fabs(Tau2_wta) > 1.e-6 ? Tau3_wta / Tau2_wta : -1000.;
+
         const float C2 = ECF3 * ECF1 / TMath::Power(ECF2, 2);
         hp->h_rljet_C2.at(i)->fill(C2, weight);
 
         const float fw0 = rljet_FoxWolfram0->at(i);
         const float fw2 = rljet_FoxWolfram2->at(i);
         const float fw20 = fabs(fw0) > 1.e-6 ? fw2 / fw0 : -1000.;
+
 
         hp->h_rljet_FoxWolfram0.at(i)->fill(fw0, weight);
         hp->h_rljet_FoxWolfram2.at(i)->fill(fw2, weight);
@@ -596,6 +759,63 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
         hp->h_rljet_NTrimSubjets.at(i)->fill(rljet_NTrimSubjets->at(i), weight);
         hp->h_rljet_ungroomed_ntrk500.at(i)->fill(rljet_ungroomed_ntrk500->at(i), weight);
+
+        if (rljet_D2->at(i) > 0
+                && C2 > 0
+                && rljet_Tau32_wta->at(i) > 0
+                && rljet_Tau21_wta->at(i) > 0
+                && rljet_Tau1_wta->at(i) > 0
+                && rljet_Tau2_wta->at(i) > 0
+                && rljet_Tau3_wta->at(i) > 0
+                && rljet_ECF1->at(i) > 0
+                && rljet_ECF2->at(i) > 0
+                && rljet_ECF3->at(i) > 0)
+        {
+            dnn_input_map["Tau1_wta"]  = rljet_Tau1_wta->at(i);
+            dnn_input_map["Tau2_wta"]  = rljet_Tau2_wta->at(i);
+            dnn_input_map["Tau3_wta"]  = rljet_Tau3_wta->at(i);
+            dnn_input_map["Tau21_wta"] = Tau21_wta;
+            dnn_input_map["Tau32_wta"] = Tau32_wta;
+            dnn_input_map["Split12"]   = rljet_Split12->at(i);
+            dnn_input_map["Split23"]   = rljet_Split23->at(i);
+            dnn_input_map["Qw"]        = rljet_Qw->at(i);
+            dnn_input_map["C2"]        = C2;
+            dnn_input_map["D2"]        = rljet_D2->at(i);
+            dnn_input_map["ECF1"]      = rljet_ECF1->at(i);
+            dnn_input_map["ECF2"]      = rljet_ECF2->at(i);
+            dnn_input_map["ECF3"]      = rljet_ECF3->at(i);
+
+            hp->h_rljet_DNN_score.at(i)->fill_tagged("TEST",
+                    dnn_top_tagger->GetDiscriminant(dnn_input_map), weight, true);
+
+            bdt_input_map["fjet_D2"]           = rljet_D2->at(i);
+            bdt_input_map["fjet_ECF3"]         = rljet_ECF3->at(i);
+            bdt_input_map["fjet_C2"]           = C2;
+            bdt_input_map["fjet_ThrustMin"]    = rljet_ThrustMin->at(i);
+            bdt_input_map["fjet_Angularity"]   = rljet_Angularity->at(i);
+            bdt_input_map["fjet_PlanarFlow"]   = rljet_PlanarFlow->at(i);
+            bdt_input_map["fjet_Tau21_wta"]    = Tau21_wta;
+            bdt_input_map["fjet_Aplanarity"]   = rljet_Aplanarity->at(i);
+            bdt_input_map["fjet_FoxWolfram20"] = fw20;
+            bdt_input_map["fjet_Split12"]      = rljet_Split12->at(i);
+            bdt_input_map["fjet_ZCut12"]       = rljet_ZCut12->at(i);
+            bdt_input_map["fjet_KtDR"]         = rljet_KtDR->at(i);
+            bdt_input_map["fjet_ECF2"]         = rljet_ECF2->at(i);
+            bdt_input_map["fjet_Tau1_wta"]     = rljet_Tau1_wta->at(i);
+            bdt_input_map["fjet_Sphericity"]   = rljet_Sphericity->at(i);
+            bdt_input_map["fjet_Dip12"]        = rljet_Dip12->at(i);
+            bdt_input_map["fjet_ThrustMaj"]    = rljet_ThrustMaj->at(i);
+            bdt_input_map["fjet_Tau2_wta"]     = rljet_Tau2_wta->at(i);
+            bdt_input_map["fjet_ECF1"]         = rljet_ECF1->at(i);
+
+            for (auto& r  : bdt_readers) {
+                hp->h_rljet_BDT_score.at(i)->fill_tagged(r.first,
+                        r.second->EvaluateMVA(r.first), weight, true);
+            }
+
+        } else {
+            num_mva_rejected_jets++;
+        } // end saving MVA tagger distributions
 
         // SD log(chi) variables
         if (ranSD) {
@@ -627,10 +847,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             } // end of saving systematic branch SD-tagged variables
         } // end of saving SD-tagged variables
 
-        if (rljet_D2->at(i) > 0.) {
-            hp->h_rljet_BDT_Top_Score.at(i)->fill(rljet_BDT_Top_Score->at(i), weight);
-            hp->h_rljet_BDT_W_Score.at(i)->fill(rljet_BDT_W_Score->at(i), weight);
-        }
 
     } // end of saving all anti-kt R = 1.0 distributions
 
@@ -726,4 +942,5 @@ void DataMCbackgroundSelector::Terminate()
 
     delete hp;
 }
+
 

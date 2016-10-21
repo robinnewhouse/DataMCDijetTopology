@@ -7,6 +7,11 @@
 
 #include "TopExamples/AnalysisTools.h"
 
+#include "NNTaggingTools/DNNWTopTagger.h"
+
+#include "TMVA/Tools.h"
+#include "TMVA/Reader.h"
+
 #include <TROOT.h>
 #include <TH1F.h>
 #include <TNamed.h>
@@ -38,7 +43,7 @@ class DataMCbackgroundSelector : public TSelector {
         const std::string sub_dir_str;
         const std::string data_trigger_str;
 
-        WeightTool weight_tool;
+        std::unique_ptr<WeightTool> weight_tool;
 
         const bool operating_on_mc;
         const bool on_nominal_branch;
@@ -62,6 +67,14 @@ class DataMCbackgroundSelector : public TSelector {
         std::unordered_map<std::string, bool> SD_nominal_tag_map;
         std::unordered_map<std::string, bool> SD_systematic_tag_map;
         // std::unordered_map<std::string, bool> nominal_tag_map;
+
+        std::unordered_map<std::string, std::unique_ptr<TMVA::Reader>> bdt_readers;
+        std::map<std::string, float> bdt_input_map;
+
+        std::unique_ptr<DNNWTopTagger> dnn_top_tagger;
+        std::map<std::string, double> dnn_input_map;
+
+        int num_mva_rejected_jets;
 
         // Declaration of leaf types
         Float_t   weight_mc;
@@ -117,8 +130,8 @@ class DataMCbackgroundSelector : public TSelector {
         vector<float> *rljet_ThrustMin;
         vector<float> *rljet_ZCut12;
 
-		vector<int> *rljet_NTrimSubjets;
-		vector<int> *rljet_ungroomed_ntrk500;
+        vector<int> *rljet_NTrimSubjets;
+        vector<int> *rljet_ungroomed_ntrk500;
 
         vector<float>   *tljet_pt;
         vector<float>   *tljet_eta;
@@ -127,12 +140,6 @@ class DataMCbackgroundSelector : public TSelector {
         vector<float>   *tljet_dR;
         vector<float>   *tljet_D2;
         vector<float>   *tljet_Tau32_wta;
-
-        vector<int> *rljet_dRmatched_reco_truth;
-        vector<int> *rljet_dRmatched_particle_flavor;
-        vector<int> *rljet_dRmatched_maxEParton_flavor;
-        vector<int> *rljet_dRmatched_topBChild;
-        vector<int> *rljet_dRmatched_nQuarkChildren;
 
         Int_t           hltjet_count;
         vector<float>   *hltjet_m;
@@ -175,12 +182,9 @@ class DataMCbackgroundSelector : public TSelector {
         vector<int>     *rljet_smoothZTag50eff;
         vector<int>     *rljet_smoothZTag25eff;
 
-        vector<float>   *rljet_BDT_Top_Score;
-        vector<float>   *rljet_BDT_W_Score;
-
-        vector<bool>    *rljet_btag_double;
-        vector<bool>    *rljet_btag_single;
-        vector<bool>    *rljet_btag_leading_pt;
+        // vector<bool>    *rljet_btag_double;
+        // vector<bool>    *rljet_btag_single;
+        // vector<bool>    *rljet_btag_leading_pt;
 
         vector<double>  *rljet_SDw_win20_btag0;
         vector<double>  *rljet_SDz_win20_btag0;
@@ -227,12 +231,6 @@ class DataMCbackgroundSelector : public TSelector {
         TBranch        *b_tljet_dR;   //!
         TBranch        *b_tljet_D2;   //!
         TBranch        *b_tljet_Tau32_wta;   //!
-
-        TBranch        *b_rljet_dRmatched_reco_truth; //!
-        TBranch        *b_rljet_dRmatched_particle_flavor; //!
-        TBranch        *b_rljet_dRmatched_maxEParton_flavor; //!
-        TBranch        *b_rljet_dRmatched_topBChild; //!
-        TBranch        *b_rljet_dRmatched_nQuarkChildren; //!
 
         TBranch        *b_hltjet_count;   //!
         TBranch        *b_hltjet_m;   //!
@@ -289,8 +287,8 @@ class DataMCbackgroundSelector : public TSelector {
         TBranch        *b_rljet_ThrustMin;
         TBranch        *b_rljet_ZCut12;
 
-		TBranch        *b_rljet_NTrimSubjets; //!
-		TBranch        *b_rljet_ungroomed_ntrk500; //!
+        TBranch        *b_rljet_NTrimSubjets; //!
+        TBranch        *b_rljet_ungroomed_ntrk500; //!
 
         TBranch        *b_rljet_smoothMassTag50eff;   //!
         TBranch        *b_rljet_smoothMassTag80eff;   //!
@@ -303,12 +301,9 @@ class DataMCbackgroundSelector : public TSelector {
         TBranch        *b_rljet_smoothZTag50eff;   //!
         TBranch        *b_rljet_smoothZTag25eff;   //!
 
-        TBranch        *b_rljet_BDT_Top_Score;   //!
-        TBranch        *b_rljet_BDT_W_Score;   //!
-
-        TBranch        *b_rljet_btag_double;   //!
-        TBranch        *b_rljet_btag_single;   //!
-        TBranch        *b_rljet_btag_leading_pt;   //!
+        // TBranch        *b_rljet_btag_double;   //!
+        // TBranch        *b_rljet_btag_single;   //!
+        // TBranch        *b_rljet_btag_leading_pt;   //!
 
         TBranch        *b_rljet_SDw_win20_btag0;   //!
         TBranch        *b_rljet_SDz_win20_btag0;   //!
@@ -404,12 +399,6 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     tljet_D2 = 0;
     tljet_Tau32_wta = 0;
 
-    rljet_dRmatched_reco_truth = 0;
-    rljet_dRmatched_particle_flavor = 0;
-    rljet_dRmatched_maxEParton_flavor = 0;
-    rljet_dRmatched_topBChild = 0;
-    rljet_dRmatched_nQuarkChildren = 0;
-
     hltjet_m = 0;
     hltjet_pt = 0;
     hltjet_eta = 0;
@@ -432,12 +421,9 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     rljet_smoothZTag50eff = 0;
     rljet_smoothZTag25eff = 0;
 
-    rljet_BDT_Top_Score = 0;
-    rljet_BDT_W_Score = 0;
-
-    rljet_btag_double = 0;
-    rljet_btag_single = 0;
-    rljet_btag_leading_pt = 0;
+    // rljet_btag_double = 0;
+    // rljet_btag_single = 0;
+    // rljet_btag_leading_pt = 0;
 
     rljet_SDw_win20_btag0 = 0;
     rljet_SDz_win20_btag0 = 0;
@@ -495,11 +481,7 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     fChain->SetBranchAddress("rljet_smoothZTag25eff"         , &rljet_smoothZTag25eff         , &b_rljet_smoothZTag25eff);
 
     if (this->operating_on_mc) {
-        fChain->SetBranchAddress("rljet_dRmatched_reco_truth"        , &rljet_dRmatched_reco_truth        , &b_rljet_dRmatched_reco_truth);
-        fChain->SetBranchAddress("rljet_dRmatched_particle_flavor"   , &rljet_dRmatched_particle_flavor   , &b_rljet_dRmatched_particle_flavor);
-        fChain->SetBranchAddress("rljet_dRmatched_maxEParton_flavor" , &rljet_dRmatched_maxEParton_flavor , &b_rljet_dRmatched_maxEParton_flavor);
-        fChain->SetBranchAddress("rljet_dRmatched_topBChild"         , &rljet_dRmatched_topBChild         , &b_rljet_dRmatched_topBChild);
-        fChain->SetBranchAddress("rljet_dRmatched_nQuarkChildren"    , &rljet_dRmatched_nQuarkChildren    , &b_rljet_dRmatched_nQuarkChildren);
+            //get pdgid
     }
 
     if (sub_dir_str == "nominal") {
@@ -543,8 +525,8 @@ void DataMCbackgroundSelector::Init(TTree *tree)
         fChain->SetBranchAddress("rljet_ThrustMin"   , &rljet_ThrustMin   , &b_rljet_ThrustMin);
         fChain->SetBranchAddress("rljet_ZCut12"      , &rljet_ZCut12      , &b_rljet_ZCut12);
 
-		fChain->SetBranchAddress("rljet_NTrimSubjets"      , &rljet_NTrimSubjets      , &b_rljet_NTrimSubjets);
-		fChain->SetBranchAddress("rljet_ungroomed_ntrk500" , &rljet_ungroomed_ntrk500 , &b_rljet_ungroomed_ntrk500);
+        fChain->SetBranchAddress("rljet_NTrimSubjets"      , &rljet_NTrimSubjets      , &b_rljet_NTrimSubjets);
+        fChain->SetBranchAddress("rljet_ungroomed_ntrk500" , &rljet_ungroomed_ntrk500 , &b_rljet_ungroomed_ntrk500);
 
         if (this->operating_on_mc) {
             fChain->SetBranchAddress("tljet_pt"        , &tljet_pt        , &b_tljet_pt);
@@ -631,12 +613,9 @@ void DataMCbackgroundSelector::Init(TTree *tree)
             fChain->SetBranchAddress(getHTTBranchName("caGroomJet_m"   , htt_config_strings[i]).c_str() , &htt_caGroomJet_m[i]   , &b_htt_caGroomJet_m[i]);
         }
 
-        fChain->SetBranchAddress("rljet_BDT_Top_Score" , &rljet_BDT_Top_Score , &b_rljet_BDT_Top_Score);
-        fChain->SetBranchAddress("rljet_BDT_W_Score"   , &rljet_BDT_W_Score   , &b_rljet_BDT_W_Score);
-
-        fChain->SetBranchAddress("rljet_btag_double"     , &rljet_btag_double     , &b_rljet_btag_double);
-        fChain->SetBranchAddress("rljet_btag_single"     , &rljet_btag_single     , &b_rljet_btag_single);
-        fChain->SetBranchAddress("rljet_btag_leading_pt" , &rljet_btag_leading_pt , &b_rljet_btag_leading_pt);
+        // fChain->SetBranchAddress("rljet_btag_double"     , &rljet_btag_double     , &b_rljet_btag_double);
+        // fChain->SetBranchAddress("rljet_btag_single"     , &rljet_btag_single     , &b_rljet_btag_single);
+        // fChain->SetBranchAddress("rljet_btag_leading_pt" , &rljet_btag_leading_pt , &b_rljet_btag_leading_pt);
 
         fChain->SetBranchAddress("rljet_SDw_win20_btag0", &rljet_SDw_win20_btag0, &b_rljet_SDw_win20_btag0);
         fChain->SetBranchAddress("rljet_SDz_win20_btag0", &rljet_SDz_win20_btag0, &b_rljet_SDz_win20_btag0);
