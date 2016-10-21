@@ -93,8 +93,9 @@ public:
     vector<unique_ptr<TH1Tagged>> h_rljet_SDz_win20_btag0_logchi;
     vector<unique_ptr<TH1Tagged>> h_rljet_SDt_win50_btag0_logchi;
 
-    vector<unique_ptr<TH1Tagged>> h_rljet_BDT_Top_Score;
-    vector<unique_ptr<TH1Tagged>> h_rljet_BDT_W_Score;
+    vector<unique_ptr<TH1Tagged>> h_rljet_BDT_score;
+
+    vector<unique_ptr<TH1Tagged>> h_rljet_DNN_score;
 
     void WriteCommonHistograms() const;
     void WriteNominalOnlyHistograms() const;

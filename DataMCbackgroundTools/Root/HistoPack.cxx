@@ -186,11 +186,11 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
         this->h_htt_pts3 . push_back ( make_unique<TH1Tagged>(
                     "h_htt" + std::to_string(i) + "_pts3", 0., 2000., 25));
 
-        this->h_rljet_BDT_Top_Score . push_back( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string(i) + "_BDT_Top_Score", -1.0, 1.0, 0.01));
+        this->h_rljet_BDT_score . push_back( make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string(i) + "_BDT_score", -1.0, 1.0, 0.01));
 
-        this->h_rljet_BDT_W_Score . push_back( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string(i) + "_BDT_W_Score", -1.0, 1.0, 0.01));
+        this->h_rljet_DNN_score . push_back( make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string(i) + "_DNN_score", 0., 1.0, 0.005));
     }
 
     this->h_rljet_mjj = make_unique<TH1Tagged>("h_rljet_mjj", 0., 8000., 10.);
@@ -277,7 +277,7 @@ void HistoPack::WriteNominalOnlyHistograms() const
     for (auto const &h : h_rljet_SDz_win20_btag0_logchi) h->write_all();
     for (auto const &h : h_rljet_SDt_win50_btag0_logchi) h->write_all();
 
-    for (auto const &h : h_rljet_BDT_Top_Score) h->write_all();
-    for (auto const &h : h_rljet_BDT_W_Score) h->write_all();
+    for (auto const &h : h_rljet_BDT_score) h->write_all();
+    for (auto const &h : h_rljet_DNN_score) h->write_all();
 }
 
