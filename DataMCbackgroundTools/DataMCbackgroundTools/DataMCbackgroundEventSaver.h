@@ -53,7 +53,6 @@ namespace top {
         /*********/
 
         std::unique_ptr<TruthMatchTool> m_truth_match_tool;
-        // std::unique_ptr<JSSWTopTaggerBDT> m_bdt_tool;
 
         /***********/
         /* METHODS */
@@ -241,10 +240,6 @@ namespace top {
         // prerec Z tags (reco)
         std::vector<int> m_rljet_smoothZTag50eff;
         std::vector<int> m_rljet_smoothZTag25eff;
-
-        // BDT
-        // std::vector<float> m_rljet_BDT_Top_Score;
-        // std::vector<float> m_rljet_BDT_W_Score;
 
         // Shower Deconstruction tags
         std::vector<double> m_rljet_SDw_win20_btag0;

@@ -2,6 +2,7 @@
 #include "DataMCbackgroundTools/LocalTools.h"
 
 #include <xAODJet/JetAuxContainer.h>
+
 #include <xAODCaloEvent/CaloClusterContainer.h>
 #include <xAODTruth/TruthParticle.h>
 #include <xAODTruth/TruthParticleContainer.h>
@@ -316,9 +317,6 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
             // systematicTree->makeOutputVariable(m_rljet_btag_single     , "rljet_btag_single");
             // systematicTree->makeOutputVariable(m_rljet_btag_leading_pt , "rljet_btag_leading_pt");
 
-            // BDT tagger output variables
-            // systematicTree->makeOutputVariable(m_rljet_BDT_Top_Score , "rljet_BDT_Top_Score");
-            // systematicTree->makeOutputVariable(m_rljet_BDT_W_Score   , "rljet_BDT_W_Score");
         } // end making nominal branch only output variables
     } // end making all output variables
 
@@ -343,9 +341,6 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
     // smooth Z taggers
     zTagger_smooth_50eff = make_unique<JetSubStructureUtils::BosonTag>("medium", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Ztagging_MC15_Prerecommendations_20150809.dat", false, false);
     zTagger_smooth_25eff = make_unique<JetSubStructureUtils::BosonTag>("tight", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Ztagging_MC15_Prerecommendations_20150809.dat", false, false);
-
-    // m_bdt_tool = std::unique_ptr<JSSWTopTaggerBDT>( new JSSWTopTaggerBDT(true,true,"NvarM") );
-    // m_bdt_tool->initialize();
 
     m_truth_match_tool = make_unique<TruthMatchTool>();
 }
@@ -503,9 +498,6 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
         // m_rljet_btag_double     . assign(m_num_fatjets_keep, false);
         // m_rljet_btag_single     . assign(m_num_fatjets_keep, false);
         // m_rljet_btag_leading_pt . assign(m_num_fatjets_keep, false);
-
-        // m_rljet_BDT_Top_Score . assign(m_num_fatjets_keep, -1000. );
-        // m_rljet_BDT_W_Score   . assign(m_num_fatjets_keep, -1000. );
 
         m_hltjet_pt  . assign(m_num_fatjets_keep, -1000. );
         m_hltjet_eta . assign(m_num_fatjets_keep, -1000. );
@@ -830,10 +822,6 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
                     m_hltjet_dR[i]  = top::deltaR(*rljets[i], *hltjet_near);
                 }
             } // end of saving trigger jet variables
-
-            // BDT
-            // m_rljet_BDT_Top_Score[i] = m_bdt_tool->score(*rljets[i], "toptag");
-            // m_rljet_BDT_W_Score[i] = m_bdt_tool->score(*rljets[i], "wtag");
 
             /*************/
             /* B-TAGGING */
