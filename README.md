@@ -4,7 +4,7 @@
 
 This package can be used to accomplish the following:
 
-* Produce flat ntuples of calibrated objects from JETM8 DxAOD's for data and Monte Carlo, locally or on the grid
+* Produce flat ntuples of calibrated objects from JETM6 DxAOD's for data and Monte Carlo, locally or on the grid
 * From the flat ntuples, produce sets of raw histograms with optional offline cuts
 * From the raw histograms, produce publication quality plots
 
@@ -19,7 +19,8 @@ This package is based on AnalysisTop. If you are not familiar, consider these re
 
 # SETUP
 
-See `setup_script.sh`. Due to variations between lxplus/local servers and different setups, it is not recommended to simply run this script, but to follow it one line at a time, making the necessary changes.
+See `setup_script.sh`. Due to variations between lxplus/local servers and different setups, it is not recommended to simply run this script,
+but to follow it one line at a time, making the necessary changes.
 
 # NTUPLE PRODUCTION
 
@@ -32,7 +33,7 @@ where `cuts_XX.txt` the configuration file with basic cuts and AnalysisTop setti
 
 The second argument, `input.txt`, is a simple text file with list of paths to locally available DxAOD files to run over.
 
-The resulting file, `output.root`, will contain all variables specified/saved by `DataMCbackgroundEventSaver.cxx/h`
+The resulting file, `output.root`, will contain all variables as specified/saved in `DataMCbackgroundEventSaver.cxx/h`
 
 ## RUNNING ON THE GRID
 
@@ -40,7 +41,7 @@ Everything related to grid job submission/downloading/merging is located in the 
 
 #### Job Submission
 
-Jobs are submitted using python scripts: `submit_XXX.py`, where XXX = data, pythia, herwig, etc.
+Jobs are submitted using python scripts: `submit_XXX.py`.
 
 Inside each script, there are configuration options which **must be specified on an individual basis**, including:
 
@@ -48,7 +49,7 @@ Inside each script, there are configuration options which **must be specified on
 * *config.suffix*: specify a suffix for job (i.e. 'dijets_18Feb'), this will be appended to the output container of the job
 * *config.settingsFile*: specifies the AnalysisTop cuts/settings file used.
 
-The list of all samples can be found in the file samples.py. The samples are grouped by entries in the python dictionaries `samples_XXX` in this file, where XXX = JETM8, EVNT, etc.
+The list of all samples can be found in the file samples.py. The samples are grouped by entries in the python dictionaries `samples_XXX` in this file, where XXX = JETM6, AOD, EVNT, etc.
 
 #### Retrieving Grid Job Output
 
@@ -62,20 +63,21 @@ The downloaded output from the grid can be merged by DSID with `merge_output.py`
 
 In the `grid/cuts/cuts_XXX.txt` files, there exist some configuration options that are local to this package and not part of AnalysisTop:
 
-* **RunHTT**:
-* **HTTConfigs**:
-* **RunShowerDeconstruction**:
-* **SaveTrackAssistedMass**:
-* **KeepNLargeRJets**:
+* **RunHTT** (boolean): Whether or not to run HEPTopTagger.
+* **HTTConfigs** (list of strings): List of HTT configurations to use.
+* **RunShowerDeconstruction** (boolean): Whether or not to run Shower Deconstruction tagging algorithm.
+* **SaveTrackAssistedMass** (boolean): Whether or not to save the TA mass.
+* **KeepNLargeRJets** (int): Number of Large-R jets to save variables for.
 
 # PILEUP REWEIGHTING
-Pileup reweighting is done automatically as defined in the configuration file `grid/cuts/cuts_XXX.txt`, using the files in `DataMCbackgroundTools/data/` , which contain PRW metadata for the MC samples used.
+Pileup reweighting is done automatically as defined in the configuration file `grid/cuts/cuts_XXX.txt`, using the files in `DataMCbackgroundTools/data/prw`, which contain PRW metadata for the MC samples used.
 
-In case you need to rerun pileup reweighting (for instance because of different run number, new pileup profile, MC campaign, etc.), use the script `submit_pileupReweight.py` in grid/ folder.  This script needs a list of MC samples. You can use any derivation, as long it is UNSKIMMED (e.g. not EXOT4, JETM8, etc.). It is often easiest to simply use the AOD.
+In case you need to rerun pileup reweighting (for instance because of different run number, new pileup profile, MC campaign, etc.), use the script `submit_pileupReweight.py` in grid/ folder.
+This script needs a list of MC samples. You can use any derivation, as long it is UNSKIMMED (e.g. not EXOT4, JETM8, etc.). It is often easiest to simply use the AOD.
 
 In order to run the script:
 
-1. setup the proper version of Athena Analysis Base: ex: `asetup AthAnalysisBase,2.4.17,here`
+1. setup the proper version of Athena Analysis Base: ex: `asetup AthAnalysisBase,2.4.19,here`
 2. setup panda and voms-proxy
 3. modify the samples list inside `submit_pileupReweight.py`
 4. run the script to submit the PRW job
@@ -125,11 +127,10 @@ A generic dumping ground for functions that are either re-used or don't fit anyw
 
 **util/histogram-factory.cxx**:
 
-Produces raw histograms for control plots via the executable `histogram-factory`. Before using, run `histogram-factory` without arguments or view the util/histogram-factory.cxx source for **important** details regarding command line flags.
+Produces raw histograms for control plots via the executable `histogram-factory`.
+Before using, run `histogram-factory` without arguments or view the util/histogram-factory.cxx source for **important** details regarding command line flags.
 
-The first argument passed to the `histogram-factory` executable should be a list of input ntuples, each with a corresponding label for grouping multiple DSID's together: see data/example-histogram-factory-input.txt
-
-Output is in the form of a single .root file with TDirectories for individual samples (i.e. data, pythia_dijet, herwig_wjets, etc). Inside each of these directories will be separate sub-directories corresponding to each systematic branch processed (if any).
+Output is in the form of a single .root file with TDirectories for individual systematic branches.
 
 **plotting/plot_base.py**:
 
@@ -175,7 +176,8 @@ Outlined here are the steps that would be taken in order to add/update MC sample
 If the new selection is too complicated to be represented by [built-in AnalysisTop cuts](http://epweb2.ph.bham.ac.uk/user/head/AnalysisTop-2.3.13/testpage.html), you must create a custom EventSelector for AnalysisTop. see `GammaJetSelector.h/cxx` in this package for an example.
 
 #### offline (histogram-factory)
-For any additional offline selection, you must create a custom EventSelector function. See the top of DataMCbackgroundSelector for examples. This new selector must be given a name, and then passed to the histogram-factory executable with a command line flag. ex: `-E MY_FANCY_NEW_SELECTOR`
+For any additional offline selection, you must create a custom EventSelector function. See the top of DataMCbackgroundSelector for examples.
+This new selector must be given a name, and then passed to the histogram-factory executable with a command line flag. ex: `-E MY_FANCY_NEW_SELECTOR`
 
 # CREDIT
 
