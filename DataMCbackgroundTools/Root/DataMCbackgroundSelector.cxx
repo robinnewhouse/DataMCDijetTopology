@@ -760,7 +760,8 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_NTrimSubjets.at(i)->fill(rljet_NTrimSubjets->at(i), weight);
         hp->h_rljet_ungroomed_ntrk500.at(i)->fill(rljet_ungroomed_ntrk500->at(i), weight);
 
-        if (rljet_D2->at(i) > 0
+        if ( rljet_m->at(i)/1000. > 40
+                && rljet_D2->at(i) > 0
                 && C2 > 0
                 && rljet_Tau32_wta->at(i) > 0
                 && rljet_Tau21_wta->at(i) > 0
@@ -785,8 +786,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             dnn_input_map["ECF2"]      = rljet_ECF2->at(i);
             dnn_input_map["ECF3"]      = rljet_ECF3->at(i);
 
-            hp->h_rljet_DNN_score.at(i)->fill_tagged("TEST",
-                    dnn_top_tagger->GetDiscriminant(dnn_input_map), weight, true);
+            hp->h_rljet_DNN_score.at(i)->fill_tagged("TEST", dnn_top_tagger->GetDiscriminant(dnn_input_map), weight, true);
 
             bdt_input_map["fjet_D2"]           = rljet_D2->at(i);
             bdt_input_map["fjet_ECF3"]         = rljet_ECF3->at(i);
@@ -809,8 +809,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             bdt_input_map["fjet_ECF1"]         = rljet_ECF1->at(i);
 
             for (auto& r  : bdt_readers) {
-                hp->h_rljet_BDT_score.at(i)->fill_tagged(r.first,
-                        r.second->EvaluateMVA(r.first), weight, true);
+                hp->h_rljet_BDT_score.at(i)->fill_tagged(r.first, r.second->EvaluateMVA(r.first), weight, true);
             }
 
         } else {
