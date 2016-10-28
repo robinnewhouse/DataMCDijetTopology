@@ -11,17 +11,16 @@ from plot_dmd import *
 from plot_loader import *
 from plot_systematics import *
 
-if len(argv) != 3:
-  print "Usage: python2 {0} <control_plots.root> <output_directory>" . format(argv[0])
-  exit(1)
+# if len(argv) != 3:
+#   print "Usage: python2 {0} <control_plots.root> <output_directory>" . format(argv[0])
+#   exit(1)
 
 gROOT.SetBatch()
 sane_defaults()
 TGaxis.SetMaxDigits(4)
 
-RAW = DMDLoader(argv[1])
-
-ROOT_OUTPUT_DIR = argv[2]
+RAW = DMDLoader("/home/zmeadows/ana/TopBosonTagBackground/DataMCbackground/plotting/raw/dijet/27-10-2016__14:11:40__p2794_first_test_v0/cp.all.merged.root")
+ROOT_OUTPUT_DIR = "/home/zmeadows/ana/TopBosonTagBackground/DataMCbackground/plotting/raw/dijet/27-10-2016__14:11:40__p2794_first_test_v0/plots"
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/control_plots"
 make_dir(ROOT_OUTPUT_DIR)
@@ -29,8 +28,8 @@ make_dir(OUTPUT_DIR)
 
 LOG_FILE = open(OUTPUT_DIR + "/control_plots.log", 'w')
 
-SYSTEMATICS = SYSTEMATICS_MC15C_MEDIUM_SUBSTRUCTURE + SYSTEMATICS_MC15C_MEDIUM_KINEMATIC
-#SYSTEMATICS = [ ]
+#SYSTEMATICS = SYSTEMATICS_MC15C_MEDIUM_SUBSTRUCTURE + SYSTEMATICS_MC15C_MEDIUM_KINEMATIC
+SYSTEMATICS = [ ]
 
 print SYSTEMATICS
 
@@ -85,8 +84,8 @@ class PlotDataPythiaHerwig(PlotBase):
         herwig_sys_dict = {}
 
         if is_htt:
-            pythia_sys_dict = RAW.get_htt_systematics_dict(var_name[:-4], "pythia_dijet", "sjcalib0955", "sjcalib1045")
-            herwig_sys_dict = RAW.get_htt_systematics_dict(var_name[:-4], "herwig_dijet", "sjcalib0955", "sjcalib1045")
+            pythia_sys_dict = RAW.get_htt_systematics_dict(var_name[:-4], "pythia_dijet", "sjcalib0970", "sjcalib1030")
+            herwig_sys_dict = RAW.get_htt_systematics_dict(var_name[:-4], "herwig_dijet", "sjcalib0970", "sjcalib1030")
         elif (plot_systematics):
             pythia_sys_dict = RAW.get_systematics_dict(var_name, SYSTEMATICS, [ "pythia_dijet" ])
             herwig_sys_dict = RAW.get_systematics_dict(var_name, SYSTEMATICS, [ "herwig_dijet" ])
@@ -156,7 +155,7 @@ class PlotDataPythiaHerwig(PlotBase):
         for h in [self.h_data, self.h_pythia_dijet, self.h_herwig_dijet,
                 self.h_pythia_sys, self.h_herwig_sys]:
             h.GetYaxis().SetTitle(self.y_title)
-            h.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
+            h.GetXaxis().SetLabelSize(0)
             h.GetYaxis().SetTitleOffset(2.0)
             self.set_x_axis_bounds(h)
             self.set_y_min(h)
@@ -192,6 +191,7 @@ class PlotDataPythiaHerwig(PlotBase):
             self.set_x_axis_bounds(h_ratio)
             h_ratio.GetXaxis().SetTitleOffset(4.0)
             h_ratio.GetYaxis().SetTitleOffset(2.0)
+            h_ratio.GetXaxis().SetLabelSize(19)
 
     def make_data_pythia_herwig_plot(self, output_dir):
         self.name = self.var_name + "_data_pythia_herwig"
@@ -235,6 +235,7 @@ class PlotDataPythiaHerwig(PlotBase):
         self.pad1.SetTopMargin(0.07)
         self.pad1.SetBottomMargin(0.00)
         self.pad1.SetFillColorAlpha(0, 0.)
+        self.pad1.SetBorderSize(0)
         if self.log_scale: self.pad1.SetLogy()
 
         self.pad2 = self.canvas.cd(2)
@@ -243,6 +244,7 @@ class PlotDataPythiaHerwig(PlotBase):
         self.pad2.SetBottomMargin(0.3)
         self.pad2.SetFillColorAlpha(0, 0.)
         self.pad2.SetGridy(1) # grid for ratio plot
+        self.pad2.SetBorderSize(0)
 
         self.pad1.cd()
 
@@ -276,7 +278,7 @@ class PlotDataPythiaHerwig(PlotBase):
         self.canvas.Update()
         self.canvas.Modified()
 
-        self.print_to_file(output_dir + "/" + self.name + ".pdf")
+        self.print_to_file(output_dir + "/" + self.name + ".eps")
         self.canvas.Clear()
 
     def make_data_pythia_stack_plot(self, output_dir):
@@ -375,7 +377,7 @@ class PlotDataPythiaHerwig(PlotBase):
         self.canvas.Update()
         self.canvas.Modified()
 
-        self.print_to_file(output_dir + "/" + self.name + ".pdf")
+        self.print_to_file(output_dir + "/" + self.name + ".eps")
         self.canvas.Clear()
 
 DEF_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", "Dijet Selection" ]
@@ -687,28 +689,93 @@ data_mc_plots = [
             empty_scale = 1.9
             ),
 
-        PlotDataPythiaHerwig("h_rljet0_BDT_Top_Score",
+        PlotDataPythiaHerwig("h_rljet0_BDT_score_W_NvarS",
             plot_systematics = False,
-            extra_legend_lines = DEF_LINES,
+            extra_legend_lines = DEF_LINES + ["m_{calo} > 40 GeV"],
             x_min = -1,
             x_max = 1,
             rebin = 4,
-            y_min = 10**3,
+            y_min = 1e-2,
             x_units = "",
             empty_scale = 1.3
             ),
 
-        PlotDataPythiaHerwig("h_rljet0_BDT_W_Score",
+        PlotDataPythiaHerwig("h_rljet0_BDT_score_W_NvarM",
             plot_systematics = False,
-            extra_legend_lines = DEF_LINES,
+            extra_legend_lines = DEF_LINES + ["m_{calo} > 40 GeV"],
             x_min = -1,
             x_max = 1,
             rebin = 4,
-            y_min = 10**3,
+            y_min = 1e-2,
             x_units = "",
             empty_scale = 1.3
             ),
 
+        PlotDataPythiaHerwig("h_rljet0_BDT_score_W_NvarL",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES + ["m_{calo} > 40 GeV"],
+            x_min = -1,
+            x_max = 1,
+            rebin = 4,
+            y_min = 1e-2,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_BDT_score_TOP3q_NvarS",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES + ["m_{calo} > 40 GeV"],
+            x_min = -1,
+            x_max = 1,
+            rebin = 4,
+            y_min = 1e-2,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_BDT_score_TOP3q_NvarM",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES + ["m_{calo} > 40 GeV"],
+            x_min = -1,
+            x_max = 1,
+            rebin = 4,
+            y_min = 1e-2,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_BDT_score_TOP3q_NvarL",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES + ["m_{calo} > 40 GeV"],
+            x_min = -1,
+            x_max = 1,
+            rebin = 4,
+            y_min = 1e-2,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_BDT_score_TOP_NvarM",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES + ["m_{calo} > 40 GeV"],
+            x_min = -1,
+            x_max = 1,
+            rebin = 4,
+            y_min = 1e-2,
+            x_units = "",
+            empty_scale = 1.3
+            ),
+
+        PlotDataPythiaHerwig("h_rljet0_DNN_score_TEST",
+            plot_systematics = False,
+            extra_legend_lines = DEF_LINES + ["m_{calo} > 40 GeV"],
+            x_min = -1,
+            x_max = 1,
+            rebin = 4,
+            y_min = 1e-2,
+            x_units = "",
+            empty_scale = 1.3
+            ),
         PlotDataPythiaHerwig("h_rljet0_FoxWolfram0",
             plot_systematics = False,
             extra_legend_lines = DEF_LINES,
