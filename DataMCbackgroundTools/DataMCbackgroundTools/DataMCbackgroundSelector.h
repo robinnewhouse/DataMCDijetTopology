@@ -47,8 +47,6 @@ class DataMCbackgroundSelector : public TSelector {
 
         const bool operating_on_mc;
         const bool on_nominal_branch;
-        bool compute_Tau32;
-        bool compute_D2;
 
         const float luminosity;
 
@@ -66,15 +64,12 @@ class DataMCbackgroundSelector : public TSelector {
         std::unordered_map<std::string, bool> ntrk_prerec_tag_map;
         std::unordered_map<std::string, bool> SD_nominal_tag_map;
         std::unordered_map<std::string, bool> SD_systematic_tag_map;
-        // std::unordered_map<std::string, bool> nominal_tag_map;
 
         std::unordered_map<std::string, std::unique_ptr<TMVA::Reader>> bdt_readers;
         std::map<std::string, float> bdt_input_map;
 
         std::unique_ptr<DNNWTopTagger> dnn_top_tagger;
         std::map<std::string, double> dnn_input_map;
-
-        int num_mva_rejected_jets;
 
         // Declaration of leaf types
         Float_t   weight_mc;
@@ -457,17 +452,8 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     fChain->SetBranchAddress("rljet_phi" , &rljet_phi , &b_rljet_phi);
     fChain->SetBranchAddress("rljet_m"   , &rljet_m   , &b_rljet_m);
 
-    if (fChain->GetListOfBranches()->FindObject("rljet_Tau32_wta")) {
-        fChain->SetBranchAddress("rljet_Tau32_wta", &rljet_Tau32_wta, &b_rljet_Tau32_wta);
-    } else {
-        compute_Tau32 = true;
-    }
-
-    if (fChain->GetListOfBranches()->FindObject("rljet_D2")) {
-        fChain->SetBranchAddress("rljet_D2", &rljet_D2, &b_rljet_D2);
-    } else {
-        compute_D2 = true;
-    }
+    fChain->SetBranchAddress("rljet_Tau32_wta", &rljet_Tau32_wta, &b_rljet_Tau32_wta);
+    fChain->SetBranchAddress("rljet_D2", &rljet_D2, &b_rljet_D2);
 
     fChain->SetBranchAddress("rljet_smoothMassTag50eff"      , &rljet_smoothMassTag50eff      , &b_rljet_smoothMassTag50eff);
     fChain->SetBranchAddress("rljet_smoothMassTag80eff"      , &rljet_smoothMassTag80eff      , &b_rljet_smoothMassTag80eff);
