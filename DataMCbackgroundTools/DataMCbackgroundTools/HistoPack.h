@@ -29,6 +29,11 @@ public:
     unique_ptr<TH1Tagged> h_rljet_ptasym;
     unique_ptr<TH1Tagged> h_rljet_dy;
     unique_ptr<TH1Tagged> h_rljet_dR;
+    unique_ptr<TH1Tagged> h_rljet_deta;
+    unique_ptr<TH1Tagged> h_rljet_dphi;
+
+    unique_ptr<TH1Tagged> h_mu;
+    unique_ptr<TH1Tagged> h_NPV;
 
     // mass/energy response
     vector<unique_ptr<TH1Tagged>> h_rljet_RES_m;

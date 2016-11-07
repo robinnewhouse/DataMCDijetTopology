@@ -16,7 +16,7 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
                     "h_rljet" + std::to_string (i) + "_pt", 0., 4000., 10.));
 
         this->h_rljet_eta.push_back ( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string (i) + "_eta", -2.5 , 2.5, 0.025));
+                    "h_rljet" + std::to_string (i) + "_eta", -2.5 , 2.5, 0.05));
 
         this->h_rljet_phi.push_back ( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string (i) + "_phi", -3.2 , 3.2, 0.025));
@@ -46,13 +46,13 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
                     "h_rljet" + std::to_string (i) + "_ECF2", 0. , 1000e9, 5.0e9));
 
         this->h_rljet_ECF3.push_back    ( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string (i) + "_ECF3", 0. , 100.0e14, 20e12));
+                    "h_rljet" + std::to_string (i) + "_ECF3", 0. , 150.0e14, 40e12));
 
         this->h_rljet_C2.push_back      ( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string (i) + "_C2", 0. , 1., 0.005));
 
         this->h_rljet_D2.push_back      ( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string (i) + "_D2", 0. , 10., 0.025));
+                    "h_rljet" + std::to_string (i) + "_D2", 0. , 20., 0.025));
 
         this->h_rljet_FoxWolfram0.push_back ( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string (i) + "_FoxWolfram0", 0.2 , 0.6, 0.002));
@@ -61,19 +61,19 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
                     "h_rljet" + std::to_string (i) + "_FoxWolfram2", -0.2 , 0.6, 0.002));
 
         this->h_rljet_FoxWolfram20.push_back ( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string (i) + "_FoxWolfram20", -0.5 , 1., 0.01));
+                    "h_rljet" + std::to_string (i) + "_FoxWolfram20", -0.5 , 2., 0.01));
 
         this->h_rljet_Qw.push_back ( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string (i) + "_Qw", 0. , 1000e3, 2e3));
 
         this->h_rljet_Angularity.push_back ( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string (i) + "_Angularity", 0. , 0.06, 0.001));
+                    "h_rljet" + std::to_string (i) + "_Angularity", 0. , 0.1, 0.0005));
 
         this->h_rljet_Aplanarity.push_back ( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string (i) + "_Aplanarity", 0. , 0.5, 0.01));
+                    "h_rljet" + std::to_string (i) + "_Aplanarity", 0. , 0.5, 0.005));
 
         this->h_rljet_Dip12.push_back ( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string (i) + "_Dip12", 0. , 2.0, 0.005));
+                    "h_rljet" + std::to_string (i) + "_Dip12", 0. , 3.0, 0.005));
 
         this->h_rljet_KtDR.push_back ( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string (i) + "_KtDR", 0. , 7.0, 0.025));
@@ -88,13 +88,13 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
                     "h_rljet" + std::to_string (i) + "_Sphericity", 0. , 1.0, 0.01));
 
         this->h_rljet_Split12.push_back ( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string (i) + "_Split12", 0. , 1500e3, 1e4));
+                    "h_rljet" + std::to_string (i) + "_Split12", 0. , 2500e3, 1e4));
 
         this->h_rljet_Split23.push_back ( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string (i) + "_Split23", 0., 500e3, 1e4));
+                    "h_rljet" + std::to_string (i) + "_Split23", 0., 1000e3, 1e4));
 
         this->h_rljet_Split34.push_back ( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string (i) + "_Split34", 0., 500e3, 1e4));
+                    "h_rljet" + std::to_string (i) + "_Split34", 0., 500e3, 0.5e4));
 
         this->h_rljet_ThrustMaj.push_back ( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string (i) + "_ThrustMaj", 0., 1., 0.005));
@@ -109,7 +109,7 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
                     "h_rljet" + std::to_string (i) + "_NTrimSubjets", 1. , 20., 1.0));
 
         this->h_rljet_ungroomed_ntrk500.push_back      ( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string (i) + "_ungroomed_ntrk500", 0. , 120., 1.0));
+                    "h_rljet" + std::to_string (i) + "_ungroomed_ntrk500", 0. , 150., 1.0));
 
         this->h_rljet_RES_m.push_back ( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string (i) + "_RES_m", 0. , 10., 0.025));
@@ -127,13 +127,13 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
                     "h_rljet" + std::to_string (i) + "_pdgid", -1. , 40., 1.0));
 
         this->h_rljet_SDw_win20_btag0_logchi.push_back (make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string(i) + "_SDw_win20_btag0_logchi", -15., 20., 0.1));
+                    "h_rljet" + std::to_string(i) + "_SDw_win20_btag0_logchi", -25., 25., 0.1));
 
         this->h_rljet_SDz_win20_btag0_logchi.push_back (make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string(i) + "_SDz_win20_btag0_logchi", -15., 20., 0.1));
+                    "h_rljet" + std::to_string(i) + "_SDz_win20_btag0_logchi", -25., 25., 0.1));
 
         this->h_rljet_SDt_win50_btag0_logchi.push_back (make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string(i) + "_SDt_win50_btag0_logchi", -15., 20., 0.1));
+                    "h_rljet" + std::to_string(i) + "_SDt_win50_btag0_logchi", -25., 25., 0.1));
 
         this->h_htt_caJet_pt.push_back  ( make_unique<TH1Tagged>(
                     "h_htt_caJet" + std::to_string (i) + "_pt", 0., 4000., 10.));
@@ -169,13 +169,13 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
                     "h_htt" + std::to_string (i) + "_phi", -3.2 , 3.2, 0.025));
 
         this->h_htt_m.push_back   ( make_unique<TH1Tagged>(
-                    "h_htt" + std::to_string (i) + "_m", 0., 1000, 1.0));
+                    "h_htt" + std::to_string (i) + "_m", 0., 300, 1.0));
 
         this->h_htt_m23m123 . push_back ( make_unique<TH1Tagged>(
-                    "h_htt" + std::to_string(i) + "_m23m123", 0.35, 0.8, 0.005));
+                    "h_htt" + std::to_string(i) + "_m23m123", 0.35, 0.8, 0.0025));
 
         this->h_htt_atan1312 . push_back ( make_unique<TH1Tagged>(
-                    "h_htt" + std::to_string(i) + "_atan1312", 0.2, 1.3, 0.01));
+                    "h_htt" + std::to_string(i) + "_atan1312", 0.2, 1.3, 0.005));
 
         this->h_htt_pts1 . push_back ( make_unique<TH1Tagged>(
                     "h_htt" + std::to_string(i) + "_pts1", 0., 2000., 25));
@@ -193,10 +193,15 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
                     "h_rljet" + std::to_string(i) + "_DNN_score", 0., 1.0, 0.005));
     }
 
-    this->h_rljet_mjj = make_unique<TH1Tagged>("h_rljet_mjj", 0., 8000., 10.);
-    this->h_rljet_ptasym = make_unique<TH1Tagged>("h_rljet_ptasym", 0., 1.0, 0.005);
-    this->h_rljet_dy = make_unique<TH1Tagged>("h_rljet_dy", -5., 5., 0.05);
-    this->h_rljet_dR = make_unique<TH1Tagged>("h_rljet_dR", 0., 6.4, 0.02);
+    this->h_rljet_mjj    = make_unique<TH1Tagged>("h_rljet_mjj"    , 0.  , 10000. , 10.);
+    this->h_rljet_ptasym = make_unique<TH1Tagged>("h_rljet_ptasym" , 0.  , 1.0    , 0.005);
+    this->h_rljet_dy     = make_unique<TH1Tagged>("h_rljet_dy"     , -5. , 5.     , 0.05);
+    this->h_rljet_dR     = make_unique<TH1Tagged>("h_rljet_dR"     , 0.  , 6.4    , 0.02);
+    this->h_rljet_deta   = make_unique<TH1Tagged>("h_rljet_deta"   , -5. , 5.     , 0.05);
+    this->h_rljet_dphi   = make_unique<TH1Tagged>("h_rljet_dphi"   , 0.  , 6.4    , 0.02);
+
+    this->h_mu  = make_unique<TH1Tagged>("h_mu"  , -0.5 , 120.5 , 1.);
+    this->h_NPV = make_unique<TH1Tagged>("h_NPV" , 0.5  , 120.5 , 1.);
 }
 
 void HistoPack::WriteCommonHistograms() const
@@ -216,6 +221,11 @@ void HistoPack::WriteNominalOnlyHistograms() const
     h_rljet_ptasym->write_all();
     h_rljet_dy->write_all();
     h_rljet_dR->write_all();
+    h_rljet_deta->write_all();
+    h_rljet_dphi->write_all();
+
+    h_mu->write_all();
+    h_NPV->write_all();
 
     for (auto const &h : h_rljet_RES_m) h->write_all();
     for (auto const &h : h_rljet_RES_pT) h->write_all();
