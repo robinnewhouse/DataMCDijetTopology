@@ -52,8 +52,8 @@ get_nearest_jet_in_collection(const xAOD::Jet* ref_jet, const xAOD::JetContainer
 
 float get_sum_weights_sample(TFile* input_file)
 {
-	float sum_weights_total = 0.;
-	float tmp = 0.;
+    float sum_weights_total = 0.;
+    float tmp = 0.;
 
     TTree *sum_weights_tree = (TTree*) input_file->Get("sumWeights");
     sum_weights_tree->SetBranchAddress("totalEventsWeighted", &tmp);
@@ -64,23 +64,23 @@ float get_sum_weights_sample(TFile* input_file)
     }
 
     delete sum_weights_tree;
-	return sum_weights_total;
+    return sum_weights_total;
 }
 
 ULong64_t getTotalEventsSample(TFile* inputFile)
 {
-	ULong64_t sumWTotal=0.;
-	ULong64_t sumW=0.;
-	TTree *sumWeights = (TTree*) inputFile->Get("sumWeights");
-	sumWeights->SetBranchAddress("totalEvents", &sumW);
-	for(int ientry = 0; ientry < sumWeights->GetEntries(); ++ientry) {
-	  sumWeights->GetEntry(ientry);
-		sumWTotal += sumW;
-	}
+    ULong64_t sumWTotal=0.;
+    ULong64_t sumW=0.;
+    TTree *sumWeights = (TTree*) inputFile->Get("sumWeights");
+    sumWeights->SetBranchAddress("totalEvents", &sumW);
+    for(int ientry = 0; ientry < sumWeights->GetEntries(); ++ientry) {
+      sumWeights->GetEntry(ientry);
+        sumWTotal += sumW;
+    }
 
     delete sumWeights;
 
-	return sumWTotal;
+    return sumWTotal;
 }
 
 bool has_suffix(const std::string& str, const std::string& suffix)
@@ -120,7 +120,6 @@ std::vector<TChain*> get_branch_tchains(const std::string input_filepath)
         std::vector<std::string> tree_names;
 
         while (auto tmp_key = (TKey*) next_key()) {
-
                 std::string tmp_key_title(tmp_key->GetTitle());
                 std::string tmp_key_name(tmp_key->GetName());
 
