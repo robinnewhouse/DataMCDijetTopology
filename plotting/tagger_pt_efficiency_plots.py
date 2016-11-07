@@ -11,17 +11,16 @@ from plot_dmd import *
 from plot_loader import *
 from plot_systematics import *
 
-if len(argv) != 3:
-    print "Usage: python2 {0} <control_plots.root> <output_directory>" . format(argv[0])
-    exit(1)
+#if len(argv) != 3:
+#    print "Usage: python2 {0} <control_plots.root> <output_directory>" . format(argv[0])
+#    exit(1)
 
 gROOT.SetBatch()
 sane_defaults()
 TGaxis.SetMaxDigits(4)
 
-RAW = DMDLoader(argv[1])
-
-ROOT_OUTPUT_DIR = argv[2]
+RAW = DMDLoader("/home/zmeadows/ana/TopBosonTagBackground/DataMCbackground/plotting/raw/dijet/30-10-2016__12:06:03__DS3_p2794_everything_v0/cp.all.merged.root")
+ROOT_OUTPUT_DIR = "/home/zmeadows/ana/TopBosonTagBackground/DataMCbackground/plotting/raw/dijet/30-10-2016__12:06:03__DS3_p2794_everything_v0/plots"
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/efficiency_plots"
 make_dir(ROOT_OUTPUT_DIR)
@@ -153,7 +152,7 @@ def make_pt_efficiency_plot(tag_name, rejection = True, **kwargs):
             legend_loc = [0.75,0.93,0.94,0.79],
             x_title = "Leading Large-R Jet #it{p_{T}}",
             x_min = 500,
-            x_max = 2000,
+            x_max = 2500,
             width = 600,
             **kwargs)
 
@@ -174,10 +173,10 @@ def make_htt_pt_efficiency_plot(rejection = True, **kwargs):
     h_pythia_passed.Rebin(REBIN_PT)
     h_herwig_passed.Rebin(REBIN_PT)
 
-    sys_dict_pythia_total  = RAW.get_htt_systematics_dict("h_htt_caGroomJet0_pt" , "pythia_dijet", "sjcalib0955", "sjcalib1045")
-    sys_dict_herwig_total  = RAW.get_htt_systematics_dict("h_htt_caGroomJet0_pt" , "herwig_dijet", "sjcalib0955", "sjcalib1045")
-    sys_dict_pythia_passed = RAW.get_htt_systematics_dict("h_htt0_pt"            , "pythia_dijet", "sjcalib0955", "sjcalib1045")
-    sys_dict_herwig_passed = RAW.get_htt_systematics_dict("h_htt0_pt"            , "herwig_dijet", "sjcalib0955", "sjcalib1045")
+    sys_dict_pythia_total  = RAW.get_htt_systematics_dict("h_htt_caGroomJet0_pt" , "pythia_dijet", "sjcalib0970", "sjcalib1030")
+    sys_dict_herwig_total  = RAW.get_htt_systematics_dict("h_htt_caGroomJet0_pt" , "herwig_dijet", "sjcalib0970", "sjcalib1030")
+    sys_dict_pythia_passed = RAW.get_htt_systematics_dict("h_htt0_pt"            , "pythia_dijet", "sjcalib0970", "sjcalib1030")
+    sys_dict_herwig_passed = RAW.get_htt_systematics_dict("h_htt0_pt"            , "herwig_dijet", "sjcalib0970", "sjcalib1030")
 
     rebin_sys_dict(sys_dict_pythia_total, REBIN_PT)
     rebin_sys_dict(sys_dict_herwig_total, REBIN_PT)
@@ -223,7 +222,7 @@ def make_htt_pt_efficiency_plot(rejection = True, **kwargs):
             legend_loc = [0.75,0.93,0.94,0.79],
             x_title = "Leading Large-R Jet #it{p_{T}}",
             x_min = 500,
-            x_max = 2000,
+            x_max = 2500,
             width = 600,
             **kwargs)
 
