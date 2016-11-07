@@ -31,5 +31,14 @@ cp data/SubjetCalibration/CamKt2LCTopoAreaCalib_JES_HTTmodified.config JetCalibT
 # ShowerDeconstruction tagger
 svn co svn+ssh://svn.cern.ch/reps/atlas-dferreir/dferreir/ShowerDeconstruction/trunk ShowerDeconstruction
 
+git clone ssh://git@gitlab.cern.ch:7999/omajersk/JetSubstructureTools.git
+cd JetSubstructureTools
+git checkout rootcore-ntuples
+mv NNTaggingTools ../
+cd ..
+rm -rf JetSubstructureTools
+
+https://:@gitlab.cern.ch:8443/tnitta/BosonTopTaggingBDT.git
+
 rc find_packages
 rc compile
