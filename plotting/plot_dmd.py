@@ -211,9 +211,9 @@ AXIS_TITLES = {
         "rljet1_phi"               : "Subleading Large-R Jet #it{#phi}",
         "rljet0_m"                 : "Leading Large-R Jet Mass",
         "rljet1_m"                 : "Subleading Large-R Jet Mass",
-        "rljet0_d2"                : "Leading Large-R Jet #it{D}_{2}^{#beta=1}",
+        "rljet0_D2__caloMgt50GeV"                : "Leading Large-R Jet #it{D}_{2}^{#beta=1}",
         "rljet1_d2"                : "Subleading Large-R Jet #it{D}_{2}^{#beta=1}",
-        "rljet0_tau32"             : "Leading Large-R Jet #it{#tau}_{32}^{WTA}",
+        "rljet0_Tau32_wta__caloMgt100GeV"             : "Leading Large-R Jet #it{#tau}_{32}^{WTA}",
         "rljet1_tau32"             : "Subleading Large-R Jet #it{#tau}_{32}^{WTA}",
         "rl_dijet_m"               : "m_{JJ}",
         "rljet0_ungroomed_ntrk500" : "Leading Large-R Jet n_{trk}",
@@ -228,7 +228,9 @@ AXIS_TITLES = {
         "htt0_m"                   : "Top Candidate m_T",
         "htt0_m23m123"             : "Top Candidate m_{23} / m_{123}",
         "htt0_atan1312"            : "Top Candidate arctan (m_{13} / m_{12})",
-        "BDT_TopTag"               : "Leading Large-R Jet BTDG",
+        "BDT_score_TOP"               : "Leading Large-R Jet BTDG Top Discriminant",
+        "BDT_score_W"              : "Leading Large-R Jet BTDG W Discriminant",
+        "DNN_score_TEST"              : "Leading Large-R Jet DNN Top Discriminant",
         }
 
 def get_axis_title(histo_name):
