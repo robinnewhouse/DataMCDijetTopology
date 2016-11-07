@@ -96,7 +96,7 @@ DataMCbackgroundSelector::DataMCbackgroundSelector(
 
     weight_tool = make_unique<WeightTool>();
 
-    std::string xsection_file = rc + "/data/DataMCbackgroundTools/sample_weights.txt";
+    std::string xsection_file = rc + "/data/DataMCbackgroundTools/sample_weights_JETM6.txt";
     if (!weight_tool->read_weights_file(xsection_file))
         exit(1);
 
@@ -201,64 +201,38 @@ void DataMCbackgroundSelector::SlaveBegin(TTree * /*tree*/)
                 reader->AddVariable("fjet_" + v, &this->bdt_input_map[v]);
             } else {
                 std::cout << "DataMCbackgroundSelector.cxx: l" << __LINE__ <<
-                    ": ERROR: coudln't find " << v << "in bdt_input_map"
-                    << std::endl;
+                    ": ERROR: couldn't find " << v << "in bdt_input_map" << std::endl;
                 exit(1);
             }
         }
     };
 
-    //bdt_readers["TOP3q_NvarAll"] = make_unique<TMVA::Reader>("!Color:!Silent");
     bdt_readers["TOP3q_NvarL"]   = make_unique<TMVA::Reader>("!Color:!Silent");
     bdt_readers["TOP3q_NvarM"]   = make_unique<TMVA::Reader>("!Color:!Silent");
-    bdt_readers["TOP3q_NvarS"]   = make_unique<TMVA::Reader>("!Color:!Silent");
 
-    // bdt_readers["W_NvarAll"] = make_unique<TMVA::Reader>("!Color:!Silent");
     bdt_readers["W_NvarL"]   = make_unique<TMVA::Reader>("!Color:!Silent");
     bdt_readers["W_NvarM"]   = make_unique<TMVA::Reader>("!Color:!Silent");
     bdt_readers["W_NvarS"]   = make_unique<TMVA::Reader>("!Color:!Silent");
 
     bdt_readers["TOP_NvarM"] = make_unique<TMVA::Reader>("!Color:!Silent");
 
-    // add_bdt_vars(bdt_readers["W_NvarAll"].get(), {
-    //                 "D2",
-    //                 "C2",
-    //                 "ECF3",
-    //                 "KtDR",
-    //                 "ThrustMin",
-    //                 "Angularity",
-    //                 "PlanarFlow",
-    //                 "Tau21_wta",
-    //                 "Aplanarity",
-    //                 "FoxWolfram20",
-    //                 "Split12",
-    //                 "ZCut12",
-    //                 "ECF2",
-    //                 "Tau1_wta",
-    //                 "Sphericity",
-    //                 "Dip12",
-    //                 "ThrustMaj",
-    //                 "Tau2_wta",
-    //                 "ECF1"
-    //                 });
-
     add_bdt_vars(bdt_readers["W_NvarL"].get(), {
-                    "Angularity",
-                    "Aplanarity",
-                    "C2",
                     "D2",
-                    "Dip12"
-                    "ECF2",
                     "ECF3",
-                    "FoxWolfram20",
-                    "KtDR",
-                    "PlanarFlow",
-                    "Sphericity",
-                    "Split12",
-                    "Tau1_wta",
-                    "Tau21_wta",
+                    "C2",
                     "ThrustMin",
+                    "Angularity",
+                    "PlanarFlow",
+                    "Tau21_wta",
+                    "Aplanarity",
+                    "FoxWolfram20",
+                    "Split12",
                     "ZCut12",
+                    "KtDR",
+                    "ECF2",
+                    "Tau1_wta",
+                    "Sphericity",
+                    "Dip12"
                     });
 
     add_bdt_vars(bdt_readers["W_NvarM"].get(), {
@@ -287,22 +261,6 @@ void DataMCbackgroundSelector::SlaveBegin(TTree * /*tree*/)
                     "Tau21_wta"
                     });
 
-    // add_bdt_vars(bdt_readers["TOP3q_NvarAll"].get(), {
-    //                 "Tau32_wta",
-    //                 "ECF3",
-    //                 "Qw",
-    //                 "D2",
-    //                 "ECF2",
-    //                 "Split23",
-    //                 "Tau21_wta",
-    //                 "Split12",
-    //                 "Tau3_wta",
-    //                 "ECF1",
-    //                 "C2",
-    //                 "Tau2_wta",
-    //                 "Tau1_wta"
-    //                 });
-
     add_bdt_vars(bdt_readers["TOP3q_NvarL"].get(), {
                     "Tau32_wta",
                     "ECF3",
@@ -316,16 +274,6 @@ void DataMCbackgroundSelector::SlaveBegin(TTree * /*tree*/)
                     });
 
     add_bdt_vars(bdt_readers["TOP3q_NvarM"].get(), {
-                    "Tau32_wta",
-                    "ECF3",
-                    "Qw",
-                    "D2",
-                    "ECF2",
-                    "Split23",
-                    "Tau21_wta"
-                    });
-
-    add_bdt_vars(bdt_readers["TOP3q_NvarS"].get(), {
                     "Tau32_wta",
                     "ECF3",
                     "Qw",
@@ -420,6 +368,11 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         b_rljet_ptasym->GetEntry(entry);
         b_rljet_dy->GetEntry(entry);
         b_rljet_dR->GetEntry(entry);
+        b_rljet_deta->GetEntry(entry);
+        b_rljet_dphi->GetEntry(entry);
+
+        b_NPV->GetEntry(entry);
+
         b_rljet_count->GetEntry(entry);
 
         b_met_met->GetEntry(entry);
@@ -526,35 +479,22 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
         if (this->operating_on_mc) {
             const ULong64_t nevents_skimmed = getTotalEventsSample(current_file);
-            float sum_weights = get_sum_weights_sample(current_file);
-            float xsection  = weight_tool->get_xsection(mcChannelNumber);
-            float nevents   = weight_tool->get_nevents(mcChannelNumber);
-            float filtereff = weight_tool->get_filtereff(mcChannelNumber);
-
-            // OLD (< p2794) : TEMPORARY FIX FOR BUGGED ALL-HAD TTBAR WEIGHTS
-            // if (mcChannelNumber == 303722) {
-            //     sum_weights = 3.396948e-01;
-            // } else if (mcChannelNumber == 303723) {
-            //     sum_weights = 1.467807e-01;
-            // } else if (mcChannelNumber == 303724) {
-            //     sum_weights = 6.405792e-02;
-            // } else if (mcChannelNumber == 303725) {
-            //     sum_weights = 4.490201e-02;
-            // } else if (mcChannelNumber == 303726) {
-            //     sum_weights = 2.736783e-02;
-            // }
+            float sum_weights               = get_sum_weights_sample(current_file);
+            float xsection                  = weight_tool->get_xsection(mcChannelNumber);
+            float nevents                   = weight_tool->get_nevents(mcChannelNumber);
+            float filtereff                 = weight_tool->get_filtereff(mcChannelNumber);
 
             this->log("TOTAL EVENTS (SKIMMED): "   + std::to_string(nevents_skimmed));
             this->log("TOTAL EVENTS (UNSKIMMED): " + std::to_string(nevents));
             this->log("SUM WEIGHTS (UNSKIMMED): "  + std::to_string(sum_weights));
 
-            const bool is_pythia_JZXW_slice = mcChannelNumber >= 361020
-                && mcChannelNumber <= 361032;
-            const bool is_herwig_JZXW_slice = mcChannelNumber >= 426040
-                && mcChannelNumber <= 426052;
+            const bool is_pythia_JZXW_slice = mcChannelNumber >= 361020 && mcChannelNumber <= 361032;
+            const bool is_herwig_JZXW_slice = mcChannelNumber >= 426040 && mcChannelNumber <= 426052;
+            const bool is_sherpa_JZX_slice  = mcChannelNumber >= 426131 && mcChannelNumber <= 426142;
+            const bool is_dijet_slice       = is_pythia_JZXW_slice || is_herwig_JZXW_slice || is_sherpa_JZX_slice;
 
             // TODO: check if this is even needed (already accounted for in sumWeights?)
-            if (is_pythia_JZXW_slice || is_herwig_JZXW_slice) {
+            if (is_dijet_slice) {
                 this->SF_lumi_Fb = xsection * filtereff / nevents;
             } else {
                 this->SF_lumi_Fb = xsection * filtereff / sum_weights;
@@ -588,6 +528,19 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             ss << "LEAD JET pT: " << rljet_pt->at(0) / 1000. << " GeV";
             this->log(ss.str());
         }
+
+        /*
+        if (weight > 100 && rljet_pt->at(0) / 1000. > 2100 && rljet_pt->at(0) / 1000. < 2150) {
+            std::stringstream ss;
+            ss << std::fixed;
+            ss << "FOUND BUGGED EVENT SUSPECT -- ENTRY NUMBER: " << entry << " ";
+            ss << "EVENT NUMBER: " << eventNumber << " ";
+            ss << std::scientific;
+            ss << "WEIGHT: " << weight << " ";
+            ss << "LEAD JET pT: " << rljet_pt->at(0) / 1000. << " GeV";
+            this->log(ss.str());
+        }
+        */
 
         if (weight_tool->is_bugged_event(mcChannelNumber, eventNumber)) {
             std::stringstream ss;
@@ -677,12 +630,26 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
     const bool ranSD = rljet_SDw_win20_btag0->size() > 0;
 
+    hp->h_NPV->fill( (Float_t) NPV, weight);
+
+    if (!this->operating_on_mc) {
+        hp->h_mu->fill(mu_original_xAOD, weight);
+        hp->h_mu->fill_tagged("NPV_sf"      , mu_original_xAOD * 1./1.16              , weight , true);
+        hp->h_mu->fill_tagged("lumi_NPV_sf" , mu_original_xAOD * (1./1.055) * 1./1.16 , weight , true);
+    } else {
+        // note: we don't actually correct the mc mu distribution, making the below tagged
+        // histograms just makes it easier to do data/mc comparison plots later
+        hp->h_mu->fill(mu, weight);
+        hp->h_mu->fill_tagged("NPV_sf"      , mu, weight, true);
+        hp->h_mu->fill_tagged("lumi_NPV_sf" , mu, weight, true);
+    }
+
+
     /*******************/
     /* ANTI-KT 10 JETS */
     /*******************/
 
     for (UInt_t i = 0; i < n_rljets_recorded; i++) {
-
         const bool pass_ntrk_cut =
             rljet_ungroomed_ntrk500->at(i) >= 0 && rljet_ungroomed_ntrk500->at(i) < 30;
 
@@ -740,7 +707,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
         const float Tau32_wta = fabs(Tau2_wta) > 1.e-6 ? Tau3_wta / Tau2_wta : -1000.;
 
-        const float C2 = ECF3 * ECF1 / TMath::Power(ECF2, 2);
+        const float C2 = fabs(ECF2) > 1.e-6 ? ECF3 * ECF1 / TMath::Power(ECF2, 2) : -1000.;
         hp->h_rljet_C2.at(i)->fill(C2, weight);
 
         const float fw0 = rljet_FoxWolfram0->at(i);
@@ -785,7 +752,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
                 && rljet_ECF2->at(i) > 0
                 && rljet_ECF3->at(i) > 0;
 
-        const bool PASSED_MVA_MASS_TRAINING_CUT = rljet_m->at(i) / 1000. > 40;
+        const bool PASSED_MVA_MASS_TRAINING_CUT = rljet_m->at(i) / 1000. > 40.;
 
         dnn_input_map["Angularity"]   = rljet_Angularity->at(i);
         dnn_input_map["Aplanarity"]   = rljet_Aplanarity->at(i);
@@ -844,12 +811,10 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         for (auto& r  : bdt_readers) {
                 const float bdt_discriminant = r.second->EvaluateMVA(r.first);
                 hp->h_rljet_BDT_score.at(i)->fill_tagged(r.first                         , bdt_discriminant , weight , true);
-                hp->h_rljet_BDT_score.at(i)->fill_tagged(r.first + "_caloMget40GeV"      , bdt_discriminant , weight , PASSED_MVA_MASS_TRAINING_CUT);
+                hp->h_rljet_BDT_score.at(i)->fill_tagged(r.first + "_caloMgt40GeV"      , bdt_discriminant , weight , PASSED_MVA_MASS_TRAINING_CUT);
                 hp->h_rljet_BDT_score.at(i)->fill_tagged(r.first + "_CLEAN"              , bdt_discriminant , weight , IS_GOOD_MVA_JET);
                 hp->h_rljet_BDT_score.at(i)->fill_tagged(r.first + "_caloMgt40GeV_CLEAN" , bdt_discriminant , weight , IS_GOOD_MVA_JET && PASSED_MVA_MASS_TRAINING_CUT);
-        }
-
-        // end MVA taggers
+        } // end MVA taggers
 
         // SD log(chi) variables
         if (ranSD) {
@@ -857,9 +822,16 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_rljet_SDz_win20_btag0_logchi.at(i)->fill(rljet_SDz_win20_btag0->at(i), weight);
             hp->h_rljet_SDt_win50_btag0_logchi.at(i)->fill(rljet_SDt_win50_btag0->at(i), weight);
 
-            SD_nominal_tag_map["SDw_win20_btag0"] = rljet_SDw_win20_btag0->at(i) > 2.8;
-            SD_nominal_tag_map["SDz_win20_btag0"] = rljet_SDz_win20_btag0->at(i) > 2.8;
-            SD_nominal_tag_map["SDt_win50_btag0"] = rljet_SDt_win50_btag0->at(i) > 4.;
+            const bool in_SD_W_mass_window   = abs( (rljet_m->at(i) / 1000.) - 80.  ) < 20;
+            const bool in_SD_Z_mass_window   = abs( (rljet_m->at(i) / 1000.) - 91.  ) < 20;
+            const bool in_SD_Top_mass_window = abs( (rljet_m->at(i) / 1000.) - 172. ) < 50;
+
+            SD_nominal_tag_map["SDw_win20_btag0"]    = rljet_SDw_win20_btag0->at(i) > 3;
+            SD_nominal_tag_map["SDz_win20_btag0"]    = rljet_SDz_win20_btag0->at(i) > 3;
+            SD_nominal_tag_map["SDt_win50_btag0"]    = rljet_SDt_win50_btag0->at(i) > 4.25;
+            SD_nominal_tag_map["SDw_win20CUT_btag0"] = rljet_SDw_win20_btag0->at(i) > 3 && in_SD_W_mass_window;
+            SD_nominal_tag_map["SDz_win20CUT_btag0"] = rljet_SDz_win20_btag0->at(i) > 3 && in_SD_Z_mass_window;
+            SD_nominal_tag_map["SDt_win50CUT_btag0"] = rljet_SDt_win50_btag0->at(i) > 4.25 && in_SD_Top_mass_window;
 
             for (const auto& itag : SD_nominal_tag_map) {
                 hp->h_rljet_m.at(i)->fill_tagged(itag.first, rljet_m->at(i)/1000., weight, itag.second);
@@ -867,12 +839,21 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             }
 
             if (this->operating_on_mc) {
-                SD_systematic_tag_map["SDw_win20_btag0_UP"] = rljet_SDw_win20_btag0_UP->at(i) > 2.8;
-                SD_systematic_tag_map["SDz_win20_btag0_UP"] = rljet_SDz_win20_btag0_UP->at(i) > 2.8;
-                SD_systematic_tag_map["SDt_win50_btag0_UP"] = rljet_SDt_win50_btag0_UP->at(i) > 4.;
-                SD_systematic_tag_map["SDw_win20_btag0_DOWN"] = rljet_SDw_win20_btag0_DOWN->at(i) > 2.8;
-                SD_systematic_tag_map["SDz_win20_btag0_DOWN"] = rljet_SDz_win20_btag0_DOWN->at(i) > 2.8;
-                SD_systematic_tag_map["SDt_win50_btag0_DOWN"] = rljet_SDt_win50_btag0_DOWN->at(i) > 4.;
+                SD_systematic_tag_map["SDw_win20_btag0_UP"] = rljet_SDw_win20_btag0_UP->at(i) > 3;
+                SD_systematic_tag_map["SDz_win20_btag0_UP"] = rljet_SDz_win20_btag0_UP->at(i) > 3;
+                SD_systematic_tag_map["SDt_win50_btag0_UP"] = rljet_SDt_win50_btag0_UP->at(i) > 4.25;
+
+                SD_systematic_tag_map["SDw_win20_btag0_DOWN"] = rljet_SDw_win20_btag0_DOWN->at(i) > 3;
+                SD_systematic_tag_map["SDz_win20_btag0_DOWN"] = rljet_SDz_win20_btag0_DOWN->at(i) > 3;
+                SD_systematic_tag_map["SDt_win50_btag0_DOWN"] = rljet_SDt_win50_btag0_DOWN->at(i) > 4.25;
+
+                SD_systematic_tag_map["SDw_win20CUT_btag0_UP"] = rljet_SDw_win20_btag0_UP->at(i) > 3 && in_SD_W_mass_window;
+                SD_systematic_tag_map["SDz_win20CUT_btag0_UP"] = rljet_SDz_win20_btag0_UP->at(i) > 3 && in_SD_Z_mass_window;
+                SD_systematic_tag_map["SDt_win50CUT_btag0_UP"] = rljet_SDt_win50_btag0_UP->at(i) > 4.25 && in_SD_Top_mass_window;
+
+                SD_systematic_tag_map["SDw_win20CUT_btag0_DOWN"] = rljet_SDw_win20_btag0_DOWN->at(i) > 3 && in_SD_W_mass_window;
+                SD_systematic_tag_map["SDz_win20CUT_btag0_DOWN"] = rljet_SDz_win20_btag0_DOWN->at(i) > 3 && in_SD_Z_mass_window;
+                SD_systematic_tag_map["SDt_win50CUT_btag0_DOWN"] = rljet_SDt_win50_btag0_DOWN->at(i) > 4.25 && in_SD_Top_mass_window;
 
                 for (const auto& itag : SD_systematic_tag_map) {
                     hp->h_rljet_m.at(i)->fill_tagged(itag.first, rljet_m->at(i)/1000., weight, itag.second);
@@ -881,7 +862,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             } // end of saving systematic branch SD-tagged variables
         } // end of saving SD-tagged variables
 
-
     } // end of saving all anti-kt R = 1.0 distributions
 
     if (rljet_count >= 2) {
@@ -889,6 +869,9 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_ptasym->fill(rljet_ptasym, weight);
         hp->h_rljet_dy->fill(rljet_dy, weight);
         hp->h_rljet_dR->fill(rljet_dR, weight);
+
+        hp->h_rljet_deta->fill(rljet_deta, weight);
+        hp->h_rljet_dphi->fill(rljet_dphi, weight);
     }
 
     /**************************/
@@ -896,31 +879,34 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     /**************************/
 
     const UInt_t n_cajets_recorded = htt_caJet_pt->size();
-    for (UInt_t ijet = 0; ijet < 3 && ijet < n_cajets_recorded; ijet++)
-    {
-        hp->h_htt_caJet_pt.at(ijet)->fill(htt_caJet_pt->at(ijet), weight);
-        hp->h_htt_caJet_eta.at(ijet)->fill(htt_caJet_eta->at(ijet), weight);
-        hp->h_htt_caJet_phi.at(ijet)->fill(htt_caJet_phi->at(ijet), weight);
-        hp->h_htt_caJet_m.at(ijet)->fill(htt_caJet_m->at(ijet), weight);
-
-        for (UInt_t ihtt = 0; ihtt < htt_config_strings.size(); ihtt++)
+    if (n_cajets_recorded > 0 && htt_caJet_pt->at(0) / 1000. > 500.) {
+        for (UInt_t ijet = 0; ijet < 3 && ijet < n_cajets_recorded; ijet++)
         {
-            hp->h_htt_pt.at(ijet)->fill_tagged(htt_config_strings[ihtt]  , htt_pt[ihtt]->at(ijet) / 1000. , weight , htt_tag[ihtt]->at(ijet));
-            hp->h_htt_eta.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_eta[ihtt]->at(ijet)        , weight , htt_tag[ihtt]->at(ijet));
-            hp->h_htt_phi.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_phi[ihtt]->at(ijet)        , weight , htt_tag[ihtt]->at(ijet));
-            hp->h_htt_m.at(ijet)->fill_tagged(htt_config_strings[ihtt]   , htt_m[ihtt]->at(ijet) / 1000.  , weight , htt_tag[ihtt]->at(ijet));
 
-            hp->h_htt_atan1312.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_atan1312[ihtt]->at(ijet) , weight , htt_tag[ihtt]->at(ijet));
-            hp->h_htt_m23m123.at(ijet)->fill_tagged(htt_config_strings[ihtt]  , htt_m23m123[ihtt]->at(ijet)  , weight , htt_tag[ihtt]->at(ijet));
+            hp->h_htt_caJet_pt.at(ijet)->fill(htt_caJet_pt->at(ijet) / 1000., weight);
+            hp->h_htt_caJet_eta.at(ijet)->fill(htt_caJet_eta->at(ijet), weight);
+            hp->h_htt_caJet_phi.at(ijet)->fill(htt_caJet_phi->at(ijet), weight);
+            hp->h_htt_caJet_m.at(ijet)->fill(htt_caJet_m->at(ijet) / 1000., weight);
 
-            hp->h_htt_pts1.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_pts1[ihtt]->at(ijet) , weight , htt_tag[ihtt]->at(ijet));
-            hp->h_htt_pts2.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_pts2[ihtt]->at(ijet) , weight , htt_tag[ihtt]->at(ijet));
-            hp->h_htt_pts3.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_pts3[ihtt]->at(ijet) , weight , htt_tag[ihtt]->at(ijet));
+            for (UInt_t ihtt = 0; ihtt < htt_config_strings.size(); ihtt++)
+            {
+                hp->h_htt_pt.at(ijet)->fill_tagged(htt_config_strings[ihtt]  , htt_pt[ihtt]->at(ijet) / 1000. , weight , htt_tag[ihtt]->at(ijet));
+                hp->h_htt_eta.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_eta[ihtt]->at(ijet)        , weight , htt_tag[ihtt]->at(ijet));
+                hp->h_htt_phi.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_phi[ihtt]->at(ijet)        , weight , htt_tag[ihtt]->at(ijet));
+                hp->h_htt_m.at(ijet)->fill_tagged(htt_config_strings[ihtt]   , htt_m[ihtt]->at(ijet) / 1000.  , weight , htt_tag[ihtt]->at(ijet));
 
-            hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged(htt_config_strings[ihtt]  , htt_caGroomJet_pt[ihtt]->at(ijet) / 1000. , weight , htt_caGroomJet_pt[ihtt]->at(ijet) > -1000);
-            hp->h_htt_caGroomJet_eta.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_caGroomJet_eta[ihtt]->at(ijet)        , weight , htt_caGroomJet_eta[ihtt]->at(ijet) > -1000);
-            hp->h_htt_caGroomJet_phi.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_caGroomJet_phi[ihtt]->at(ijet)        , weight , htt_caGroomJet_phi[ihtt]->at(ijet) > -1000);
-            hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged(htt_config_strings[ihtt]   , htt_caGroomJet_m[ihtt]->at(ijet) / 1000.  , weight , htt_caGroomJet_m[ihtt]->at(ijet) > -1000);
+                hp->h_htt_atan1312.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_atan1312[ihtt]->at(ijet) , weight , htt_tag[ihtt]->at(ijet));
+                hp->h_htt_m23m123.at(ijet)->fill_tagged(htt_config_strings[ihtt]  , htt_m23m123[ihtt]->at(ijet)  , weight , htt_tag[ihtt]->at(ijet));
+
+                hp->h_htt_pts1.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_pts1[ihtt]->at(ijet) / 1000., weight , htt_tag[ihtt]->at(ijet));
+                hp->h_htt_pts2.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_pts2[ihtt]->at(ijet) / 1000., weight , htt_tag[ihtt]->at(ijet));
+                hp->h_htt_pts3.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_pts3[ihtt]->at(ijet) / 1000., weight , htt_tag[ihtt]->at(ijet));
+
+                hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged(htt_config_strings[ihtt]  , htt_caGroomJet_pt[ihtt]->at(ijet) / 1000. , weight , htt_caGroomJet_pt[ihtt]->at(ijet) > -1000);
+                hp->h_htt_caGroomJet_eta.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_caGroomJet_eta[ihtt]->at(ijet)        , weight , htt_caGroomJet_eta[ihtt]->at(ijet) > -1000);
+                hp->h_htt_caGroomJet_phi.at(ijet)->fill_tagged(htt_config_strings[ihtt] , htt_caGroomJet_phi[ihtt]->at(ijet)        , weight , htt_caGroomJet_phi[ihtt]->at(ijet) > -1000);
+                hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged(htt_config_strings[ihtt]   , htt_caGroomJet_m[ihtt]->at(ijet) / 1000.  , weight , htt_caGroomJet_m[ihtt]->at(ijet) > -1000);
+            }
         }
     }
 

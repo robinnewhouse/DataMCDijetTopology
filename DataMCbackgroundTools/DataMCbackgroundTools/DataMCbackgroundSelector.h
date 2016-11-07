@@ -82,6 +82,7 @@ class DataMCbackgroundSelector : public TSelector {
         UInt_t    mcChannelNumber;
         Float_t   mu;
         Float_t   mu_original_xAOD;
+        Int_t     NPV;
         UInt_t    backgroundFlags;
 
         Float_t         met_met;
@@ -99,6 +100,8 @@ class DataMCbackgroundSelector : public TSelector {
         Float_t rljet_ptasym;
         Float_t rljet_dy;
         Float_t rljet_dR;
+        Float_t rljet_deta;
+        Float_t rljet_dphi;
 
         vector<float> *rljet_Tau1_wta;
         vector<float> *rljet_Tau2_wta;
@@ -218,6 +221,10 @@ class DataMCbackgroundSelector : public TSelector {
         TBranch        *b_rljet_ptasym;   //!
         TBranch        *b_rljet_dy;   //!
         TBranch        *b_rljet_dR;   //!
+        TBranch        *b_rljet_deta;   //!
+        TBranch        *b_rljet_dphi;   //!
+
+        TBranch        *b_NPV;   //!
 
         TBranch        *b_tljet_pt;   //!
         TBranch        *b_tljet_eta;   //!
@@ -487,6 +494,10 @@ void DataMCbackgroundSelector::Init(TTree *tree)
         fChain->SetBranchAddress("rljet_ptasym" , &rljet_ptasym , &b_rljet_ptasym);
         fChain->SetBranchAddress("rljet_dy"     , &rljet_dy     , &b_rljet_dy);
         fChain->SetBranchAddress("rljet_dR"     , &rljet_dR     , &b_rljet_dR);
+        fChain->SetBranchAddress("rljet_deta"     , &rljet_deta     , &b_rljet_deta);
+        fChain->SetBranchAddress("rljet_dphi"     , &rljet_dphi     , &b_rljet_dphi);
+
+        fChain->SetBranchAddress("NPV"     , &NPV     , &b_NPV);
 
         fChain->SetBranchAddress("rljet_Tau1_wta"    , &rljet_Tau1_wta    , &b_rljet_Tau1_wta);
         fChain->SetBranchAddress("rljet_Tau2_wta"    , &rljet_Tau2_wta    , &b_rljet_Tau2_wta);
