@@ -2,7 +2,7 @@
 
 set -e
 
-DESCRIPTION="p2794_first_test_v0"
+DESCRIPTION="DS3_p2794_everything_v0"
 
 INPUT_DIR=/titan/atlas/common/zmeadows/TopBosonTagging/dijet/10242016
 OUTPUT_DIR_BASE=/home/zmeadows/ana/TopBosonTagBackground/DataMCbackground/plotting/raw/dijet

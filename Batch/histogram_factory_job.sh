@@ -17,4 +17,4 @@ cd /home/zmeadows/ana/TopBosonTagBackground/DataMCbackground/
 lsetup 'rcsetup -u'
 lsetup rcsetup
 
-histogram-factory -i $INPUT_FILE -o $OUTPUT_FILE -t $DATA_TRIGGER -L $LUMINOSITY -E $EVENT_SELECTOR -p $SAMPLE_TYPE
+histogram-factory -i $INPUT_FILE -o $OUTPUT_FILE -t $DATA_TRIGGER -L $LUMINOSITY -E $EVENT_SELECTOR -p $SAMPLE_TYPE -S
