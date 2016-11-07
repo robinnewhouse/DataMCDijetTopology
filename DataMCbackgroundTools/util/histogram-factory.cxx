@@ -126,7 +126,6 @@ main(int argc, char** argv)
     //p->SetProgressDialog(0);
     //p->SetParallel(5);
 
-    std::cout << "attempting to load input file: " << input_filepath << std::endl;
     std::vector<TChain*> tchains = get_branch_tchains(input_filepath);
 
     TSelector* dmd_selector;
