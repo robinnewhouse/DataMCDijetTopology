@@ -231,6 +231,7 @@ AXIS_TITLES = {
         "BDT_score_TOP"               : "Leading Large-R Jet BTDG Top Discriminant",
         "BDT_score_W"              : "Leading Large-R Jet BTDG W Discriminant",
         "DNN_score_TEST"              : "Leading Large-R Jet DNN Top Discriminant",
+        "rljet0_SD"               : "Leading Large-R Jet log #chi"
         }
 
 def get_axis_title(histo_name):

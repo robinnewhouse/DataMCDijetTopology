@@ -7,7 +7,7 @@ class PlotLoader(object):
 
     def __init__(self, filepath):
         self.filepath = filepath
-        self.tfile = TFile(self.filepath, "READ")
+        self.tfile = TFile.Open(self.filepath, "READ")
 
         # check that the file exists and opened successfully
         if not self.tfile:

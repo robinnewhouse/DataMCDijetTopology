@@ -19,12 +19,14 @@ gROOT.SetBatch()
 sane_defaults()
 TGaxis.SetMaxDigits(4)
 
-RAW = DMDLoader("/home/zmeadows/ana/TopBosonTagBackground/DataMCbackground/plotting/raw/dijet/30-10-2016__12:06:03__DS3_p2794_everything_v0/cp.all.merged.root")
-ROOT_OUTPUT_DIR = "/home/zmeadows/ana/TopBosonTagBackground/DataMCbackground/plotting/raw/dijet/30-10-2016__12:06:03__DS3_p2794_everything_v0/plots"
+RAW = DMDLoader("/home/zmeadows/ana/TopBosonTagBackground/DataMCDijetTopology/plotting/raw/dijet/30-10-2016__12:06:03__DS3_p2794_everything_v0/cp.all.merged.root")
+ROOT_OUTPUT_DIR = "/home/zmeadows/ana/TopBosonTagBackground/DataMCDijetTopology/plotting/raw/dijet/30-10-2016__12:06:03__DS3_p2794_everything_v0/plots"
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/control_plots"
 make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
+
+MAKE_ROOT_FILES = False
 
 LOG_FILE = open(OUTPUT_DIR + "/control_plots.log", 'w')
 
@@ -97,8 +99,9 @@ class PlotDataPythiaHerwig(PlotBase):
         self.h_pythia_dijet.Scale(self.pythia_dijet_SF)
         self.h_herwig_dijet.Scale(self.herwig_dijet_SF)
 
-        root_file = TFile(OUTPUT_DIR + "/" + var_name + ".root", "RECREATE")
-        root_file.cd()
+        if MAKE_ROOT_FILES:
+            root_file = TFile(OUTPUT_DIR + "/" + var_name + ".root", "RECREATE")
+            root_file.cd()
 
         default_histo = TH1F()
 
@@ -116,7 +119,8 @@ class PlotDataPythiaHerwig(PlotBase):
             h.SetMarkerSize(default_histo.GetMarkerSize())
             h.Write(h.GetName())
 
-        root_file.Close()
+        if MAKE_ROOT_FILES:
+            root_file.Close()
 
         LOG_FILE.write("\n")
         LOG_FILE.write("data yield (before signal subtraction): " + str(self.h_data.Integral()) + "\n")
@@ -757,7 +761,7 @@ data_mc_plots = [
             extra_legend_lines = DEF_LINES + ["m_{calo} > 40 GeV"],
             x_min = -1,
             x_max = 1,
-            rebin = 8,
+            rebin = 4,
             y_min = 1e-2,
             x_units = "",
             empty_scale = 1.2
@@ -770,7 +774,7 @@ data_mc_plots = [
             x_max = 1,
             rebin = 4,
             y_min = 1e4,
-            y_max = 5e5,
+            y_max = 2e8,
             x_units = "",
             log_scale = True,
             empty_scale = 2.
@@ -915,7 +919,7 @@ data_mc_plots = [
             x_min = -5,
             x_max = 6,
             x_units = "",
-            empty_scale = 1.3
+            empty_scale = 1.5
             ),
 
         PlotDataPythiaHerwig("h_rljet0_SDz_win20_btag0_logchi",
@@ -925,7 +929,7 @@ data_mc_plots = [
             x_units = "",
             x_min = -5,
             x_max = 6,
-            empty_scale = 1.3
+            empty_scale = 1.5
             ),
 
         PlotDataPythiaHerwig("h_rljet0_SDt_win50_btag0_logchi",
@@ -935,7 +939,7 @@ data_mc_plots = [
             x_units = "",
             x_min = -10,
             x_max = 10,
-            empty_scale = 1.3
+            empty_scale = 1.5
             ),
 
         PlotDataPythiaHerwig("h_rljet0_m_SDw_win20_btag0",
@@ -980,26 +984,26 @@ for var_str in [ "W_NvarS", "W_NvarM", "W_NvarL", "TOP3q_NvarM", "TOP3q_NvarL", 
             x_max = 1,
             rebin = 4,
             y_min = 1e-3,
-            y_max = 5e5,
+            y_max = 2e6,
             x_units = "",
-            empty_scale = 1.15
+            empty_scale = 1.45
             ))
 
         data_mc_plots.append(PlotDataPythiaHerwig(full_var_name,
             plot_systematics = False,
             extra_legend_lines = DEF_LINES + ["m_{calo} > 40 GeV"],
-            x_min = 0.7,
+            x_min = -1,
             x_max = 1,
             rebin = 4,
             y_min = 1e4,
-            y_max = 5e5,
+            y_max = 1e8,
             x_units = "",
             log_scale = True,
-            empty_scale = 4.
+            empty_scale = 5.
             ))
 
 for plot in data_mc_plots:
     plot.make_data_pythia_herwig_plot(OUTPUT_DIR)
-    plot.make_data_pythia_stack_plot(OUTPUT_DIR)
+    #plot.make_data_pythia_stack_plot(OUTPUT_DIR)
 
 LOG_FILE.close()
