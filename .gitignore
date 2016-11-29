@@ -1,0 +1,15 @@
+.RootCoreBin
+BoostedJetTaggers/
+JetCalibTools/
+NNTaggingTools/
+RootCoreBin/
+ShowerDeconstruction/
+TopDataPreparation/
+local_test/
+*.pyc
+plotting/raw/
+rcSetup.csh
+rcSetup.sh
+tags
+tags.lock
+tags.temp
