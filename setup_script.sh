@@ -1,5 +1,5 @@
 #!/bin/bash
-rcSetup Top,2.4.19
+lsetup 'rcsetup Top,2.4.21'
 
 # for simple cut-based taggers and HEPTopTagger
 svn co svn+ssh://svn.cern.ch/reps/atlasoff/Reconstruction/Jet/BoostedJetTaggers/tags/BoostedJetTaggers-00-00-25 BoostedJetTaggers
