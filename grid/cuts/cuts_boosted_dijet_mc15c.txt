@@ -5,7 +5,7 @@ LibraryNames libTopEventSelectionTools libTopEventReconstructionTools libDataMCb
 ############################
 
 PRWConfigFiles DataMCbackgroundTools/PRW/prw.10192016.TopBosonTag.root
-PRWLumiCalcFiles DataMCbackgroundTools/GRL/physics_25ns_20.7.lumicalc.OflLumi-13TeV-005.root
+PRWLumiCalcFiles DataMCbackgroundTools/GRL/data15_physics_25ns_20.7.lumicalc.OflLumi-13TeV-005.root DataMCbackgroundTools/GRL/data16_physics_25ns_20.7.lumicalc.OflLumi-13TeV-005.root
 PRWDefaultChannel 361025
 
 #######################
@@ -27,11 +27,11 @@ DebugLevel 0
 ### Systematics Configuration ###
 #################################
 
-LargeRJESUncertaintyConfig MultiTagging
+LargeRJESUncertaintyConfig MultiTagging_CombMass
 #Systematics AllJets
 #Systematics All
 #Systematics Nominal
-Systematics LARGERJET_Medium_JET_Rtrk_Baseline_Kin__1down,LARGERJET_Medium_JET_Rtrk_Baseline_Kin__1up,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1down,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1up,LARGERJET_Medium_JET_Rtrk_Modelling_Kin__1down,LARGERJET_Medium_JET_Rtrk_Modelling_Kin__1up,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1down,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1up,LARGERJET_Medium_JET_Rtrk_TotalStat_Kin__1down,LARGERJET_Medium_JET_Rtrk_TotalStat_Kin__1up,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1down,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1up,LARGERJET_Medium_JET_Rtrk_Tracking_Kin__1down,LARGERJET_Medium_JET_Rtrk_Tracking_Kin__1up,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1down,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1up,LARGERJET_Strong_JET_Rtrk_Baseline_All__1down,LARGERJET_Strong_JET_Rtrk_Baseline_All__1up,LARGERJET_Strong_JET_Rtrk_Modelling_All__1down,LARGERJET_Strong_JET_Rtrk_Modelling_All__1up,LARGERJET_Strong_JET_Rtrk_TotalStat_All__1down,LARGERJET_Strong_JET_Rtrk_TotalStat_All__1up,LARGERJET_Strong_JET_Rtrk_Tracking_All__1down,LARGERJET_Strong_JET_Rtrk_Tracking_All__1up
+Systematics LARGERJET_Medium_JET_Comb_Baseline_Kin__1down,LARGERJET_Medium_JET_Comb_Baseline_Kin__1up,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1down,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1up,LARGERJET_Medium_JET_Comb_Modelling_Kin__1down,LARGERJET_Medium_JET_Comb_Modelling_Kin__1up,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1down,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1up,LARGERJET_Medium_JET_Comb_TotalStat_Kin__1down,LARGERJET_Medium_JET_Comb_TotalStat_Kin__1up,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1down,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1up,LARGERJET_Medium_JET_Comb_Tracking_Kin__1down,LARGERJET_Medium_JET_Comb_Tracking_Kin__1up,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1down,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1up
 
 ##########################
 ### Object Collections ###
@@ -47,10 +47,10 @@ PhotonCollectionName None
 METCollectionName MET_Reference_AntiKt4EMTopo
 TruthCollectionName TruthParticles
 TruthJetCollectionName AntiKt4TruthJets
-TruthLargeRJetCollectionName AntiKt10TruthTrimmedPtFrac5SmallR20Jets
+TruthLargeRJetCollectionName AntiKt10TruthJets
 TruthLargeRJetEta 2.5
 TruthLargeRJetPt 25000
-TopPartonHistory None
+TopPartonHistory False
 TruthBlockInfo False
 PDFInfo False
 
@@ -58,33 +58,20 @@ PDFInfo False
 ### General Configuration ###
 #############################
 
-#NEvents 500
-JetUncertainties_BunchSpacing 25ns
+IsAFII False
+
+#NEvents 100
 
 OutputFileSetAutoFlushZero True
-
 ObjectSelectionName top::ObjectLoaderStandardCuts
-
 #OutputFormat top::EventSaverFlatNtuple
 OutputFormat top::DataMCbackgroundEventSaver
 
 OutputEvents SelectedEvents
 OutputFilename output.root
-PerfStats No
-
-### to retrieve the matrix-method weights from the TopFakes package if available - default is False
-FakesMMWeights False
 
 ### handling scale-factors
-CalculateSF True
-BTaggingWP FixedCutBEff_70
-
-### to process the loose selection also for MC - default is False
-FakesControlRegionDoLooseMC False
-
-FakesControlRegionDoLooseMC False
-OverlapRemovalLeptonDef Tight
-ApplyElectronInJetSubtraction False
+CalculateSF False
 
 ####################
 ### SELECTION(S) ###
@@ -95,7 +82,7 @@ INITIAL
 GRL
 GOODCALO
 PRIVTX
-TRIGDEC HLT_j150 HLT_j175 HLT_j260 HLT_j360 HLT_j420_a10_lcw_L1J100 HLT_j420_a10r_L1J100
+# TRIGDEC HLT_j150 HLT_j175 HLT_j260 HLT_j360 HLT_j420_a10_lcw_L1J100 HLT_j420_a10r_L1J100
 JETCLEAN LooseBad
 LARGEJET_N 200000 >= 2
 LARGEJET_N 450000 >= 1

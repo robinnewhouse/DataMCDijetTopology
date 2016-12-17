@@ -1,0 +1,13 @@
+Index: TopCPTools/Root/TopToolStore.cxx
+===================================================================
+--- TopCPTools/Root/TopToolStore.cxx	(revision 788086)
++++ TopCPTools/Root/TopToolStore.cxx	(working copy)
+@@ -1209,7 +1209,7 @@
+     } else {
+       // Only a single calib config/sequence for MC and data
+       // so just put it here for now.
+-      const std::string calibConfigLargeR = "JES_MC15recommendation_FatJet_track_assisted_January2016.config";
++      const std::string calibConfigLargeR = "JES_MC15recommendation_FatJet_Nov2016_QCDCombinationUncorrelatedWeights.config";
+       const std::string calibSequenceLargeR = "EtaJES_JMS";
+       
+       JetCalibrationTool* jetCalibrationToolLargeR

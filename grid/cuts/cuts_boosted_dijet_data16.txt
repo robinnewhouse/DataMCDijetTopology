@@ -5,7 +5,7 @@ LibraryNames libTopEventSelectionTools libTopEventReconstructionTools libDataMCb
 #########################
 
 GRLDir DataMCbackgroundTools/GRL
-GRLFile data16_13TeV.periodAllYear_DetStatus-v82-pro20-13_DQDefects-00-02-04_PHYS_StandardGRL_All_Good_25ns.xml
+GRLFile data15_13TeV.periodAllYear_DetStatus-v79-repro20-02_DQDefects-00-02-02_PHYS_StandardGRL_All_Good_25ns.xml data16_13TeV.periodAllYear_DetStatus-v83-pro20-15_DQDefects-00-02-04_PHYS_StandardGRL_All_Good_25ns.xml
 
 #######################
 ### Custom Settings ###
@@ -22,6 +22,13 @@ SaveTrackAssistedMass True
 NumFatjetsKeep 1
 DebugLevel 0
 
+#################################
+### Systematics Configuration ###
+#################################
+
+LargeRJESUncertaintyConfig MultiTagging_CombMass
+Systematics Nominal
+
 ##########################
 ### Object Collections ###
 ##########################
@@ -36,7 +43,7 @@ PhotonCollectionName None
 METCollectionName MET_Reference_AntiKt4EMTopo
 TruthCollectionName TruthParticles
 TruthJetCollectionName AntiKt4TruthJets
-TruthLargeRJetCollectionName AntiKt10TruthTrimmedPtFrac5SmallR20Jets
+TruthLargeRJetCollectionName AntiKt10TruthJets
 TruthLargeRJetEta 2.5
 TruthLargeRJetPt 25000
 TopPartonHistory None
@@ -47,43 +54,20 @@ PDFInfo False
 ### General Configuration ###
 #############################
 
-#NEvents 2000
-JetUncertainties_BunchSpacing 25ns
+IsAFII False
+
+#NEvents 10000
 
 OutputFileSetAutoFlushZero True
-
 ObjectSelectionName top::ObjectLoaderStandardCuts
-
 #OutputFormat top::EventSaverFlatNtuple
 OutputFormat top::DataMCbackgroundEventSaver
 
 OutputEvents SelectedEvents
 OutputFilename output.root
-PerfStats No
 
-### to retrieve the matrix-method weights from the TopFakes package if available - default is False
-FakesMMWeights False
-
-### handling btag scale-factors
-CalculateSF True
-BTaggingWP FixedCutBEff_70
-
-### handling systematic trees
-LargeRJESUncertaintyConfig MultiTagging
-Systematics Nominal
-
-### to process the loose selection also for MC - default is False
-FakesControlRegionDoLooseMC False
-
-### loose MET collection - default is MET_Reference_AntiKt4EMTopo
-LooseMETCollectionName MET_Reference_AntiKt4EMTopo
-
-### to do overlap removal with loose leptons
-ApplyElectronInJetSubtraction False
-
-FakesControlRegionDoLooseMC False
-OverlapRemovalLeptonDef Tight
-ApplyElectronInJetSubtraction False
+### handling scale-factors
+CalculateSF False
 
 ####################
 ### SELECTION(S) ###

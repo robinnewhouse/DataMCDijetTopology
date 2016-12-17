@@ -9,8 +9,7 @@ def check_sample_dict(sample_dict):
     global num_samples_failed
     for sample_set, sample_files in sample_dict.iteritems():
         for f in sample_files:
-            ret_code = subprocess.call(["ami","show","dataset","info",f],
-                    stdout = subprocess.PIPE)
+            ret_code = subprocess.call(["ami","show","dataset","info",f],stdout = subprocess.PIPE)
             if (ret_code != 0):
                 num_samples_failed += 1
                 print "SAMPLES NOT FOUND: ", f

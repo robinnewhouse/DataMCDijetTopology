@@ -4,23 +4,23 @@ from samples import samples_JETM6
 
 mc_config = TopExamples.grid.Config()
 mc_config.settingsFile  = 'cuts/cuts_boosted_dijet_mc15c.txt'
-mc_config.suffix        = 'mc15c_10242016_v0'
+mc_config.suffix        = 'TopWZTag_mc15c_16122016_v1'
 
 data_config = TopExamples.grid.Config()
 data_config.settingsFile  = 'cuts/cuts_boosted_dijet_data16.txt'
-data_config.suffix        = 'data16_10242016_v0'
+data_config.suffix        = 'TopWZTag_data_16122016_v1'
 
 for config in [mc_config, data_config]:
     config.code          = 'top-xaod'
     config.gridUsername  = 'zmeadows'
-    config.excludedSites = ''
+    config.excludedSites = 'US,ANALY_CONNECT_SHORT,ANALY_CONNECT,ANALY_TAIWAN'
     config.noSubmit      = False
-    config.memory        = '1999' # A lot of sites were short on RAM recently, so we avoid brokerage issues this way
+    config.memory        = '1999' # A lot of sites are short on RAM, so we avoid brokerage issues this way
     config.mergeType     = 'Default' #'None', 'Default' or 'xAOD'
     config.destSE        = '' #This is the default (anywhere), or try e.g. 'UKI-SOUTHGRID-BHAM-HEP_LOCALGROUPDISK'
 
 
-data16_sample_names = [ 'data_2016_25ns' ]
+data_sample_names = [ 'data_2016_25ns', 'data_2015_25ns' ]
 mc_sample_names = [
         'pythia_dijet_mc15c',
         'herwig_dijet_mc15c',
@@ -29,8 +29,8 @@ mc_sample_names = [
         'ttbar_allhad_mc15c'
         ]
 
-for sample_name in mc_sample_names + data16_sample_names:
+for sample_name in mc_sample_names + data_sample_names:
     TopExamples.grid.Add(sample_name).datasets = samples_JETM6[sample_name]
 
-TopExamples.grid.submit(data_config, TopExamples.grid.Samples(data16_sample_names))
+TopExamples.grid.submit(data_config, TopExamples.grid.Samples(data_sample_names))
 TopExamples.grid.submit(mc_config, TopExamples.grid.Samples(mc_sample_names))
