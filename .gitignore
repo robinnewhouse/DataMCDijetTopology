@@ -13,3 +13,8 @@ rcSetup.sh
 tags
 tags.lock
 tags.temp
+JetMatchingTools/
+TopAnalysis/
+TopCPTools/
+cleanup.sh
+grid/top-xaod.tar.gz
