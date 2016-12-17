@@ -19,8 +19,8 @@ gROOT.SetBatch()
 sane_defaults()
 TGaxis.SetMaxDigits(4)
 
-RAW = DMDLoader("/home/zmeadows/ana/TopBosonTagBackground/DataMCDijetTopology/plotting/raw/dijet/30-10-2016__12:06:03__DS3_p2794_everything_v0/cp.all.merged.root")
-ROOT_OUTPUT_DIR = "/home/zmeadows/ana/TopBosonTagBackground/DataMCDijetTopology/plotting/raw/dijet/30-10-2016__12:06:03__DS3_p2794_everything_v0/plots"
+RAW = DMDLoader("./raw/dijet/30-10-2016__12:06:03__DS3_p2794_everything_v0/cp.all.merged.root")
+ROOT_OUTPUT_DIR = "./raw/dijet/30-10-2016__12:06:03__DS3_p2794_everything_v0/plots"
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/control_plots"
 make_dir(ROOT_OUTPUT_DIR)

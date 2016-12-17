@@ -19,8 +19,8 @@ gROOT.SetBatch()
 sane_defaults()
 TGaxis.SetMaxDigits(4)
 
-RAW = DMDLoader("/home/zmeadows/ana/TopBosonTagBackground/DataMCDijetTopology/plotting/raw/dijet/30-10-2016__12:06:03__DS3_p2794_everything_v0/cp.all.merged.root")
-ROOT_OUTPUT_DIR = "/home/zmeadows/ana/TopBosonTagBackground/DataMCDijetTopology/plotting/raw/dijet/30-10-2016__12:06:03__DS3_p2794_everything_v0/plots"
+RAW = DMDLoader("./raw/dijet/30-10-2016__12:06:03__DS3_p2794_everything_v0/cp.all.merged.root")
+ROOT_OUTPUT_DIR = "./raw/dijet/30-10-2016__12:06:03__DS3_p2794_everything_v0/plots"
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/efficiency_plots"
 make_dir(ROOT_OUTPUT_DIR)
@@ -152,7 +152,7 @@ def make_pt_efficiency_plot(tag_name, rejection = True, **kwargs):
             legend_loc = [0.75,0.93,0.94,0.79],
             x_title = "Leading Large-R Jet #it{p_{T}}",
             x_min = 500,
-            x_max = 2500,
+            x_max = 2000,
             width = 600,
             **kwargs)
 
@@ -222,7 +222,7 @@ def make_htt_pt_efficiency_plot(rejection = True, **kwargs):
             legend_loc = [0.75,0.93,0.94,0.79],
             x_title = "Leading Large-R Jet #it{p_{T}}",
             x_min = 500,
-            x_max = 2500,
+            x_max = 2000,
             width = 600,
             **kwargs)
 
