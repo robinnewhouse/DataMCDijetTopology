@@ -7,26 +7,24 @@
 
 #include "TopExamples/AnalysisTools.h"
 
-// #include "NNTaggingTools/DNNWTopTagger.h"
- 
-// #include "TMVA/Tools.h"
-// #include "TMVA/Reader.h"
-
-#include <TROOT.h>
-#include <TH1F.h>
-#include <TNamed.h>
 #include <TChain.h>
 #include <TFile.h>
-#include <TSelector.h>
+#include <TH1F.h>
 #include <TLorentzVector.h>
+#include <TMath.h>
+#include <TNamed.h>
+#include <TROOT.h>
+#include <TSelector.h>
+#include <TStyle.h>
 
-#include <vector>
-using std::vector;
 #include <array>
+#include <fstream>
+#include <iostream>
 #include <map>
 #include <memory>
-#include <iostream>
-#include <fstream>
+#include <unordered_map>
+#include <vector>
+using std::vector;
 
 class DataMCbackgroundSelector;
 
@@ -49,27 +47,24 @@ class DataMCbackgroundSelector : public TSelector {
         const bool on_nominal_branch;
 
         const float luminosity;
+        float SF_lumi_Fb;
+
+        // keep track of highest weight event in file for finding bugged events
+        float max_weight; 
 
         static const std::unordered_map<std::string, EventSelector> available_event_selectors;
         EventSelector chosen_event_selector;
-
-        float max_weight;
-        float SF_lumi_Fb;
 
         vector<std::string> htt_config_strings;
 
         std::ofstream output_log;
 
-        std::unordered_map<std::string, bool> prerec_tag_map;
+        // various maps used for creating tagged histograms
+        std::unordered_map<std::string, bool> smooth15_tag_map;
+        std::unordered_map<std::string, bool> smooth16_tag_map;
         std::unordered_map<std::string, bool> ntrk_prerec_tag_map;
         std::unordered_map<std::string, bool> SD_nominal_tag_map;
         std::unordered_map<std::string, bool> SD_systematic_tag_map;
-
-        /* std::unordered_map<std::string, std::unique_ptr<TMVA::Reader>> bdt_readers; */
-        /* std::map<std::string, float> bdt_input_map; */
-
-        /* std::unique_ptr<DNNWTopTagger> dnn_top_tagger; */
-        /* std::map<std::string, double> dnn_input_map; */
 
         // Declaration of leaf types
         Float_t   weight_mc;
@@ -91,10 +86,15 @@ class DataMCbackgroundSelector : public TSelector {
         Char_t          HLT_jet_trigger;
 
         Int_t           rljet_count;
-        vector<float>   *rljet_pt;
+        vector<float>   *rljet_pt_comb;
+        vector<float>   *rljet_m_comb;
+        vector<float>   *rljet_pt_calo;
+        vector<float>   *rljet_m_calo;
+        vector<float>   *rljet_pt_ta;
+        vector<float>   *rljet_m_ta;
+
         vector<float>   *rljet_eta;
         vector<float>   *rljet_phi;
-        vector<float>   *rljet_m;
 
         Float_t rljet_mjj;
         Float_t rljet_ptasym;
@@ -131,20 +131,33 @@ class DataMCbackgroundSelector : public TSelector {
         vector<int> *rljet_NTrimSubjets;
         vector<int> *rljet_ungroomed_ntrk500;
 
-        vector<float>   *tljet_pt;
-        vector<float>   *tljet_eta;
-        vector<float>   *tljet_phi;
-        vector<float>   *tljet_m;
-        vector<float>   *tljet_dR;
-        vector<float>   *tljet_D2;
-        vector<float>   *tljet_Tau32_wta;
+        // 2015 smooth top
+        vector<int>* rljet_smooth15Top_MassTau32Tag50eff;
+        vector<int>* rljet_smooth15Top_MassTau32Tag80eff;
 
-        Int_t           hltjet_count;
-        vector<float>   *hltjet_m;
-        vector<float>   *hltjet_pt;
-        vector<float>   *hltjet_eta;
-        vector<float>   *hltjet_phi;
-        vector<float>   *hltjet_dR;
+        // 2015 smooth W
+        vector<int>* rljet_smooth15W_Tag50eff;
+        vector<int>* rljet_smooth15W_Tag25eff;
+
+        // 2015 smooth Z
+        vector<int>* rljet_smooth15Z_Tag50eff;
+        vector<int>* rljet_smooth15Z_Tag25eff;
+
+        // 2016 smooth top
+        vector<int>* rljet_smooth16Top_Tau32Split23Tag50eff;
+        vector<int>* rljet_smooth16Top_Tau32Split23Tag80eff;
+        vector<int>* rljet_smooth16Top_MassTau32Tag50eff;
+        vector<int>* rljet_smooth16Top_MassTau32Tag80eff;
+        vector<int>* rljet_smooth16Top_QwTau32Tag50eff;
+        vector<int>* rljet_smooth16Top_QwTau32Tag80eff;
+
+        // 2016 smooth W
+        vector<int>* rljet_smooth16W_Tag50eff;
+        vector<int>* rljet_smooth16W_Tag80eff;
+
+        // 2016 smooth Z
+        vector<int>* rljet_smooth16Z_Tag50eff;
+        vector<int>* rljet_smooth16Z_Tag80eff;
 
         Int_t           caJet_count;
         vector<float>   *htt_caJet_pt;
@@ -168,17 +181,6 @@ class DataMCbackgroundSelector : public TSelector {
         vector<vector<float>*>   htt_caGroomJet_eta;
         vector<vector<float>*>   htt_caGroomJet_phi;
         vector<vector<float>*>   htt_caGroomJet_m;
-
-        vector<bool>    *rljet_smoothMassTag50eff;
-        vector<bool>    *rljet_smoothMassTag80eff;
-        vector<bool>    *rljet_smoothTau32Tag50eff;
-        vector<bool>    *rljet_smoothTau32Tag80eff;
-        vector<bool>    *rljet_smoothMassTau32Tag50eff;
-        vector<bool>    *rljet_smoothMassTau32Tag80eff;
-        vector<int>     *rljet_smoothWTag50eff;
-        vector<int>     *rljet_smoothWTag25eff;
-        vector<int>     *rljet_smoothZTag50eff;
-        vector<int>     *rljet_smoothZTag25eff;
 
         // vector<bool>    *rljet_btag_double;
         // vector<bool>    *rljet_btag_single;
@@ -212,10 +214,15 @@ class DataMCbackgroundSelector : public TSelector {
         TBranch        *b_HLT_jet_trigger;  //!
 
         TBranch        *b_rljet_count;   //!
-        TBranch        *b_rljet_pt;   //!
         TBranch        *b_rljet_eta;   //!
         TBranch        *b_rljet_phi;   //!
-        TBranch        *b_rljet_m;   //!
+
+        TBranch* b_rljet_pt_comb; //!
+        TBranch* b_rljet_m_comb; //!
+        TBranch* b_rljet_pt_calo; //!
+        TBranch* b_rljet_m_calo; //!
+        TBranch* b_rljet_pt_ta; //!
+        TBranch* b_rljet_m_ta; //!
 
         TBranch        *b_rljet_mjj;   //!
         TBranch        *b_rljet_ptasym;   //!
@@ -292,16 +299,22 @@ class DataMCbackgroundSelector : public TSelector {
         TBranch        *b_rljet_NTrimSubjets; //!
         TBranch        *b_rljet_ungroomed_ntrk500; //!
 
-        TBranch        *b_rljet_smoothMassTag50eff;   //!
-        TBranch        *b_rljet_smoothMassTag80eff;   //!
-        TBranch        *b_rljet_smoothTau32Tag50eff;   //!
-        TBranch        *b_rljet_smoothTau32Tag80eff;   //!
-        TBranch        *b_rljet_smoothMassTau32Tag50eff;   //!
-        TBranch        *b_rljet_smoothMassTau32Tag80eff;   //!
-        TBranch        *b_rljet_smoothWTag50eff;   //!
-        TBranch        *b_rljet_smoothWTag25eff;   //!
-        TBranch        *b_rljet_smoothZTag50eff;   //!
-        TBranch        *b_rljet_smoothZTag25eff;   //!
+        TBranch *b_rljet_smooth15Top_MassTau32Tag50eff; //!
+        TBranch *b_rljet_smooth15Top_MassTau32Tag80eff; //!
+        TBranch *b_rljet_smooth15W_Tag50eff; //!
+        TBranch *b_rljet_smooth15W_Tag25eff; //!
+        TBranch *b_rljet_smooth15Z_Tag50eff; //!
+        TBranch *b_rljet_smooth15Z_Tag25eff; //!
+        TBranch *b_rljet_smooth16Top_Tau32Split23Tag50eff; //!
+        TBranch *b_rljet_smooth16Top_Tau32Split23Tag80eff; //!
+        TBranch *b_rljet_smooth16Top_MassTau32Tag50eff; //!
+        TBranch *b_rljet_smooth16Top_MassTau32Tag80eff; //!
+        TBranch *b_rljet_smooth16Top_QwTau32Tag50eff; //!
+        TBranch *b_rljet_smooth16Top_QwTau32Tag80eff; //!
+        TBranch *b_rljet_smooth16W_Tag50eff; //!
+        TBranch *b_rljet_smooth16W_Tag80eff; //!
+        TBranch *b_rljet_smooth16Z_Tag50eff; //!
+        TBranch *b_rljet_smooth16Z_Tag80eff; //!
 
         // TBranch        *b_rljet_btag_double;   //!
         // TBranch        *b_rljet_btag_single;   //!
@@ -360,83 +373,6 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     // Init() will be called many times when running on PROOF
     // (once per file to be processed).
 
-    rljet_pt = 0;
-    rljet_eta = 0;
-    rljet_phi = 0;
-    rljet_m = 0;
-
-    rljet_Tau1_wta = 0;
-    rljet_Tau2_wta = 0;
-    rljet_Tau3_wta = 0;
-    rljet_Tau32_wta = 0;
-    rljet_ECF1 = 0;
-    rljet_ECF2 = 0;
-    rljet_ECF3 = 0;
-    rljet_D2 = 0;
-    rljet_FoxWolfram0 = 0;
-    rljet_FoxWolfram2 = 0;
-    rljet_Qw = 0;
-    rljet_Angularity = 0;
-    rljet_Aplanarity = 0;
-    rljet_Dip12 = 0;
-    rljet_KtDR = 0;
-    rljet_Mu12 = 0;
-    rljet_PlanarFlow = 0;
-    rljet_Sphericity = 0;
-    rljet_Split12 = 0;
-    rljet_Split23 = 0;
-    rljet_Split34 = 0;
-    rljet_ThrustMaj = 0;
-    rljet_ThrustMin = 0;
-    rljet_ZCut12 = 0;
-
-    rljet_NTrimSubjets = 0;
-    rljet_ungroomed_ntrk500 = 0;
-
-    tljet_pt = 0;
-    tljet_eta = 0;
-    tljet_phi = 0;
-    tljet_m = 0;
-    tljet_dR = 0;
-    tljet_D2 = 0;
-    tljet_Tau32_wta = 0;
-
-    hltjet_m = 0;
-    hltjet_pt = 0;
-    hltjet_eta = 0;
-    hltjet_phi = 0;
-    hltjet_dR = 0;
-
-    htt_caJet_pt = 0;
-    htt_caJet_eta = 0;
-    htt_caJet_phi = 0;
-    htt_caJet_m = 0;
-
-    rljet_smoothMassTag50eff = 0;
-    rljet_smoothMassTag80eff = 0;
-    rljet_smoothTau32Tag50eff = 0;
-    rljet_smoothTau32Tag80eff = 0;
-    rljet_smoothMassTau32Tag50eff = 0;
-    rljet_smoothMassTau32Tag80eff = 0;
-    rljet_smoothWTag50eff = 0;
-    rljet_smoothWTag25eff = 0;
-    rljet_smoothZTag50eff = 0;
-    rljet_smoothZTag25eff = 0;
-
-    // rljet_btag_double = 0;
-    // rljet_btag_single = 0;
-    // rljet_btag_leading_pt = 0;
-
-    rljet_SDw_win20_btag0 = 0;
-    rljet_SDz_win20_btag0 = 0;
-    rljet_SDt_win50_btag0 = 0;
-    rljet_SDw_win20_btag0_UP = 0;
-    rljet_SDz_win20_btag0_UP = 0;
-    rljet_SDt_win50_btag0_UP = 0;
-    rljet_SDw_win20_btag0_DOWN = 0;
-    rljet_SDz_win20_btag0_DOWN = 0;
-    rljet_SDt_win50_btag0_DOWN = 0;
-
     // Set branch addresses and branch pointers
     if (!tree) return;
     fChain = tree;
@@ -454,33 +390,45 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     fChain->SetBranchAddress("runNumber"       , &runNumber       , &b_runNumber);
     fChain->SetBranchAddress("backgroundFlags" , &backgroundFlags , &b_backgroundFlags);
 
-    fChain->SetBranchAddress("rljet_pt"  , &rljet_pt  , &b_rljet_pt);
-    fChain->SetBranchAddress("rljet_eta" , &rljet_eta , &b_rljet_eta);
-    fChain->SetBranchAddress("rljet_phi" , &rljet_phi , &b_rljet_phi);
-    fChain->SetBranchAddress("rljet_m"   , &rljet_m   , &b_rljet_m);
+    fChain->SetBranchAddress("rljet_eta"     , &rljet_eta     , &b_rljet_eta);
+    fChain->SetBranchAddress("rljet_phi"     , &rljet_phi     , &b_rljet_phi);
+    fChain->SetBranchAddress("rljet_m_comb"  , &rljet_m_comb  , &b_rljet_m_comb);
+    fChain->SetBranchAddress("rljet_pt_comb" , &rljet_pt_comb , &b_rljet_pt_comb);
 
     fChain->SetBranchAddress("rljet_Tau32_wta", &rljet_Tau32_wta, &b_rljet_Tau32_wta);
     fChain->SetBranchAddress("rljet_D2", &rljet_D2, &b_rljet_D2);
 
-    fChain->SetBranchAddress("rljet_smoothMassTag50eff"      , &rljet_smoothMassTag50eff      , &b_rljet_smoothMassTag50eff);
-    fChain->SetBranchAddress("rljet_smoothMassTag80eff"      , &rljet_smoothMassTag80eff      , &b_rljet_smoothMassTag80eff);
-    fChain->SetBranchAddress("rljet_smoothTau32Tag50eff"     , &rljet_smoothTau32Tag50eff     , &b_rljet_smoothTau32Tag50eff);
-    fChain->SetBranchAddress("rljet_smoothTau32Tag80eff"     , &rljet_smoothTau32Tag80eff     , &b_rljet_smoothTau32Tag80eff);
-    fChain->SetBranchAddress("rljet_smoothMassTau32Tag50eff" , &rljet_smoothMassTau32Tag50eff , &b_rljet_smoothMassTau32Tag50eff);
-    fChain->SetBranchAddress("rljet_smoothMassTau32Tag80eff" , &rljet_smoothMassTau32Tag80eff , &b_rljet_smoothMassTau32Tag80eff);
-    fChain->SetBranchAddress("rljet_smoothWTag50eff"         , &rljet_smoothWTag50eff         , &b_rljet_smoothWTag50eff);
-    fChain->SetBranchAddress("rljet_smoothWTag25eff"         , &rljet_smoothWTag25eff         , &b_rljet_smoothWTag25eff);
-    fChain->SetBranchAddress("rljet_smoothZTag50eff"         , &rljet_smoothZTag50eff         , &b_rljet_smoothZTag50eff);
-    fChain->SetBranchAddress("rljet_smoothZTag25eff"         , &rljet_smoothZTag25eff         , &b_rljet_smoothZTag25eff);
+    fChain->SetBranchAddress("rljet_smooth16Top_Tau32Split23Tag50eff" , rljet_smooth16Top_Tau32Split23Tag50eff);
+    fChain->SetBranchAddress("rljet_smooth16Top_Tau32Split23Tag80eff" , rljet_smooth16Top_Tau32Split23Tag80eff);
+    fChain->SetBranchAddress("rljet_smooth16Top_MassTau32Tag50eff"    , rljet_smooth16Top_MassTau32Tag50eff);
+    fChain->SetBranchAddress("rljet_smooth16Top_MassTau32Tag80eff"    , rljet_smooth16Top_MassTau32Tag80eff);
+    fChain->SetBranchAddress("rljet_smooth16Top_QwTau32Tag50eff"      , rljet_smooth16Top_QwTau32Tag50eff);
+    fChain->SetBranchAddress("rljet_smooth16Top_QwTau32Tag80eff"      , rljet_smooth16Top_QwTau32Tag80eff);
 
-    if (this->operating_on_mc) {
-            //get pdgid
-    }
+    fChain->SetBranchAddress("rljet_smooth16W_Tag50eff", rljet_smooth16W_Tag50eff);
+    fChain->SetBranchAddress("rljet_smooth16W_Tag80eff", rljet_smooth16W_Tag80eff);
+
+    fChain->SetBranchAddress("rljet_smooth16Z_Tag50eff", rljet_smooth16Z_Tag50eff);
+    fChain->SetBranchAddress("rljet_smooth16Z_Tag80eff", rljet_smooth16Z_Tag80eff);
 
     if (sub_dir_str == "nominal") {
         if (!this->operating_on_mc) {
             fChain->SetBranchAddress("mu_original_xAOD", &mu_original_xAOD, &b_mu_original_xAOD);
         }
+
+        fChain->SetBranchAddress("rljet_m_calo"  , &rljet_m_calo  , &b_rljet_m_calo);
+        fChain->SetBranchAddress("rljet_pt_calo" , &rljet_pt_calo , &b_rljet_pt_calo);
+        fChain->SetBranchAddress("rljet_m_ta"    , &rljet_m_ta    , &b_rljet_m_ta);
+        fChain->SetBranchAddress("rljet_pt_ta"   , &rljet_pt_ta   , &b_rljet_pt_ta);
+
+        fChain->SetBranchAddress("rljet_smooth15Top_MassTau32Tag50eff", rljet_smooth15Top_MassTau32Tag50eff);
+        fChain->SetBranchAddress("rljet_smooth15Top_MassTau32Tag80eff", rljet_smooth15Top_MassTau32Tag80eff);
+
+        fChain->SetBranchAddress("rljet_smooth15W_Tag50eff", rljet_smooth15W_Tag50eff);
+        fChain->SetBranchAddress("rljet_smooth15W_Tag25eff", rljet_smooth15W_Tag25eff);
+
+        fChain->SetBranchAddress("rljet_smooth15Z_Tag50eff", rljet_smooth15Z_Tag50eff);
+        fChain->SetBranchAddress("rljet_smooth15Z_Tag25eff", rljet_smooth15Z_Tag25eff);
 
         fChain->SetBranchAddress("mu", &mu, &b_mu);
 
@@ -494,8 +442,8 @@ void DataMCbackgroundSelector::Init(TTree *tree)
         fChain->SetBranchAddress("rljet_ptasym" , &rljet_ptasym , &b_rljet_ptasym);
         fChain->SetBranchAddress("rljet_dy"     , &rljet_dy     , &b_rljet_dy);
         fChain->SetBranchAddress("rljet_dR"     , &rljet_dR     , &b_rljet_dR);
-        fChain->SetBranchAddress("rljet_deta"     , &rljet_deta     , &b_rljet_deta);
-        fChain->SetBranchAddress("rljet_dphi"     , &rljet_dphi     , &b_rljet_dphi);
+        fChain->SetBranchAddress("rljet_deta"   , &rljet_deta   , &b_rljet_deta);
+        fChain->SetBranchAddress("rljet_dphi"   , &rljet_dphi   , &b_rljet_dphi);
 
         fChain->SetBranchAddress("NPV"     , &NPV     , &b_NPV);
 
@@ -524,23 +472,6 @@ void DataMCbackgroundSelector::Init(TTree *tree)
 
         fChain->SetBranchAddress("rljet_NTrimSubjets"      , &rljet_NTrimSubjets      , &b_rljet_NTrimSubjets);
         fChain->SetBranchAddress("rljet_ungroomed_ntrk500" , &rljet_ungroomed_ntrk500 , &b_rljet_ungroomed_ntrk500);
-
-        if (this->operating_on_mc) {
-            fChain->SetBranchAddress("tljet_pt"        , &tljet_pt        , &b_tljet_pt);
-            fChain->SetBranchAddress("tljet_eta"       , &tljet_eta       , &b_tljet_eta);
-            fChain->SetBranchAddress("tljet_phi"       , &tljet_phi       , &b_tljet_phi);
-            fChain->SetBranchAddress("tljet_m"         , &tljet_m         , &b_tljet_m);
-            fChain->SetBranchAddress("tljet_dR"        , &tljet_dR        , &b_tljet_dR);
-            fChain->SetBranchAddress("tljet_D2"        , &tljet_D2        , &b_tljet_D2);
-            fChain->SetBranchAddress("tljet_Tau32_wta" , &tljet_Tau32_wta , &b_tljet_Tau32_wta);
-        }
-
-        fChain->SetBranchAddress("hltjet_count" , &hltjet_count , &b_hltjet_count);
-        fChain->SetBranchAddress("hltjet_m"     , &hltjet_m     , &b_hltjet_m);
-        fChain->SetBranchAddress("hltjet_pt"    , &hltjet_pt    , &b_hltjet_pt);
-        fChain->SetBranchAddress("hltjet_eta"   , &hltjet_eta   , &b_hltjet_eta);
-        fChain->SetBranchAddress("hltjet_phi"   , &hltjet_phi   , &b_hltjet_phi);
-        fChain->SetBranchAddress("hltjet_dR"    , &hltjet_dR    , &b_hltjet_dR);
 
         fChain->SetBranchAddress("caJet_count"   , &caJet_count   , &b_caJet_count);
         fChain->SetBranchAddress("htt_caJet_pt"  , &htt_caJet_pt  , &b_htt_caJet_pt);

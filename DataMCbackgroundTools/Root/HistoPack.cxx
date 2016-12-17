@@ -12,8 +12,18 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
     /* LARGE-R ANTIKT10 JETS */
     for (i = 0; i < num_fatjets_keep; i++) {
 
-        this->h_rljet_pt.push_back  ( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string (i) + "_pt", 0., 4000., 10.));
+        this->h_rljet_pt_comb.push_back  ( make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_pt_comb", 0., 4000., 10.));
+        this->h_rljet_m_comb.push_back   ( make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_m_comb", 0., 1000, 1.0));
+        this->h_rljet_pt_calo.push_back  ( make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_pt_calo", 0., 4000., 10.));
+        this->h_rljet_m_calo.push_back   ( make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_m_calo", 0., 1000, 1.0));
+        this->h_rljet_pt_ta.push_back  ( make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_pt_ta", 0., 4000., 10.));
+        this->h_rljet_m_ta.push_back   ( make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_m_ta", 0., 1000, 1.0));
 
         this->h_rljet_eta.push_back ( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string (i) + "_eta", -2.5 , 2.5, 0.05));
@@ -21,8 +31,6 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
         this->h_rljet_phi.push_back ( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string (i) + "_phi", -3.2 , 3.2, 0.025));
 
-        this->h_rljet_m.push_back   ( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string (i) + "_m", 0., 1000, 1.0));
 
         this->h_rljet_Tau1_wta.push_back    ( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string (i) + "_Tau1_wta", 0., 1., 0.005));
@@ -206,10 +214,10 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
 
 void HistoPack::WriteCommonHistograms() const
 {
-    for (auto const &h : h_rljet_pt) h->write_all();
+    for (auto const &h : h_rljet_pt_comb) h->write_all();
+    for (auto const &h : h_rljet_m_comb) h->write_all();
     for (auto const &h : h_rljet_eta) h->write_all();
     for (auto const &h : h_rljet_phi) h->write_all();
-    for (auto const &h : h_rljet_m) h->write_all();
 
     for (auto const &h : h_rljet_D2) h->write_all();
     for (auto const &h : h_rljet_Tau32_wta) h->write_all();
@@ -217,6 +225,11 @@ void HistoPack::WriteCommonHistograms() const
 
 void HistoPack::WriteNominalOnlyHistograms() const
 {
+    for (auto const &h : h_rljet_pt_calo) h->write_all();
+    for (auto const &h : h_rljet_m_calo) h->write_all();
+    for (auto const &h : h_rljet_pt_ta) h->write_all();
+    for (auto const &h : h_rljet_m_ta) h->write_all();
+
     h_rljet_mjj->write_all();
     h_rljet_ptasym->write_all();
     h_rljet_dy->write_all();

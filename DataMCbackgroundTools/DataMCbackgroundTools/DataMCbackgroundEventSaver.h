@@ -204,26 +204,6 @@ namespace top {
 
         std::vector<int> m_rljet_NTrimSubjets;
         std::vector<int> m_rljet_ungroomed_ntrk500;
-        // std::vector<int> m_rljet_pdgid;
-
-        // matched truth jets
-        // int m_tljet_count;
-        // std::vector<float> m_tljet_pt;
-        // std::vector<float> m_tljet_eta;
-        // std::vector<float> m_tljet_phi;
-        // std::vector<float> m_tljet_m;
-        // std::vector<float> m_tljet_dR;
-        // std::vector<float> m_tljet_D2;
-        // std::vector<float> m_tljet_Tau32_wta;
-
-        // truth parton matching information
-        /*
-        std::vector<int> m_rljet_dRmatched_reco_truth;
-        std::vector<int> m_rljet_dRmatched_particle_flavor;
-        std::vector<int> m_rljet_dRmatched_maxEParton_flavor;
-        std::vector<int> m_rljet_dRmatched_topBChild;
-        std::vector<int> m_rljet_dRmatched_nQuarkChildren;
-        */
 
         /*****************/
         /* HTT VARIABLES */

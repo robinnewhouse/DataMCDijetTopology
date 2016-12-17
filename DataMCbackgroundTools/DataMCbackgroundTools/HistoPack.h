@@ -19,10 +19,15 @@ public:
 
     virtual ~HistoPack(void) { };
 
-    vector<unique_ptr<TH1Tagged>> h_rljet_pt;
+    vector<unique_ptr<TH1Tagged>> h_rljet_pt_comb;
+    vector<unique_ptr<TH1Tagged>> h_rljet_m_comb;
+    vector<unique_ptr<TH1Tagged>> h_rljet_pt_calo;
+    vector<unique_ptr<TH1Tagged>> h_rljet_m_calo;
+    vector<unique_ptr<TH1Tagged>> h_rljet_pt_ta;
+    vector<unique_ptr<TH1Tagged>> h_rljet_m_ta;
+
     vector<unique_ptr<TH1Tagged>> h_rljet_eta;
     vector<unique_ptr<TH1Tagged>> h_rljet_phi;
-    vector<unique_ptr<TH1Tagged>> h_rljet_m;
 
     // lead/sublead jet variables
     unique_ptr<TH1Tagged> h_rljet_mjj;
