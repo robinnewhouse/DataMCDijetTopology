@@ -96,4 +96,6 @@ void fakeClusterEMScale(const xAOD::CaloClusterContainer* cont);
 
 std::vector<TChain*> get_branch_tchains(const std::string input_filepath);
 
+int combine_bits(const bool bit_one, const bool bit_two);
+
 #endif

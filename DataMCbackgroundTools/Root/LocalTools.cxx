@@ -141,3 +141,13 @@ std::vector<TChain*> get_branch_tchains(const std::string input_filepath)
 
         return tchains;
 }
+
+
+int 
+combine_bits(const bool bit_one, const bool bit_two)
+{
+    int one = bit_one ? 1 : 0;
+    int two = (bit_two ? 1 : 0) << 1;
+
+    return (one | two);
+}

@@ -4,31 +4,40 @@
 #include "TopAnalysis/EventSaverFlatNtuple.h"
 #include "TopAnalysis/EventSaverBase.h"
 
+// OLD smoothed taggers (2015) + HEPTopTagger
 #include "BoostedJetTaggers/SubstructureTopTaggerHelpers.h"
+#include "JetSubStructureUtils/BosonTag.h"
+
+// NEW smoothed/MVA taggers (2016-2017)
+#include "BoostedJetTaggers/IJSSTagger.h"
+#include "BoostedJetTaggers/SmoothedTopTagger.h"
+#include "BoostedJetTaggers/SmoothedWZTagger.h"
+#include "BoostedJetTaggers/JSSWTopTaggerBDT.h"
+#include "BoostedJetTaggers/JSSWTopTaggerDNN.h"
+
 #include "ShowerDeconstruction/ShowerDeconstruction.h"
 
 #include "JetRec/JetRecTool.h"
 #include "JetCalibTools/JetCalibrationTool.h"
-#include "JetSubStructureUtils/BosonTag.h"
 
 #include "DataMCbackgroundTools/TruthMatchTool.h"
 
-#include <vector>
 #include <utility>
+#include <vector>
 
 namespace top {
     class DataMCbackgroundEventSaver : public top::EventSaverFlatNtuple {
 
     public:
-        // Default - so root can load based on a name
         DataMCbackgroundEventSaver();
-
-        // Default - so we can clean up
         ~DataMCbackgroundEventSaver();
 
         // Run once at the start of the job
-        void initialize(std::shared_ptr<top::TopConfig> config, TFile* file,
-                const std::vector<std::string>& extraBranches);
+        void initialize(
+                std::shared_ptr<top::TopConfig> config,
+                TFile* file,
+                const std::vector<std::string>& extraBranches
+                );
 
         StatusCode initialize() {
             return StatusCode::SUCCESS;
@@ -44,7 +53,6 @@ namespace top {
         // variables corresponding to DynamicKeys from AnalysisTop cuts file
         bool m_runHTT;
         bool m_runSD;
-        bool m_saveTAmass;
         unsigned m_num_fatjets_keep;
         unsigned m_debug_level;
 
@@ -53,6 +61,9 @@ namespace top {
         /*********/
 
         std::unique_ptr<TruthMatchTool> m_truth_match_tool;
+
+        // CA2 Subjet calibration tool
+        JetCalibrationTool* m_jetcalib_subjet;
 
         /***********/
         /* METHODS */
@@ -70,36 +81,66 @@ namespace top {
 
         void initializeSD(void);
         void runSDandFillTree(void);
-
         void runHTTAndFillTree(void);
 
         /***********/
         /* TAGGERS */
         /***********/
 
-        // simple/smoothed top taggers
-        SubstructureTopTagger *tagger_smoothMassTau32_50eff;
-        SubstructureTopTagger *tagger_smoothMassTau32_80eff;
-        SubstructureTopTagger *tagger_smoothMass_50eff;
-        SubstructureTopTagger *tagger_smoothMass_80eff;
-        SubstructureTopTagger *tagger_smoothTau32_50eff;
-        SubstructureTopTagger *tagger_smoothTau32_80eff;
+        /*********************************/
+        /* 2015 pre-rec smoothed taggers */
+        /*********************************/
 
-        // simple/smoothed W taggers
-        std::unique_ptr<JetSubStructureUtils::BosonTag> wTagger_smooth_50eff;
-        std::unique_ptr<JetSubStructureUtils::BosonTag> wTagger_smooth_25eff;
+        // Top
+        SubstructureTopTagger *topTagger15_Mass_50eff;
+        SubstructureTopTagger *topTagger15_Mass_80eff;
+        SubstructureTopTagger *topTagger15_Tau32_50eff;
+        SubstructureTopTagger *topTagger15_Tau32_80eff;
 
-        // simple/smoothed Z taggers
-        std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger_smooth_50eff;
-        std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger_smooth_25eff;
+        // W
+        std::unique_ptr<JetSubStructureUtils::BosonTag> wTagger15_50eff;
+        std::unique_ptr<JetSubStructureUtils::BosonTag> wTagger15_25eff;
+
+        // Z
+        std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger15_50eff;
+        std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger15_25eff;
+
+        /**************************************/
+        /* Late 2016 updated smoothed taggers */
+        /**************************************/
+
+        // Top
+        std::unique_ptr<SmoothedTopTagger> topTagger16_Tau32Split23_50eff;
+        std::unique_ptr<SmoothedTopTagger> topTagger16_Tau32Split23_80eff;
+        std::unique_ptr<SmoothedTopTagger> topTagger16_MassTau32_50eff;
+        std::unique_ptr<SmoothedTopTagger> topTagger16_MassTau32_80eff;
+        std::unique_ptr<SmoothedTopTagger> topTagger16_QwTau32_50eff;
+        std::unique_ptr<SmoothedTopTagger> topTagger16_QwTau32_80eff;
+
+        // W
+        std::unique_ptr<SmoothedWZTagger> wTagger16_50eff;
+        std::unique_ptr<SmoothedWZTagger> wTagger16_80eff;
+
+        // Z
+        std::unique_ptr<SmoothedWZTagger> zTagger16_50eff;
+        std::unique_ptr<SmoothedWZTagger> zTagger16_80eff;
+
+        /*****************/
+        /* Other taggers */
+        /*****************/
+
+        // BDT
+        std::unique_ptr<JSSWTopTaggerBDT> m_topTagger_BDT_qqb;
+        std::unique_ptr<JSSWTopTaggerBDT> m_topTagger_BDT_inclusive;
+
+        // DNN
+        std::unique_ptr<JSSWTopTaggerDNN> m_topTagger_DNN_qqb;
+        std::unique_ptr<JSSWTopTaggerDNN> m_topTagger_DNN_inclusive;
 
         // Shower Deconstruction (SD)
         std::unique_ptr<ShowerDeconstruction> tagger_SDw_win20_btag0;
         std::unique_ptr<ShowerDeconstruction> tagger_SDz_win20_btag0;
         std::unique_ptr<ShowerDeconstruction> tagger_SDt_win50_btag0;
-
-        // CA2 Subjet calibration tool
-        std::unique_ptr<JetCalibrationTool> m_jet_calib_tool;
 
         // HEPTopTagger
         int m_nHttTools;
@@ -115,24 +156,25 @@ namespace top {
 
         // reco large leading jets
         int m_rljet_count;
-        std::vector<float> m_rljet_pt;
         std::vector<float> m_rljet_eta;
         std::vector<float> m_rljet_phi;
-        std::vector<float> m_rljet_m;
 
-        // dijet mass = mass(leading + subleading)
-        float m_rljet_mjj;
+        // different pt/mass 'scales'
+        std::vector<float> m_rljet_pt_calo;
+        std::vector<float> m_rljet_pt_ta;
+        std::vector<float> m_rljet_pt_comb;
+
+        std::vector<float> m_rljet_m_calo;
+        std::vector<float> m_rljet_m_ta;
+        std::vector<float> m_rljet_m_comb;
 
         // lead vs. sub-lead jet variables
+        float m_rljet_mjj;
         float m_rljet_ptasym;
         float m_rljet_dy; // rapidity
         float m_rljet_dR;
         float m_rljet_dphi;
         float m_rljet_deta; // pseudorapidity
-
-        // track assisted masses
-        std::vector<float> m_rljet_m_ta;
-        std::vector<float> m_rljet_m_ta_nocalib;
 
         // substructure variables
         std::vector<float> m_rljet_Tau1_wta;
@@ -162,17 +204,17 @@ namespace top {
 
         std::vector<int> m_rljet_NTrimSubjets;
         std::vector<int> m_rljet_ungroomed_ntrk500;
-        std::vector<int> m_rljet_pdgid;
+        // std::vector<int> m_rljet_pdgid;
 
         // matched truth jets
-        int m_tljet_count;
-        std::vector<float> m_tljet_pt;
-        std::vector<float> m_tljet_eta;
-        std::vector<float> m_tljet_phi;
-        std::vector<float> m_tljet_m;
-        std::vector<float> m_tljet_dR;
-        std::vector<float> m_tljet_D2;
-        std::vector<float> m_tljet_Tau32_wta;
+        // int m_tljet_count;
+        // std::vector<float> m_tljet_pt;
+        // std::vector<float> m_tljet_eta;
+        // std::vector<float> m_tljet_phi;
+        // std::vector<float> m_tljet_m;
+        // std::vector<float> m_tljet_dR;
+        // std::vector<float> m_tljet_D2;
+        // std::vector<float> m_tljet_Tau32_wta;
 
         // truth parton matching information
         /*
@@ -182,14 +224,6 @@ namespace top {
         std::vector<int> m_rljet_dRmatched_topBChild;
         std::vector<int> m_rljet_dRmatched_nQuarkChildren;
         */
-
-        // matched trigger jets
-        int m_hltjet_count;
-        std::vector<float> m_hltjet_pt;
-        std::vector<float> m_hltjet_eta;
-        std::vector<float> m_hltjet_phi;
-        std::vector<float> m_hltjet_m;
-        std::vector<float> m_hltjet_dR;
 
         /*****************/
         /* HTT VARIABLES */
@@ -214,6 +248,7 @@ namespace top {
         std::vector<std::vector<float>> m_htt_eta;
         std::vector<std::vector<float>> m_htt_phi;
         std::vector<std::vector<float>> m_htt_m;
+        std::vector<std::vector<float>> m_htt_m123;
         std::vector<std::vector<float>> m_htt_m23m123;
         std::vector<std::vector<float>> m_htt_atan1312;
         std::vector<std::vector<int>> m_htt_nTagCands;
@@ -225,21 +260,33 @@ namespace top {
         /* TAGGER VARIABLES */
         /********************/
 
-        // prerec top tags (reco)
-        std::vector<bool> m_rljet_smoothMassTag50eff;
-        std::vector<bool> m_rljet_smoothMassTag80eff;
-        std::vector<bool> m_rljet_smoothTau32Tag50eff;
-        std::vector<bool> m_rljet_smoothTau32Tag80eff;
-        std::vector<bool> m_rljet_smoothMassTau32Tag50eff;
-        std::vector<bool> m_rljet_smoothMassTau32Tag80eff;
+        // 2015 smooth top
+        std::vector<int> m_rljet_smooth15Top_MassTau32Tag50eff;
+        std::vector<int> m_rljet_smooth15Top_MassTau32Tag80eff;
 
-        // prerec W tags (reco)
-        std::vector<int> m_rljet_smoothWTag50eff;
-        std::vector<int> m_rljet_smoothWTag25eff;
+        // 2015 smooth W
+        std::vector<int> m_rljet_smooth15W_Tag50eff;
+        std::vector<int> m_rljet_smooth15W_Tag25eff;
 
-        // prerec Z tags (reco)
-        std::vector<int> m_rljet_smoothZTag50eff;
-        std::vector<int> m_rljet_smoothZTag25eff;
+        // 2015 smooth Z
+        std::vector<int> m_rljet_smooth15Z_Tag50eff;
+        std::vector<int> m_rljet_smooth15Z_Tag25eff;
+
+        // 2016 smooth top
+        std::vector<int> m_rljet_smooth16Top_Tau32Split23Tag50eff;
+        std::vector<int> m_rljet_smooth16Top_Tau32Split23Tag80eff;
+        std::vector<int> m_rljet_smooth16Top_MassTau32Tag50eff;
+        std::vector<int> m_rljet_smooth16Top_MassTau32Tag80eff;
+        std::vector<int> m_rljet_smooth16Top_QwTau32Tag50eff;
+        std::vector<int> m_rljet_smooth16Top_QwTau32Tag80eff;
+
+        // 2016 smooth W
+        std::vector<int> m_rljet_smooth16W_Tag50eff;
+        std::vector<int> m_rljet_smooth16W_Tag80eff;
+
+        // 2016 smooth Z
+        std::vector<int> m_rljet_smooth16Z_Tag50eff;
+        std::vector<int> m_rljet_smooth16Z_Tag80eff;
 
         // Shower Deconstruction tags
         std::vector<double> m_rljet_SDw_win20_btag0;

@@ -104,10 +104,10 @@ DataMCbackgroundSelector::DataMCbackgroundSelector(
     if (!weight_tool->read_bugged_events_file(bugged_events_file))
         exit(1);
 
-    dnn_top_tagger = make_unique<DNNWTopTagger>(
-                    rc + "/data/DataMCbackgroundTools/dnn_weights/keras_top_dnn_2.json");
+    // dnn_top_tagger = make_unique<DNNWTopTagger>(
+    //                 rc + "/data/DataMCbackgroundTools/dnn_weights/keras_top_dnn_2.json");
 
-    TMVA::Tools::Instance();
+    // TMVA::Tools::Instance();
 
     try {
         std::cout << "OFFLINE EVENT SELECTION SPECIFIED: " << event_selector_str_ << std::endl;
@@ -143,163 +143,163 @@ void DataMCbackgroundSelector::SlaveBegin(TTree * /*tree*/)
     // The tree argument is deprecated (on PROOF 0 is passed).
     TString option = GetOption();
 
-    bdt_input_map.clear();
-    dnn_input_map.clear();
+    /* bdt_input_map.clear(); */
+    /* dnn_input_map.clear(); */
 
-    bdt_input_map["Angularity"]   = -1000.;
-    bdt_input_map["Aplanarity"]   = -1000.;
-    bdt_input_map["C2"]           = -1000.;
-    bdt_input_map["D2"]           = -1000.;
-    bdt_input_map["Dip12"]        = -1000.;
-    bdt_input_map["ECF1"]         = -1000.;
-    bdt_input_map["ECF2"]         = -1000.;
-    bdt_input_map["ECF3"]         = -1000.;
-    bdt_input_map["FoxWolfram20"] = -1000.;
-    bdt_input_map["KtDR"]         = -1000.;
-    bdt_input_map["PlanarFlow"]   = -1000.;
-    bdt_input_map["Qw"]           = -1000.;
-    bdt_input_map["Sphericity"]   = -1000.;
-    bdt_input_map["Split12"]      = -1000.;
-    bdt_input_map["Split23"]      = -1000.;
-    bdt_input_map["Tau1_wta"]     = -1000.;
-    bdt_input_map["Tau2_wta"]     = -1000.;
-    bdt_input_map["Tau3_wta"]     = -1000.;
-    bdt_input_map["Tau21_wta"]    = -1000.;
-    bdt_input_map["Tau32_wta"]    = -1000.;
-    bdt_input_map["ThrustMaj"]    = -1000.;
-    bdt_input_map["ThrustMin"]    = -1000.;
-    bdt_input_map["ZCut12"]       = -1000.;
+    /* bdt_input_map["Angularity"]   = -1000.; */
+    /* bdt_input_map["Aplanarity"]   = -1000.; */
+    /* bdt_input_map["C2"]           = -1000.; */
+    /* bdt_input_map["D2"]           = -1000.; */
+    /* bdt_input_map["Dip12"]        = -1000.; */
+    /* bdt_input_map["ECF1"]         = -1000.; */
+    /* bdt_input_map["ECF2"]         = -1000.; */
+    /* bdt_input_map["ECF3"]         = -1000.; */
+    /* bdt_input_map["FoxWolfram20"] = -1000.; */
+    /* bdt_input_map["KtDR"]         = -1000.; */
+    /* bdt_input_map["PlanarFlow"]   = -1000.; */
+    /* bdt_input_map["Qw"]           = -1000.; */
+    /* bdt_input_map["Sphericity"]   = -1000.; */
+    /* bdt_input_map["Split12"]      = -1000.; */
+    /* bdt_input_map["Split23"]      = -1000.; */
+    /* bdt_input_map["Tau1_wta"]     = -1000.; */
+    /* bdt_input_map["Tau2_wta"]     = -1000.; */
+    /* bdt_input_map["Tau3_wta"]     = -1000.; */
+    /* bdt_input_map["Tau21_wta"]    = -1000.; */
+    /* bdt_input_map["Tau32_wta"]    = -1000.; */
+    /* bdt_input_map["ThrustMaj"]    = -1000.; */
+    /* bdt_input_map["ThrustMin"]    = -1000.; */
+    /* bdt_input_map["ZCut12"]       = -1000.; */
 
-    dnn_input_map["Angularity"]   = -1000.;
-    dnn_input_map["Aplanarity"]   = -1000.;
-    dnn_input_map["C2"]           = -1000.;
-    dnn_input_map["D2"]           = -1000.;
-    dnn_input_map["Dip12"]        = -1000.;
-    dnn_input_map["ECF1"]         = -1000.;
-    dnn_input_map["ECF2"]         = -1000.;
-    dnn_input_map["ECF3"]         = -1000.;
-    dnn_input_map["FoxWolfram20"] = -1000.;
-    dnn_input_map["KtDR"]         = -1000.;
-    dnn_input_map["PlanarFlow"]   = -1000.;
-    dnn_input_map["Qw"]           = -1000.;
-    dnn_input_map["Sphericity"]   = -1000.;
-    dnn_input_map["Split12"]      = -1000.;
-    dnn_input_map["Split23"]      = -1000.;
-    dnn_input_map["Tau1_wta"]     = -1000.;
-    dnn_input_map["Tau2_wta"]     = -1000.;
-    dnn_input_map["Tau3_wta"]     = -1000.;
-    dnn_input_map["Tau21_wta"]    = -1000.;
-    dnn_input_map["Tau32_wta"]    = -1000.;
-    dnn_input_map["ThrustMaj"]    = -1000.;
-    dnn_input_map["ThrustMin"]    = -1000.;
-    dnn_input_map["ZCut12"]       = -1000.;
+    /* dnn_input_map["Angularity"]   = -1000.; */
+    /* dnn_input_map["Aplanarity"]   = -1000.; */
+    /* dnn_input_map["C2"]           = -1000.; */
+    /* dnn_input_map["D2"]           = -1000.; */
+    /* dnn_input_map["Dip12"]        = -1000.; */
+    /* dnn_input_map["ECF1"]         = -1000.; */
+    /* dnn_input_map["ECF2"]         = -1000.; */
+    /* dnn_input_map["ECF3"]         = -1000.; */
+    /* dnn_input_map["FoxWolfram20"] = -1000.; */
+    /* dnn_input_map["KtDR"]         = -1000.; */
+    /* dnn_input_map["PlanarFlow"]   = -1000.; */
+    /* dnn_input_map["Qw"]           = -1000.; */
+    /* dnn_input_map["Sphericity"]   = -1000.; */
+    /* dnn_input_map["Split12"]      = -1000.; */
+    /* dnn_input_map["Split23"]      = -1000.; */
+    /* dnn_input_map["Tau1_wta"]     = -1000.; */
+    /* dnn_input_map["Tau2_wta"]     = -1000.; */
+    /* dnn_input_map["Tau3_wta"]     = -1000.; */
+    /* dnn_input_map["Tau21_wta"]    = -1000.; */
+    /* dnn_input_map["Tau32_wta"]    = -1000.; */
+    /* dnn_input_map["ThrustMaj"]    = -1000.; */
+    /* dnn_input_map["ThrustMin"]    = -1000.; */
+    /* dnn_input_map["ZCut12"]       = -1000.; */
 
-    auto add_bdt_vars = [this](TMVA::Reader* reader, const std::vector<std::string>& bdt_vars)
-    {
-        for (auto const& v : bdt_vars) {
-            if (bdt_input_map.find(v) != bdt_input_map.end()) {
-                reader->AddVariable("fjet_" + v, &this->bdt_input_map[v]);
-            } else {
-                std::cout << "DataMCbackgroundSelector.cxx: l" << __LINE__ <<
-                    ": ERROR: couldn't find " << v << "in bdt_input_map" << std::endl;
-                exit(1);
-            }
-        }
-    };
+    /* auto add_bdt_vars = [this](TMVA::Reader* reader, const std::vector<std::string>& bdt_vars) */
+    /* { */
+    /*     for (auto const& v : bdt_vars) { */
+    /*         if (bdt_input_map.find(v) != bdt_input_map.end()) { */
+    /*             reader->AddVariable("fjet_" + v, &this->bdt_input_map[v]); */
+    /*         } else { */
+    /*             std::cout << "DataMCbackgroundSelector.cxx: l" << __LINE__ << */
+    /*                 ": ERROR: couldn't find " << v << "in bdt_input_map" << std::endl; */
+    /*             exit(1); */
+    /*         } */
+    /*     } */
+    /* }; */
 
-    bdt_readers["TOP3q_NvarL"]   = make_unique<TMVA::Reader>("!Color:!Silent");
-    bdt_readers["TOP3q_NvarM"]   = make_unique<TMVA::Reader>("!Color:!Silent");
+    /* bdt_readers["TOP3q_NvarL"]   = make_unique<TMVA::Reader>("!Color:!Silent"); */
+    /* bdt_readers["TOP3q_NvarM"]   = make_unique<TMVA::Reader>("!Color:!Silent"); */
 
-    bdt_readers["W_NvarL"]   = make_unique<TMVA::Reader>("!Color:!Silent");
-    bdt_readers["W_NvarM"]   = make_unique<TMVA::Reader>("!Color:!Silent");
-    bdt_readers["W_NvarS"]   = make_unique<TMVA::Reader>("!Color:!Silent");
+    /* bdt_readers["W_NvarL"]   = make_unique<TMVA::Reader>("!Color:!Silent"); */
+    /* bdt_readers["W_NvarM"]   = make_unique<TMVA::Reader>("!Color:!Silent"); */
+    /* bdt_readers["W_NvarS"]   = make_unique<TMVA::Reader>("!Color:!Silent"); */
 
-    bdt_readers["TOP_NvarM"] = make_unique<TMVA::Reader>("!Color:!Silent");
+    /* bdt_readers["TOP_NvarM"] = make_unique<TMVA::Reader>("!Color:!Silent"); */
 
-    add_bdt_vars(bdt_readers["W_NvarL"].get(), {
-                    "D2",
-                    "ECF3",
-                    "C2",
-                    "ThrustMin",
-                    "Angularity",
-                    "PlanarFlow",
-                    "Tau21_wta",
-                    "Aplanarity",
-                    "FoxWolfram20",
-                    "Split12",
-                    "ZCut12",
-                    "KtDR",
-                    "ECF2",
-                    "Tau1_wta",
-                    "Sphericity",
-                    "Dip12"
-                    });
+    /* add_bdt_vars(bdt_readers["W_NvarL"].get(), { */
+    /*                 "D2", */
+    /*                 "ECF3", */
+    /*                 "C2", */
+    /*                 "ThrustMin", */
+    /*                 "Angularity", */
+    /*                 "PlanarFlow", */
+    /*                 "Tau21_wta", */
+    /*                 "Aplanarity", */
+    /*                 "FoxWolfram20", */
+    /*                 "Split12", */
+    /*                 "ZCut12", */
+    /*                 "KtDR", */
+    /*                 "ECF2", */
+    /*                 "Tau1_wta", */
+    /*                 "Sphericity", */
+    /*                 "Dip12" */
+    /*                 }); */
 
-    add_bdt_vars(bdt_readers["W_NvarM"].get(), {
-                    "D2",
-                    "ECF3",
-                    "C2",
-                    "ThrustMin",
-                    "Angularity",
-                    "PlanarFlow",
-                    "Tau21_wta",
-                    "Aplanarity",
-                    "FoxWolfram20",
-                    "Split12",
-                    "ZCut12",
-                    "KtDR",
-                    "ECF2"
-                    });
+    /* add_bdt_vars(bdt_readers["W_NvarM"].get(), { */
+    /*                 "D2", */
+    /*                 "ECF3", */
+    /*                 "C2", */
+    /*                 "ThrustMin", */
+    /*                 "Angularity", */
+    /*                 "PlanarFlow", */
+    /*                 "Tau21_wta", */
+    /*                 "Aplanarity", */
+    /*                 "FoxWolfram20", */
+    /*                 "Split12", */
+    /*                 "ZCut12", */
+    /*                 "KtDR", */
+    /*                 "ECF2" */
+    /*                 }); */
 
-    add_bdt_vars(bdt_readers["W_NvarS"].get(), {
-                    "D2",
-                    "ECF3",
-                    "C2",
-                    "ThrustMin",
-                    "Angularity",
-                    "PlanarFlow",
-                    "Tau21_wta"
-                    });
+    /* add_bdt_vars(bdt_readers["W_NvarS"].get(), { */
+    /*                 "D2", */
+    /*                 "ECF3", */
+    /*                 "C2", */
+    /*                 "ThrustMin", */
+    /*                 "Angularity", */
+    /*                 "PlanarFlow", */
+    /*                 "Tau21_wta" */
+    /*                 }); */
 
-    add_bdt_vars(bdt_readers["TOP3q_NvarL"].get(), {
-                    "Tau32_wta",
-                    "ECF3",
-                    "Qw",
-                    "D2",
-                    "ECF2",
-                    "Split23",
-                    "Tau21_wta",
-                    "Split12",
-                    "Tau3_wta"
-                    });
+    /* add_bdt_vars(bdt_readers["TOP3q_NvarL"].get(), { */
+    /*                 "Tau32_wta", */
+    /*                 "ECF3", */
+    /*                 "Qw", */
+    /*                 "D2", */
+    /*                 "ECF2", */
+    /*                 "Split23", */
+    /*                 "Tau21_wta", */
+    /*                 "Split12", */
+    /*                 "Tau3_wta" */
+    /*                 }); */
 
-    add_bdt_vars(bdt_readers["TOP3q_NvarM"].get(), {
-                    "Tau32_wta",
-                    "ECF3",
-                    "Qw",
-                    "D2",
-                    "ECF2",
-                    "Split23",
-                    "Tau21_wta"
-                    });
+    /* add_bdt_vars(bdt_readers["TOP3q_NvarM"].get(), { */
+    /*                 "Tau32_wta", */
+    /*                 "ECF3", */
+    /*                 "Qw", */
+    /*                 "D2", */
+    /*                 "ECF2", */
+    /*                 "Split23", */
+    /*                 "Tau21_wta" */
+    /*                 }); */
 
-    add_bdt_vars(bdt_readers["TOP_NvarM"].get(), {
-                    "Tau32_wta",
-                    "Qw",
-                    "ECF3",
-                    "D2",
-                    "Tau21_wta",
-                    "ECF1",
-                    "Split12"
-                    });
+    /* add_bdt_vars(bdt_readers["TOP_NvarM"].get(), { */
+    /*                 "Tau32_wta", */
+    /*                 "Qw", */
+    /*                 "ECF3", */
+    /*                 "D2", */
+    /*                 "Tau21_wta", */
+    /*                 "ECF1", */
+    /*                 "Split12" */
+    /*                 }); */
 
-    const std::string rc = std::string(getenv("ROOTCOREBIN"));
+    /* const std::string rc = std::string(getenv("ROOTCOREBIN")); */
 
-    for (auto& r : bdt_readers) {
-            std::string weight_filepath = rc + "/data/DataMCbackgroundTools/bdt_weights/TMVAClassification_BDTG." + r.first + "_pT200to2000GeV.weights.xml";
-            r.second->BookMVA(r.first, rc +
-                "/data/DataMCbackgroundTools/bdt_weights/TMVAClassification_BDTG." + r.first + "_pT200to2000GeV.weights.xml");
-    }
+    /* for (auto& r : bdt_readers) { */
+    /*         std::string weight_filepath = rc + "/data/DataMCbackgroundTools/bdt_weights/TMVAClassification_BDTG." + r.first + "_pT200to2000GeV.weights.xml"; */
+    /*         r.second->BookMVA(r.first, rc + */
+    /*             "/data/DataMCbackgroundTools/bdt_weights/TMVAClassification_BDTG." + r.first + "_pT200to2000GeV.weights.xml"); */
+    /* } */
 
     this->hp = new HistoPack(1);
 
@@ -740,81 +740,81 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         /* MVA TAGGERS */
         /***************/
 
-        const bool IS_GOOD_MVA_JET =
-                rljet_D2->at(i) > 0
-                && C2 > 0
-                && Tau32_wta > 0
-                && Tau21_wta > 0
-                && rljet_Tau1_wta->at(i) > 0
-                && rljet_Tau2_wta->at(i) > 0
-                && rljet_Tau3_wta->at(i) > 0
-                && rljet_ECF1->at(i) > 0
-                && rljet_ECF2->at(i) > 0
-                && rljet_ECF3->at(i) > 0;
+        /* const bool IS_GOOD_MVA_JET = */
+        /*         rljet_D2->at(i) > 0 */
+        /*         && C2 > 0 */
+        /*         && Tau32_wta > 0 */
+        /*         && Tau21_wta > 0 */
+        /*         && rljet_Tau1_wta->at(i) > 0 */
+        /*         && rljet_Tau2_wta->at(i) > 0 */
+        /*         && rljet_Tau3_wta->at(i) > 0 */
+        /*         && rljet_ECF1->at(i) > 0 */
+        /*         && rljet_ECF2->at(i) > 0 */
+        /*         && rljet_ECF3->at(i) > 0; */
 
-        const bool PASSED_MVA_MASS_TRAINING_CUT = rljet_m->at(i) / 1000. > 40.;
+        /* const bool PASSED_MVA_MASS_TRAINING_CUT = rljet_m->at(i) / 1000. > 40.; */
 
-        dnn_input_map["Angularity"]   = rljet_Angularity->at(i);
-        dnn_input_map["Aplanarity"]   = rljet_Aplanarity->at(i);
-        dnn_input_map["C2"]           = C2;
-        dnn_input_map["D2"]           = rljet_D2->at(i);
-        dnn_input_map["Dip12"]        = rljet_Dip12->at(i);
-        dnn_input_map["ECF1"]         = rljet_ECF1->at(i);
-        dnn_input_map["ECF2"]         = rljet_ECF2->at(i);
-        dnn_input_map["ECF3"]         = rljet_ECF3->at(i);
-        dnn_input_map["FoxWolfram20"] = fw20;
-        dnn_input_map["KtDR"]         = rljet_KtDR->at(i);
-        dnn_input_map["PlanarFlow"]   = rljet_PlanarFlow->at(i);
-        dnn_input_map["Qw"]           = rljet_Qw->at(i);
-        dnn_input_map["Sphericity"]   = rljet_Sphericity->at(i);
-        dnn_input_map["Split12"]      = rljet_Split12->at(i);
-        dnn_input_map["Split23"]      = rljet_Split23->at(i);
-        dnn_input_map["Tau1_wta"]     = rljet_Tau1_wta->at(i);
-        dnn_input_map["Tau21_wta"]    = Tau21_wta;
-        dnn_input_map["Tau2_wta"]     = rljet_Tau2_wta->at(i);
-        dnn_input_map["Tau32_wta"]    = Tau32_wta;
-        dnn_input_map["Tau3_wta"]     = rljet_Tau3_wta->at(i);
-        dnn_input_map["ThrustMaj"]    = rljet_ThrustMaj->at(i);
-        dnn_input_map["ThrustMin"]    = rljet_ThrustMin->at(i);
-        dnn_input_map["ZCut12"]       = rljet_ZCut12->at(i);
+        /* dnn_input_map["Angularity"]   = rljet_Angularity->at(i); */
+        /* dnn_input_map["Aplanarity"]   = rljet_Aplanarity->at(i); */
+        /* dnn_input_map["C2"]           = C2; */
+        /* dnn_input_map["D2"]           = rljet_D2->at(i); */
+        /* dnn_input_map["Dip12"]        = rljet_Dip12->at(i); */
+        /* dnn_input_map["ECF1"]         = rljet_ECF1->at(i); */
+        /* dnn_input_map["ECF2"]         = rljet_ECF2->at(i); */
+        /* dnn_input_map["ECF3"]         = rljet_ECF3->at(i); */
+        /* dnn_input_map["FoxWolfram20"] = fw20; */
+        /* dnn_input_map["KtDR"]         = rljet_KtDR->at(i); */
+        /* dnn_input_map["PlanarFlow"]   = rljet_PlanarFlow->at(i); */
+        /* dnn_input_map["Qw"]           = rljet_Qw->at(i); */
+        /* dnn_input_map["Sphericity"]   = rljet_Sphericity->at(i); */
+        /* dnn_input_map["Split12"]      = rljet_Split12->at(i); */
+        /* dnn_input_map["Split23"]      = rljet_Split23->at(i); */
+        /* dnn_input_map["Tau1_wta"]     = rljet_Tau1_wta->at(i); */
+        /* dnn_input_map["Tau21_wta"]    = Tau21_wta; */
+        /* dnn_input_map["Tau2_wta"]     = rljet_Tau2_wta->at(i); */
+        /* dnn_input_map["Tau32_wta"]    = Tau32_wta; */
+        /* dnn_input_map["Tau3_wta"]     = rljet_Tau3_wta->at(i); */
+        /* dnn_input_map["ThrustMaj"]    = rljet_ThrustMaj->at(i); */
+        /* dnn_input_map["ThrustMin"]    = rljet_ThrustMin->at(i); */
+        /* dnn_input_map["ZCut12"]       = rljet_ZCut12->at(i); */
 
-        bdt_input_map["Angularity"]   = rljet_Angularity->at(i);
-        bdt_input_map["Aplanarity"]   = rljet_Aplanarity->at(i);
-        bdt_input_map["C2"]           = C2;
-        bdt_input_map["D2"]           = rljet_D2->at(i);
-        bdt_input_map["Dip12"]        = rljet_Dip12->at(i);
-        bdt_input_map["ECF1"]         = rljet_ECF1->at(i);
-        bdt_input_map["ECF2"]         = rljet_ECF2->at(i);
-        bdt_input_map["ECF3"]         = rljet_ECF3->at(i);
-        bdt_input_map["FoxWolfram20"] = fw20;
-        bdt_input_map["KtDR"]         = rljet_KtDR->at(i);
-        bdt_input_map["PlanarFlow"]   = rljet_PlanarFlow->at(i);
-        bdt_input_map["Qw"]           = rljet_Qw->at(i);
-        bdt_input_map["Sphericity"]   = rljet_Sphericity->at(i);
-        bdt_input_map["Split12"]      = rljet_Split12->at(i);
-        bdt_input_map["Split23"]      = rljet_Split23->at(i);
-        bdt_input_map["Tau1_wta"]     = rljet_Tau1_wta->at(i);
-        bdt_input_map["Tau21_wta"]    = Tau21_wta;
-        bdt_input_map["Tau2_wta"]     = rljet_Tau2_wta->at(i);
-        bdt_input_map["Tau32_wta"]    = Tau32_wta;
-        bdt_input_map["Tau3_wta"]     = rljet_Tau3_wta->at(i);
-        bdt_input_map["ThrustMaj"]    = rljet_ThrustMaj->at(i);
-        bdt_input_map["ThrustMin"]    = rljet_ThrustMin->at(i);
-        bdt_input_map["ZCut12"]       = rljet_ZCut12->at(i);
+        /* bdt_input_map["Angularity"]   = rljet_Angularity->at(i); */
+        /* bdt_input_map["Aplanarity"]   = rljet_Aplanarity->at(i); */
+        /* bdt_input_map["C2"]           = C2; */
+        /* bdt_input_map["D2"]           = rljet_D2->at(i); */
+        /* bdt_input_map["Dip12"]        = rljet_Dip12->at(i); */
+        /* bdt_input_map["ECF1"]         = rljet_ECF1->at(i); */
+        /* bdt_input_map["ECF2"]         = rljet_ECF2->at(i); */
+        /* bdt_input_map["ECF3"]         = rljet_ECF3->at(i); */
+        /* bdt_input_map["FoxWolfram20"] = fw20; */
+        /* bdt_input_map["KtDR"]         = rljet_KtDR->at(i); */
+        /* bdt_input_map["PlanarFlow"]   = rljet_PlanarFlow->at(i); */
+        /* bdt_input_map["Qw"]           = rljet_Qw->at(i); */
+        /* bdt_input_map["Sphericity"]   = rljet_Sphericity->at(i); */
+        /* bdt_input_map["Split12"]      = rljet_Split12->at(i); */
+        /* bdt_input_map["Split23"]      = rljet_Split23->at(i); */
+        /* bdt_input_map["Tau1_wta"]     = rljet_Tau1_wta->at(i); */
+        /* bdt_input_map["Tau21_wta"]    = Tau21_wta; */
+        /* bdt_input_map["Tau2_wta"]     = rljet_Tau2_wta->at(i); */
+        /* bdt_input_map["Tau32_wta"]    = Tau32_wta; */
+        /* bdt_input_map["Tau3_wta"]     = rljet_Tau3_wta->at(i); */
+        /* bdt_input_map["ThrustMaj"]    = rljet_ThrustMaj->at(i); */
+        /* bdt_input_map["ThrustMin"]    = rljet_ThrustMin->at(i); */
+        /* bdt_input_map["ZCut12"]       = rljet_ZCut12->at(i); */
 
-        const float dnn_discriminant = dnn_top_tagger->GetDiscriminant(dnn_input_map);
-        hp->h_rljet_DNN_score.at(i)->fill_tagged("TEST"                    , dnn_discriminant , weight , true);
-        hp->h_rljet_DNN_score.at(i)->fill_tagged("TEST_caloMgt40GeV"       , dnn_discriminant , weight , PASSED_MVA_MASS_TRAINING_CUT);
-        hp->h_rljet_DNN_score.at(i)->fill_tagged("TEST_CLEAN"              , dnn_discriminant , weight , IS_GOOD_MVA_JET);
-        hp->h_rljet_DNN_score.at(i)->fill_tagged("TEST_caloMgt40GeV_CLEAN" , dnn_discriminant , weight , IS_GOOD_MVA_JET && PASSED_MVA_MASS_TRAINING_CUT);
+        /* const float dnn_discriminant = dnn_top_tagger->GetDiscriminant(dnn_input_map); */
+        /* hp->h_rljet_DNN_score.at(i)->fill_tagged("TEST"                    , dnn_discriminant , weight , true); */
+        /* hp->h_rljet_DNN_score.at(i)->fill_tagged("TEST_caloMgt40GeV"       , dnn_discriminant , weight , PASSED_MVA_MASS_TRAINING_CUT); */
+        /* hp->h_rljet_DNN_score.at(i)->fill_tagged("TEST_CLEAN"              , dnn_discriminant , weight , IS_GOOD_MVA_JET); */
+        /* hp->h_rljet_DNN_score.at(i)->fill_tagged("TEST_caloMgt40GeV_CLEAN" , dnn_discriminant , weight , IS_GOOD_MVA_JET && PASSED_MVA_MASS_TRAINING_CUT); */
 
-        for (auto& r  : bdt_readers) {
-                const float bdt_discriminant = r.second->EvaluateMVA(r.first);
-                hp->h_rljet_BDT_score.at(i)->fill_tagged(r.first                         , bdt_discriminant , weight , true);
-                hp->h_rljet_BDT_score.at(i)->fill_tagged(r.first + "_caloMgt40GeV"      , bdt_discriminant , weight , PASSED_MVA_MASS_TRAINING_CUT);
-                hp->h_rljet_BDT_score.at(i)->fill_tagged(r.first + "_CLEAN"              , bdt_discriminant , weight , IS_GOOD_MVA_JET);
-                hp->h_rljet_BDT_score.at(i)->fill_tagged(r.first + "_caloMgt40GeV_CLEAN" , bdt_discriminant , weight , IS_GOOD_MVA_JET && PASSED_MVA_MASS_TRAINING_CUT);
-        } // end MVA taggers
+        /* for (auto& r  : bdt_readers) { */
+        /*         const float bdt_discriminant = r.second->EvaluateMVA(r.first); */
+        /*         hp->h_rljet_BDT_score.at(i)->fill_tagged(r.first                         , bdt_discriminant , weight , true); */
+        /*         hp->h_rljet_BDT_score.at(i)->fill_tagged(r.first + "_caloMgt40GeV"      , bdt_discriminant , weight , PASSED_MVA_MASS_TRAINING_CUT); */
+        /*         hp->h_rljet_BDT_score.at(i)->fill_tagged(r.first + "_CLEAN"              , bdt_discriminant , weight , IS_GOOD_MVA_JET); */
+        /*         hp->h_rljet_BDT_score.at(i)->fill_tagged(r.first + "_caloMgt40GeV_CLEAN" , bdt_discriminant , weight , IS_GOOD_MVA_JET && PASSED_MVA_MASS_TRAINING_CUT); */
+        /* } // end MVA taggers */
 
         // SD log(chi) variables
         if (ranSD) {

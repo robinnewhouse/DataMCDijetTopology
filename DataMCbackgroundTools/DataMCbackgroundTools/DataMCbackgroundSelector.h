@@ -7,10 +7,10 @@
 
 #include "TopExamples/AnalysisTools.h"
 
-#include "NNTaggingTools/DNNWTopTagger.h"
-
-#include "TMVA/Tools.h"
-#include "TMVA/Reader.h"
+// #include "NNTaggingTools/DNNWTopTagger.h"
+ 
+// #include "TMVA/Tools.h"
+// #include "TMVA/Reader.h"
 
 #include <TROOT.h>
 #include <TH1F.h>
@@ -65,11 +65,11 @@ class DataMCbackgroundSelector : public TSelector {
         std::unordered_map<std::string, bool> SD_nominal_tag_map;
         std::unordered_map<std::string, bool> SD_systematic_tag_map;
 
-        std::unordered_map<std::string, std::unique_ptr<TMVA::Reader>> bdt_readers;
-        std::map<std::string, float> bdt_input_map;
+        /* std::unordered_map<std::string, std::unique_ptr<TMVA::Reader>> bdt_readers; */
+        /* std::map<std::string, float> bdt_input_map; */
 
-        std::unique_ptr<DNNWTopTagger> dnn_top_tagger;
-        std::map<std::string, double> dnn_input_map;
+        /* std::unique_ptr<DNNWTopTagger> dnn_top_tagger; */
+        /* std::map<std::string, double> dnn_input_map; */
 
         // Declaration of leaf types
         Float_t   weight_mc;
