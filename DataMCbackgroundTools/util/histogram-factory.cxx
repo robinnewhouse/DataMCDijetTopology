@@ -121,27 +121,22 @@ main(int argc, char** argv)
         outfile_test.close();
     }
 
-    // ZM: OCT 18 2016: No longer trying PROOF in favor of Titan batch system
-    //TProof* p = TProof::Open("lite://");
-    //p->SetProgressDialog(0);
-    //p->SetParallel(5);
-
     std::vector<TChain*> tchains = get_branch_tchains(input_filepath);
 
     TSelector* dmd_selector;
     for (auto& t : tchains) {
         const std::string tchain_name = std::string(t->GetName());
-        const bool is_a_desired_tchain = process_systematics
-                || tchain_name == "nominal" || tchain_name == "Nominal";
+        const bool is_a_desired_tchain = process_systematics || tchain_name == "nominal" || tchain_name == "Nominal";
+
         if (is_a_desired_tchain) {
             dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
                             tchain_name, data_trigger, event_selector, luminosity);
 
-            //tchain->SetProof();
             t->Process(dmd_selector);
 
             delete dmd_selector;
         }
+
     }
 
     return EXIT_SUCCESS;
