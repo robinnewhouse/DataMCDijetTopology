@@ -105,6 +105,33 @@ DataMCbackgroundSelector::DataMCbackgroundSelector(
         std::cout << "EventSelector: " << event_selector_str_ << " not available." << std::endl;
         std::cout << "see DataMCbackgroundSelector.cxx for more details." << std::endl;
     }
+
+    // BDT
+    // top taggers (80% eff. WP, medium variable set)
+    m_topTagger_BDT_qqb = make_unique<JSSWTopTaggerBDT>("topTagger_BDT_qqb");
+    m_topTagger_BDT_qqb->setProperty("TopTagger_fullyContained", true);
+    m_topTagger_BDT_qqb->initialize();
+
+    m_topTagger_BDT_inclusive = make_unique<JSSWTopTaggerBDT>("topTagger_BDT_inclusive");
+    m_topTagger_BDT_inclusive->setProperty("TopTagger", true);
+    m_topTagger_BDT_inclusive->initialize();
+
+    // W tagger (80% eff. WP, medium variable set)
+    m_wTagger_BDT = make_unique<JSSWTopTaggerBDT>("m_wTagger_BDT");
+    m_wTagger_BDT->setProperty("WTagger", true);
+    m_wTagger_BDT->initialize();
+
+    m_topTagger_DNN_qqb = make_unique<JSSWTopTaggerDNN>("m_topTagger_DNN_qqb");
+    m_topTagger_DNN_qqb->setProperty("TopTagger", true);
+    m_topTagger_DNN_qqb->setProperty("KerasConfigFile", "keras_top_dnn_BN_december11_contained.json");
+    m_topTagger_DNN_qqb->setProperty("KerasOutput", "top_dnn_BN_dec11_contained");
+    m_topTagger_DNN_qqb->initialize();
+
+    m_topTagger_DNN_inclusive = make_unique<JSSWTopTaggerDNN>("m_topTagger_DNN_inclusive");
+    m_topTagger_DNN_inclusive->setProperty("TopTagger", true);
+    m_topTagger_DNN_inclusive->setProperty("KerasConfigFile", "keras_top_dnn_BN_december11_all.json");
+    m_topTagger_DNN_inclusive->setProperty("KerasOutput", "top_dnn_BN_dec11_all");
+    m_topTagger_DNN_inclusive->initialize();
 }
 
 void DataMCbackgroundSelector::log(const std::string& line)
@@ -534,33 +561,57 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
             mva_jet->setJetP4(xAOD::JetFourMom_t(rljet_pt_calo->at(i), rljet_eta->at(i), rljet_phi->at(i), rljet_m_calo->at(i)));
 
-            mva_jet->setAttribute<float>("Angularity"  , rljet_Angularity->at(i));
-            mva_jet->setAttribute<float>("Aplanarity"  , rljet_Aplanarity->at(i));
-            mva_jet->setAttribute<float>("C2"          , C2);
-            mva_jet->setAttribute<float>("D2"          , rljet_D2->at(i));
-            mva_jet->setAttribute<float>("Dip12"       , rljet_Dip12->at(i));
-            mva_jet->setAttribute<float>("ECF1"        , rljet_ECF1->at(i));
-            mva_jet->setAttribute<float>("ECF2"        , rljet_ECF2->at(i));
-            mva_jet->setAttribute<float>("ECF3"        , rljet_ECF3->at(i));
-            mva_jet->setAttribute<float>("FoxWolfram0" , rljet_FoxWolfram0->at(i));
-            mva_jet->setAttribute<float>("FoxWolfram2" , rljet_FoxWolfram2->at(i));
+            mva_jet->setAttribute<float>("Angularity"   , rljet_Angularity->at(i));
+            mva_jet->setAttribute<float>("Aplanarity"   , rljet_Aplanarity->at(i));
+            mva_jet->setAttribute<float>("C2"           , C2);
+            mva_jet->setAttribute<float>("D2"           , rljet_D2->at(i));
+            mva_jet->setAttribute<float>("Dip12"        , rljet_Dip12->at(i));
+            mva_jet->setAttribute<float>("ECF1"         , rljet_ECF1->at(i));
+            mva_jet->setAttribute<float>("ECF2"         , rljet_ECF2->at(i));
+            mva_jet->setAttribute<float>("ECF3"         , rljet_ECF3->at(i));
+            mva_jet->setAttribute<float>("FoxWolfram0"  , rljet_FoxWolfram0->at(i));
+            mva_jet->setAttribute<float>("FoxWolfram2"  , rljet_FoxWolfram2->at(i));
             mva_jet->setAttribute<float>("FoxWolfram20" , fw20);
-            mva_jet->setAttribute<float>("KtDR"        , rljet_KtDR->at(i));
-            mva_jet->setAttribute<float>("Mu12"        , rljet_Mu12->at(i));
-            mva_jet->setAttribute<float>("PlanarFlow"  , rljet_PlanarFlow->at(i));
-            mva_jet->setAttribute<float>("Qw"          , rljet_Qw->at(i));
-            mva_jet->setAttribute<float>("Sphericity"  , rljet_Sphericity->at(i));
-            mva_jet->setAttribute<float>("Split12"     , rljet_Split12->at(i));
-            mva_jet->setAttribute<float>("Split23"     , rljet_Split23->at(i));
-            mva_jet->setAttribute<float>("Split34"     , rljet_Split34->at(i));
-            mva_jet->setAttribute<float>("Tau1_wta"    , rljet_Tau1_wta->at(i));
-            mva_jet->setAttribute<float>("Tau21_wta"   , Tau21_wta);
-            mva_jet->setAttribute<float>("Tau2_wta"    , rljet_Tau2_wta->at(i));
-            mva_jet->setAttribute<float>("Tau32_wta"   , Tau32_wta);
-            mva_jet->setAttribute<float>("Tau3_wta"    , rljet_Tau3_wta->at(i));
-            mva_jet->setAttribute<float>("ThrustMaj"   , rljet_ThrustMaj->at(i));
-            mva_jet->setAttribute<float>("ThrustMin"   , rljet_ThrustMin->at(i));
-            mva_jet->setAttribute<float>("ZCut12"      , rljet_ZCut12->at(i));
+            mva_jet->setAttribute<float>("KtDR"         , rljet_KtDR->at(i));
+            mva_jet->setAttribute<float>("Mu12"         , rljet_Mu12->at(i));
+            mva_jet->setAttribute<float>("PlanarFlow"   , rljet_PlanarFlow->at(i));
+            mva_jet->setAttribute<float>("Qw"           , rljet_Qw->at(i));
+            mva_jet->setAttribute<float>("Sphericity"   , rljet_Sphericity->at(i));
+            mva_jet->setAttribute<float>("Split12"      , rljet_Split12->at(i));
+            mva_jet->setAttribute<float>("Split23"      , rljet_Split23->at(i));
+            mva_jet->setAttribute<float>("Split34"      , rljet_Split34->at(i));
+            mva_jet->setAttribute<float>("Tau1_wta"     , rljet_Tau1_wta->at(i));
+            mva_jet->setAttribute<float>("Tau21_wta"    , Tau21_wta);
+            mva_jet->setAttribute<float>("Tau2_wta"     , rljet_Tau2_wta->at(i));
+            mva_jet->setAttribute<float>("Tau32_wta"    , Tau32_wta);
+            mva_jet->setAttribute<float>("Tau3_wta"     , rljet_Tau3_wta->at(i));
+            mva_jet->setAttribute<float>("ThrustMaj"    , rljet_ThrustMaj->at(i));
+            mva_jet->setAttribute<float>("ThrustMin"    , rljet_ThrustMin->at(i));
+            mva_jet->setAttribute<float>("ZCut12"       , rljet_ZCut12->at(i));
+
+            const int BDT_top_qqb_result = static_cast<int>(m_topTagger_BDT_qqb->result(*mva_jet));
+            hp->h_rljet_BDT_score.at(i)->fill_tagged("top_qqb", m_topTagger_BDT_qqb->getBDTScore(), weight, true);
+
+            const int BDT_top_inclusive_result = static_cast<int>(m_topTagger_BDT_inclusive->result(*mva_jet));
+            hp->h_rljet_BDT_score.at(i)->fill_tagged("top_inclusive", m_topTagger_BDT_inclusive->getBDTScore(), weight, true);
+
+            const int BDT_w_result = static_cast<int>(m_wTagger_BDT->result(*mva_jet));
+            hp->h_rljet_BDT_score.at(i)->fill_tagged("w", m_wTagger_BDT->getBDTScore(), weight, true);
+
+            mva_tag_map["BDT_top_qqb_JSSCut"]           = BDT_top_qqb_result == 0 || BDT_top_qqb_result == 1;
+            mva_tag_map["BDT_top_qqb_MassJSSCut"]       = BDT_top_qqb_result == 0;
+            mva_tag_map["BDT_top_inclusive_JSSCut"]     = BDT_top_inclusive_result == 0 || BDT_top_inclusive_result == 1;
+            mva_tag_map["BDT_top_inclusive_MassJSSCut"] = BDT_top_inclusive_result == 0;
+            mva_tag_map["BDT_w_JSSCut"]                 = BDT_w_result == 0 || BDT_w_result == 1;
+            mva_tag_map["BDT_w_MassJSSCut"]             = BDT_w_result == 0;
+
+            for (const auto& itag : mva_tag_map) {
+                hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
+                hp->h_rljet_pt_comb.at(i)->fill_tagged(itag.first, rljet_pt_comb->at(i)/1000., weight, itag.second);
+            }
+
+            hp->h_rljet_DNN_score.at(i)->fill_tagged("top_qqb", m_topTagger_DNN_qqb->getScore(*mva_jet), weight, true);
+            hp->h_rljet_DNN_score.at(i)->fill_tagged("top_inclusive", m_topTagger_DNN_inclusive->getScore(*mva_jet), weight, true);
         }
 
         // SD log(chi) variables
