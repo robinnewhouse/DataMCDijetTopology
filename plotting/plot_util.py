@@ -87,12 +87,18 @@ def set_data_style_simple(hist):
 def set_mc_style_marker(hist, col, shape = 20, line_style = 1):
         hist.SetFillStyle(0)
         hist.SetLineColor(col)
-        hist.SetLineWidth(1)
         hist.SetMarkerColor(col)
         hist.SetMarkerSize(0.8)
         hist.SetMarkerStyle(shape)
         hist.SetLineStyle(line_style)
         hist.SetLineWidth(3)
+
+def set_mc_style_line(hist, col, line_style = 1, line_width = 1):
+        hist.SetFillStyle(0)
+        hist.SetLineColor(col)
+        hist.SetMarkerSize(0)
+        hist.SetLineStyle(line_style)
+        hist.SetLineWidth(line_width)
 
 def set_mc_style_simple_hist(hist, col):
         hist.SetFillStyle(1001)
