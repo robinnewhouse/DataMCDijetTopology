@@ -1,17 +1,20 @@
 #!/bin/zsh
-
 set -e
 
-DESCRIPTION="DS3_p2794_everything_v0"
+#DRY_RUN=true
 
-INPUT_DIR=/titan/atlas/common/zmeadows/TopBosonTagging/dijet/10242016
-OUTPUT_DIR_BASE=/home/zmeadows/ana/TopBosonTagBackground/DataMCbackground/plotting/raw/dijet
+DESCRIPTION="16122016_jobs_v0"
+
+INPUT_DIR=/eos/atlas/atlascerngroupdisk/perf-jets/JSS/TopBosonTagAnalysis2016/NTuples_DataMC_dijets/20161216
+OUTPUT_DIR_BASE=/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/plotting/raw/dijet
+HISTOGRAM_FACTORY_JOB_SCRIPT=/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/Batch/histogram_factory_job.sh
+SUBMIT_DIR=/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/Batch/log
 
 MY_DATE=$(date "+%d-%m-%Y__%H:%M:%S")
 OUTPUT_DIR="$OUTPUT_DIR_BASE/${MY_DATE}__${DESCRIPTION}/"
-mkdir -p $OUTPUT_DIR
 
 #copy directory structure from INPUT_DIR to OUTPUT_DIR
+mkdir -p $OUTPUT_DIR
 cd $INPUT_DIR
 find . -type d -exec mkdir -p -- $OUTPUT_DIR{} \;
 
@@ -31,11 +34,10 @@ function get_sample_type {
         fi
 }
 
-HISTOGRAM_FACTORY_JOB_SCRIPT=/home/zmeadows/ana/TopBosonTagBackground/DataMCbackground/Batch/histogram_factory_job.sh
 
 echo "SUBMITTING JOBS..."
 echo ""
-cd /home/zmeadows/ana/TopBosonTagBackground/DataMCbackground/Batch/run
+cd $SUBMIT_DIR
 for INPUT_FILE in $(find $INPUT_DIR -type f -name '*root*'); do
         DSID=${INPUT_FILE#*user.zmeadows.}
         DSID=${DSID%%.*}
@@ -44,20 +46,34 @@ for INPUT_FILE in $(find $INPUT_DIR -type f -name '*root*'); do
         OUTPUT_FILE=${OUTPUT_FILE%.root*}.cp.root
 
         if [[ $INPUT_FILE == *"physics_Main"* ]]
-        then SAMPLE_TYPE="data"
-        else SAMPLE_TYPE=$(get_sample_type DSID)
+        then 
+            if [[ $INPUT_FILE == *"period"* ]]
+            then
+                SAMPLE_TYPE="data16"
+            else
+                SAMPLE_TYPE="data15"
+            fi
+        else 
+            SAMPLE_TYPE=$(get_sample_type DSID)
         fi
 
         INPUT_FILE=${INPUT_FILE#/titan/*}
-        INPUT_FILE="root://titan.physics.umass.edu//$INPUT_FILE"
+        INPUT_FILE="root://eosatlas/$INPUT_FILE"
 
         echo "INPUT FILE: $INPUT_FILE"
         echo "OUTPUT FILE: $OUTPUT_FILE"
         echo "DSID: $DSID"
         echo "SAMPLE TYPE: $SAMPLE_TYPE"
-        echo ""
 
-        qsub -l cput=24:00:00 -v INPUT_FILE=$INPUT_FILE,OUTPUT_FILE=$OUTPUT_FILE,SAMPLE_TYPE=$SAMPLE_TYPE $HISTOGRAM_FACTORY_JOB_SCRIPT
+        job_cmd="DRY_RUN=$DRY_RUN INPUT_FILE=$INPUT_FILE OUTPUT_FILE=$OUTPUT_FILE SAMPLE_TYPE=$SAMPLE_TYPE $HISTOGRAM_FACTORY_JOB_SCRIPT"
+
+        if [ $DRY_RUN ]
+        then
+            echo "COMMAND: $job_cmd"
+        else
+            eval "bsub -R \"pool>3000\" -q 8nh \"$job_cmd\""
+        fi
+        echo ""
 done
 
 echo ""
