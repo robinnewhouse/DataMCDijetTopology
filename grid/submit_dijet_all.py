@@ -4,16 +4,17 @@ from samples import samples_JETM6
 
 mc_config = TopExamples.grid.Config()
 mc_config.settingsFile  = 'cuts/cuts_boosted_dijet_mc15c.txt'
-mc_config.suffix        = 'TopWZTag_mc15c_16122016_v1'
+mc_config.suffix        = 'TopWZTag_mc15c_17122016_v5_catch'
 
 data_config = TopExamples.grid.Config()
 data_config.settingsFile  = 'cuts/cuts_boosted_dijet_data16.txt'
-data_config.suffix        = 'TopWZTag_data_16122016_v1'
+data_config.suffix        = 'TopWZTag_data_16122016_v2'
 
 for config in [mc_config, data_config]:
     config.code          = 'top-xaod'
     config.gridUsername  = 'zmeadows'
-    config.excludedSites = 'US,ANALY_CONNECT_SHORT,ANALY_CONNECT,ANALY_TAIWAN'
+    #config.excludedSites = 'US,ANALY_CONNECT_SHORT,ANALY_CONNECT,ANALY_TAIWAN,ANALY_PSNC,ANALY_TAIWAN_SL6,ANALY_TAIWAN_PNFS_SL6'
+    config.excludedSites = ''
     config.noSubmit      = False
     config.memory        = '1999' # A lot of sites are short on RAM, so we avoid brokerage issues this way
     config.mergeType     = 'Default' #'None', 'Default' or 'xAOD'
@@ -22,15 +23,15 @@ for config in [mc_config, data_config]:
 
 data_sample_names = [ 'data_2016_25ns', 'data_2015_25ns' ]
 mc_sample_names = [
-        'pythia_dijet_mc15c',
+        #'pythia_dijet_mc15c',
         'herwig_dijet_mc15c',
-        'sherpa_dijet_mc15c',
+        # 'sherpa_dijet_mc15c',
         'V+jets_mc15c',
-        'ttbar_allhad_mc15c'
+        # 'ttbar_allhad_mc15c'
         ]
 
 for sample_name in mc_sample_names + data_sample_names:
     TopExamples.grid.Add(sample_name).datasets = samples_JETM6[sample_name]
 
-TopExamples.grid.submit(data_config, TopExamples.grid.Samples(data_sample_names))
+#TopExamples.grid.submit(data_config, TopExamples.grid.Samples(data_sample_names))
 TopExamples.grid.submit(mc_config, TopExamples.grid.Samples(mc_sample_names))

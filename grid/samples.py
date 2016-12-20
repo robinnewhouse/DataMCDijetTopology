@@ -4,7 +4,7 @@ samples_JETM6 = {}
 
 # {{{ DATA
 
-samples_JETM6['data_2016_25ns'] = [
+samples_JETM6['data_2016_25ns'] = [ # 33257.2/pb
         'data16_13TeV.periodA.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
         'data16_13TeV.periodB.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
         'data16_13TeV.periodC.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
@@ -17,7 +17,7 @@ samples_JETM6['data_2016_25ns'] = [
         'data16_13TeV.periodL.physics_Main.PhysCont.DAOD_JETM6.grp16_v02_p2840'
         ]
 
-samples_JETM6['data_2015_25ns'] = [
+samples_JETM6['data_2015_25ns'] = [ # 3212.96/pb
         'data15_13TeV.00276262.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
         'data15_13TeV.00276329.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
         'data15_13TeV.00276336.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
@@ -85,6 +85,8 @@ samples_JETM6['data_2015_25ns'] = [
         'data15_13TeV.00284484.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813'
 ]
 
+# }}}
+
 # {{{ PYTHIA DIJET
 
 samples_EVNT['pythia_dijet_mc15c'] = [
@@ -133,10 +135,6 @@ samples_JETM6['pythia_dijet_mc15c'] = [
         "mc15_13TeV.361030.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ10W.merge.DAOD_JETM6.e3569_s2576_s2132_r7772_r7676_p2794",
         "mc15_13TeV.361031.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ11W.merge.DAOD_JETM6.e3569_s2608_s2183_r7772_r7676_p2794",
         "mc15_13TeV.361032.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ12W.merge.DAOD_JETM6.e3668_s2608_s2183_r7772_r7676_p2794"
-        ]
-
-samples_JETM6['pythia_dijet_mc15c_JZ6W'] = [
-        "mc15_13TeV.361026.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ6W.merge.DAOD_JETM6.e3569_s2608_s2183_r7725_r7676_p2794",
         ]
 # }}}
 
