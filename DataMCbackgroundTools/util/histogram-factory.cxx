@@ -129,6 +129,7 @@ main(int argc, char** argv)
         const bool is_a_desired_tchain = process_systematics || tchain_name == "nominal" || tchain_name == "Nominal";
 
         if (is_a_desired_tchain) {
+            std::cout << tchain_name << std::endl;
             dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
                             tchain_name, data_trigger, event_selector, luminosity);
 
