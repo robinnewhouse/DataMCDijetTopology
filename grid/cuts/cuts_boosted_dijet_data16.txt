@@ -27,6 +27,7 @@ DebugLevel 0
 #################################
 
 LargeRJESUncertaintyConfig MultiTagging_CombMass
+LargeRJESJMSConfig CombinedMass
 Systematics Nominal
 
 ##########################
@@ -80,8 +81,8 @@ GOODCALO
 PRIVTX
 TRIGDEC HLT_j420_a10_lcw_L1J100 HLT_j420_a10r_L1J100 HLT_j360_a10_lcw_sub_L1J100 HLT_j360_a10r_L1J100 HLT_j360_a10_lcw_L1J100
 JETCLEAN LooseBad
-LARGEJET_N 200000 >= 2
-LARGEJET_N 450000 >= 1
+LJET_N 200000 >= 2
+LJET_N 450000 >= 1
 EL_N 25000 == 0
 MU_N 25000 == 0
 SAVE

@@ -27,11 +27,12 @@ DebugLevel 0
 ### Systematics Configuration ###
 #################################
 
-LargeRJESUncertaintyConfig MultiTagging_CombMass
-#Systematics AllJets
+LargeRJESUncertaintyConfig MultiTagging
+LargeRJESJMSConfig CombinedMass
+Systematics AllJets
 #Systematics All
 #Systematics Nominal
-Systematics LARGERJET_Medium_JET_Comb_Baseline_Kin__1down,LARGERJET_Medium_JET_Comb_Baseline_Kin__1up,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1down,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1up,LARGERJET_Medium_JET_Comb_Modelling_Kin__1down,LARGERJET_Medium_JET_Comb_Modelling_Kin__1up,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1down,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1up,LARGERJET_Medium_JET_Comb_TotalStat_Kin__1down,LARGERJET_Medium_JET_Comb_TotalStat_Kin__1up,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1down,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1up,LARGERJET_Medium_JET_Comb_Tracking_Kin__1down,LARGERJET_Medium_JET_Comb_Tracking_Kin__1up,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1down,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1up
+#Systematics LARGERJET_Medium_JET_Comb_Baseline_Kin__1down,LARGERJET_Medium_JET_Comb_Baseline_Kin__1up,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1down,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1up,LARGERJET_Medium_JET_Comb_Modelling_Kin__1down,LARGERJET_Medium_JET_Comb_Modelling_Kin__1up,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1down,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1up,LARGERJET_Medium_JET_Comb_TotalStat_Kin__1down,LARGERJET_Medium_JET_Comb_TotalStat_Kin__1up,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1down,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1up,LARGERJET_Medium_JET_Comb_Tracking_Kin__1down,LARGERJET_Medium_JET_Comb_Tracking_Kin__1up,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1down,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1up
 
 ##########################
 ### Object Collections ###
@@ -60,7 +61,7 @@ PDFInfo False
 
 IsAFII False
 
-#NEvents 100
+NEvents 500
 
 OutputFileSetAutoFlushZero True
 ObjectSelectionName top::ObjectLoaderStandardCuts
@@ -84,8 +85,8 @@ GOODCALO
 PRIVTX
 # TRIGDEC HLT_j150 HLT_j175 HLT_j260 HLT_j360 HLT_j420_a10_lcw_L1J100 HLT_j420_a10r_L1J100
 JETCLEAN LooseBad
-LARGEJET_N 200000 >= 2
-LARGEJET_N 450000 >= 1
+LJET_N 200000 >= 2
+LJET_N 450000 >= 1
 EL_N 25000 == 0
 MU_N 25000 == 0
 SAVE
