@@ -6,8 +6,8 @@ from ROOT import *
 # https://twiki.cern.ch/twiki/bin/view/AtlasProtected/MC15HadronicHerwigVJets
 # https://twiki.cern.ch/twiki/bin/view/AtlasProtected/MC15HadronicWJets
 
-PYTHIA_SHERPA_WJETS_SF = 1.2670
-PYTHIA_SHERPA_ZJETS_SF = 1.2043
+PYTHIA_SHERPA_WJETS_SF = 1.2535
+PYTHIA_SHERPA_ZJETS_SF = 1.1312
 
 class DMDLoader(PlotLoader):
     def __init__(self, filepath):

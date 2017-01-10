@@ -11,16 +11,12 @@ from plot_dmd import *
 from plot_loader import *
 from plot_systematics import *
 
-#if len(argv) != 3:
-#    print "Usage: python2 {0} <control_plots.root> <output_directory>" . format(argv[0])
-#    exit(1)
-
 gROOT.SetBatch()
 sane_defaults()
 TGaxis.SetMaxDigits(4)
 
-RAW = DMDLoader("./raw/dijet/30-10-2016__12:06:03__DS3_p2794_everything_v0/cp.all.merged.root")
-ROOT_OUTPUT_DIR = "./raw/dijet/30-10-2016__12:06:03__DS3_p2794_everything_v0/plots"
+RAW = DMDLoader("./raw/dijet/20-12-2016__23:51:04__16122016_gridjobs_leakfixed_v0/cp.merged.root")
+ROOT_OUTPUT_DIR = "./raw/dijet/20-12-2016__23:51:04__16122016_gridjobs_leakfixed_v0/plots"
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/efficiency_plots"
 make_dir(ROOT_OUTPUT_DIR)
@@ -82,18 +78,20 @@ DEF_EXTRA_LINES = [
 
 SYSTEMATICS = SYSTEMATICS_MC15C_MEDIUM_KINEMATIC + SYSTEMATICS_MC15C_MEDIUM_SUBSTRUCTURE
 
-REBIN_PT = 4
-
 def make_pt_efficiency_plot(tag_name, rejection = True, **kwargs):
-    h_data_total = RAW.get_hist(["data","nominal"], "h_rljet0_pt")
-    h_pythia_total = RAW.get_hist(["pythia_dijet","nominal"], "h_rljet0_pt")
-    h_herwig_total = RAW.get_hist(["herwig_dijet","nominal"], "h_rljet0_pt")
+    REBIN_ARRAY = array('d',[500,600,700,800,900,1000,1100,1300,1600])
+
+    base_var_name = "h_rljet0_pt_comb"
+
+    h_data_total = RAW.get_hist(["data","nominal"], base_var_name)
+    h_pythia_total = RAW.get_hist(["pythia_dijet","nominal"], base_var_name)
+    h_herwig_total = RAW.get_hist(["herwig_dijet","nominal"], base_var_name)
 
     h_data_total.Rebin(REBIN_PT)
     h_pythia_total.Rebin(REBIN_PT)
     h_herwig_total.Rebin(REBIN_PT)
 
-    passed_name = "h_rljet0_pt_" + tag_name
+    passed_name = base_var_name + "_" + tag_name
 
     h_data_passed = RAW.get_hist(["data","nominal"], passed_name)
     h_pythia_passed = RAW.get_hist(["pythia_dijet","nominal"], passed_name)
@@ -103,8 +101,8 @@ def make_pt_efficiency_plot(tag_name, rejection = True, **kwargs):
     h_pythia_passed.Rebin(REBIN_PT)
     h_herwig_passed.Rebin(REBIN_PT)
 
-    sys_dict_pythia_total = RAW.get_systematics_dict("h_rljet0_pt" , SYSTEMATICS , ["pythia_dijet"])
-    sys_dict_herwig_total = RAW.get_systematics_dict("h_rljet0_pt" , SYSTEMATICS , ["herwig_dijet"])
+    sys_dict_pythia_total = RAW.get_systematics_dict(base_var_name , SYSTEMATICS , ["pythia_dijet"])
+    sys_dict_herwig_total = RAW.get_systematics_dict(base_var_name , SYSTEMATICS , ["herwig_dijet"])
     sys_dict_pythia_passed = RAW.get_systematics_dict(passed_name  , SYSTEMATICS , ["pythia_dijet"])
     sys_dict_herwig_passed = RAW.get_systematics_dict(passed_name  , SYSTEMATICS , ["herwig_dijet"])
 
@@ -140,76 +138,6 @@ def make_pt_efficiency_plot(tag_name, rejection = True, **kwargs):
                 h_herwig_total, sys_dict_herwig_total)
 
         eff_name = passed_name + "_eff"
-
-    return PlotDataPythiaHerwigEfficiency(
-            h_data,
-            hsys_pythia,
-            hsys_herwig,
-            rejection,
-            name = eff_name,
-            lumi_val = "3.5",
-            atlas_mod = "Internal",
-            legend_loc = [0.75,0.93,0.94,0.79],
-            x_title = "Leading Large-R Jet #it{p_{T}}",
-            x_min = 500,
-            x_max = 2000,
-            width = 600,
-            **kwargs)
-
-def make_htt_pt_efficiency_plot(rejection = True, **kwargs):
-    h_data_total = RAW.get_hist(["data","nominal"], "h_htt_caGroomJet0_pt_def")
-    h_pythia_total = RAW.get_hist(["pythia_dijet","nominal"], "h_htt_caGroomJet0_pt_def")
-    h_herwig_total = RAW.get_hist(["herwig_dijet","nominal"], "h_htt_caGroomJet0_pt_def")
-
-    h_data_total.Rebin(REBIN_PT)
-    h_pythia_total.Rebin(REBIN_PT)
-    h_herwig_total.Rebin(REBIN_PT)
-
-    h_data_passed = RAW.get_hist(["data","nominal"], "h_htt0_pt_def")
-    h_pythia_passed = RAW.get_hist(["pythia_dijet","nominal"], "h_htt0_pt_def")
-    h_herwig_passed = RAW.get_hist(["herwig_dijet","nominal"], "h_htt0_pt_def")
-
-    h_data_passed.Rebin(REBIN_PT)
-    h_pythia_passed.Rebin(REBIN_PT)
-    h_herwig_passed.Rebin(REBIN_PT)
-
-    sys_dict_pythia_total  = RAW.get_htt_systematics_dict("h_htt_caGroomJet0_pt" , "pythia_dijet", "sjcalib0970", "sjcalib1030")
-    sys_dict_herwig_total  = RAW.get_htt_systematics_dict("h_htt_caGroomJet0_pt" , "herwig_dijet", "sjcalib0970", "sjcalib1030")
-    sys_dict_pythia_passed = RAW.get_htt_systematics_dict("h_htt0_pt"            , "pythia_dijet", "sjcalib0970", "sjcalib1030")
-    sys_dict_herwig_passed = RAW.get_htt_systematics_dict("h_htt0_pt"            , "herwig_dijet", "sjcalib0970", "sjcalib1030")
-
-    rebin_sys_dict(sys_dict_pythia_total, REBIN_PT)
-    rebin_sys_dict(sys_dict_herwig_total, REBIN_PT)
-    rebin_sys_dict(sys_dict_pythia_passed, REBIN_PT)
-    rebin_sys_dict(sys_dict_herwig_passed, REBIN_PT)
-
-    h_data      = None
-    hsys_pythia = None
-    hsys_herwig = None
-    eff_name    = None
-
-    if rejection:
-        h_data = h_data_total.Clone()
-        h_data.Divide(h_data_passed)
-
-        hsys_pythia = TH1SysEff(h_pythia_total, sys_dict_pythia_total,
-                h_pythia_passed, sys_dict_pythia_passed)
-
-        hsys_herwig = TH1SysEff(h_herwig_total, sys_dict_herwig_total,
-                h_herwig_passed, sys_dict_herwig_passed)
-
-        eff_name = "htt0_pt_rej"
-    else:
-        h_data = h_data_passed.Clone()
-        h_data.Divide(h_data_total)
-
-        hsys_pythia = TH1SysEff(h_pythia_passed, sys_dict_pythia_passed,
-                h_pythia_total, sys_dict_pythia_total)
-
-        hsys_herwig = TH1SysEff(h_herwig_passed, sys_dict_herwig_passed,
-                h_herwig_total, sys_dict_herwig_total)
-
-        eff_name = "htt0_pt_eff"
 
     return PlotDataPythiaHerwigEfficiency(
             h_data,
@@ -279,17 +207,17 @@ breakdown_plots = [
             y_max = 0.5
             ),
 
-        make_htt_pt_efficiency_plot(
-            rejection = False,
-            extra_legend_lines = DEF_EXTRA_LINES + [ "HTT Top Candidate" ],
-            y_max = 0.07
-            ),
+        # make_htt_pt_efficiency_plot(
+        #     rejection = False,
+        #     extra_legend_lines = DEF_EXTRA_LINES + [ "HTT Top Candidate" ],
+        #     y_max = 0.07
+        #     ),
 
-        make_htt_pt_efficiency_plot(
-            rejection = True,
-            extra_legend_lines = DEF_EXTRA_LINES + [ "HTT Top Candidate" ],
-            y_max = 325
-            )
+        # make_htt_pt_efficiency_plot(
+        #     rejection = True,
+        #     extra_legend_lines = DEF_EXTRA_LINES + [ "HTT Top Candidate" ],
+        #     y_max = 325
+        #     )
         ]
 
 for i in range(len(breakdown_plots)):

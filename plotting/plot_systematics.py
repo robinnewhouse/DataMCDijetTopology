@@ -111,6 +111,12 @@ class TH1Sys(object):
             self.systematics_dictionary[sys_name]["up"].Rebin(rebin_num)
             self.systematics_dictionary[sys_name]["down"].Rebin(rebin_num)
 
+    def rebin_array(self, arr):
+        self.h_nominal.Rebin(rebin_num)
+        for sys_name in self.systematics_dictionary.iterkeys():
+            self.systematics_dictionary[sys_name]["up"].Rebin(rebin_num)
+            self.systematics_dictionary[sys_name]["down"].Rebin(rebin_num)
+
     def scale(self, scale_factor):
         ''' Scales the nominal and systematic histograms by the same value. '''
         self.h_nominal.Scale(scale_factor)
