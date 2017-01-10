@@ -27,7 +27,7 @@ lsetup rcsetup
 
 job_cmd="histogram-factory -i $INPUT_FILE -o $OUTPUT_FILE -t $DATA_TRIGGER -L $LUMINOSITY -E $EVENT_SELECTOR -p $SAMPLE_TYPE -S"
 
-echo $job_cmd
-#eval $job_cmd
+#echo $job_cmd
+eval $job_cmd
 
 

@@ -3,7 +3,7 @@ set -e
 
 #DRY_RUN=true
 
-DESCRIPTION="16122016_jobs_v0"
+DESCRIPTION="16122016_gridjobs_leakfixed_v0"
 
 INPUT_DIR=/eos/atlas/atlascerngroupdisk/perf-jets/JSS/TopBosonTagAnalysis2016/NTuples_DataMC_dijets/20161216
 OUTPUT_DIR_BASE=/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/plotting/raw/dijet
@@ -65,7 +65,7 @@ for INPUT_FILE in $(find $INPUT_DIR -type f -name '*root*'); do
         echo "DSID: $DSID"
         echo "SAMPLE TYPE: $SAMPLE_TYPE"
 
-        job_cmd="DRY_RUN=$DRY_RUN INPUT_FILE=$INPUT_FILE OUTPUT_FILE=$OUTPUT_FILE SAMPLE_TYPE=$SAMPLE_TYPE $HISTOGRAM_FACTORY_JOB_SCRIPT"
+        job_cmd="INPUT_FILE=$INPUT_FILE OUTPUT_FILE=$OUTPUT_FILE SAMPLE_TYPE=$SAMPLE_TYPE $HISTOGRAM_FACTORY_JOB_SCRIPT"
 
         if [ $DRY_RUN ]
         then
