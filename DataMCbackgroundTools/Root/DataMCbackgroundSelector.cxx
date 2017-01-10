@@ -430,7 +430,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         smooth16_tag_map["smooth16Top_QwTau32Tag50eff"] = rljet_smooth16Top_QwTau32Tag50eff->at(i) == 3;
         smooth16_tag_map["smooth16Top_QwTau32Tag80eff"] = rljet_smooth16Top_QwTau32Tag80eff->at(i) == 3;
         smooth16_tag_map["smooth16Top_MassTau32Tag50eff_JSSCut"] = rljet_smooth16Top_MassTau32Tag50eff->at(i) == 3 || rljet_smooth16Top_MassTau32Tag50eff->at(i) == 2;
-        smooth16_tag_map["smooth16Top_MassTau32Tag80eff_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag50eff->at(i) == 3;
+        smooth16_tag_map["smooth16Top_MassTau32Tag80eff_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag80eff->at(i) == 3;
 
         smooth16_tag_map["smooth16WTag_50eff_JSSCut"] = rljet_smooth16WTag_50eff->at(i) == 1 || rljet_smooth16WTag_50eff->at(i) == 16 || rljet_smooth16WTag_50eff->at(i) == 4;
         smooth16_tag_map["smooth16WTag_50eff_MassJSSCut"] = rljet_smooth16WTag_50eff->at(i) == 1;
@@ -484,6 +484,11 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     /*******************/
 
     for (UInt_t i = 0; i < n_rljets_recorded; i++) {
+        hp->h_rljet_pt_calo.at(i)->fill(rljet_pt_calo->at(i)/1000., weight);
+        hp->h_rljet_m_calo.at(i)->fill(rljet_m_calo->at(i)/1000., weight);
+        hp->h_rljet_pt_ta.at(i)->fill(rljet_pt_ta->at(i)/1000., weight);
+        hp->h_rljet_m_ta.at(i)->fill(rljet_m_ta->at(i)/1000., weight);
+
         // other substructure variables
         const float Tau1_wta = rljet_Tau1_wta->at(i);
         const float Tau2_wta = rljet_Tau2_wta->at(i);
@@ -540,7 +545,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         /***************/
 
         const bool IS_GOOD_MVA_JET =
-            rljet_m_calo->at(i) / 1000. > 40.
+            rljet_m_comb->at(i) / 1000. > 40.
             && rljet_D2->at(i) > 0
             && C2 > 0
             && Tau32_wta > 0
@@ -557,10 +562,10 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             xAOD::Jet* mva_jet = new xAOD::Jet();
             mva_jet->makePrivateStore();
 
-            mva_jet->setAttribute<float>("pt"  , rljet_pt_calo->at(i));
+            mva_jet->setAttribute<float>("pt"  , rljet_pt_comb->at(i));
             mva_jet->setAttribute<float>("eta" , rljet_eta->at(i));
             mva_jet->setAttribute<float>("phi" , rljet_phi->at(i));
-            mva_jet->setAttribute<float>("m"   , rljet_m_calo->at(i));
+            mva_jet->setAttribute<float>("m"   , rljet_m_comb->at(i));
 
             mva_jet->setAttribute<float>("C2"           , C2);
             mva_jet->setAttribute<float>("Angularity"   , rljet_Angularity->at(i));
@@ -599,12 +604,12 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             const int BDT_w_result = static_cast<int>(m_wTagger_BDT->result(*mva_jet));
             hp->h_rljet_BDT_score.at(i)->fill_tagged("w", m_wTagger_BDT->getBDTScore(), weight, true);
 
-            mva_tag_map["BDT_top_qqb_JSSCut"]           = BDT_top_qqb_result == 0 || BDT_top_qqb_result == 1;
-            mva_tag_map["BDT_top_qqb_MassJSSCut"]       = BDT_top_qqb_result == 0;
-            mva_tag_map["BDT_top_inclusive_JSSCut"]     = BDT_top_inclusive_result == 0 || BDT_top_inclusive_result == 1;
-            mva_tag_map["BDT_top_inclusive_MassJSSCut"] = BDT_top_inclusive_result == 0;
-            mva_tag_map["BDT_w_JSSCut"]                 = BDT_w_result == 0 || BDT_w_result == 1;
-            mva_tag_map["BDT_w_MassJSSCut"]             = BDT_w_result == 0;
+            mva_tag_map["BDT_top_qqb_JSSCut"]           = rljet_m_comb->at(i) / 1000. > 100 && (BDT_top_qqb_result == 0 || BDT_top_qqb_result == 1);
+            mva_tag_map["BDT_top_qqb_MassJSSCut"]       = rljet_m_comb->at(i) / 1000. > 100 && BDT_top_qqb_result == 0;
+            mva_tag_map["BDT_top_inclusive_JSSCut"]     = rljet_m_comb->at(i) / 1000. > 100 && (BDT_top_inclusive_result == 0 || BDT_top_inclusive_result == 1);
+            mva_tag_map["BDT_top_inclusive_MassJSSCut"] = rljet_m_comb->at(i) / 1000. > 100 && BDT_top_inclusive_result == 0;
+            mva_tag_map["BDT_w_JSSCut"]                 = rljet_m_comb->at(i) / 1000. > 40 && (BDT_w_result == 0 || BDT_w_result == 1);
+            mva_tag_map["BDT_w_MassJSSCut"]             = rljet_m_comb->at(i) / 1000. > 40 && BDT_w_result == 0;
 
             for (const auto& itag : mva_tag_map) {
                 hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
@@ -613,6 +618,8 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
             hp->h_rljet_DNN_score.at(i)->fill_tagged("top_qqb", m_topTagger_DNN_qqb->getScore(*mva_jet), weight, true);
             hp->h_rljet_DNN_score.at(i)->fill_tagged("top_inclusive", m_topTagger_DNN_inclusive->getScore(*mva_jet), weight, true);
+
+            delete mva_jet;
         }
 
         // SD log(chi) variables
@@ -677,7 +684,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     /**************************/
 
     const UInt_t n_cajets_recorded = htt_caJet_pt->size();
-    if (n_cajets_recorded > 0 && htt_caJet_pt->at(0) / 1000. > 500.) {
+    if (n_cajets_recorded > 0 && htt_caJet_pt->at(0) / 1000. > 550.) {
         for (UInt_t ijet = 0; ijet < 3 && ijet < n_cajets_recorded; ijet++)
         {
             hp->h_htt_caJet_pt.at(ijet)->fill(htt_caJet_pt->at(ijet) / 1000., weight);
@@ -779,6 +786,7 @@ void DataMCbackgroundSelector::Terminate()
         hp->WriteNominalOnlyHistograms();
 
     output_file->Close();
+    delete output_file;
 
     ss.str(std::string());
     ss << "FINISHED: " << root_dir_str << "/" << sub_dir_str;
