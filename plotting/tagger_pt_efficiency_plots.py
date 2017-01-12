@@ -3,6 +3,7 @@ import atlas_style
 
 import os
 from math import *
+import array
 from sys import argv, exit
 
 from plot_base import *
@@ -23,36 +24,34 @@ make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
 
 class PlotDataPythiaHerwigEfficiency(PlotBase):
-    def __init__(self, h_data, hsys_pythia, hsys_herwig, rejection, **kwargs):
+    def __init__(
+            self,
+            h_data,
+            h_data_ref,
+            h_pythia,
+            h_herwig,
+            h_sherpa,
+            **kwargs):
         super(PlotDataPythiaHerwigEfficiency, self).__init__(**kwargs)
 
         self.h_data = h_data
-        self.hsys_pythia = hsys_pythia
-        self.hsys_herwig = hsys_herwig
+        self.h_data_ref = h_data_ref
+        self.h_pythia = h_pythia
+        self.h_herwig = h_herwig
+        self.h_sherpa = h_sherpa
 
-        self.hsys_pythia._compute_errors()
-        self.hsys_herwig._compute_errors()
+        self.h_data_ref.Scale(0.5)
 
-        self.h_pythia_nominal = self.hsys_pythia.h_nominal.Clone()
-        self.h_herwig_nominal = self.hsys_herwig.h_nominal.Clone()
+        self.determine_y_axis_title(h_data, "1/#epsilon_{QCD}")
 
-        self.h_pythia_sys = self.hsys_pythia.get_histo_with_systematic_errs(
-                include_stat_error = True)
-        self.h_herwig_sys = self.hsys_herwig.get_histo_with_systematic_errs(
-                include_stat_error = True)
+        set_mc_style_marker(self.h_pythia, kRed, shape = 21)
+        set_mc_style_marker(self.h_herwig, kBlue, shape = 22)
+        set_mc_style_marker(self.h_sherpa, kGreen, shape = 23)
 
-        if rejection:
-            self.determine_y_axis_title(h_data, "1/#epsilon_{QCD}")
-        else:
-            self.determine_y_axis_title(h_data, "#epsilon_{QCD}")
+        self.h_data_ref.SetLineColor(kGray+1)
+        self.h_data_ref.SetMarkerSize(0)
 
-        set_mc_style_marker(self.h_pythia_nominal, kRed, shape = 21)
-        set_mc_style_marker(self.h_herwig_nominal, kBlue, shape = 22)
-        set_mc_sys_err_style(self.h_pythia_sys, kRed)
-        set_mc_sys_err_style(self.h_herwig_sys, kBlue)
-
-        for h in [self.h_data, self.h_pythia_nominal, self.h_herwig_nominal,
-                self.h_pythia_sys, self.h_herwig_sys]:
+        for h in [self.h_data, self.h_data_ref, self.h_pythia, self.h_herwig, self.h_sherpa]:
             h.GetYaxis().SetTitle(self.y_title)
             h.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
             self.set_x_axis_bounds(h)
@@ -60,15 +59,17 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
             self.set_y_max(h)
             h.GetYaxis().SetTitleOffset(2.0)
 
-        self.h_herwig_sys.Draw("E2")
-        self.h_pythia_sys.Draw("E2,same")
-        self.h_herwig_nominal.Draw("PE,same")
-        self.h_pythia_nominal.Draw("PE,same")
-        self.h_data.Draw("PE,same")
+        self.h_sherpa.Draw("PE1,same")
+        self.h_herwig.Draw("PE1,same")
+        self.h_pythia.Draw("PE1,same")
+        self.h_data.Draw("PE1,same")
+        self.h_data_ref.Draw("hist,same")
 
         self.leg.AddEntry(self.h_data, "Data 2016")
-        self.leg.AddEntry(self.h_pythia_nominal, "Pythia8")
-        self.leg.AddEntry(self.h_herwig_nominal, "Herwig++")
+        self.leg.AddEntry(self.h_pythia, "Pythia8")
+        self.leg.AddEntry(self.h_herwig, "Herwig++")
+        self.leg.AddEntry(self.h_sherpa, "Sherpa")
+        self.leg.AddEntry(self.h_data_ref, "2015 Tagger Ref.")
         self.leg.Draw()
 
 DEF_EXTRA_LINES = [
@@ -76,150 +77,138 @@ DEF_EXTRA_LINES = [
             "Dijet Selection"
             ]
 
-SYSTEMATICS = SYSTEMATICS_MC15C_MEDIUM_KINEMATIC + SYSTEMATICS_MC15C_MEDIUM_SUBSTRUCTURE
-
-def make_pt_efficiency_plot(tag_name, rejection = True, **kwargs):
-    REBIN_ARRAY = array('d',[500,600,700,800,900,1000,1100,1300,1600])
+def make_pt_efficiency_plot(
+        tag_name,
+        ref_tag_name,
+        rejection = True,
+        **kwargs):
+    BIN_BOUNDS = array.array('d', [450,500,550,600,700,800,900,1000,1100,1200,1300,1400,1500,1700,2000,2500])
 
     base_var_name = "h_rljet0_pt_comb"
 
-    h_data_total = RAW.get_hist(["data","nominal"], base_var_name)
-    h_pythia_total = RAW.get_hist(["pythia_dijet","nominal"], base_var_name)
-    h_herwig_total = RAW.get_hist(["herwig_dijet","nominal"], base_var_name)
+    h_data_total_tmp     = RAW.get_sigsub_data(base_var_name)
+    h_pythia_total_tmp   = RAW.get_normalized_dijet("pythia", base_var_name)
+    h_herwig_total_tmp   = RAW.get_normalized_dijet("herwig", base_var_name)
+    h_sherpa_total_tmp   = RAW.get_normalized_dijet("sherpa", base_var_name)
 
-    h_data_total.Rebin(REBIN_PT)
-    h_pythia_total.Rebin(REBIN_PT)
-    h_herwig_total.Rebin(REBIN_PT)
+    h_data_total     = h_data_total_tmp.Rebin(len(BIN_BOUNDS)-1, h_data_total_tmp.GetName()+"_rebinned", BIN_BOUNDS)
+    h_pythia_total   = h_pythia_total_tmp.Rebin(len(BIN_BOUNDS)-1, h_pythia_total_tmp.GetName()+"_rebinned", BIN_BOUNDS)
+    h_herwig_total   = h_herwig_total_tmp.Rebin(len(BIN_BOUNDS)-1, h_herwig_total_tmp.GetName()+"_rebinned", BIN_BOUNDS)
+    h_sherpa_total   = h_sherpa_total_tmp.Rebin(len(BIN_BOUNDS)-1, h_sherpa_total_tmp.GetName()+"_rebinned", BIN_BOUNDS)
 
     passed_name = base_var_name + "_" + tag_name
+    ref_passed_name = base_var_name + "_" + ref_tag_name
 
-    h_data_passed = RAW.get_hist(["data","nominal"], passed_name)
-    h_pythia_passed = RAW.get_hist(["pythia_dijet","nominal"], passed_name)
-    h_herwig_passed = RAW.get_hist(["herwig_dijet","nominal"], passed_name)
+    h_data_passed_tmp     = RAW.get_sigsub_data(passed_name)
+    h_pythia_passed_tmp   = RAW.get_normalized_dijet("pythia", passed_name)
+    h_herwig_passed_tmp   = RAW.get_normalized_dijet("herwig", passed_name)
+    h_sherpa_passed_tmp   = RAW.get_normalized_dijet("herwig", passed_name)
+    h_data_passed_ref_tmp = RAW.get_sigsub_data(ref_passed_name)
 
-    h_data_passed.Rebin(REBIN_PT)
-    h_pythia_passed.Rebin(REBIN_PT)
-    h_herwig_passed.Rebin(REBIN_PT)
+    h_data_passed     = h_data_passed_tmp.Rebin(len(BIN_BOUNDS)-1, h_data_passed_tmp.GetName()+"_rebinned", BIN_BOUNDS)
+    h_pythia_passed   = h_pythia_passed_tmp.Rebin(len(BIN_BOUNDS)-1, h_pythia_passed_tmp.GetName()+"_rebinned", BIN_BOUNDS)
+    h_herwig_passed   = h_herwig_passed_tmp.Rebin(len(BIN_BOUNDS)-1, h_herwig_passed_tmp.GetName()+"_rebinned", BIN_BOUNDS)
+    h_sherpa_passed   = h_sherpa_passed_tmp.Rebin(len(BIN_BOUNDS)-1, h_sherpa_passed_tmp.GetName()+"_rebinned", BIN_BOUNDS)
+    h_data_passed_ref = h_data_passed_ref_tmp.Rebin(len(BIN_BOUNDS)-1, h_data_passed_ref_tmp.GetName()+"_rebinned", BIN_BOUNDS)
 
-    sys_dict_pythia_total = RAW.get_systematics_dict(base_var_name , SYSTEMATICS , ["pythia_dijet"])
-    sys_dict_herwig_total = RAW.get_systematics_dict(base_var_name , SYSTEMATICS , ["herwig_dijet"])
-    sys_dict_pythia_passed = RAW.get_systematics_dict(passed_name  , SYSTEMATICS , ["pythia_dijet"])
-    sys_dict_herwig_passed = RAW.get_systematics_dict(passed_name  , SYSTEMATICS , ["herwig_dijet"])
-
-    rebin_sys_dict(sys_dict_pythia_total, REBIN_PT)
-    rebin_sys_dict(sys_dict_herwig_total, REBIN_PT)
-    rebin_sys_dict(sys_dict_pythia_passed, REBIN_PT)
-    rebin_sys_dict(sys_dict_herwig_passed, REBIN_PT)
-
-    h_data      = None
-    hsys_pythia = None
-    hsys_herwig = None
-    eff_name    = None
+    # h_data      = None
+    # h_data_ref  = None
+    # hsys_pythia = None
+    # hsys_herwig = None
+    # hsys_sherpa = None
+    # eff_name    = None
 
     if rejection:
         h_data = h_data_total.Clone()
         h_data.Divide(h_data_passed)
+        h_data_ref = h_data_total.Clone()
+        h_data_ref.Divide(h_data_passed_ref)
 
-        hsys_pythia = TH1SysEff(h_pythia_total, sys_dict_pythia_total,
-                h_pythia_passed, sys_dict_pythia_passed)
-
-        hsys_herwig = TH1SysEff(h_herwig_total, sys_dict_herwig_total,
-                h_herwig_passed, sys_dict_herwig_passed)
+        hsys_pythia = TH1SysEff(h_pythia_total, None, h_pythia_passed, None)
+        hsys_herwig = TH1SysEff(h_herwig_total, None, h_herwig_passed, None)
+        hsys_sherpa = TH1SysEff(h_sherpa_total, None, h_sherpa_passed, None)
 
         eff_name = passed_name + "_rej"
     else:
         h_data = h_data_passed.Clone()
         h_data.Divide(h_data_total)
+        h_data_ref = h_data_passed_ref.Clone()
+        h_data_ref.Divide(h_data_total)
 
-        hsys_pythia = TH1SysEff(h_pythia_passed, sys_dict_pythia_passed,
-                h_pythia_total, sys_dict_pythia_total)
-
-        hsys_herwig = TH1SysEff(h_herwig_passed, sys_dict_herwig_passed,
-                h_herwig_total, sys_dict_herwig_total)
+        hsys_pythia = TH1SysEff(h_pythia_passed, None, h_pythia_total, None)
+        hsys_herwig = TH1SysEff(h_herwig_passed, None, h_herwig_total, None)
+        hsys_sherpa = TH1SysEff(h_sherpa_passed, None, h_sherpa_total, None)
 
         eff_name = passed_name + "_eff"
 
     return PlotDataPythiaHerwigEfficiency(
             h_data,
-            hsys_pythia,
-            hsys_herwig,
-            rejection,
+            h_data_ref,
+            hsys_pythia.h_nominal,
+            hsys_herwig.h_nominal,
+            hsys_sherpa.h_nominal,
             name = eff_name,
-            lumi_val = "3.5",
+            lumi_val = "36.5",
             atlas_mod = "Internal",
-            legend_loc = [0.75,0.93,0.94,0.79],
+            legend_loc = [0.67,0.93,0.92,0.69],
             x_title = "Leading Large-R Jet #it{p_{T}}",
-            x_min = 500,
-            x_max = 2000,
+            x_min = 450,
+            x_max = 3000,
+            y_min = 0.001,
             width = 600,
             **kwargs)
 
 breakdown_plots = [
         make_pt_efficiency_plot(
-            "w_prerec_50eff_D2masscut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth D_{2}-Tagged", "#epsilon_{sig} = 50%" ],
-            y_max = 150
+            "smooth16Top_MassTau32Tag80eff_MassJSSCut",
+            "smooth16Top_MassTau32Tag80eff_MassJSSCut",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 50%" ],
+            y_max = 120
             ),
 
         make_pt_efficiency_plot(
-            "w_prerec_25eff_D2masscut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth D_{2}-Tagged", "#epsilon_{sig} = 25%" ],
-            y_max = 600
+            "smooth16Top_QwTau32Tag50eff",
+            "smooth16Top_QwTau32Tag50eff",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{sig} = 50%" ],
+            y_max = 120
             ),
 
         make_pt_efficiency_plot(
-            "t_prerec_50eff_Tau32masscut",
+            "smooth16Top_Tau32Split23Tag50eff",
+            "smooth16Top_Tau32Split23Tag50eff",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + #sqrt{d_{23}}", "#epsilon_{sig} = 50%" ],
+            y_max = 100
+            ),
+
+        make_pt_efficiency_plot(
+            "smooth16WTag_50eff_MassJSSCut",
+            "smooth16WTag_50eff_MassJSSCut",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 50%" ],
+            y_max = 160
+            ),
+
+        make_pt_efficiency_plot(
+            "smooth16ZTag_50eff_MassJSSCut",
+            "smooth16ZTag_50eff_MassJSSCut",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 50%" ],
+            y_max = 160
+            ),
+
+        make_pt_efficiency_plot(
+            "BDT_top_qqb_JSSCut",
+            "BDT_top_qqb_JSSCut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth #tau_{32}-Tagged", "#epsilon_{sig} = 50%" ],
-            y_max = 35
+            y_max = 200
             ),
 
         make_pt_efficiency_plot(
-            "t_prerec_80eff_Tau32masscut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth #tau_{32}-Tagged", "#epsilon_{sig} = 80%" ],
-            y_max = 10
-            ),
-
-        make_pt_efficiency_plot(
-            "w_prerec_50eff_D2masscut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth D_{2}-Tagged", "#epsilon_{sig} = 50%" ],
-            rejection = False,
-            y_max = 0.1
-            ),
-
-        make_pt_efficiency_plot(
-            "w_prerec_25eff_D2masscut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth D_{2}-Tagged", "#epsilon_{sig} = 25%" ],
-            rejection = False,
-            y_max = 0.015
-            ),
-
-        make_pt_efficiency_plot(
-            "t_prerec_50eff_Tau32masscut",
+            "BDT_w_JSSCut",
+            "BDT_w_JSSCut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth #tau_{32}-Tagged", "#epsilon_{sig} = 50%" ],
-            rejection = False,
-            y_max = 0.3
+            y_max = 200
             ),
 
-        make_pt_efficiency_plot(
-            "t_prerec_80eff_Tau32masscut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth #tau_{32}-Tagged", "#epsilon_{sig} = 80%" ],
-            rejection = False,
-            y_max = 0.5
-            ),
-
-        # make_htt_pt_efficiency_plot(
-        #     rejection = False,
-        #     extra_legend_lines = DEF_EXTRA_LINES + [ "HTT Top Candidate" ],
-        #     y_max = 0.07
-        #     ),
-
-        # make_htt_pt_efficiency_plot(
-        #     rejection = True,
-        #     extra_legend_lines = DEF_EXTRA_LINES + [ "HTT Top Candidate" ],
-        #     y_max = 325
-        #     )
         ]
 
 for i in range(len(breakdown_plots)):
     breakdown_plots[i].print_to_file(OUTPUT_DIR + "/" + breakdown_plots[i].name + ".pdf")
-    breakdown_plots[i].print_to_file(OUTPUT_DIR + "/" + "data16_mc15c_efficiency_plots", i, len(breakdown_plots))
