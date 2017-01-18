@@ -95,12 +95,14 @@ class PlotBase(object):
         self._make_canvas()
         self._make_decorations()
 
-    def determine_y_axis_title(self, histo, label = "Events"):
+    def determine_y_axis_title(self, histo, label = "Events", show_binwidth = True):
         bin_width = histo.GetXaxis().GetBinWidth(1)
 
-        self.y_title = label + " / "
-        self.y_title += format_bin_width(bin_width)
-        self.y_title += " " + self.x_units
+        self.y_title = label
+        if (show_binwidth):
+            self.y_title += " / "
+            self.y_title += format_bin_width(bin_width)
+            self.y_title += " " + self.x_units
 
     def set_x_axis_bounds(self, histo):
         if (self.x_max or self.x_min):

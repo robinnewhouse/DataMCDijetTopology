@@ -140,10 +140,11 @@ class TH1SysEff(TH1Sys):
         self.h_nominal.Divide(h_nominal_total)
 
         self.systematics_dictionary = {}
-        for sys_name, h_sys in systematics_dictionary_passed.iteritems():
-            self.systematics_dictionary[sys_name] = {}
-            for variation in ["up", "down"]:
-                self.systematics_dictionary[sys_name][variation] = h_sys[variation].Clone(h_sys[variation].GetName() + "_eff")
-                self.systematics_dictionary[sys_name][variation].Divide(systematics_dictionary_total[sys_name][variation])
+        if (systematics_dictionary_passed != None):
+           for sys_name, h_sys in systematics_dictionary_passed.iteritems():
+               self.systematics_dictionary[sys_name] = {}
+               for variation in ["up", "down"]:
+                   self.systematics_dictionary[sys_name][variation] = h_sys[variation].Clone(h_sys[variation].GetName() + "_eff")
+                   self.systematics_dictionary[sys_name][variation].Divide(systematics_dictionary_total[sys_name][variation])
 
         self._reset()

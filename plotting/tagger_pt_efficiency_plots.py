@@ -16,8 +16,8 @@ gROOT.SetBatch()
 sane_defaults()
 TGaxis.SetMaxDigits(4)
 
-RAW = DMDLoader("./raw/dijet/20-12-2016__23:51:04__16122016_gridjobs_leakfixed_v0/cp.merged.root")
-ROOT_OUTPUT_DIR = "./raw/dijet/20-12-2016__23:51:04__16122016_gridjobs_leakfixed_v0/plots"
+RAW = DMDLoader("./raw/dijet/12-01-2017__15:26:26__16122016_gridjobs_nominalOnly_v1/cp.merged.root")
+ROOT_OUTPUT_DIR = "./raw/dijet/12-01-2017__15:26:26__16122016_gridjobs_nominalOnly_v1/plots"
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/efficiency_plots"
 make_dir(ROOT_OUTPUT_DIR)
@@ -34,15 +34,15 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
             **kwargs):
         super(PlotDataPythiaHerwigEfficiency, self).__init__(**kwargs)
 
+        show_ref = h_data_ref != None
+
         self.h_data = h_data
-        self.h_data_ref = h_data_ref
+        self.h_data_ref = h_data_ref if show_ref else h_data.Clone()
         self.h_pythia = h_pythia
         self.h_herwig = h_herwig
         self.h_sherpa = h_sherpa
 
-        self.h_data_ref.Scale(0.5)
-
-        self.determine_y_axis_title(h_data, "1/#epsilon_{QCD}")
+        self.determine_y_axis_title(h_data, "1/#epsilon_{QCD}", show_binwidth = False)
 
         set_mc_style_marker(self.h_pythia, kRed, shape = 21)
         set_mc_style_marker(self.h_herwig, kBlue, shape = 22)
@@ -59,17 +59,21 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
             self.set_y_max(h)
             h.GetYaxis().SetTitleOffset(2.0)
 
+        if self.log_scale: self.canvas.SetLogy()
+
         self.h_sherpa.Draw("PE1,same")
         self.h_herwig.Draw("PE1,same")
         self.h_pythia.Draw("PE1,same")
         self.h_data.Draw("PE1,same")
-        self.h_data_ref.Draw("hist,same")
+        if (show_ref):
+            self.h_data_ref.Draw("hist,same")
 
         self.leg.AddEntry(self.h_data, "Data 2016")
-        self.leg.AddEntry(self.h_pythia, "Pythia8")
-        self.leg.AddEntry(self.h_herwig, "Herwig++")
-        self.leg.AddEntry(self.h_sherpa, "Sherpa")
-        self.leg.AddEntry(self.h_data_ref, "2015 Tagger Ref.")
+        self.leg.AddEntry(self.h_pythia, "Pythia8 dijet")
+        self.leg.AddEntry(self.h_herwig, "Herwig++ dijet")
+        self.leg.AddEntry(self.h_sherpa, "Sherpa dijet")
+        if (show_ref):
+            self.leg.AddEntry(self.h_data_ref, "2015 Tagger Ref.")
         self.leg.Draw()
 
 DEF_EXTRA_LINES = [
@@ -97,19 +101,22 @@ def make_pt_efficiency_plot(
     h_sherpa_total   = h_sherpa_total_tmp.Rebin(len(BIN_BOUNDS)-1, h_sherpa_total_tmp.GetName()+"_rebinned", BIN_BOUNDS)
 
     passed_name = base_var_name + "_" + tag_name
-    ref_passed_name = base_var_name + "_" + ref_tag_name
+    if (ref_tag_name != None):
+        ref_passed_name = base_var_name + "_" + ref_tag_name
 
     h_data_passed_tmp     = RAW.get_sigsub_data(passed_name)
     h_pythia_passed_tmp   = RAW.get_normalized_dijet("pythia", passed_name)
     h_herwig_passed_tmp   = RAW.get_normalized_dijet("herwig", passed_name)
     h_sherpa_passed_tmp   = RAW.get_normalized_dijet("herwig", passed_name)
-    h_data_passed_ref_tmp = RAW.get_sigsub_data(ref_passed_name)
+    if (ref_tag_name != None):
+        h_data_passed_ref_tmp = RAW.get_sigsub_data(ref_passed_name)
 
     h_data_passed     = h_data_passed_tmp.Rebin(len(BIN_BOUNDS)-1, h_data_passed_tmp.GetName()+"_rebinned", BIN_BOUNDS)
     h_pythia_passed   = h_pythia_passed_tmp.Rebin(len(BIN_BOUNDS)-1, h_pythia_passed_tmp.GetName()+"_rebinned", BIN_BOUNDS)
     h_herwig_passed   = h_herwig_passed_tmp.Rebin(len(BIN_BOUNDS)-1, h_herwig_passed_tmp.GetName()+"_rebinned", BIN_BOUNDS)
     h_sherpa_passed   = h_sherpa_passed_tmp.Rebin(len(BIN_BOUNDS)-1, h_sherpa_passed_tmp.GetName()+"_rebinned", BIN_BOUNDS)
-    h_data_passed_ref = h_data_passed_ref_tmp.Rebin(len(BIN_BOUNDS)-1, h_data_passed_ref_tmp.GetName()+"_rebinned", BIN_BOUNDS)
+    if (ref_tag_name != None):
+        h_data_passed_ref = h_data_passed_ref_tmp.Rebin(len(BIN_BOUNDS)-1, h_data_passed_ref_tmp.GetName()+"_rebinned", BIN_BOUNDS)
 
     # h_data      = None
     # h_data_ref  = None
@@ -122,7 +129,11 @@ def make_pt_efficiency_plot(
         h_data = h_data_total.Clone()
         h_data.Divide(h_data_passed)
         h_data_ref = h_data_total.Clone()
-        h_data_ref.Divide(h_data_passed_ref)
+
+        if (ref_tag_name != None):
+            h_data_ref.Divide(h_data_passed_ref)
+        else:
+            h_data_ref = None
 
         hsys_pythia = TH1SysEff(h_pythia_total, None, h_pythia_passed, None)
         hsys_herwig = TH1SysEff(h_herwig_total, None, h_herwig_passed, None)
@@ -133,7 +144,11 @@ def make_pt_efficiency_plot(
         h_data = h_data_passed.Clone()
         h_data.Divide(h_data_total)
         h_data_ref = h_data_passed_ref.Clone()
-        h_data_ref.Divide(h_data_total)
+
+        if (ref_tag_name != None):
+            h_data_ref.Divide(h_data_total)
+        else:
+            h_data_ref = None
 
         hsys_pythia = TH1SysEff(h_pythia_passed, None, h_pythia_total, None)
         hsys_herwig = TH1SysEff(h_herwig_passed, None, h_herwig_total, None)
@@ -160,53 +175,88 @@ def make_pt_efficiency_plot(
 
 breakdown_plots = [
         make_pt_efficiency_plot(
-            "smooth16Top_MassTau32Tag80eff_MassJSSCut",
-            "smooth16Top_MassTau32Tag80eff_MassJSSCut",
+            "smooth16Top_MassTau32Tag50eff_MassJSSCut",
+            "smooth15Top_MassTau32Tag50eff_MassJSSCut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 50%" ],
-            y_max = 120
+            y_max = 100,
+            ),
+
+        make_pt_efficiency_plot(
+            "smooth16Top_MassTau32Tag80eff_MassJSSCut",
+            "smooth15Top_MassTau32Tag80eff_MassJSSCut",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 80%" ],
+            y_max = 35,
             ),
 
         make_pt_efficiency_plot(
             "smooth16Top_QwTau32Tag50eff",
-            "smooth16Top_QwTau32Tag50eff",
+            "smooth15Top_MassTau32Tag50eff_MassJSSCut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{sig} = 50%" ],
             y_max = 120
             ),
 
         make_pt_efficiency_plot(
+            "smooth16Top_QwTau32Tag80eff",
+            "smooth15Top_MassTau32Tag80eff_MassJSSCut",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{sig} = 80%" ],
+            y_max = 35,
+            ),
+
+        make_pt_efficiency_plot(
             "smooth16Top_Tau32Split23Tag50eff",
-            "smooth16Top_Tau32Split23Tag50eff",
+            "smooth15Top_MassTau32Tag50eff_MassJSSCut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + #sqrt{d_{23}}", "#epsilon_{sig} = 50%" ],
-            y_max = 100
+            y_max = 100,
+            ),
+
+        make_pt_efficiency_plot(
+            "smooth16Top_Tau32Split23Tag80eff",
+            "smooth15Top_MassTau32Tag80eff_MassJSSCut",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + #sqrt{d_{23}}", "#epsilon_{sig} = 80%" ],
+            y_max = 35,
             ),
 
         make_pt_efficiency_plot(
             "smooth16WTag_50eff_MassJSSCut",
-            "smooth16WTag_50eff_MassJSSCut",
+            "smooth15WTag_50eff_MassJSSCut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 50%" ],
             y_max = 160
             ),
 
         make_pt_efficiency_plot(
+            "smooth16WTag_80eff_MassJSSCut",
+            None,
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
+            y_max = 30
+            ),
+
+        make_pt_efficiency_plot(
             "smooth16ZTag_50eff_MassJSSCut",
-            "smooth16ZTag_50eff_MassJSSCut",
+            "smooth15ZTag_50eff_MassJSSCut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 50%" ],
             y_max = 160
             ),
 
         make_pt_efficiency_plot(
-            "BDT_top_qqb_JSSCut",
-            "BDT_top_qqb_JSSCut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth #tau_{32}-Tagged", "#epsilon_{sig} = 50%" ],
-            y_max = 200
+            "smooth16ZTag_80eff_MassJSSCut",
+            None,
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
+            y_max = 30
             ),
 
-        make_pt_efficiency_plot(
-            "BDT_w_JSSCut",
-            "BDT_w_JSSCut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth #tau_{32}-Tagged", "#epsilon_{sig} = 50%" ],
-            y_max = 200
-            ),
+        # make_pt_efficiency_plot(
+        #     "BDT_top_qqb_JSSCut",
+        #     "smooth15Top_MassTau32Tag50eff_MassJSSCut",
+        #     extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth #tau_{32}-Tagged", "#epsilon_{sig} = 50%" ],
+        #     y_max = 200
+        #     ),
+
+        # make_pt_efficiency_plot(
+        #     "BDT_w_JSSCut",
+        #     "smooth15WTag_50eff_MassJSSCut",
+        #     extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth #tau_{32}-Tagged", "#epsilon_{sig} = 50%" ],
+        #     y_max = 200
+        #     ),
 
         ]
 

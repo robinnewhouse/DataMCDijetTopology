@@ -259,7 +259,7 @@ def get_closest_match(full_name, match_dict):
 def set_style_ratio(hist, y_title = "Data/Pred.", y_min = 0.5, y_max = 1.5):
      hist.GetYaxis().SetRangeUser(y_min, y_max)
      hist.GetYaxis().SetNdivisions(504, 0)
-     hist.GetYaxis().SetTitle("Data/Pred.")
+     hist.GetYaxis().SetTitle(y_title)
      hist.GetYaxis().CenterTitle()
 
 class Enumeration(object):

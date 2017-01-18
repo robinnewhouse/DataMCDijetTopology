@@ -28,6 +28,51 @@ class DMDLoader(PlotLoader):
 
         return systematics
 
+    def get_wjets(self, hist_name, branch = "nominal"):
+        h_wjets = self.get_hist(["pythia_wjets", branch] , hist_name)
+        h_wjets.Scale(PYTHIA_SHERPA_WJETS_SF)
+        return h_wjets.Clone()
+
+    def get_zjets(self, hist_name, branch = "nominal"):
+        h_zjets = self.get_hist(["pythia_zjets", branch] , hist_name)
+        h_zjets.Scale(PYTHIA_SHERPA_ZJETS_SF)
+        return h_zjets.Clone()
+
+    def get_ttbar(self, hist_name, branch = "nominal"):
+        h_ttbar = self.get_hist(["ttbar_allhad", branch] , hist_name)
+        return h_ttbar.Clone()
+
+    def get_data(self, hist_name): 
+        h_data = self.get_hist(["data","nominal"], hist_name)
+        return h_data.Clone()
+
+    def get_sigsub_data(self, hist_name):
+        h_data = self.get_data(hist_name)
+        h_wjets = self.get_wjets(hist_name)
+        h_zjets = self.get_zjets(hist_name)
+        h_ttbar = self.get_ttbar(hist_name)
+
+        h_data.Add(h_wjets, -1.0)
+        h_data.Add(h_zjets, -1.0)
+        h_data.Add(h_ttbar, -1.0)
+
+        return h_data.Clone()
+
+    def get_normalized_dijet(self, generator, hist_name, branch = "nominal"):
+        if ("pythia" in generator):
+            h_dijet = self.get_hist(["pythia_dijet", branch], hist_name)
+        elif ("herwig" in generator):
+            h_dijet = self.get_hist(["herwig_dijet", branch], hist_name)
+        elif ("sherpa" in generator):
+            h_dijet = self.get_hist(["sherpa_dijet", branch], hist_name)
+        else: raise
+
+        h_sigsub_data = self.get_sigsub_data(hist_name)
+        dijet_sf = h_sigsub_data.Integral() / h_dijet.Integral()
+        h_dijet.Scale(dijet_sf)
+
+        return h_dijet.Clone()
+
 #############
 ### MC15C ###
 #############
