@@ -115,7 +115,6 @@ void fakeClusterEMScale(const xAOD::CaloClusterContainer* cont)
 std::vector<TChain*> get_branch_tchains(const std::string input_filepath)
 {
         TFile* tmp_tfile = TFile::Open(input_filepath.c_str(), "READ");
-        std::cout << "file ptr: " << tmp_tfile << std::endl;
         TIter next_key(tmp_tfile->GetListOfKeys());
 
         std::vector<std::string> tree_names;

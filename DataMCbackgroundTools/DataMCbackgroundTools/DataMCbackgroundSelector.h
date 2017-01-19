@@ -69,8 +69,7 @@ class DataMCbackgroundSelector : public TSelector {
         std::unique_ptr<JSSWTopTaggerDNN> m_topTagger_DNN_inclusive;
 
         // various maps used for creating tagged histograms
-        std::unordered_map<std::string, bool> smooth15_tag_map;
-        std::unordered_map<std::string, bool> smooth16_tag_map;
+        std::unordered_map<std::string, bool> smooth_tag_map;
         std::unordered_map<std::string, bool> ntrk_prerec_tag_map;
         std::unordered_map<std::string, bool> SD_nominal_tag_map;
         std::unordered_map<std::string, bool> SD_systematic_tag_map;

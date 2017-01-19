@@ -425,31 +425,39 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_Tau32_wta.at(i)->fill_tagged("_combMgt100GeV", rljet_Tau32_wta->at(i), weight, rljet_m_comb->at(i) / 1000. > 100.);
 
         // SMOOTHED SUBSTRUCTURE TAGGERS
-        smooth16_tag_map["smooth16Top_Tau32Split23Tag50eff"] = rljet_smooth16Top_Tau32Split23Tag50eff->at(i) == 3;
-        smooth16_tag_map["smooth16Top_Tau32Split23Tag80eff"] = rljet_smooth16Top_Tau32Split23Tag80eff->at(i) == 3;
-        smooth16_tag_map["smooth16Top_QwTau32Tag50eff"] = rljet_smooth16Top_QwTau32Tag50eff->at(i) == 3;
-        smooth16_tag_map["smooth16Top_QwTau32Tag80eff"] = rljet_smooth16Top_QwTau32Tag80eff->at(i) == 3;
-        smooth16_tag_map["smooth16Top_MassTau32Tag50eff_JSSCut"] = rljet_smooth16Top_MassTau32Tag50eff->at(i) == 3 || rljet_smooth16Top_MassTau32Tag50eff->at(i) == 2;
-        smooth16_tag_map["smooth16Top_MassTau32Tag80eff_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag80eff->at(i) == 3;
+        smooth_tag_map["smooth16Top_Tau32Split23Tag50eff"] = rljet_smooth16Top_Tau32Split23Tag50eff->at(i) == 3;
+        smooth_tag_map["smooth16Top_Tau32Split23Tag80eff"] = rljet_smooth16Top_Tau32Split23Tag80eff->at(i) == 3;
+        smooth_tag_map["smooth16Top_QwTau32Tag50eff"] = rljet_smooth16Top_QwTau32Tag50eff->at(i) == 3;
+        smooth_tag_map["smooth16Top_QwTau32Tag80eff"] = rljet_smooth16Top_QwTau32Tag80eff->at(i) == 3;
+        smooth_tag_map["smooth16Top_MassTau32Tag50eff_JSSCut"] = rljet_smooth16Top_MassTau32Tag50eff->at(i) == 3 || rljet_smooth16Top_MassTau32Tag50eff->at(i) == 2;
+        smooth_tag_map["smooth16Top_MassTau32Tag50eff_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag50eff->at(i) == 3;
+        smooth_tag_map["smooth16Top_MassTau32Tag80eff_JSSCut"] = rljet_smooth16Top_MassTau32Tag80eff->at(i) == 3 || rljet_smooth16Top_MassTau32Tag80eff->at(i) == 2;
+        smooth_tag_map["smooth16Top_MassTau32Tag80eff_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag80eff->at(i) == 3;
 
-        smooth16_tag_map["smooth16WTag_50eff_JSSCut"] = rljet_smooth16WTag_50eff->at(i) == 1 || rljet_smooth16WTag_50eff->at(i) == 16 || rljet_smooth16WTag_50eff->at(i) == 4;
-        smooth16_tag_map["smooth16WTag_50eff_MassJSSCut"] = rljet_smooth16WTag_50eff->at(i) == 1;
-        smooth16_tag_map["smooth16WTag_80eff_JSSCut"] = rljet_smooth16WTag_80eff->at(i) == 1 || rljet_smooth16WTag_80eff->at(i) == 16 || rljet_smooth16WTag_80eff->at(i) == 4;
-        smooth16_tag_map["smooth16WTag_80eff_MassJSSCut"] = rljet_smooth16WTag_80eff->at(i) == 1;
-        smooth16_tag_map["smooth16ZTag_50eff_JSSCut"] = rljet_smooth16ZTag_50eff->at(i) == 1 || rljet_smooth16ZTag_50eff->at(i) == 16 || rljet_smooth16ZTag_50eff->at(i) == 4;
-        smooth16_tag_map["smooth16ZTag_50eff_MassJSSCut"] = rljet_smooth16ZTag_50eff->at(i) == 1;
-        smooth16_tag_map["smooth16ZTag_80eff_JSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 1 || rljet_smooth16ZTag_80eff->at(i) == 16 || rljet_smooth16ZTag_80eff->at(i) == 4;
-        smooth16_tag_map["smooth16ZTag_80eff_MassJSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 1;
+        smooth_tag_map["smooth16WTag_50eff_JSSCut"] = rljet_smooth16WTag_50eff->at(i) == 1 || rljet_smooth16WTag_50eff->at(i) == 16 || rljet_smooth16WTag_50eff->at(i) == 4;
+        smooth_tag_map["smooth16WTag_50eff_MassJSSCut"] = rljet_smooth16WTag_50eff->at(i) == 1;
+        smooth_tag_map["smooth16WTag_80eff_JSSCut"] = rljet_smooth16WTag_80eff->at(i) == 1 || rljet_smooth16WTag_80eff->at(i) == 16 || rljet_smooth16WTag_80eff->at(i) == 4;
+        smooth_tag_map["smooth16WTag_80eff_MassJSSCut"] = rljet_smooth16WTag_80eff->at(i) == 1;
+        smooth_tag_map["smooth16ZTag_50eff_JSSCut"] = rljet_smooth16ZTag_50eff->at(i) == 1 || rljet_smooth16ZTag_50eff->at(i) == 16 || rljet_smooth16ZTag_50eff->at(i) == 4;
+        smooth_tag_map["smooth16ZTag_50eff_MassJSSCut"] = rljet_smooth16ZTag_50eff->at(i) == 1;
+        smooth_tag_map["smooth16ZTag_80eff_JSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 1 || rljet_smooth16ZTag_80eff->at(i) == 16 || rljet_smooth16ZTag_80eff->at(i) == 4;
+        smooth_tag_map["smooth16ZTag_80eff_MassJSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 1;
 
-        for (const auto& itag : smooth16_tag_map) {
+        smooth_tag_map["smooth15WTag_50eff_JSSCut"    ] = rljet_smooth15WTag_50eff->at(i) == 1 || rljet_smooth15WTag_50eff->at(i) == 3;
+        smooth_tag_map["smooth15WTag_50eff_MassJSSCut"] = rljet_smooth15WTag_50eff->at(i) == 3;
+        smooth_tag_map["smooth15ZTag_50eff_JSSCut"    ] = rljet_smooth15ZTag_50eff->at(i) == 1 || rljet_smooth15ZTag_50eff->at(i) == 3;
+        smooth_tag_map["smooth15ZTag_50eff_MassJSSCut"] = rljet_smooth15ZTag_50eff->at(i) == 3;
+
+        smooth_tag_map["smooth15Top_MassTau32Tag50eff_MassJSSCut" ] = rljet_smooth15Top_MassTau32Tag50eff->at(i) == 3;
+        smooth_tag_map["smooth15Top_MassTau32Tag80eff_MassJSSCut" ] = rljet_smooth15Top_MassTau32Tag80eff->at(i) == 3;
+
+        for (const auto& itag : smooth_tag_map) {
             hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
             hp->h_rljet_pt_comb.at(i)->fill_tagged(itag.first, rljet_pt_comb->at(i)/1000., weight, itag.second);
-
-            // const bool pass_ntrk_cut = rljet_ungroomed_ntrk500->at(i) >= 1 && rljet_ungroomed_ntrk500->at(i) < 30;
-            // if (pass_ntrk_cut) {
-            //     hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first + "_NtrkCut", rljet_m_comb->at(i)/1000., weight, itag.second);
-            // }
+            hp->h_rljet_m_calo.at(i)->fill_tagged(itag.first, rljet_m_calo->at(i)/1000., weight, itag.second);
+            hp->h_rljet_pt_calo.at(i)->fill_tagged(itag.first, rljet_pt_calo->at(i)/1000., weight, itag.second);
         }
+
     }
 
     /*********************************************************/
@@ -545,7 +553,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         /***************/
 
         const bool IS_GOOD_MVA_JET =
-            rljet_m_comb->at(i) / 1000. > 40.
+            rljet_m_calo->at(i) / 1000. > 40.
             && rljet_D2->at(i) > 0
             && C2 > 0
             && Tau32_wta > 0
@@ -562,10 +570,10 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             xAOD::Jet* mva_jet = new xAOD::Jet();
             mva_jet->makePrivateStore();
 
-            mva_jet->setAttribute<float>("pt"  , rljet_pt_comb->at(i));
+            mva_jet->setAttribute<float>("pt"  , rljet_pt_calo->at(i));
             mva_jet->setAttribute<float>("eta" , rljet_eta->at(i));
             mva_jet->setAttribute<float>("phi" , rljet_phi->at(i));
-            mva_jet->setAttribute<float>("m"   , rljet_m_comb->at(i));
+            mva_jet->setAttribute<float>("m"   , rljet_m_calo->at(i));
 
             mva_jet->setAttribute<float>("C2"           , C2);
             mva_jet->setAttribute<float>("Angularity"   , rljet_Angularity->at(i));
@@ -595,29 +603,75 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             mva_jet->setAttribute<float>("ThrustMin"    , rljet_ThrustMin->at(i));
             mva_jet->setAttribute<float>("ZCut12"       , rljet_ZCut12->at(i));
 
+            // std::cout << "C2:" << mva_jet->getAttribute<float>("C2") << std::endl;
+            // std::cout << "Angularity:" << mva_jet->getAttribute<float>("Angularity") << std::endl;
+            // std::cout << "Aplanarity:" << mva_jet->getAttribute<float>("Aplanarity") << std::endl;
+            // std::cout << "D2:" << mva_jet->getAttribute<float>("D2") << std::endl;
+            // std::cout << "Dip12:" << mva_jet->getAttribute<float>("Dip12") << std::endl;
+            // std::cout << "ECF1:" << mva_jet->getAttribute<float>("ECF1") << std::endl;
+            // std::cout << "ECF2:" << mva_jet->getAttribute<float>("ECF2") << std::endl;
+            // std::cout << "ECF3:" << mva_jet->getAttribute<float>("ECF3") << std::endl;
+            // std::cout << "FoxWolfram0:" << mva_jet->getAttribute<float>("FoxWolfram0") << std::endl;
+            // std::cout << "FoxWolfram2:" << mva_jet->getAttribute<float>("FoxWolfram2") << std::endl;
+            // std::cout << "FoxWolfram20:" << mva_jet->getAttribute<float>("FoxWolfram20") << std::endl;
+            // std::cout << "KtDR:" << mva_jet->getAttribute<float>("KtDR") << std::endl;
+            // std::cout << "Mu12:" << mva_jet->getAttribute<float>("Mu12") << std::endl;
+            // std::cout << "PlanarFlow:" << mva_jet->getAttribute<float>("PlanarFlow") << std::endl;
+            // std::cout << "Qw:" << mva_jet->getAttribute<float>("Qw") << std::endl;
+            // std::cout << "Sphericity:" << mva_jet->getAttribute<float>("Sphericity") << std::endl;
+            // std::cout << "Split12:" << mva_jet->getAttribute<float>("Split12") << std::endl;
+            // std::cout << "Split23:" << mva_jet->getAttribute<float>("Split23") << std::endl;
+            // std::cout << "Split34:" << mva_jet->getAttribute<float>("Split34") << std::endl;
+            // std::cout << "Tau1_wta:" << mva_jet->getAttribute<float>("Tau1_wta") << std::endl;
+            // std::cout << "Tau21_wta:" << mva_jet->getAttribute<float>("Tau21_wta") << std::endl;
+            // std::cout << "Tau2_wta:" << mva_jet->getAttribute<float>("Tau2_wta") << std::endl;
+            // std::cout << "Tau32_wta:" << mva_jet->getAttribute<float>("Tau32_wta") << std::endl;
+            // std::cout << "Tau3_wta:" << mva_jet->getAttribute<float>("Tau3_wta") << std::endl;
+            // std::cout << "ThrustMaj:" << mva_jet->getAttribute<float>("ThrustMaj") << std::endl;
+            // std::cout << "ThrustMin:" << mva_jet->getAttribute<float>("ThrustMin") << std::endl;
+            // std::cout << "ZCut12:" << mva_jet->getAttribute<float>("ZCut12") << std::endl;
+            // std::cout << std::endl
+
+			const bool CLEAN = rljet_Dip12->at(i) > 0;
+
             const int BDT_top_qqb_result = static_cast<int>(m_topTagger_BDT_qqb->result(*mva_jet));
             hp->h_rljet_BDT_score.at(i)->fill_tagged("top_qqb", m_topTagger_BDT_qqb->getBDTScore(), weight, true);
+            hp->h_rljet_BDT_score.at(i)->fill_tagged("top_qqb_CLEAN", m_topTagger_BDT_qqb->getBDTScore(), weight, CLEAN);
 
             const int BDT_top_inclusive_result = static_cast<int>(m_topTagger_BDT_inclusive->result(*mva_jet));
             hp->h_rljet_BDT_score.at(i)->fill_tagged("top_inclusive", m_topTagger_BDT_inclusive->getBDTScore(), weight, true);
+            hp->h_rljet_BDT_score.at(i)->fill_tagged("top_inclusive_CLEAN", m_topTagger_BDT_inclusive->getBDTScore(), weight, CLEAN);
 
             const int BDT_w_result = static_cast<int>(m_wTagger_BDT->result(*mva_jet));
             hp->h_rljet_BDT_score.at(i)->fill_tagged("w", m_wTagger_BDT->getBDTScore(), weight, true);
+            hp->h_rljet_BDT_score.at(i)->fill_tagged("w_CLEAN", m_wTagger_BDT->getBDTScore(), weight, CLEAN);
 
-            mva_tag_map["BDT_top_qqb_JSSCut"]           = rljet_m_comb->at(i) / 1000. > 100 && (BDT_top_qqb_result == 0 || BDT_top_qqb_result == 1);
-            mva_tag_map["BDT_top_qqb_MassJSSCut"]       = rljet_m_comb->at(i) / 1000. > 100 && BDT_top_qqb_result == 0;
-            mva_tag_map["BDT_top_inclusive_JSSCut"]     = rljet_m_comb->at(i) / 1000. > 100 && (BDT_top_inclusive_result == 0 || BDT_top_inclusive_result == 1);
-            mva_tag_map["BDT_top_inclusive_MassJSSCut"] = rljet_m_comb->at(i) / 1000. > 100 && BDT_top_inclusive_result == 0;
-            mva_tag_map["BDT_w_JSSCut"]                 = rljet_m_comb->at(i) / 1000. > 40 && (BDT_w_result == 0 || BDT_w_result == 1);
-            mva_tag_map["BDT_w_MassJSSCut"]             = rljet_m_comb->at(i) / 1000. > 40 && BDT_w_result == 0;
+            mva_tag_map["BDT_top_qqb_JSSCut"]           =  (BDT_top_qqb_result == 0 || BDT_top_qqb_result == 1);
+            mva_tag_map["BDT_top_qqb_MassJSSCut"]       =  BDT_top_qqb_result == 0;
+            mva_tag_map["BDT_top_inclusive_JSSCut"]     =  (BDT_top_inclusive_result == 0 || BDT_top_inclusive_result == 1);
+            mva_tag_map["BDT_top_inclusive_MassJSSCut"] =  BDT_top_inclusive_result == 0;
+            mva_tag_map["BDT_w_JSSCut"]                 =  (BDT_w_result == 0 || BDT_w_result == 1);
+            mva_tag_map["BDT_w_MassJSSCut"]             =  BDT_w_result == 0;
+
+            const float DNN_top_qqb_score = m_topTagger_DNN_qqb->getScore(*mva_jet);
+            const float DNN_top_inclusive_score = m_topTagger_DNN_inclusive->getScore(*mva_jet);
+            hp->h_rljet_DNN_score.at(i)->fill_tagged("top_qqb"       , DNN_top_qqb_score       , weight , true);
+            hp->h_rljet_DNN_score.at(i)->fill_tagged("top_qqb_CLEAN"       , DNN_top_qqb_score       , weight , CLEAN);
+            hp->h_rljet_DNN_score.at(i)->fill_tagged("top_inclusive" , DNN_top_inclusive_score , weight , true);
+            hp->h_rljet_DNN_score.at(i)->fill_tagged("top_inclusive_CLEAN" , DNN_top_inclusive_score , weight , CLEAN);
+
+            // const int DNN_top_qqb_result = static_cast<int>(m_topTagger_DNN_qqb->result(*mva_jet));
+            // const int DNN_top_inclusive_result = static_cast<int>(m_topTagger_DNN_inclusive->result(*mva_jet));
+
+            // mva_tag_map["DNN_top_qqb_MassJSSCut"]       = DNN_top_qqb_result == 1;
+            // mva_tag_map["DNN_top_inclusive_MassJSSCut"] = DNN_top_inclusive_result == 1;
 
             for (const auto& itag : mva_tag_map) {
                 hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
+                hp->h_rljet_m_calo.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
                 hp->h_rljet_pt_comb.at(i)->fill_tagged(itag.first, rljet_pt_comb->at(i)/1000., weight, itag.second);
+                hp->h_rljet_pt_calo.at(i)->fill_tagged(itag.first, rljet_pt_comb->at(i)/1000., weight, itag.second);
             }
-
-            hp->h_rljet_DNN_score.at(i)->fill_tagged("top_qqb", m_topTagger_DNN_qqb->getScore(*mva_jet), weight, true);
-            hp->h_rljet_DNN_score.at(i)->fill_tagged("top_inclusive", m_topTagger_DNN_inclusive->getScore(*mva_jet), weight, true);
 
             delete mva_jet;
         }
