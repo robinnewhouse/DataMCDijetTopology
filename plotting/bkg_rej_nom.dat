@@ -1,0 +1,53 @@
+
+Applying ATLAS style settings...
+
+smooth16Top_MassTau32Tag50eff_MassJSSCut
+data:  (40.99, 0.04)
+pythia:  (41.0, 0.2)
+herwig:  (41.0, 0.5)
+sherpa:  (41.0, 0.5)
+smooth16Top_MassTau32Tag80eff_MassJSSCut
+data:  (13.244, 0.008)
+pythia:  (13.24, 0.05)
+herwig:  (13.24, 0.09)
+sherpa:  (13.24, 0.1)
+smooth16Top_QwTau32Tag50eff
+data:  (57.11, 0.07)
+pythia:  (57.1, 0.4)
+herwig:  (57.1, 1.0)
+sherpa:  (57.1, 1.0)
+smooth16Top_QwTau32Tag80eff
+data:  (16.07, 0.01)
+pythia:  (16.07, 0.06)
+herwig:  (16.1, 0.1)
+sherpa:  (16.1, 0.1)
+smooth16Top_Tau32Split23Tag50eff
+data:  (50.72, 0.06)
+pythia:  (50.7, 0.3)
+herwig:  (50.7, 0.8)
+sherpa:  (50.7, 0.8)
+smooth16Top_Tau32Split23Tag80eff
+data:  (14.477, 0.009)
+pythia:  (14.48, 0.05)
+herwig:  (14.5, 0.1)
+sherpa:  (14.5, 0.1)
+smooth16WTag_50eff_MassJSSCut
+data:  (70.8, 0.1)
+pythia:  (70.8, 0.5)
+herwig:  (70.8, 0.9)
+sherpa:  (70.8, 0.9)
+smooth16WTag_80eff_MassJSSCut
+data:  (12.574, 0.008)
+pythia:  (12.57, 0.04)
+herwig:  (12.57, 0.07)
+sherpa:  (12.57, 0.08)
+smooth16ZTag_50eff_MassJSSCut
+data:  (59.03, 0.08)
+pythia:  (59.0, 0.6)
+herwig:  (59.0, 0.7)
+sherpa:  (59.0, 0.7)
+smooth16ZTag_80eff_MassJSSCut
+data:  (10.92, 0.006)
+pythia:  (10.92, 0.03)
+herwig:  (10.92, 0.06)
+sherpa:  (10.92, 0.06)

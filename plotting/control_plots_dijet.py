@@ -199,6 +199,7 @@ class PlotDataPythiaHerwig(PlotBase):
         self.h_pythia_sys_ratio.Divide(self.h_data, self.h_pythia_sys_ratio, 1, 1, "")
 
         self.h_pythia_stat_ratio = self.h_pythia_dijet_ratio.Clone("h_pythia_stat_ratio")
+        self.h_pythia_stat_ratio.SetFillColor(kGray)
 
         # center the stat. and syst. errors around data/mc ratio = 1.0
         for ibin in range(self.h_pythia_sys_ratio.GetSize()):
@@ -206,7 +207,7 @@ class PlotDataPythiaHerwig(PlotBase):
             self.h_pythia_stat_ratio.SetBinContent(ibin, 1.0)
 
         ratio_title = "#frac{Data}{MC(sig. + bkg.)}"
-        for h_ratio in [self.h_pythia_dijet_ratio, self.h_herwig_dijet_ratio, self.h_sherpa_dijet_ratio, self.h_pythia_sys_ratio]:
+        for h_ratio in [self.h_pythia_dijet_ratio, self.h_herwig_dijet_ratio, self.h_sherpa_dijet_ratio, self.h_pythia_sys_ratio, self.h_pythia_stat_ratio]:
             set_style_ratio(h_ratio, y_title = ratio_title)
             h_ratio.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
             self.set_x_axis_bounds(h_ratio)
@@ -248,7 +249,7 @@ class PlotDataPythiaHerwig(PlotBase):
         self.h_pythia_sys_ratio.SetMarkerSize(0)
         self.h_pythia_stat_ratio.SetMarkerSize(0)
         self.h_pythia_sys_ratio.SetFillColor(kGreen-8)
-        self.h_pythia_stat_ratio.SetFillColor(kGreen-5)
+        #self.h_pythia_stat_ratio.SetFillColor(kGreen-5)
 
         self.h_pythia_stat_ratio.SetFillStyle(1001)
         self.h_pythia_stat_ratio.SetLineWidth(0)
@@ -302,9 +303,9 @@ class PlotDataPythiaHerwig(PlotBase):
         self.leg.AddEntry(h_wjets_mag, "W+jets (#times " + '{0:.0f}'.format(self.wzjets_sf) + ")"  )
         self.leg.AddEntry(h_zjets_mag, "Z+jets (#times " + '{0:.0f}'.format(self.wzjets_sf) + ")" )
         self.leg.AddEntry(h_ttbar_mag, "all-had t#bar{t} (#times " + '{0:.0f}'.format(self.ttbar_sf) + ")" )
+        self.leg.AddEntry(self.h_pythia_stat_ratio, "Stat. uncert.")
         if (self.hsys_pythia.num_systematics != 0):
             self.leg.AddEntry(self.h_pythia_sys_ratio, "Stat. #oplus syst. uncert.")
-            self.leg.AddEntry(self.h_pythia_stat_ratio, "Stat. uncert.")
         self.leg.Draw()
 
         self.pad2.cd()
@@ -312,7 +313,7 @@ class PlotDataPythiaHerwig(PlotBase):
         #self.h_herwig_sys_ratio.Draw("E2,same")
         if (self.hsys_pythia.num_systematics != 0):
             self.h_pythia_sys_ratio.Draw("E2,same")
-            self.h_pythia_stat_ratio.Draw("E2,same")
+        self.h_pythia_stat_ratio.Draw("E2,same")
         self.h_pythia_dijet_ratio.Draw("hist,same")
         self.h_herwig_dijet_ratio.Draw("hist,same")
         self.h_sherpa_dijet_ratio.Draw("hist,same")
@@ -396,10 +397,10 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "SDt_win50_btag0
         empty_scale = 2.5,
         extra_legend_lines = DEF_LINES,
         y_min = 0,
-        x_min = 0,
-        x_max = 400,
-        ttbar_sf = 10,
-        rebin = MASS_PLOT_REBIN,
+        x_min = 50,
+        x_max = 300,
+        ttbar_sf = 5,
+        rebin = 4,
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "SDw_win20_btag0",
@@ -407,9 +408,10 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "SDw_win20_btag0
         extra_legend_lines = DEF_LINES,
         y_min = 0,
         x_min = 0,
-        x_max = 400,
-        ttbar_sf = 10,
-        rebin = MASS_PLOT_REBIN,
+        x_max = 150,
+        ttbar_sf = 15,
+        wzjets_sf = 15,
+        rebin = 4,
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "SDz_win20_btag0",
@@ -417,9 +419,10 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "SDz_win20_btag0
         extra_legend_lines = DEF_LINES,
         y_min = 0,
         x_min = 0,
-        x_max = 400,
-        ttbar_sf = 10,
-        rebin = MASS_PLOT_REBIN,
+        x_max = 150,
+        ttbar_sf = 15,
+        wzjets_sf = 15,
+        rebin = 4,
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "smooth16Top_MassTau32Tag50eff_JSSCut",
@@ -533,6 +536,7 @@ data_mc_plots += [
             empty_scale = 1.7,
             extra_legend_lines = DEF_LINES,
             x_max = 400,
+            log_scale = True,
             rebin = MASS_PLOT_REBIN,
             y_min = 0.01,
             ),
@@ -740,6 +744,7 @@ data_mc_plots += [
             y_min = 0.01,
             rebin = 4,
             extra_legend_lines = ["HTT Top Candidate"],
+            ttbar_sf = 40,
             empty_scale = 1.5
             ),
 
@@ -747,6 +752,8 @@ data_mc_plots += [
             is_htt = True,
             x_min = 0.2,
             x_max = 1.3,
+            y_max = 250e3,
+            ttbar_sf = 30,
             rebin = 4,
             x_units = "",
             extra_legend_lines = ["HTT Top Candidate"],
@@ -757,7 +764,9 @@ data_mc_plots += [
             is_htt = True,
             x_min = 140,
             x_max = 210,
+            y_min = 0.01,
             extra_legend_lines = ["HTT Top Candidate"],
+            ttbar_sf = 15,
             rebin = 2,
             empty_scale = 1.9
             ),

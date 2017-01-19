@@ -3,6 +3,9 @@ from math import *
 import array as arr
 import os
 
+def round_to_1(x):
+    return round(x, -int(floor(log10(abs(x)))))
+
 def get_systematics_dict(raw_loader, gen_name, var_name, systematic_list):
     systematics = {}
     for acro in systematic_list:

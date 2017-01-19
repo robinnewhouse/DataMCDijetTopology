@@ -12,6 +12,8 @@ from plot_dmd import *
 from plot_loader import *
 from plot_systematics import *
 
+WRITE_PLOTS = False
+
 gROOT.SetBatch()
 sane_defaults()
 TGaxis.SetMaxDigits(4)
@@ -22,6 +24,41 @@ ROOT_OUTPUT_DIR = "./raw/dijet/12-01-2017__15:26:26__16122016_gridjobs_nominalOn
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/efficiency_plots"
 make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
+
+
+def calculate_efficiency(h_tagged, h_inclusive):
+    assert(h_tagged.GetSize() == h_inclusive.GetSize())
+
+    integral_lower_bound = 1 # ignore underflow
+    integral_upper_bound = h_inclusive.GetSize()+1
+
+    tagged_err, inclusive_err = Double(), Double()
+
+    tagged_count = h_tagged.IntegralAndError(integral_lower_bound,
+            integral_upper_bound, tagged_err)
+
+    inclusive_count = h_inclusive.IntegralAndError(integral_lower_bound,
+            integral_upper_bound, inclusive_err)
+
+    nominal_efficiency = tagged_count / inclusive_count
+
+    total_err = nominal_efficiency * sqrt(
+            (tagged_err / tagged_count)**2 + (inclusive_err / inclusive_count)**2
+            )
+
+
+    return nominal_efficiency, total_err
+
+def calculate_rejection(h_tagged, h_inclusive):
+    eff, eff_err = calculate_efficiency(h_tagged, h_inclusive)
+    rej = 1.0 / eff
+    rej_err = (1.0 / eff**2) * eff_err
+
+    sig_figs = -int(floor(log10(abs(rej_err))))
+    rej = round(rej, sig_figs)
+    rej_err = round(rej_err, sig_figs)
+
+    return rej, rej_err
 
 class PlotDataPythiaHerwigEfficiency(PlotBase):
     def __init__(
@@ -76,6 +113,7 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
             self.leg.AddEntry(self.h_data_ref, "2015 Tagger Ref.")
         self.leg.Draw()
 
+
 DEF_EXTRA_LINES = [
             "Trimmed anti-#it{k_{t}} #it{R}=1.0",
             "Dijet Selection"
@@ -118,12 +156,12 @@ def make_pt_efficiency_plot(
     if (ref_tag_name != None):
         h_data_passed_ref = h_data_passed_ref_tmp.Rebin(len(BIN_BOUNDS)-1, h_data_passed_ref_tmp.GetName()+"_rebinned", BIN_BOUNDS)
 
-    # h_data      = None
-    # h_data_ref  = None
-    # hsys_pythia = None
-    # hsys_herwig = None
-    # hsys_sherpa = None
-    # eff_name    = None
+    print(tag_name)
+    print "data: ", calculate_rejection(h_data_passed, h_data_total)
+    print "pythia: ", calculate_rejection(h_pythia_passed, h_pythia_total)
+    print "herwig: ", calculate_rejection(h_herwig_passed, h_herwig_total)
+    print "sherpa: ", calculate_rejection(h_sherpa_passed, h_sherpa_total)
+    print ""
 
     if rejection:
         h_data = h_data_total.Clone()
@@ -242,23 +280,10 @@ breakdown_plots = [
             None,
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
             y_max = 30
-            ),
-
-        # make_pt_efficiency_plot(
-        #     "BDT_top_qqb_JSSCut",
-        #     "smooth15Top_MassTau32Tag50eff_MassJSSCut",
-        #     extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth #tau_{32}-Tagged", "#epsilon_{sig} = 50%" ],
-        #     y_max = 200
-        #     ),
-
-        # make_pt_efficiency_plot(
-        #     "BDT_w_JSSCut",
-        #     "smooth15WTag_50eff_MassJSSCut",
-        #     extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth #tau_{32}-Tagged", "#epsilon_{sig} = 50%" ],
-        #     y_max = 200
-        #     ),
+            )
 
         ]
 
-for i in range(len(breakdown_plots)):
-    breakdown_plots[i].print_to_file(OUTPUT_DIR + "/" + breakdown_plots[i].name + ".pdf")
+if (WRITE_PLOTS):
+    for i in range(len(breakdown_plots)):
+        breakdown_plots[i].print_to_file(OUTPUT_DIR + "/" + breakdown_plots[i].name + ".pdf")
