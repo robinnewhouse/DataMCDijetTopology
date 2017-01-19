@@ -3,7 +3,7 @@ set -e
 
 #DRY_RUN=true
 
-DESCRIPTION="16122016_gridjobs_leakfixed_v0"
+DESCRIPTION="16122016_gridjobs_nominalOnly_v1"
 
 INPUT_DIR=/eos/atlas/atlascerngroupdisk/perf-jets/JSS/TopBosonTagAnalysis2016/NTuples_DataMC_dijets/20161216
 OUTPUT_DIR_BASE=/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/plotting/raw/dijet

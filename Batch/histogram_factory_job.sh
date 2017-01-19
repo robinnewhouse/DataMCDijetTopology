@@ -25,7 +25,7 @@ cd /afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/
 lsetup 'rcsetup -u'
 lsetup rcsetup
 
-job_cmd="histogram-factory -i $INPUT_FILE -o $OUTPUT_FILE -t $DATA_TRIGGER -L $LUMINOSITY -E $EVENT_SELECTOR -p $SAMPLE_TYPE -S"
+job_cmd="histogram-factory -i $INPUT_FILE -o $OUTPUT_FILE -t $DATA_TRIGGER -L $LUMINOSITY -E $EVENT_SELECTOR -p $SAMPLE_TYPE"
 
 #echo $job_cmd
 eval $job_cmd
