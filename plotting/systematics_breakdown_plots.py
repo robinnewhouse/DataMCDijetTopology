@@ -89,7 +89,7 @@ BREAKDOWN_SYSTEMATICS = SYSTEMATICS_MC15C_MEDIUM_SUBSTRUCTURE + SYSTEMATICS_MC15
 
 def make_pythia_systematics_breakdown_plot(var_name, **kwargs):
     h_nominal = RAW.get_hist(["pythia_dijet","nominal"], var_name)
-    sys_dict = RAW.get_systematics_dict(var_name, BREAKDOWN_SYSTEMATICS, ["pythia_dijet"])
+    sys_dict  = RAW.get_systematics_dict(var_name, BREAKDOWN_SYSTEMATICS, ["pythia_dijet"])
     return PlotPythiaSystematicsBreakdown(
             TH1Sys(h_nominal, sys_dict),
             name = var_name + "_sys_breakdown",

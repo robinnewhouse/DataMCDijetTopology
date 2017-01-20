@@ -12,21 +12,40 @@ from plot_dmd import *
 from plot_loader import *
 from plot_systematics import *
 
-WRITE_PLOTS = False
+WRITE_PLOTS = True
+BIN_BOUNDS = array.array('d', [
+    450,
+    500,
+    550,
+    600,
+    700,
+    800,
+    900,
+    1000,
+    1100,
+    1200,
+    1300,
+    1400,
+    1500,
+    1700,
+    2000,
+    2500]
+    )
+TOTAL_VAR_NAME = "h_rljet0_pt_comb"
 
 gROOT.SetBatch()
 sane_defaults()
 TGaxis.SetMaxDigits(4)
 
-RAW = DMDLoader("./raw/dijet/12-01-2017__15:26:26__16122016_gridjobs_nominalOnly_v1/cp.merged.root")
-ROOT_OUTPUT_DIR = "./raw/dijet/12-01-2017__15:26:26__16122016_gridjobs_nominalOnly_v1/plots"
+CP_ROOT_FILEPATH = "./raw/dijet/12-01-2017__15:26:26__16122016_gridjobs_nominalOnly_v1/cp.merged.root"
+RAW = DMDLoader(CP_ROOT_FILEPATH)
+ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/efficiency_plots"
 make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
 
-
-def calculate_efficiency(h_tagged, h_inclusive):
+def calculate_inclusive_efficiency(h_tagged, h_inclusive):
     assert(h_tagged.GetSize() == h_inclusive.GetSize())
 
     integral_lower_bound = 1 # ignore underflow
@@ -46,11 +65,10 @@ def calculate_efficiency(h_tagged, h_inclusive):
             (tagged_err / tagged_count)**2 + (inclusive_err / inclusive_count)**2
             )
 
-
     return nominal_efficiency, total_err
 
-def calculate_rejection(h_tagged, h_inclusive):
-    eff, eff_err = calculate_efficiency(h_tagged, h_inclusive)
+def calculate_inclusive_rejection(h_tagged, h_inclusive):
+    eff, eff_err = calculate_inclusive_efficiency(h_tagged, h_inclusive)
     rej = 1.0 / eff
     rej_err = (1.0 / eff**2) * eff_err
 
@@ -60,26 +78,58 @@ def calculate_rejection(h_tagged, h_inclusive):
 
     return rej, rej_err
 
+def rej_rebin(h):
+    return h.Rebin(len(BIN_BOUNDS)-1, h.GetName()+"_rebinned", BIN_BOUNDS)
+
+def get_sys_dict_eff(gen_name, var_name):
+    dict = {}
+    dict["sig_sf"] = {}
+    dict["sig_sf"]["up"] = rej_rebin(RAW.get_normalized_dijet(gen_name, var_name, sig_sf = 1.5))
+    dict["sig_sf"]["down"] = rej_rebin(RAW.get_normalized_dijet(gen_name, var_name, sig_sf = 0.5))
+    return dict
+
+def make_rej_TH1SysEff(gen_name, tag_name):
+    is_data = "data" in gen_name
+    passed_var_name = TOTAL_VAR_NAME + "_" + tag_name
+
+    h_total = rej_rebin(
+            RAW.get_sigsub_data(TOTAL_VAR_NAME)
+            if is_data
+            else RAW.get_normalized_dijet(gen_name, TOTAL_VAR_NAME)
+            )
+
+    h_passed = rej_rebin(
+            RAW.get_sigsub_data(passed_var_name)
+            if is_data
+            else RAW.get_normalized_dijet(gen_name, passed_var_name)
+            )
+
+    if (is_data):
+        h_total.Divide(h_passed)
+        return h_total.Clone()
+    else:
+        total_sys_dict = get_sys_dict_eff(gen_name, TOTAL_VAR_NAME) 
+        passed_sys_dict = get_sys_dict_eff(gen_name, passed_var_name) 
+        return TH1SysEff(h_total, total_sys_dict, h_passed, passed_sys_dict)
+
 class PlotDataPythiaHerwigEfficiency(PlotBase):
-    def __init__(
-            self,
-            h_data,
-            h_data_ref,
-            h_pythia,
-            h_herwig,
-            h_sherpa,
-            **kwargs):
+    def __init__(self, histos, **kwargs):
         super(PlotDataPythiaHerwigEfficiency, self).__init__(**kwargs)
 
-        show_ref = h_data_ref != None
+        show_ref = "data_ref" in histos
 
-        self.h_data = h_data
-        self.h_data_ref = h_data_ref if show_ref else h_data.Clone()
-        self.h_pythia = h_pythia
-        self.h_herwig = h_herwig
-        self.h_sherpa = h_sherpa
+        self.h_data      = histos["data"]
+        self.h_data_ref  = histos["data_ref"] if show_ref else self.h_data.Clone()
+        self.hsys_pythia = histos["pythia"]
+        self.h_pythia = histos["pythia"].h_nominal
+        self.h_herwig = histos["herwig"].h_nominal
+        self.h_sherpa = histos["sherpa"].h_nominal
 
-        self.determine_y_axis_title(h_data, "1/#epsilon_{QCD}", show_binwidth = False)
+        self.hsys_pythia._compute_errors()
+        self.h_pythia_sys = self.hsys_pythia.get_histo_with_systematic_errs()
+        set_mc_sys_err_style(self.h_pythia_sys)
+
+        self.determine_y_axis_title(self.h_data, "1/#epsilon_{QCD}", show_binwidth = False)
 
         set_mc_style_marker(self.h_pythia, kRed, shape = 21)
         set_mc_style_marker(self.h_herwig, kBlue, shape = 22)
@@ -88,7 +138,7 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         self.h_data_ref.SetLineColor(kGray+1)
         self.h_data_ref.SetMarkerSize(0)
 
-        for h in [self.h_data, self.h_data_ref, self.h_pythia, self.h_herwig, self.h_sherpa]:
+        for h in [self.h_data, self.h_data_ref, self.h_pythia, self.h_herwig, self.h_sherpa, self.h_pythia_sys]:
             h.GetYaxis().SetTitle(self.y_title)
             h.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
             self.set_x_axis_bounds(h)
@@ -98,6 +148,7 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
 
         if self.log_scale: self.canvas.SetLogy()
 
+        self.h_pythia_sys.Draw("E2")
         self.h_sherpa.Draw("PE1,same")
         self.h_herwig.Draw("PE1,same")
         self.h_pythia.Draw("PE1,same")
@@ -119,88 +170,25 @@ DEF_EXTRA_LINES = [
             "Dijet Selection"
             ]
 
-def make_pt_efficiency_plot(
-        tag_name,
-        ref_tag_name,
-        rejection = True,
-        **kwargs):
-    BIN_BOUNDS = array.array('d', [450,500,550,600,700,800,900,1000,1100,1200,1300,1400,1500,1700,2000,2500])
+def make_pt_efficiency_plot( tag_name, ref_tag_name = None, **kwargs):
 
-    base_var_name = "h_rljet0_pt_comb"
+    histos = {}
+    for gen in ["data","pythia","herwig","sherpa"]:
+        histos[gen] = make_rej_TH1SysEff(gen, tag_name)
 
-    h_data_total_tmp     = RAW.get_sigsub_data(base_var_name)
-    h_pythia_total_tmp   = RAW.get_normalized_dijet("pythia", base_var_name)
-    h_herwig_total_tmp   = RAW.get_normalized_dijet("herwig", base_var_name)
-    h_sherpa_total_tmp   = RAW.get_normalized_dijet("sherpa", base_var_name)
+    if (ref_tag_name != None): 
+        histos["data_ref"] = make_rej_TH1SysEff("data_ref", ref_tag_name)
 
-    h_data_total     = h_data_total_tmp.Rebin(len(BIN_BOUNDS)-1, h_data_total_tmp.GetName()+"_rebinned", BIN_BOUNDS)
-    h_pythia_total   = h_pythia_total_tmp.Rebin(len(BIN_BOUNDS)-1, h_pythia_total_tmp.GetName()+"_rebinned", BIN_BOUNDS)
-    h_herwig_total   = h_herwig_total_tmp.Rebin(len(BIN_BOUNDS)-1, h_herwig_total_tmp.GetName()+"_rebinned", BIN_BOUNDS)
-    h_sherpa_total   = h_sherpa_total_tmp.Rebin(len(BIN_BOUNDS)-1, h_sherpa_total_tmp.GetName()+"_rebinned", BIN_BOUNDS)
-
-    passed_name = base_var_name + "_" + tag_name
-    if (ref_tag_name != None):
-        ref_passed_name = base_var_name + "_" + ref_tag_name
-
-    h_data_passed_tmp     = RAW.get_sigsub_data(passed_name)
-    h_pythia_passed_tmp   = RAW.get_normalized_dijet("pythia", passed_name)
-    h_herwig_passed_tmp   = RAW.get_normalized_dijet("herwig", passed_name)
-    h_sherpa_passed_tmp   = RAW.get_normalized_dijet("herwig", passed_name)
-    if (ref_tag_name != None):
-        h_data_passed_ref_tmp = RAW.get_sigsub_data(ref_passed_name)
-
-    h_data_passed     = h_data_passed_tmp.Rebin(len(BIN_BOUNDS)-1, h_data_passed_tmp.GetName()+"_rebinned", BIN_BOUNDS)
-    h_pythia_passed   = h_pythia_passed_tmp.Rebin(len(BIN_BOUNDS)-1, h_pythia_passed_tmp.GetName()+"_rebinned", BIN_BOUNDS)
-    h_herwig_passed   = h_herwig_passed_tmp.Rebin(len(BIN_BOUNDS)-1, h_herwig_passed_tmp.GetName()+"_rebinned", BIN_BOUNDS)
-    h_sherpa_passed   = h_sherpa_passed_tmp.Rebin(len(BIN_BOUNDS)-1, h_sherpa_passed_tmp.GetName()+"_rebinned", BIN_BOUNDS)
-    if (ref_tag_name != None):
-        h_data_passed_ref = h_data_passed_ref_tmp.Rebin(len(BIN_BOUNDS)-1, h_data_passed_ref_tmp.GetName()+"_rebinned", BIN_BOUNDS)
-
-    print(tag_name)
-    print "data: ", calculate_rejection(h_data_passed, h_data_total)
-    print "pythia: ", calculate_rejection(h_pythia_passed, h_pythia_total)
-    print "herwig: ", calculate_rejection(h_herwig_passed, h_herwig_total)
-    print "sherpa: ", calculate_rejection(h_sherpa_passed, h_sherpa_total)
-    print ""
-
-    if rejection:
-        h_data = h_data_total.Clone()
-        h_data.Divide(h_data_passed)
-        h_data_ref = h_data_total.Clone()
-
-        if (ref_tag_name != None):
-            h_data_ref.Divide(h_data_passed_ref)
-        else:
-            h_data_ref = None
-
-        hsys_pythia = TH1SysEff(h_pythia_total, None, h_pythia_passed, None)
-        hsys_herwig = TH1SysEff(h_herwig_total, None, h_herwig_passed, None)
-        hsys_sherpa = TH1SysEff(h_sherpa_total, None, h_sherpa_passed, None)
-
-        eff_name = passed_name + "_rej"
-    else:
-        h_data = h_data_passed.Clone()
-        h_data.Divide(h_data_total)
-        h_data_ref = h_data_passed_ref.Clone()
-
-        if (ref_tag_name != None):
-            h_data_ref.Divide(h_data_total)
-        else:
-            h_data_ref = None
-
-        hsys_pythia = TH1SysEff(h_pythia_passed, None, h_pythia_total, None)
-        hsys_herwig = TH1SysEff(h_herwig_passed, None, h_herwig_total, None)
-        hsys_sherpa = TH1SysEff(h_sherpa_passed, None, h_sherpa_total, None)
-
-        eff_name = passed_name + "_eff"
+    # print(tag_name)
+    # print "data: ", calculate_inclusive_rejection(h_data_passed, h_data_total)
+    # print "pythia: ", calculate_inclusive_rejection(h_pythia_passed, h_pythia_total)
+    # print "herwig: ", calculate_inclusive_rejection(h_herwig_passed, h_herwig_total)
+    # print "sherpa: ", calculate_inclusive_rejection(h_sherpa_passed, h_sherpa_total)
+    # print ""
 
     return PlotDataPythiaHerwigEfficiency(
-            h_data,
-            h_data_ref,
-            hsys_pythia.h_nominal,
-            hsys_herwig.h_nominal,
-            hsys_sherpa.h_nominal,
-            name = eff_name,
+            histos,
+            name = TOTAL_VAR_NAME + "_" + tag_name + "_rej",
             lumi_val = "36.5",
             atlas_mod = "Internal",
             legend_loc = [0.67,0.93,0.92,0.69],
@@ -211,7 +199,7 @@ def make_pt_efficiency_plot(
             width = 600,
             **kwargs)
 
-breakdown_plots = [
+bkg_rej_plots = [
         make_pt_efficiency_plot(
             "smooth16Top_MassTau32Tag50eff_MassJSSCut",
             "smooth15Top_MassTau32Tag50eff_MassJSSCut",
@@ -285,5 +273,5 @@ breakdown_plots = [
         ]
 
 if (WRITE_PLOTS):
-    for i in range(len(breakdown_plots)):
-        breakdown_plots[i].print_to_file(OUTPUT_DIR + "/" + breakdown_plots[i].name + ".pdf")
+    for i in range(len(bkg_rej_plots)):
+        bkg_rej_plots[i].print_to_file(OUTPUT_DIR + "/" + bkg_rej_plots[i].name + ".pdf")

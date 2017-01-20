@@ -46,19 +46,19 @@ class DMDLoader(PlotLoader):
         h_data = self.get_hist(["data","nominal"], hist_name)
         return h_data.Clone()
 
-    def get_sigsub_data(self, hist_name):
+    def get_sigsub_data(self, hist_name, sig_sf = 1.0):
         h_data = self.get_data(hist_name)
         h_wjets = self.get_wjets(hist_name)
         h_zjets = self.get_zjets(hist_name)
         h_ttbar = self.get_ttbar(hist_name)
 
-        h_data.Add(h_wjets, -1.0)
-        h_data.Add(h_zjets, -1.0)
-        h_data.Add(h_ttbar, -1.0)
+        h_data.Add(h_wjets, -1.0*sig_sf)
+        h_data.Add(h_zjets, -1.0*sig_sf)
+        h_data.Add(h_ttbar, -1.0*sig_sf)
 
         return h_data.Clone()
 
-    def get_normalized_dijet(self, generator, hist_name, branch = "nominal"):
+    def get_normalized_dijet(self, generator, hist_name, branch = "nominal", sig_sf = 1.0):
         if ("pythia" in generator):
             h_dijet = self.get_hist(["pythia_dijet", branch], hist_name)
         elif ("herwig" in generator):
@@ -67,7 +67,7 @@ class DMDLoader(PlotLoader):
             h_dijet = self.get_hist(["sherpa_dijet", branch], hist_name)
         else: raise
 
-        h_sigsub_data = self.get_sigsub_data(hist_name)
+        h_sigsub_data = self.get_sigsub_data(hist_name, sig_sf)
         dijet_sf = h_sigsub_data.Integral() / h_dijet.Integral()
         h_dijet.Scale(dijet_sf)
 
