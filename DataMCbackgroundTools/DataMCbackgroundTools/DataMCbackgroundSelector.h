@@ -54,6 +54,8 @@ class DataMCbackgroundSelector : public TSelector {
 
         const bool operating_on_mc;
         const bool on_nominal_branch;
+        bool processing_dijet_slice;
+        int dijet_slice_number;
 
         const float luminosity;
         float SF_lumi_Fb;

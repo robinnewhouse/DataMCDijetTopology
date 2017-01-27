@@ -328,8 +328,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         }
     }
 
-    // calculate luminosity SF only once per file
-    if (entry == 0) {
+    if (entry == 0) { // calculate luminosity SF only once per file
         TFile* current_file = this->fChain->GetCurrentFile();
 
         this->log("PROCESSING FILE: " + std::string(current_file->GetName()));
@@ -340,10 +339,10 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
         if (this->operating_on_mc) {
             const ULong64_t nevents_skimmed = getTotalEventsSample(current_file);
-            float sum_weights               = get_sum_weights_sample(current_file);
-            float xsection                  = weight_tool->get_xsection(mcChannelNumber);
-            float nevents                   = weight_tool->get_nevents(mcChannelNumber);
-            float filtereff                 = weight_tool->get_filtereff(mcChannelNumber);
+            const float sum_weights               = get_sum_weights_sample(current_file);
+            const float xsection                  = weight_tool->get_xsection(mcChannelNumber);
+            const float nevents                   = weight_tool->get_nevents(mcChannelNumber);
+            const float filtereff                 = weight_tool->get_filtereff(mcChannelNumber);
 
             this->log("TOTAL EVENTS (SKIMMED): "   + std::to_string(nevents_skimmed));
             this->log("TOTAL EVENTS (UNSKIMMED): " + std::to_string(nevents));
@@ -352,17 +351,25 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             const bool is_pythia_JZXW_slice = mcChannelNumber >= 361020 && mcChannelNumber <= 361032;
             const bool is_herwig_JZXW_slice = mcChannelNumber >= 426040 && mcChannelNumber <= 426052;
             const bool is_sherpa_JZX_slice  = mcChannelNumber >= 426131 && mcChannelNumber <= 426142;
-            const bool is_dijet_slice       = is_pythia_JZXW_slice || is_herwig_JZXW_slice || is_sherpa_JZX_slice;
 
-            // TODO: check if this is even needed (already accounted for in sumWeights?)
-            if (is_dijet_slice) {
+            this->processing_dijet_slice = is_pythia_JZXW_slice || is_herwig_JZXW_slice || is_sherpa_JZX_slice;
+
+            if (is_pythia_JZXW_slice) {
+                this->dijet_slice_number = mcChannelNumber - 361020;
+            } else if (is_herwig_JZXW_slice) {
+                this->dijet_slice_number = mcChannelNumber - 426040;
+            } else if (is_sherpa_JZX_slice) {
+                this->dijet_slice_number = mcChannelNumber - 426130;
+            }
+
+            if (processing_dijet_slice) {
                 this->SF_lumi_Fb = xsection * filtereff / nevents;
             } else {
                 this->SF_lumi_Fb = xsection * filtereff / sum_weights;
             }
         }
 
-        current_file = nullptr; // because ROOT ownership semantics are weird
+        current_file = nullptr; // because ROOT ownership semantics are weird and I trust nothing
     }
 
     // events in data must pass the specified trigger
@@ -457,7 +464,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_rljet_m_calo.at(i)->fill_tagged(itag.first, rljet_m_calo->at(i)/1000., weight, itag.second);
             hp->h_rljet_pt_calo.at(i)->fill_tagged(itag.first, rljet_pt_calo->at(i)/1000., weight, itag.second);
         }
-
     }
 
     /*********************************************************/
@@ -466,6 +472,8 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
     if (!on_nominal_branch)
         return kTRUE;
+
+
 
     /***************************/
     /* GENERAL EVENT VARIABLES */
@@ -496,6 +504,15 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_m_calo.at(i)->fill(rljet_m_calo->at(i)/1000., weight);
         hp->h_rljet_pt_ta.at(i)->fill(rljet_pt_ta->at(i)/1000., weight);
         hp->h_rljet_m_ta.at(i)->fill(rljet_m_ta->at(i)/1000., weight);
+
+        // JZX(W) SLICE TAGS
+        if (processing_dijet_slice) {
+            for (const auto& itag : smooth_tag_map) {
+                std::string tmp_tag_str = itag.first + "_JZ" + std::to_string(dijet_slice_number);
+                hp->h_rljet_m_comb.at(i)->fill_tagged(tmp_tag_str, rljet_m_comb->at(i)/1000., weight, itag.second);
+                hp->h_rljet_pt_comb.at(i)->fill_tagged(tmp_tag_str, rljet_pt_comb->at(i)/1000., weight, itag.second);
+            }
+        }
 
         // other substructure variables
         const float Tau1_wta = rljet_Tau1_wta->at(i);
