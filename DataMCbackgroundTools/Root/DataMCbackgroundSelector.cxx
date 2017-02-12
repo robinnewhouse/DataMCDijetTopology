@@ -108,30 +108,30 @@ DataMCbackgroundSelector::DataMCbackgroundSelector(
 
     // BDT
     // top taggers (80% eff. WP, medium variable set)
-    m_topTagger_BDT_qqb = make_unique<JSSWTopTaggerBDT>("topTagger_BDT_qqb");
-    m_topTagger_BDT_qqb->setProperty("TopTagger_fullyContained", true);
-    m_topTagger_BDT_qqb->initialize();
+    // m_topTagger_BDT_qqb = make_unique<JSSWTopTaggerBDT>("topTagger_BDT_qqb");
+    // m_topTagger_BDT_qqb->setProperty("TopTagger_fullyContained", true);
+    // m_topTagger_BDT_qqb->initialize();
 
-    m_topTagger_BDT_inclusive = make_unique<JSSWTopTaggerBDT>("topTagger_BDT_inclusive");
-    m_topTagger_BDT_inclusive->setProperty("TopTagger", true);
-    m_topTagger_BDT_inclusive->initialize();
+    // m_topTagger_BDT_inclusive = make_unique<JSSWTopTaggerBDT>("topTagger_BDT_inclusive");
+    // m_topTagger_BDT_inclusive->setProperty("TopTagger", true);
+    // m_topTagger_BDT_inclusive->initialize();
 
     // W tagger (80% eff. WP, medium variable set)
-    m_wTagger_BDT = make_unique<JSSWTopTaggerBDT>("m_wTagger_BDT");
-    m_wTagger_BDT->setProperty("WTagger", true);
-    m_wTagger_BDT->initialize();
+    // m_wTagger_BDT = make_unique<JSSWTopTaggerBDT>("m_wTagger_BDT");
+    // m_wTagger_BDT->setProperty("WTagger", true);
+    // m_wTagger_BDT->initialize();
 
-    m_topTagger_DNN_qqb = make_unique<JSSWTopTaggerDNN>("m_topTagger_DNN_qqb");
-    m_topTagger_DNN_qqb->setProperty("TopTagger", true);
-    m_topTagger_DNN_qqb->setProperty("KerasConfigFile", "keras_top_dnn_BN_december11_contained.json");
-    m_topTagger_DNN_qqb->setProperty("KerasOutput", "top_dnn_BN_dec11_contained");
-    m_topTagger_DNN_qqb->initialize();
+    // m_topTagger_DNN_qqb = make_unique<JSSWTopTaggerDNN>("m_topTagger_DNN_qqb");
+    // m_topTagger_DNN_qqb->setProperty("TopTagger", true);
+    // m_topTagger_DNN_qqb->setProperty("KerasConfigFile", "keras_top_dnn_BN_december11_contained.json");
+    // m_topTagger_DNN_qqb->setProperty("KerasOutput", "top_dnn_BN_dec11_contained");
+    // m_topTagger_DNN_qqb->initialize();
 
-    m_topTagger_DNN_inclusive = make_unique<JSSWTopTaggerDNN>("m_topTagger_DNN_inclusive");
-    m_topTagger_DNN_inclusive->setProperty("TopTagger", true);
-    m_topTagger_DNN_inclusive->setProperty("KerasConfigFile", "keras_top_dnn_BN_december11_all.json");
-    m_topTagger_DNN_inclusive->setProperty("KerasOutput", "top_dnn_BN_dec11_all");
-    m_topTagger_DNN_inclusive->initialize();
+    // m_topTagger_DNN_inclusive = make_unique<JSSWTopTaggerDNN>("m_topTagger_DNN_inclusive");
+    // m_topTagger_DNN_inclusive->setProperty("TopTagger", true);
+    // m_topTagger_DNN_inclusive->setProperty("KerasConfigFile", "keras_top_dnn_BN_december11_all.json");
+    // m_topTagger_DNN_inclusive->setProperty("KerasOutput", "top_dnn_BN_dec11_all");
+    // m_topTagger_DNN_inclusive->initialize();
 }
 
 void DataMCbackgroundSelector::log(const std::string& line)
@@ -198,8 +198,8 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     b_mcChannelNumber->GetEntry(entry);
     b_mu->GetEntry(entry);
     b_backgroundFlags->GetEntry(entry);
-    b_met_met->GetEntry(entry);
-    b_met_phi->GetEntry(entry);
+    //b_met_met->GetEntry(entry);
+    //b_met_phi->GetEntry(entry);
     b_dijets->GetEntry(entry);
     b_rljet_eta->GetEntry(entry);
     b_rljet_phi->GetEntry(entry);
@@ -450,19 +450,10 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         smooth_tag_map["smooth16ZTag_80eff_JSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 1 || rljet_smooth16ZTag_80eff->at(i) == 16 || rljet_smooth16ZTag_80eff->at(i) == 4;
         smooth_tag_map["smooth16ZTag_80eff_MassJSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 1;
 
-        smooth_tag_map["smooth15WTag_50eff_JSSCut"    ] = rljet_smooth15WTag_50eff->at(i) == 1 || rljet_smooth15WTag_50eff->at(i) == 3;
-        smooth_tag_map["smooth15WTag_50eff_MassJSSCut"] = rljet_smooth15WTag_50eff->at(i) == 3;
-        smooth_tag_map["smooth15ZTag_50eff_JSSCut"    ] = rljet_smooth15ZTag_50eff->at(i) == 1 || rljet_smooth15ZTag_50eff->at(i) == 3;
-        smooth_tag_map["smooth15ZTag_50eff_MassJSSCut"] = rljet_smooth15ZTag_50eff->at(i) == 3;
-
-        smooth_tag_map["smooth15Top_MassTau32Tag50eff_MassJSSCut" ] = rljet_smooth15Top_MassTau32Tag50eff->at(i) == 3;
-        smooth_tag_map["smooth15Top_MassTau32Tag80eff_MassJSSCut" ] = rljet_smooth15Top_MassTau32Tag80eff->at(i) == 3;
 
         for (const auto& itag : smooth_tag_map) {
             hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
             hp->h_rljet_pt_comb.at(i)->fill_tagged(itag.first, rljet_pt_comb->at(i)/1000., weight, itag.second);
-            hp->h_rljet_m_calo.at(i)->fill_tagged(itag.first, rljet_m_calo->at(i)/1000., weight, itag.second);
-            hp->h_rljet_pt_calo.at(i)->fill_tagged(itag.first, rljet_pt_calo->at(i)/1000., weight, itag.second);
         }
     }
 
@@ -472,8 +463,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
     if (!on_nominal_branch)
         return kTRUE;
-
-
 
     /***************************/
     /* GENERAL EVENT VARIABLES */
@@ -565,10 +554,25 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_NTrimSubjets.at(i)->fill(rljet_NTrimSubjets->at(i), weight);
         hp->h_rljet_ungroomed_ntrk500.at(i)->fill(rljet_ungroomed_ntrk500->at(i), weight);
 
+        smooth_tag_map_nominal["smooth15WTag_50eff_JSSCut"    ] = rljet_smooth15WTag_50eff->at(i) == 1 || rljet_smooth15WTag_50eff->at(i) == 3;
+        smooth_tag_map_nominal["smooth15WTag_50eff_MassJSSCut"] = rljet_smooth15WTag_50eff->at(i) == 3;
+        smooth_tag_map_nominal["smooth15ZTag_50eff_JSSCut"    ] = rljet_smooth15ZTag_50eff->at(i) == 1 || rljet_smooth15ZTag_50eff->at(i) == 3;
+        smooth_tag_map_nominal["smooth15ZTag_50eff_MassJSSCut"] = rljet_smooth15ZTag_50eff->at(i) == 3;
+        smooth_tag_map_nominal["smooth15Top_MassTau32Tag50eff_MassJSSCut" ] = rljet_smooth15Top_MassTau32Tag50eff->at(i) == 3;
+        smooth_tag_map_nominal["smooth15Top_MassTau32Tag80eff_MassJSSCut" ] = rljet_smooth15Top_MassTau32Tag80eff->at(i) == 3;
+
+        for (const auto& itag : smooth_tag_map_nominal) {
+            hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
+            hp->h_rljet_pt_comb.at(i)->fill_tagged(itag.first, rljet_pt_comb->at(i)/1000., weight, itag.second);
+            hp->h_rljet_m_calo.at(i)->fill_tagged(itag.first, rljet_m_calo->at(i)/1000., weight, itag.second);
+            hp->h_rljet_pt_calo.at(i)->fill_tagged(itag.first, rljet_pt_calo->at(i)/1000., weight, itag.second);
+        }
+
         /***************/
         /* MVA TAGGERS */
         /***************/
 
+        /*
         const bool IS_GOOD_MVA_JET =
             rljet_m_calo->at(i) / 1000. > 40.
             && rljet_D2->at(i) > 0
@@ -692,6 +696,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
             delete mva_jet;
         }
+        */
 
         // SD log(chi) variables
         if (ranSD) {

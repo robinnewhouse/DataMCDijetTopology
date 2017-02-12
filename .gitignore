@@ -21,3 +21,9 @@ rcSetup.sh
 tags
 tags.lock
 tags.temp
+JetJvtEfficiency
+TopEvent
+TopEventSelectionTools
+TopSystematicObjectMaker
+grid/sample_weights.txt
+grid/sample_weights_AnalysisTopFormat.txt

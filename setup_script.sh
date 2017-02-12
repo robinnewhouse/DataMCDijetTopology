@@ -1,5 +1,5 @@
 #!/bin/bash
-lsetup 'rcsetup Top,2.4.24'
+lsetup 'rcsetup Top,2.4.26'
 
 # for simple and MVA taggers
 git clone https://:@gitlab.cern.ch:8443/JSSTools/BoostedJetTaggers.git
@@ -8,7 +8,7 @@ git clone https://:@gitlab.cern.ch:8443/JSSTools/BoostedJetTaggers.git
 svn co svn+ssh://svn.cern.ch/reps/atlas-dferreir/dferreir/ShowerDeconstruction/trunk ShowerDeconstruction
 
 # for truth matching
-git clone https://:@gitlab.cern.ch:8443/JetSubstructure/JetMatchingTools.git
+# git clone https://:@gitlab.cern.ch:8443/JetSubstructure/JetMatchingTools.git
 
 # not all of the necessary dijet background study samples are included in TopDataPreparation xsection lists
 rc checkout_pkg $(rc version | grep "TopDataPreparation")

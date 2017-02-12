@@ -162,6 +162,7 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         self.leg.AddEntry(self.h_sherpa, "Sherpa dijet")
         if (show_ref):
             self.leg.AddEntry(self.h_data_ref, "2015 Tagger Ref.")
+        self.leg.AddEntry(self.h_pythia_sys, "Sig. Norm. Unc.")
         self.leg.Draw()
 
 

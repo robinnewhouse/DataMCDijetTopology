@@ -157,6 +157,8 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
 
         systematicTree->makeOutputVariable(m_rljet_D2        , "rljet_D2");
         systematicTree->makeOutputVariable(m_rljet_Tau32_wta , "rljet_Tau32_wta");
+        systematicTree->makeOutputVariable(m_rljet_Qw        , "rljet_Qw");
+        systematicTree->makeOutputVariable(m_rljet_Split23   , "rljet_Split23");
 
         systematicTree->makeOutputVariable(m_rljet_smooth16Top_Tau32Split23Tag50eff , "m_rljet_smooth16Top_Tau32Split23Tag50eff");
         systematicTree->makeOutputVariable(m_rljet_smooth16Top_Tau32Split23Tag80eff , "m_rljet_smooth16Top_Tau32Split23Tag80eff");
@@ -214,7 +216,6 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
             systematicTree->makeOutputVariable(m_rljet_ECF3        , "rljet_ECF3");
             systematicTree->makeOutputVariable(m_rljet_FoxWolfram0 , "rljet_FoxWolfram0");
             systematicTree->makeOutputVariable(m_rljet_FoxWolfram2 , "rljet_FoxWolfram2");
-            systematicTree->makeOutputVariable(m_rljet_Qw          , "rljet_Qw");
             systematicTree->makeOutputVariable(m_rljet_Angularity  , "rljet_Angularity");
             systematicTree->makeOutputVariable(m_rljet_Aplanarity  , "rljet_Aplanarity");
             systematicTree->makeOutputVariable(m_rljet_Dip12       , "rljet_Dip12");
@@ -223,7 +224,6 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
             systematicTree->makeOutputVariable(m_rljet_PlanarFlow  , "rljet_PlanarFlow");
             systematicTree->makeOutputVariable(m_rljet_Sphericity  , "rljet_Sphericity");
             systematicTree->makeOutputVariable(m_rljet_Split12     , "rljet_Split12");
-            systematicTree->makeOutputVariable(m_rljet_Split23     , "rljet_Split23");
             systematicTree->makeOutputVariable(m_rljet_Split34     , "rljet_Split34");
             systematicTree->makeOutputVariable(m_rljet_ThrustMaj   , "rljet_ThrustMaj");
             systematicTree->makeOutputVariable(m_rljet_ThrustMin   , "rljet_ThrustMin");
@@ -470,6 +470,8 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
 
     m_rljet_D2        . assign(m_num_fatjets_keep, -1000. );
     m_rljet_Tau32_wta . assign(m_num_fatjets_keep, -1000. );
+    m_rljet_Qw        . assign(m_num_fatjets_keep, -1000. );
+    m_rljet_Split23   . assign(m_num_fatjets_keep, -1000. );
 
     m_rljet_smooth16Top_Tau32Split23Tag50eff . assign(m_num_fatjets_keep, -1000);
     m_rljet_smooth16Top_Tau32Split23Tag80eff . assign(m_num_fatjets_keep, -1000);
@@ -508,7 +510,6 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
         m_rljet_ECF3        . assign(m_num_fatjets_keep, -1000. );
         m_rljet_FoxWolfram0 . assign(m_num_fatjets_keep, -1000. );
         m_rljet_FoxWolfram2 . assign(m_num_fatjets_keep, -1000. );
-        m_rljet_Qw          . assign(m_num_fatjets_keep, -1000. );
         m_rljet_Angularity  . assign(m_num_fatjets_keep, -1000. );
         m_rljet_Aplanarity  . assign(m_num_fatjets_keep, -1000. );
         m_rljet_Dip12       . assign(m_num_fatjets_keep, -1000. );
@@ -517,7 +518,6 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
         m_rljet_PlanarFlow  . assign(m_num_fatjets_keep, -1000. );
         m_rljet_Sphericity  . assign(m_num_fatjets_keep, -1000. );
         m_rljet_Split12     . assign(m_num_fatjets_keep, -1000. );
-        m_rljet_Split23     . assign(m_num_fatjets_keep, -1000. );
         m_rljet_Split34     . assign(m_num_fatjets_keep, -1000. );
         m_rljet_ThrustMaj   . assign(m_num_fatjets_keep, -1000. );
         m_rljet_ThrustMin   . assign(m_num_fatjets_keep, -1000. );
@@ -714,6 +714,14 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
             m_rljet_Tau32_wta[i] = fabs(tau2) > 1.e-6 ? tau3 / tau2 : -999.;
         }
 
+
+        /**************/
+        /* Qw/Split23 */
+        /**************/
+
+        m_rljet_Qw[i]          = rljets[i]->auxdata<float>("Qw");
+        m_rljet_Split23[i]     = rljets[i]->auxdata<float>("Split23");
+
         /**********************************/
         /* SMOOTH (2016) TAGGER VARIABLES */
         /**********************************/
@@ -812,7 +820,6 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
             m_rljet_ECF3[i]        = ecf3;
             m_rljet_FoxWolfram0[i] = rljets[i]->auxdata<float>("FoxWolfram0");
             m_rljet_FoxWolfram2[i] = rljets[i]->auxdata<float>("FoxWolfram2");
-            m_rljet_Qw[i]          = rljets[i]->auxdata<float>("Qw");
             m_rljet_Angularity[i]  = rljets[i]->auxdata<float>("Angularity");
             m_rljet_Aplanarity[i]  = rljets[i]->auxdata<float>("Aplanarity");
             m_rljet_Dip12[i]       = rljets[i]->auxdata<float>("Dip12");
@@ -821,7 +828,6 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
             m_rljet_PlanarFlow[i]  = rljets[i]->auxdata<float>("PlanarFlow");
             m_rljet_Sphericity[i]  = rljets[i]->auxdata<float>("Sphericity");
             m_rljet_Split12[i]     = rljets[i]->auxdata<float>("Split12");
-            m_rljet_Split23[i]     = rljets[i]->auxdata<float>("Split23");
             m_rljet_Split34[i]     = rljets[i]->auxdata<float>("Split34");
             m_rljet_ThrustMaj[i]   = rljets[i]->auxdata<float>("ThrustMaj");
             m_rljet_ThrustMin[i]   = rljets[i]->auxdata<float>("ThrustMin");

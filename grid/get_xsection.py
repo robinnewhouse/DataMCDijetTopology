@@ -16,6 +16,7 @@ client = pyAMI.client.Client('atlas')
 my_weights_file.write("# DSID NUM_EVENTS X_SECTION(fb) FILTER_EFFICIENCY GENERATOR\n")
 
 for sample_name in samples_AOD.keys():
+    if ("sherpa_dijet" in sample_name): continue
 
     my_weights_file.write("# " + sample_name + "\n")
     analysis_top_weights_file.write("# " + sample_name + "\n")

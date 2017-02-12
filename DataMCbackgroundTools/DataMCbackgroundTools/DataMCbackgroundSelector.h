@@ -72,6 +72,7 @@ class DataMCbackgroundSelector : public TSelector {
 
         // various maps used for creating tagged histograms
         std::unordered_map<std::string, bool> smooth_tag_map;
+        std::unordered_map<std::string, bool> smooth_tag_map_nominal;
         std::unordered_map<std::string, bool> ntrk_prerec_tag_map;
         std::unordered_map<std::string, bool> SD_nominal_tag_map;
         std::unordered_map<std::string, bool> SD_systematic_tag_map;
@@ -516,14 +517,15 @@ void DataMCbackgroundSelector::Init(TTree *tree)
         fChain->SetBranchAddress("weight_leptonSF", &weight_leptonSF, &b_weight_leptonSF);
         fChain->SetBranchAddress("weight_jvt", &weight_jvt, &b_weight_jvt);
         fChain->SetBranchAddress("randomRunNumber", &randomRunNumber, &b_randomRunNumber);
+        fChain->SetBranchAddress("mu", &mu, &b_mu);
     } else {
         fChain->SetBranchAddress(this->data_trigger_str.c_str(), &HLT_jet_trigger, &b_HLT_jet_trigger); 
+        fChain->SetBranchAddress("mu_original_xAOD", &mu, &b_mu);
     }
 
     fChain->SetBranchAddress("eventNumber", &eventNumber, &b_eventNumber);
     fChain->SetBranchAddress("runNumber", &runNumber, &b_runNumber);
     fChain->SetBranchAddress("mcChannelNumber", &mcChannelNumber, &b_mcChannelNumber);
-    fChain->SetBranchAddress("mu", &mu, &b_mu);
     fChain->SetBranchAddress("backgroundFlags", &backgroundFlags, &b_backgroundFlags);
     fChain->SetBranchAddress("met_met", &met_met, &b_met_met);
     fChain->SetBranchAddress("met_phi", &met_phi, &b_met_phi);
@@ -544,6 +546,7 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     fChain->SetBranchAddress("rljet_smooth16WTag_80eff", &rljet_smooth16WTag_80eff, &b_rljet_smooth16WTag_80eff);
     fChain->SetBranchAddress("rljet_smooth16ZTag_50eff", &rljet_smooth16ZTag_50eff, &b_rljet_smooth16ZTag_50eff);
     fChain->SetBranchAddress("rljet_smooth16ZTag_80eff", &rljet_smooth16ZTag_80eff, &b_rljet_smooth16ZTag_80eff);
+
 
     if (sub_dir_str == "nominal") {
         fChain->SetBranchAddress("NPV", &NPV, &b_NPV);
