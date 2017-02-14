@@ -568,6 +568,23 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_rljet_pt_calo.at(i)->fill_tagged(itag.first, rljet_pt_calo->at(i)/1000., weight, itag.second);
         }
 
+        std::string npv_bin_str;
+        if (NPV < 10) {
+            npv_bin_str = "NPVLT10";
+        } else if (NPV >= 10 && NPV < 15) {
+            npv_bin_str = "NPVGT10LT15";
+        } else if (NPV >= 15 && NPV < 20) {
+            npv_bin_str = "NPVGT15LT20";
+        } else if (NPV >= 20) {
+            npv_bin_str = "NPVGT20";
+        }
+
+        for (const auto& itag : smooth_tag_map) {
+            std::string tmp_tag_str = itag.first + "_" + npv_bin_str;
+            hp->h_rljet_m_comb.at(i)->fill_tagged(tmp_tag_str, rljet_m_comb->at(i)/1000., weight, itag.second);
+            hp->h_rljet_pt_comb.at(i)->fill_tagged(tmp_tag_str, rljet_pt_comb->at(i)/1000., weight, itag.second);
+        }
+
         /***************/
         /* MVA TAGGERS */
         /***************/
