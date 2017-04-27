@@ -40,12 +40,12 @@ ALL_TAG_NAMES = [
 
 ALL_SLICES = range(3,13)
 
-def print_dijet_stats(gen_name, tag_name):
+def print_dijet_stats(gen_name, tag_name, slice_num = None):
     name = "h_rljet0_m_comb_" + tag_name
     if (slice_num): name += "_JZ" + str(slice_num)
 
-    h_total = RAW.get_hist([gen_name + "_dijet", "nominal"], name)
-    print gen_name, ": ", tag_name, ": ", h_dijet.Integral()
+    h_dijet = RAW.get_hist([gen_name + "_dijet", "nominal"], name)
+    print gen_name, ": ", tag_name, ": ", slice_num, ": ", h_dijet.Integral()
 
 class PlotSmoothPDF(PlotBase):
     def __init__(self, gen_name, tag_name, smooth_times = 1, **kwargs):

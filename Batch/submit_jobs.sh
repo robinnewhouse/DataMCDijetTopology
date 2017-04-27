@@ -3,9 +3,9 @@ set -e
 
 #DRY_RUN=true
 
-DESCRIPTION="16122016_gridjobs_nominalOnly_JZXtagtest_v0"
+DESCRIPTION="02072017_gridjobs_withQwSplit23Sys"
 
-INPUT_DIR=/eos/atlas/atlascerngroupdisk/perf-jets/JSS/TopBosonTagAnalysis2016/NTuples_DataMC_dijets/20161216
+INPUT_DIR=/eos/atlas/atlascerngroupdisk/perf-jets/JSS/TopBosonTagAnalysis2016/NTuples_DataMC_dijets/20170207
 OUTPUT_DIR_BASE=/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/plotting/raw/dijet
 HISTOGRAM_FACTORY_JOB_SCRIPT=/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/Batch/histogram_factory_job.sh
 SUBMIT_DIR=/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/Batch/log
@@ -46,14 +46,14 @@ for INPUT_FILE in $(find $INPUT_DIR -type f -name '*root*'); do
         OUTPUT_FILE=${OUTPUT_FILE%.root*}.cp.root
 
         if [[ $INPUT_FILE == *"physics_Main"* ]]
-        then 
+        then
             if [[ $INPUT_FILE == *"period"* ]]
             then
                 SAMPLE_TYPE="data16"
             else
                 SAMPLE_TYPE="data15"
             fi
-        else 
+        else
             SAMPLE_TYPE=$(get_sample_type DSID)
         fi
 

@@ -1,8 +1,8 @@
 #!/bin/bash
-lsetup 'rcsetup Top,2.4.26'
+lsetup 'rcsetup Top,2.4.30'
 
 # for simple and MVA taggers
-git clone https://:@gitlab.cern.ch:8443/JSSTools/BoostedJetTaggers.git
+# git clone https://:@gitlab.cern.ch:8443/JSSTools/BoostedJetTaggers.git
 
 # ShowerDeconstruction tagger
 svn co svn+ssh://svn.cern.ch/reps/atlas-dferreir/dferreir/ShowerDeconstruction/trunk ShowerDeconstruction
@@ -14,7 +14,7 @@ svn co svn+ssh://svn.cern.ch/reps/atlas-dferreir/dferreir/ShowerDeconstruction/t
 rc checkout_pkg $(rc version | grep "TopDataPreparation")
 cat data/xsections.txt >> TopDataPreparation/data/XSection-MC15-13TeV.data
 
-rc checkout_pkg atlasoff/PhysicsAnalysis/TopPhys/xAOD/TopConfiguration/tags/TopConfiguration-00-04-20
+#rc checkout_pkg atlasoff/PhysicsAnalysis/TopPhys/xAOD/TopConfiguration/tags/TopConfiguration-00-04-20
 
 # some of the DxAOD's used to not have 'DFCommon' branch(es), but all have plain 'Tight'/'Loose'
 # rc checkout_pkg $(rc version | grep "TopObjectSelectionTools")
@@ -23,7 +23,7 @@ rc checkout_pkg atlasoff/PhysicsAnalysis/TopPhys/xAOD/TopConfiguration/tags/TopC
 
 # JetEtMiss recs
 rc checkout_pkg atlasoff/Reconstruction/Jet/JetCalibTools/tags/JetCalibTools-00-04-76
-rc checkout_pkg atlasoff/Reconstruction/Jet/JetUncertainties/tags/JetUncertainties-00-09-53
+rc checkout_pkg atlasoff/Reconstruction/Jet/JetUncertainties/tags/JetUncertainties-00-09-63
 
 mkdir -p JetCalibTools/share/JetCalibTools
 cd JetCalibTools/share/JetCalibTools
@@ -37,8 +37,8 @@ cp data/SubjetCalibration/CamKt2LCTopoAreaCalib_JES_HTTmodified.config JetCalibT
 
 
 # Checkout TopCPTools and modify calibration config for large-R jets (combined calo-TA mass)
-rc checkout_pkg `rc version | grep "TopCPTools"`
-patch -p0 -i ./data/comb_mass_config_TopCPTools.patch
+# rc checkout_pkg `rc version | grep "TopCPTools"`
+# patch -p0 -i ./data/comb_mass_config_TopCPTools.patch
 
 rc find_packages
 rc compile

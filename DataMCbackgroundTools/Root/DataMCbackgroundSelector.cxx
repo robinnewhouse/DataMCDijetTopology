@@ -207,6 +207,8 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     b_rljet_pt_comb->GetEntry(entry);
     b_rljet_D2->GetEntry(entry);
     b_rljet_Tau32_wta->GetEntry(entry);
+    b_rljet_Qw->GetEntry(entry);
+    b_rljet_Split23->GetEntry(entry);
     b_m_rljet_smooth16Top_Tau32Split23Tag50eff->GetEntry(entry);
     b_m_rljet_smooth16Top_Tau32Split23Tag80eff->GetEntry(entry);
     b_m_rljet_smooth16Top_MassTau32Tag50eff->GetEntry(entry);
@@ -245,7 +247,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         b_rljet_ECF3->GetEntry(entry);
         b_rljet_FoxWolfram0->GetEntry(entry);
         b_rljet_FoxWolfram2->GetEntry(entry);
-        b_rljet_Qw->GetEntry(entry);
         b_rljet_Angularity->GetEntry(entry);
         b_rljet_Aplanarity->GetEntry(entry);
         b_rljet_Dip12->GetEntry(entry);
@@ -254,7 +255,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         b_rljet_PlanarFlow->GetEntry(entry);
         b_rljet_Sphericity->GetEntry(entry);
         b_rljet_Split12->GetEntry(entry);
-        b_rljet_Split23->GetEntry(entry);
         b_rljet_Split34->GetEntry(entry);
         b_rljet_ThrustMaj->GetEntry(entry);
         b_rljet_ThrustMin->GetEntry(entry);
@@ -431,6 +431,12 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_Tau32_wta.at(i)->fill(rljet_Tau32_wta->at(i), weight);
         hp->h_rljet_Tau32_wta.at(i)->fill_tagged("_combMgt100GeV", rljet_Tau32_wta->at(i), weight, rljet_m_comb->at(i) / 1000. > 100.);
 
+        hp->h_rljet_Qw.at(i)->fill(rljet_Qw->at(i), weight);
+        hp->h_rljet_Qw.at(i)->fill_tagged("_combMgt100GeV", rljet_Qw->at(i), weight, rljet_m_comb->at(i) / 1000. > 100.);
+
+        hp->h_rljet_Split23.at(i)->fill(rljet_Split23->at(i), weight);
+        hp->h_rljet_Split23.at(i)->fill_tagged("_combMgt100GeV", rljet_Split23->at(i), weight, rljet_m_comb->at(i) / 1000. > 100.);
+
         // SMOOTHED SUBSTRUCTURE TAGGERS
         smooth_tag_map["smooth16Top_Tau32Split23Tag50eff"] = rljet_smooth16Top_Tau32Split23Tag50eff->at(i) == 3;
         smooth_tag_map["smooth16Top_Tau32Split23Tag80eff"] = rljet_smooth16Top_Tau32Split23Tag80eff->at(i) == 3;
@@ -495,7 +501,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_m_ta.at(i)->fill(rljet_m_ta->at(i)/1000., weight);
 
         // JZX(W) SLICE TAGS
-        if (processing_dijet_slice) {
+        if (this->operating_on_mc && processing_dijet_slice) {
             for (const auto& itag : smooth_tag_map) {
                 std::string tmp_tag_str = itag.first + "_JZ" + std::to_string(dijet_slice_number);
                 hp->h_rljet_m_comb.at(i)->fill_tagged(tmp_tag_str, rljet_m_comb->at(i)/1000., weight, itag.second);
@@ -536,7 +542,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_FoxWolfram2.at(i)->fill(fw2, weight);
         hp->h_rljet_FoxWolfram20.at(i)->fill(fw20, weight);
 
-        hp->h_rljet_Qw.at(i)->fill(rljet_Qw->at(i), weight);
         hp->h_rljet_Angularity.at(i)->fill(rljet_Angularity->at(i), weight);
         hp->h_rljet_Aplanarity.at(i)->fill(rljet_Aplanarity->at(i), weight);
         hp->h_rljet_Dip12.at(i)->fill(rljet_Dip12->at(i), weight);
@@ -545,7 +550,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_PlanarFlow.at(i)->fill(rljet_PlanarFlow->at(i), weight);
         hp->h_rljet_Sphericity.at(i)->fill(rljet_Sphericity->at(i), weight);
         hp->h_rljet_Split12.at(i)->fill(rljet_Split12->at(i), weight);
-        hp->h_rljet_Split23.at(i)->fill(rljet_Split23->at(i), weight);
         hp->h_rljet_Split34.at(i)->fill(rljet_Split34->at(i), weight);
         hp->h_rljet_ThrustMaj.at(i)->fill(rljet_ThrustMaj->at(i), weight);
         hp->h_rljet_ThrustMin.at(i)->fill(rljet_ThrustMin->at(i), weight);
@@ -578,6 +582,9 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         } else if (NPV >= 20) {
             npv_bin_str = "NPVGT20";
         }
+
+        hp->h_rljet_m_comb.at(i)->fill_tagged(npv_bin_str, rljet_m_comb->at(i)/1000., weight, true);
+        hp->h_rljet_pt_comb.at(i)->fill_tagged(npv_bin_str, rljet_pt_comb->at(i)/1000., weight, true);
 
         for (const auto& itag : smooth_tag_map) {
             std::string tmp_tag_str = itag.first + "_" + npv_bin_str;

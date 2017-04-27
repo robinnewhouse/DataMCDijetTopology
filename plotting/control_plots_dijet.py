@@ -19,8 +19,8 @@ gROOT.SetBatch()
 sane_defaults()
 TGaxis.SetMaxDigits(4)
 
-RAW = DMDLoader("./raw/dijet/12-01-2017__15:26:26__16122016_gridjobs_nominalOnly_v1/cp.merged.root")
-ROOT_OUTPUT_DIR = "./raw/dijet/12-01-2017__15:26:26__16122016_gridjobs_nominalOnly_v1/plots"
+RAW = DMDLoader("./raw/dijet/12-02-2017__16:09:50__02072017_gridjobs_muplots_v0/cp.merged.root")
+ROOT_OUTPUT_DIR = "./raw/dijet/12-02-2017__16:09:50__02072017_gridjobs_muplots_v0/plots"
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/control_plots"
 make_dir(ROOT_OUTPUT_DIR)
@@ -35,7 +35,7 @@ SYSTEMATICS = SYSTEMATICS_MC15C_MEDIUM_SUBSTRUCTURE + SYSTEMATICS_MC15C_MEDIUM_K
 PYTHIA_COLOR = kRed - 3
 HERWIG_COLOR = kBlue - 3
 SHERPA_COLOR = kGreen + 2
-WJETS_COLOR = kOrange+7
+WJETS_COLOR = kOrange + 7
 ZJETS_COLOR = kPink
 TTBAR_COLOR = kViolet
 
@@ -332,66 +332,66 @@ MASS_PLOT_REBIN = 8
 
 data_mc_plots = []
 
-for bdt_str in ["top_inclusive","top_qqb","w"]:
-    full_var_name = "h_rljet0_BDT_score_" + bdt_str
-    data_mc_plots.append(PlotDataPythiaHerwig(full_var_name,
-        plot_systematics = False,
-        extra_legend_lines = DEF_LINES + ["m_{calo} > 40 GeV"],
-        x_min = -1, x_max = 1, rebin = 4,
-        y_min = 1e-3, y_max = 2e6, x_units = "",
-        empty_scale = 1.7
-        ))
-
-    data_mc_plots.append(PlotDataPythiaHerwig(full_var_name,
-        plot_systematics = False,
-        extra_legend_lines = DEF_LINES + ["m_{calo} > 40 GeV"],
-        x_min = -1, x_max = 1, rebin = 4,
-        y_min = 1e4, y_max = 1e8, x_units = "",
-        log_scale = True, empty_scale = 8
-        ))
-
-data_mc_plots.append(PlotDataPythiaHerwig(
-        "h_rljet0_DNN_score_top_qqb",
-        extra_legend_lines = DEF_LINES + ["m_{calo} > 40 GeV"],
-        empty_scale = 1.5,
-        log_scale = True,
-        y_min = 1e4,
-        x_min = 0,
-        x_max = 1,
-        rebin = 4,
-        #ttbar_sf = 10,
-        #wzjets_sf = 10,
-        ))
-
-data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "BDT_top_inclusive_JSSCut",
-        empty_scale = 2.5,
-        extra_legend_lines = DEF_LINES,
-        y_min = 0,
-        x_min = 0,
-        x_max = 400,
-        ttbar_sf = 10,
-        rebin = MASS_PLOT_REBIN,
-        ))
-
-data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "BDT_top_qqb_JSSCut",
-        empty_scale = 2.5,
-        extra_legend_lines = DEF_LINES,
-        y_min = 0,
-        x_min = 0,
-        x_max = 400,
-        ttbar_sf = 10,
-        rebin = MASS_PLOT_REBIN,
-        ))
-
-data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "BDT_w_JSSCut",
-        empty_scale = 2.5,
-        extra_legend_lines = DEF_LINES,
-        y_min = 0,
-        x_min = 0,
-        x_max = 400,
-        ttbar_sf = 10,
-        rebin = MASS_PLOT_REBIN,
-        ))
+#for bdt_str in ["top_inclusive","top_qqb","w"]:
+#    full_var_name = "h_rljet0_BDT_score_" + bdt_str
+#    data_mc_plots.append(PlotDataPythiaHerwig(full_var_name,
+#        plot_systematics = False,
+#        extra_legend_lines = DEF_LINES + ["m_{calo} > 40 GeV"],
+#        x_min = -1, x_max = 1, rebin = 4,
+#        y_min = 1e-3, y_max = 2e6, x_units = "",
+#        empty_scale = 1.7
+#        ))
+#
+#    data_mc_plots.append(PlotDataPythiaHerwig(full_var_name,
+#        plot_systematics = False,
+#        extra_legend_lines = DEF_LINES + ["m_{calo} > 40 GeV"],
+#        x_min = -1, x_max = 1, rebin = 4,
+#        y_min = 1e4, y_max = 1e8, x_units = "",
+#        log_scale = True, empty_scale = 8
+#        ))
+#
+#data_mc_plots.append(PlotDataPythiaHerwig(
+#        "h_rljet0_DNN_score_top_qqb",
+#        extra_legend_lines = DEF_LINES + ["m_{calo} > 40 GeV"],
+#        empty_scale = 1.5,
+#        log_scale = True,
+#        y_min = 1e4,
+#        x_min = 0,
+#        x_max = 1,
+#        rebin = 4,
+#        #ttbar_sf = 10,
+#        #wzjets_sf = 10,
+#        ))
+#
+#data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "BDT_top_inclusive_JSSCut",
+#        empty_scale = 2.5,
+#        extra_legend_lines = DEF_LINES,
+#        y_min = 0,
+#        x_min = 0,
+#        x_max = 400,
+#        ttbar_sf = 10,
+#        rebin = MASS_PLOT_REBIN,
+#        ))
+#
+#data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "BDT_top_qqb_JSSCut",
+#        empty_scale = 2.5,
+#        extra_legend_lines = DEF_LINES,
+#        y_min = 0,
+#        x_min = 0,
+#        x_max = 400,
+#        ttbar_sf = 10,
+#        rebin = MASS_PLOT_REBIN,
+#        ))
+#
+#data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "BDT_w_JSSCut",
+#        empty_scale = 2.5,
+#        extra_legend_lines = DEF_LINES,
+#        y_min = 0,
+#        x_min = 0,
+#        x_max = 400,
+#        ttbar_sf = 10,
+#        rebin = MASS_PLOT_REBIN,
+#        ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "SDt_win50_btag0",
         empty_scale = 2.5,

@@ -221,6 +221,8 @@ void HistoPack::WriteCommonHistograms() const
 
     for (auto const &h : h_rljet_D2) h->write_all();
     for (auto const &h : h_rljet_Tau32_wta) h->write_all();
+    for (auto const &h : h_rljet_Qw) h->write_all();
+    for (auto const &h : h_rljet_Split23) h->write_all();
 }
 
 void HistoPack::WriteNominalOnlyHistograms() const
@@ -258,7 +260,6 @@ void HistoPack::WriteNominalOnlyHistograms() const
     for (auto const &h : h_rljet_FoxWolfram0) h->write_all();
     for (auto const &h : h_rljet_FoxWolfram2) h->write_all();
     for (auto const &h : h_rljet_FoxWolfram20) h->write_all();
-    for (auto const &h : h_rljet_Qw) h->write_all();
     for (auto const &h : h_rljet_Angularity) h->write_all();
     for (auto const &h : h_rljet_Aplanarity) h->write_all();
     for (auto const &h : h_rljet_Dip12) h->write_all();
@@ -267,7 +268,6 @@ void HistoPack::WriteNominalOnlyHistograms() const
     for (auto const &h : h_rljet_PlanarFlow) h->write_all();
     for (auto const &h : h_rljet_Sphericity) h->write_all();
     for (auto const &h : h_rljet_Split12) h->write_all();
-    for (auto const &h : h_rljet_Split23) h->write_all();
     for (auto const &h : h_rljet_Split34) h->write_all();
     for (auto const &h : h_rljet_ThrustMaj) h->write_all();
     for (auto const &h : h_rljet_ThrustMin) h->write_all();

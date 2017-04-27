@@ -1,16 +1,17 @@
 from ROOT import *
 import atlas_style
 
-import os
-from math import *
+#import os
+#from math import *
 import array
-from sys import argv, exit
-
+#from sys import argv, exit
+#
 from plot_base import *
 from plot_util import *
 from plot_dmd import *
 from plot_loader import *
 from plot_systematics import *
+from plot_systematics_breakdown import *
 
 WRITE_PLOTS = True
 BIN_BOUNDS = array.array('d', [
@@ -31,13 +32,15 @@ BIN_BOUNDS = array.array('d', [
     2000,
     2500]
     )
+
 TOTAL_VAR_NAME = "h_rljet0_pt_comb"
 
 gROOT.SetBatch()
 sane_defaults()
 TGaxis.SetMaxDigits(4)
+gStyle.SetOptStat(0)
 
-CP_ROOT_FILEPATH = "./raw/dijet/12-01-2017__15:26:26__16122016_gridjobs_nominalOnly_v1/cp.merged.root"
+CP_ROOT_FILEPATH = "/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/plotting/raw/dijet/17-02-2017__15:37:30__02072017_gridjobs_withQwSplit23Sys/cp.merged.root"
 RAW = DMDLoader(CP_ROOT_FILEPATH)
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"
 
@@ -82,10 +85,20 @@ def rej_rebin(h):
     return h.Rebin(len(BIN_BOUNDS)-1, h.GetName()+"_rebinned", BIN_BOUNDS)
 
 def get_sys_dict_eff(gen_name, var_name):
-    dict = {}
-    dict["sig_sf"] = {}
-    dict["sig_sf"]["up"] = rej_rebin(RAW.get_normalized_dijet(gen_name, var_name, sig_sf = 1.5))
-    dict["sig_sf"]["down"] = rej_rebin(RAW.get_normalized_dijet(gen_name, var_name, sig_sf = 0.5))
+    # get the Rtrk systematics and rebin them
+    dict = RAW.get_systematics_dict(var_name, SYSTEMATICS_MC15C_MEDIUM, [gen_name + "_dijet"])
+    for sys_name, var_dict in dict.iteritems():
+        var_dict["up"] = rej_rebin(var_dict["up"])
+        var_dict["down"] = rej_rebin(var_dict["down"])
+    # create the sig. norm. systematics
+    dict["sig_norm_sf"] = {}
+    h_tmp_up = rej_rebin(RAW.get_normalized_dijet(gen_name, var_name, sig_sf = 1.25))
+    h_tmp_down = rej_rebin(RAW.get_normalized_dijet(gen_name, var_name, sig_sf = 0.75))
+    h_tmp_up.SetName(h_tmp_up.GetName() + "_sig_norm_sf_up")
+    h_tmp_down.SetName(h_tmp_down.GetName() + "_sig_norm_sf_own")
+    dict["sig_norm_sf"]["up"] = h_tmp_up
+    dict["sig_norm_sf"]["down"] = h_tmp_down
+
     return dict
 
 def make_rej_TH1SysEff(gen_name, tag_name):
@@ -108,8 +121,8 @@ def make_rej_TH1SysEff(gen_name, tag_name):
         h_total.Divide(h_passed)
         return h_total.Clone()
     else:
-        total_sys_dict = get_sys_dict_eff(gen_name, TOTAL_VAR_NAME) 
-        passed_sys_dict = get_sys_dict_eff(gen_name, passed_var_name) 
+        total_sys_dict = get_sys_dict_eff(gen_name, TOTAL_VAR_NAME)
+        passed_sys_dict = get_sys_dict_eff(gen_name, passed_var_name)
         return TH1SysEff(h_total, total_sys_dict, h_passed, passed_sys_dict)
 
 class PlotDataPythiaHerwigEfficiency(PlotBase):
@@ -149,22 +162,21 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         if self.log_scale: self.canvas.SetLogy()
 
         self.h_pythia_sys.Draw("E2")
-        self.h_sherpa.Draw("PE1,same")
+        #self.h_sherpa.Draw("PE1,same")
         self.h_herwig.Draw("PE1,same")
         self.h_pythia.Draw("PE1,same")
         self.h_data.Draw("PE1,same")
-        if (show_ref):
-            self.h_data_ref.Draw("hist,same")
+        # if (show_ref):
+        #     self.h_data_ref.Draw("hist,same")
 
         self.leg.AddEntry(self.h_data, "Data 2016")
         self.leg.AddEntry(self.h_pythia, "Pythia8 dijet")
         self.leg.AddEntry(self.h_herwig, "Herwig++ dijet")
-        self.leg.AddEntry(self.h_sherpa, "Sherpa dijet")
-        if (show_ref):
-            self.leg.AddEntry(self.h_data_ref, "2015 Tagger Ref.")
-        self.leg.AddEntry(self.h_pythia_sys, "Sig. Norm. Unc.")
+        #self.leg.AddEntry(self.h_sherpa, "Sherpa dijet")
+        # if (show_ref):
+        #     self.leg.AddEntry(self.h_data_ref, "2015 Tagger Ref.")
+        self.leg.AddEntry(self.h_pythia_sys, "Stat. #oplus syst. uncert.")
         self.leg.Draw()
-
 
 DEF_EXTRA_LINES = [
             "Trimmed anti-#it{k_{t}} #it{R}=1.0",
@@ -177,25 +189,21 @@ def make_pt_efficiency_plot( tag_name, ref_tag_name = None, **kwargs):
     for gen in ["data","pythia","herwig","sherpa"]:
         histos[gen] = make_rej_TH1SysEff(gen, tag_name)
 
-    if (ref_tag_name != None): 
+    if (ref_tag_name != None):
         histos["data_ref"] = make_rej_TH1SysEff("data_ref", ref_tag_name)
 
-    # print(tag_name)
-    # print "data: ", calculate_inclusive_rejection(h_data_passed, h_data_total)
-    # print "pythia: ", calculate_inclusive_rejection(h_pythia_passed, h_pythia_total)
-    # print "herwig: ", calculate_inclusive_rejection(h_herwig_passed, h_herwig_total)
-    # print "sherpa: ", calculate_inclusive_rejection(h_sherpa_passed, h_sherpa_total)
-    # print ""
+    p = PlotPythiaSystematicsBreakdown(histos["pythia"], name = tag_name + "_SYS", y_min = 0, y_max = 30)
+    p.print_to_file(OUTPUT_DIR + "/" + p.name + ".pdf")
 
     return PlotDataPythiaHerwigEfficiency(
             histos,
-            name = TOTAL_VAR_NAME + "_" + tag_name + "_rej",
+            name = tag_name + "_rej",
             lumi_val = "36.5",
             atlas_mod = "Internal",
             legend_loc = [0.67,0.93,0.92,0.69],
             x_title = "Leading Large-R Jet #it{p_{T}}",
             x_min = 450,
-            x_max = 3000,
+            x_max = 2500,
             y_min = 0.001,
             width = 600,
             **kwargs)

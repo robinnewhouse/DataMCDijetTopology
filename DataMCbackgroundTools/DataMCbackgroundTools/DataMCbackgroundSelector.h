@@ -536,6 +536,8 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     fChain->SetBranchAddress("rljet_pt_comb", &rljet_pt_comb, &b_rljet_pt_comb);
     fChain->SetBranchAddress("rljet_D2", &rljet_D2, &b_rljet_D2);
     fChain->SetBranchAddress("rljet_Tau32_wta", &rljet_Tau32_wta, &b_rljet_Tau32_wta);
+    fChain->SetBranchAddress("rljet_Qw", &rljet_Qw, &b_rljet_Qw);
+    fChain->SetBranchAddress("rljet_Split23", &rljet_Split23, &b_rljet_Split23);
     fChain->SetBranchAddress("m_rljet_smooth16Top_Tau32Split23Tag50eff", &rljet_smooth16Top_Tau32Split23Tag50eff, &b_m_rljet_smooth16Top_Tau32Split23Tag50eff);
     fChain->SetBranchAddress("m_rljet_smooth16Top_Tau32Split23Tag80eff", &rljet_smooth16Top_Tau32Split23Tag80eff, &b_m_rljet_smooth16Top_Tau32Split23Tag80eff);
     fChain->SetBranchAddress("m_rljet_smooth16Top_MassTau32Tag50eff", &rljet_smooth16Top_MassTau32Tag50eff, &b_m_rljet_smooth16Top_MassTau32Tag50eff);
@@ -546,7 +548,6 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     fChain->SetBranchAddress("rljet_smooth16WTag_80eff", &rljet_smooth16WTag_80eff, &b_rljet_smooth16WTag_80eff);
     fChain->SetBranchAddress("rljet_smooth16ZTag_50eff", &rljet_smooth16ZTag_50eff, &b_rljet_smooth16ZTag_50eff);
     fChain->SetBranchAddress("rljet_smooth16ZTag_80eff", &rljet_smooth16ZTag_80eff, &b_rljet_smooth16ZTag_80eff);
-
 
     if (sub_dir_str == "nominal") {
         fChain->SetBranchAddress("NPV", &NPV, &b_NPV);
@@ -575,7 +576,6 @@ void DataMCbackgroundSelector::Init(TTree *tree)
         fChain->SetBranchAddress("rljet_ECF3", &rljet_ECF3, &b_rljet_ECF3);
         fChain->SetBranchAddress("rljet_FoxWolfram0", &rljet_FoxWolfram0, &b_rljet_FoxWolfram0);
         fChain->SetBranchAddress("rljet_FoxWolfram2", &rljet_FoxWolfram2, &b_rljet_FoxWolfram2);
-        fChain->SetBranchAddress("rljet_Qw", &rljet_Qw, &b_rljet_Qw);
         fChain->SetBranchAddress("rljet_Angularity", &rljet_Angularity, &b_rljet_Angularity);
         fChain->SetBranchAddress("rljet_Aplanarity", &rljet_Aplanarity, &b_rljet_Aplanarity);
         fChain->SetBranchAddress("rljet_Dip12", &rljet_Dip12, &b_rljet_Dip12);
@@ -584,7 +584,6 @@ void DataMCbackgroundSelector::Init(TTree *tree)
         fChain->SetBranchAddress("rljet_PlanarFlow", &rljet_PlanarFlow, &b_rljet_PlanarFlow);
         fChain->SetBranchAddress("rljet_Sphericity", &rljet_Sphericity, &b_rljet_Sphericity);
         fChain->SetBranchAddress("rljet_Split12", &rljet_Split12, &b_rljet_Split12);
-        fChain->SetBranchAddress("rljet_Split23", &rljet_Split23, &b_rljet_Split23);
         fChain->SetBranchAddress("rljet_Split34", &rljet_Split34, &b_rljet_Split34);
         fChain->SetBranchAddress("rljet_ThrustMaj", &rljet_ThrustMaj, &b_rljet_ThrustMaj);
         fChain->SetBranchAddress("rljet_ThrustMin", &rljet_ThrustMin, &b_rljet_ThrustMin);

@@ -1,0 +1,93 @@
+LibraryNames libTopEventSelectionTools libTopEventReconstructionTools libDataMCbackgroundTools libBoostedJetTaggers libJetSubStructureUtils libShowerDeconstruction
+
+############################
+### Pileup Configuration ###
+############################
+
+PRWConfigFiles DataMCbackgroundTools/PRW/prw.10192016.TopBosonTag.root
+PRWLumiCalcFiles DataMCbackgroundTools/GRL/data15_physics_25ns_20.7.lumicalc.OflLumi-13TeV-005.root DataMCbackgroundTools/GRL/data16_physics_25ns_20.7.lumicalc.OflLumi-13TeV-005.root
+PRWDefaultChannel 361025
+
+#######################
+### Custom Settings ###
+#######################
+
+DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass,NumFatjetsKeep,DebugLevel
+
+HTTConfigs def,sjcalib1030,sjcalib0970
+RunHTT True
+
+RunShowerDeconstruction False
+SaveTrackAssistedMass False
+
+NumFatjetsKeep 2
+DebugLevel 0
+
+#################################
+### Systematics Configuration ###
+#################################
+
+LargeRJESUncertaintyConfig CombinedMass
+LargeRJESJMSConfig CombinedMass
+#Systematics LARGERJET_Medium_JET_Comb_Baseline_Kin__1down,LARGERJET_Medium_JET_Comb_Baseline_Kin__1up,LARGERJET_Medium_JET_Comb_Modelling_Kin__1down,LARGERJET_Medium_JET_Comb_Modelling_Kin__1up,LARGERJET_Medium_JET_Comb_TotalStat_Kin__1down,LARGERJET_Medium_JET_Comb_TotalStat_Kin__1up,LARGERJET_Medium_JET_Comb_Tracking_Kin__1down,LARGERJET_Medium_JET_Comb_Tracking_Kin__1up,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1down,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1up,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1down,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1up,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1down,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1up,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1down,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1up,LARGERJET_Strong_JET_Comb_Baseline_All__1down,LARGERJET_Strong_JET_Comb_Baseline_All__1up,LARGERJET_Strong_JET_Comb_Modelling_All__1down,LARGERJET_Strong_JET_Comb_Modelling_All__1up,LARGERJET_Strong_JET_Comb_TotalStat_All__1down,LARGERJET_Strong_JET_Comb_TotalStat_All__1up,LARGERJET_Strong_JET_Comb_Tracking_All__1down,LARGERJET_Strong_JET_Comb_Tracking_All__1up,LARGERJET_Weak_JET_Comb_Baseline_mass__1down,LARGERJET_Weak_JET_Comb_Baseline_mass__1up,LARGERJET_Weak_JET_Comb_Modelling_mass__1down,LARGERJET_Weak_JET_Comb_Modelling_mass__1up,LARGERJET_Weak_JET_Comb_TotalStat_mass__1down,LARGERJET_Weak_JET_Comb_TotalStat_mass__1up,LARGERJET_Weak_JET_Comb_Tracking_mass__1down,LARGERJET_Weak_JET_Comb_Tracking_mass__1up,LARGERJET_Weak_JET_Rtrk_Baseline_D2Beta1__1down,LARGERJET_Weak_JET_Rtrk_Baseline_D2Beta1__1up,LARGERJET_Weak_JET_Rtrk_Baseline_Qw__1down,LARGERJET_Weak_JET_Rtrk_Baseline_Qw__1up,LARGERJET_Weak_JET_Rtrk_Baseline_Split12__1down,LARGERJET_Weak_JET_Rtrk_Baseline_Split12__1up,LARGERJET_Weak_JET_Rtrk_Baseline_Split23__1down,LARGERJET_Weak_JET_Rtrk_Baseline_Split23__1up,LARGERJET_Weak_JET_Rtrk_Baseline_Tau21WTA__1down,LARGERJET_Weak_JET_Rtrk_Baseline_Tau21WTA__1up,LARGERJET_Weak_JET_Rtrk_Baseline_Tau32WTA__1down,LARGERJET_Weak_JET_Rtrk_Baseline_Tau32WTA__1up,LARGERJET_Weak_JET_Rtrk_Baseline_pT__1down,LARGERJET_Weak_JET_Rtrk_Baseline_pT__1up,LARGERJET_Weak_JET_Rtrk_Modelling_D2Beta1__1down,LARGERJET_Weak_JET_Rtrk_Modelling_D2Beta1__1up,LARGERJET_Weak_JET_Rtrk_Modelling_Qw__1down,LARGERJET_Weak_JET_Rtrk_Modelling_Qw__1up,LARGERJET_Weak_JET_Rtrk_Modelling_Split12__1down,LARGERJET_Weak_JET_Rtrk_Modelling_Split12__1up,LARGERJET_Weak_JET_Rtrk_Modelling_Split23__1down,LARGERJET_Weak_JET_Rtrk_Modelling_Split23__1up,LARGERJET_Weak_JET_Rtrk_Modelling_Tau21WTA__1down,LARGERJET_Weak_JET_Rtrk_Modelling_Tau21WTA__1up,LARGERJET_Weak_JET_Rtrk_Modelling_Tau32WTA__1down,LARGERJET_Weak_JET_Rtrk_Modelling_Tau32WTA__1up,LARGERJET_Weak_JET_Rtrk_Modelling_pT__1down,LARGERJET_Weak_JET_Rtrk_Modelling_pT__1up,LARGERJET_Weak_JET_Rtrk_TotalStat_D2Beta1__1down,LARGERJET_Weak_JET_Rtrk_TotalStat_D2Beta1__1up,LARGERJET_Weak_JET_Rtrk_TotalStat_Qw__1down,LARGERJET_Weak_JET_Rtrk_TotalStat_Qw__1up,LARGERJET_Weak_JET_Rtrk_TotalStat_Split12__1down,LARGERJET_Weak_JET_Rtrk_TotalStat_Split12__1up,LARGERJET_Weak_JET_Rtrk_TotalStat_Split23__1down,LARGERJET_Weak_JET_Rtrk_TotalStat_Split23__1up,LARGERJET_Weak_JET_Rtrk_TotalStat_Tau21WTA__1down,LARGERJET_Weak_JET_Rtrk_TotalStat_Tau21WTA__1up,LARGERJET_Weak_JET_Rtrk_TotalStat_Tau32WTA__1down,LARGERJET_Weak_JET_Rtrk_TotalStat_Tau32WTA__1up,LARGERJET_Weak_JET_Rtrk_TotalStat_pT__1down,LARGERJET_Weak_JET_Rtrk_TotalStat_pT__1up,LARGERJET_Weak_JET_Rtrk_Tracking_D2Beta1__1down,LARGERJET_Weak_JET_Rtrk_Tracking_D2Beta1__1up,LARGERJET_Weak_JET_Rtrk_Tracking_Qw__1down,LARGERJET_Weak_JET_Rtrk_Tracking_Qw__1up,LARGERJET_Weak_JET_Rtrk_Tracking_Split12__1down,LARGERJET_Weak_JET_Rtrk_Tracking_Split12__1up,LARGERJET_Weak_JET_Rtrk_Tracking_Split23__1down,LARGERJET_Weak_JET_Rtrk_Tracking_Split23__1up,LARGERJET_Weak_JET_Rtrk_Tracking_Tau21WTA__1down,LARGERJET_Weak_JET_Rtrk_Tracking_Tau21WTA__1up,LARGERJET_Weak_JET_Rtrk_Tracking_Tau32WTA__1down,LARGERJET_Weak_JET_Rtrk_Tracking_Tau32WTA__1up,LARGERJET_Weak_JET_Rtrk_Tracking_pT__1down,LARGERJET_Weak_JET_Rtrk_Tracking_pT__1up
+
+#Systematics All
+Systematics Nominal
+#Systematics AllJets
+
+##########################
+### Object Collections ###
+##########################
+
+ElectronCollectionName None
+MuonCollectionName None
+JetCollectionName AntiKt4EMTopoJets
+LargeJetCollectionName AntiKt10LCTopoTrimmedPtFrac5SmallR20Jets
+LargeJetSubstructure None
+TauCollectionName None
+PhotonCollectionName None
+METCollectionName MET_Reference_AntiKt4EMTopo
+TruthCollectionName TruthParticles
+TruthJetCollectionName AntiKt4TruthJets
+TruthLargeRJetCollectionName AntiKt10TruthJets
+TruthLargeRJetEta 2.5
+TruthLargeRJetPt 25000
+TopPartonHistory False
+TruthBlockInfo False
+PDFInfo False
+
+#############################
+### General Configuration ###
+#############################
+
+IsAFII False
+
+NEvents 500
+
+OutputFileSetAutoFlushZero True
+ObjectSelectionName top::ObjectLoaderStandardCuts
+#OutputFormat top::EventSaverFlatNtuple
+OutputFormat top::DataMCbackgroundEventSaver
+
+OutputEvents SelectedEvents
+OutputFilename output.root
+
+### handling scale-factors
+CalculateSF False
+
+####################
+### SELECTION(S) ###
+####################
+
+SELECTION dijets
+INITIAL
+GRL
+GOODCALO
+PRIVTX
+# TRIGDEC HLT_j150 HLT_j175 HLT_j260 HLT_j360 HLT_j420_a10_lcw_L1J100 HLT_j420_a10r_L1J100
+JETCLEAN LooseBad
+LJET_N 200000 >= 2
+LJET_N 450000 >= 1
+EL_N 25000 == 0
+MU_N 25000 == 0
+SAVE

@@ -4,8 +4,8 @@ LibraryNames libTopEventSelectionTools libTopEventReconstructionTools libDataMCb
 ### Pileup Configuration ###
 ############################
 
-PRWConfigFiles DataMCbackgroundTools/prw.08292016.mc15c.root
-PRWLumiCalcFiles DataMCbackgroundTools/ilumicalc_histograms_None_297730-301973.root
+PRWConfigFiles DataMCbackgroundTools/PRW/prw.10192016.TopBosonTag.root
+PRWLumiCalcFiles DataMCbackgroundTools/GRL/data15_physics_25ns_20.7.lumicalc.OflLumi-13TeV-005.root DataMCbackgroundTools/GRL/data16_physics_25ns_20.7.lumicalc.OflLumi-13TeV-005.root
 PRWDefaultChannel 361025
 
 #######################
@@ -30,8 +30,8 @@ DebugLevel 0
 LargeRJESUncertaintyConfig MultiTagging
 #Systematics AllJets
 #Systematics All
-#Systematics Nominal
-Systematics LARGERJET_Medium_JET_Rtrk_Baseline_Kin__1down,LARGERJET_Medium_JET_Rtrk_Baseline_Kin__1up,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1down,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1up,LARGERJET_Medium_JET_Rtrk_Modelling_Kin__1down,LARGERJET_Medium_JET_Rtrk_Modelling_Kin__1up,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1down,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1up,LARGERJET_Medium_JET_Rtrk_TotalStat_Kin__1down,LARGERJET_Medium_JET_Rtrk_TotalStat_Kin__1up,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1down,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1up,LARGERJET_Medium_JET_Rtrk_Tracking_Kin__1down,LARGERJET_Medium_JET_Rtrk_Tracking_Kin__1up,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1down,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1up
+Systematics Nominal
+#Systematics LARGERJET_Medium_JET_Rtrk_Baseline_Kin__1down,LARGERJET_Medium_JET_Rtrk_Baseline_Kin__1up,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1down,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1up,LARGERJET_Medium_JET_Rtrk_Modelling_Kin__1down,LARGERJET_Medium_JET_Rtrk_Modelling_Kin__1up,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1down,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1up,LARGERJET_Medium_JET_Rtrk_TotalStat_Kin__1down,LARGERJET_Medium_JET_Rtrk_TotalStat_Kin__1up,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1down,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1up,LARGERJET_Medium_JET_Rtrk_Tracking_Kin__1down,LARGERJET_Medium_JET_Rtrk_Tracking_Kin__1up,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1down,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1up
 
 ##########################
 ### Object Collections ###
@@ -84,6 +84,8 @@ FakesControlRegionDoLooseMC True
 OverlapRemovalLeptonDef Tight
 ApplyElectronInJetSubtraction False
 
+IsAFII False
+
 ####################
 ### SELECTION(S) ###
 ####################
@@ -93,7 +95,7 @@ INITIAL
 GRL
 GOODCALO
 PRIVTX
-TRIGDEC HLT_g140_loose
+# TRIGDEC HLT_g140_loose
 PH_N 155000 == 1
 JETCLEAN LooseBad
 LARGEJET_N 125000 >= 1

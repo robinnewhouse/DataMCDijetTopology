@@ -77,19 +77,58 @@ class DMDLoader(PlotLoader):
 ### MC15C ###
 #############
 
-SYSTEMATICS_MC15C_MEDIUM_KINEMATIC = [ # pT + mass
+SYSTEMATICS_MC15C_WEAK = [
+	"LARGERJET_Weak_JET_Comb_Baseline_mass",
+	"LARGERJET_Weak_JET_Comb_Modelling_mass",
+	"LARGERJET_Weak_JET_Comb_TotalStat_mass",
+	"LARGERJET_Weak_JET_Comb_Tracking_mass",
+	"LARGERJET_Weak_JET_Rtrk_Baseline_D2Beta1",
+	"LARGERJET_Weak_JET_Rtrk_Baseline_Qw",
+	"LARGERJET_Weak_JET_Rtrk_Baseline_Split12",
+	"LARGERJET_Weak_JET_Rtrk_Baseline_Split23",
+	"LARGERJET_Weak_JET_Rtrk_Baseline_Tau21WTA",
+	"LARGERJET_Weak_JET_Rtrk_Baseline_Tau32WTA",
+	"LARGERJET_Weak_JET_Rtrk_Baseline_pT",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_D2Beta1",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_Qw",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_Split12",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_Split23",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_Tau21WTA",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_Tau32WTA",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_pT",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_D2Beta1",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_Qw",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_Split12",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_Split23",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_Tau21WTA",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_Tau32WTA",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_pT",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_D2Beta1",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_Qw",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_Split12",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_Split23",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_Tau21WTA",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_Tau32WTA",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_pT",
+	]
+
+SYSTEMATICS_MC15C_MEDIUM = [
         "LARGERJET_Medium_JET_Comb_Baseline_Kin",
         "LARGERJET_Medium_JET_Comb_Modelling_Kin",
         "LARGERJET_Medium_JET_Comb_TotalStat_Kin",
-        "LARGERJET_Medium_JET_Comb_Tracking_Kin"
-        ]
-
-SYSTEMATICS_MC15C_MEDIUM_SUBSTRUCTURE = [ # D2 + TAU32
+        "LARGERJET_Medium_JET_Comb_Tracking_Kin",
         "LARGERJET_Medium_JET_Rtrk_Baseline_Sub",
         "LARGERJET_Medium_JET_Rtrk_Modelling_Sub",
         "LARGERJET_Medium_JET_Rtrk_TotalStat_Sub",
         "LARGERJET_Medium_JET_Rtrk_Tracking_Sub"
         ]
+
+SYSTEMATICS_MC15C_STRONG = [
+	"LARGERJET_Strong_JET_Comb_Baseline_All",
+	"LARGERJET_Strong_JET_Comb_Modelling_All",
+	"LARGERJET_Strong_JET_Comb_TotalStat_All",
+	"LARGERJET_Strong_JET_Comb_Tracking_All",
+	]
 
 SYSTEMATICS_MC15C_TEX = {
         "LARGERJET_Medium_JET_Comb_Baseline_Kin"  : "R_{trk}^{baseline} Kin.",
@@ -99,7 +138,8 @@ SYSTEMATICS_MC15C_TEX = {
         "LARGERJET_Medium_JET_Rtrk_Baseline_Sub"  : "R_{trk}^{baseline} Sub.",
         "LARGERJET_Medium_JET_Rtrk_Modelling_Sub" : "R_{trk}^{modelling} Sub.",
         "LARGERJET_Medium_JET_Rtrk_TotalStat_Sub" : "R_{trk}^{stat} Sub.",
-        "LARGERJET_Medium_JET_Rtrk_Tracking_Sub"  : "R_{trk}^{tracking} Sub."
+        "LARGERJET_Medium_JET_Rtrk_Tracking_Sub"  : "R_{trk}^{tracking} Sub.",
+        "sig_norm_sf"  : "Sig. Norm."
         }
 
 def get_mc15c_systematics_tex_title(sys_name):
@@ -114,6 +154,7 @@ SYSTEMATICS_MC15C_LINESTYLE_COLOR = {
         "LARGERJET_Medium_JET_Rtrk_Modelling_Sub" : (2, 4),
         "LARGERJET_Medium_JET_Rtrk_TotalStat_Sub" : (2, 6),
         "LARGERJET_Medium_JET_Rtrk_Tracking_Sub"  : (2, 2),
+        "sig_norm_sf"  : (1, 1),
         }
 
 def get_mc15c_systematics_style_color(sys_name):

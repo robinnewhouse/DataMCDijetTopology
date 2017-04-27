@@ -604,8 +604,10 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
 void
 DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
 {
+    std::cout << __LINE__ << std::endl;
     if (!event.m_saveEvent && m_config->saveOnlySelectedEvents()) {
         // if the event did not pass the given cuts, don't bother processing it
+        std::cout << __LINE__ << std::endl;
         return;
     }
 
@@ -622,6 +624,8 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
 
     xAOD::JetContainer rljets = sort_container_pt(&event.m_largeJets);
     if (rljets.size() >= m_num_fatjets_keep) rljets.resize(m_num_fatjets_keep);
+
+    std::cout << __LINE__ << std::endl;
 
     /******************/
     /* TRUTH MATCHING */

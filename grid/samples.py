@@ -4,17 +4,30 @@ samples_JETM6 = {}
 
 # {{{ DATA
 
-samples_JETM6['data_2016_25ns'] = [ # 33257.2/pb
-        #'data16_13TeV.periodA.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-        #'data16_13TeV.periodB.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-        #'data16_13TeV.periodC.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-        #'data16_13TeV.periodD.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-        #'data16_13TeV.periodE.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-        #'data16_13TeV.periodF.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-        #'data16_13TeV.periodG.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-        #'data16_13TeV.periodI.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-        #'data16_13TeV.periodK.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
+samples_JETM6['data_2016_25ns'] = [ # X/pb
+        'data16_13TeV.periodA.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
+        'data16_13TeV.periodB.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
+        'data16_13TeV.periodC.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
+        'data16_13TeV.periodD.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
+        'data16_13TeV.periodE.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
+        'data16_13TeV.periodF.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
+        'data16_13TeV.periodG.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
+        'data16_13TeV.periodI.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
+        'data16_13TeV.periodK.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
         'data16_13TeV.periodL.physics_Main.PhysCont.DAOD_JETM6.grp16_v02_p2840'
+        ]
+
+samples_JETM6['data_2016_25ns_gammajet'] = [ # X/pb
+        "data16_13TeV.periodA.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
+        "data16_13TeV.periodB.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
+        "data16_13TeV.periodC.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
+        "data16_13TeV.periodD.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
+        "data16_13TeV.periodE.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
+        "data16_13TeV.periodF.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
+        "data16_13TeV.periodG.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
+        "data16_13TeV.periodI.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
+        "data16_13TeV.periodK.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
+        "data16_13TeV.periodL.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950"
         ]
 
 # samples_JETM6['data_2015_25ns'] = [ # 3212.96/pb
@@ -352,6 +365,51 @@ samples_JETM6["ttbar_allhad_mc15c"] = [
 ]
 
 # }}}
+
+# {{{ gamma+jet
+
+samples_EVNT["gammajet_mc15c"] = [
+        "mc15_13TeV.423103.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP70_140.evgen.EVNT.e3791",
+        "mc15_13TeV.423104.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP140_280.evgen.EVNT.e3791",
+        "mc15_13TeV.423105.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP280_500.evgen.EVNT.e3791",
+        "mc15_13TeV.423106.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP500_800.evgen.EVNT.e3791",
+        "mc15_13TeV.423107.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP800_1000.evgen.EVNT.e4453",
+        "mc15_13TeV.423108.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP1000_1500.evgen.EVNT.e4453",
+        "mc15_13TeV.423109.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP1500_2000.evgen.EVNT.e4453",
+        "mc15_13TeV.423110.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP2000_2500.evgen.EVNT.e4453",
+        "mc15_13TeV.423111.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP2500_3000.evgen.EVNT.e4453",
+        "mc15_13TeV.423112.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP3000_inf.evgen.EVNT.e4453"
+        ]
+
+samples_AOD["gammajet_mc15c"] = [
+        "mc15_13TeV.423103.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP70_140.merge.AOD.e3791_s2608_s2183_r7725_r7676",
+        "mc15_13TeV.423104.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP140_280.merge.AOD.e3791_s2608_s2183_r7725_r7676",
+        "mc15_13TeV.423105.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP280_500.merge.AOD.e3791_s2608_s2183_r7725_r7676",
+        "mc15_13TeV.423106.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP500_800.merge.AOD.e3791_s2608_s2183_r7725_r7676",
+        "mc15_13TeV.423107.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP800_1000.merge.AOD.e4453_s2726_r7725_r7676",
+        "mc15_13TeV.423108.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP1000_1500.merge.AOD.e4453_s2726_r7725_r7676",
+        "mc15_13TeV.423109.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP1500_2000.merge.AOD.e4453_s2726_r7725_r7676",
+        "mc15_13TeV.423110.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP2000_2500.merge.AOD.e4453_s2726_r7725_r7676",
+        "mc15_13TeV.423111.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP2500_3000.merge.AOD.e4453_s2726_r7772_r7676",
+        "mc15_13TeV.423112.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP3000_inf.merge.AOD.e4453_s2726_r7772_r7676"
+        ]
+
+samples_JETM6["gammajet_mc15c"] = [
+        "mc15_13TeV.423103.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP70_140.merge.DAOD_JETM6.e3791_s2608_s2183_r7725_r7676_p2949",
+        "mc15_13TeV.423104.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP140_280.merge.DAOD_JETM6.e3791_s2608_s2183_r7725_r7676_p2949",
+        "mc15_13TeV.423105.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP280_500.merge.DAOD_JETM6.e3791_s2608_s2183_r7725_r7676_p2949",
+        "mc15_13TeV.423106.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP500_800.merge.DAOD_JETM6.e3791_s2608_s2183_r7725_r7676_p2949",
+        "mc15_13TeV.423107.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP800_1000.merge.DAOD_JETM6.e4453_s2726_r7725_r7676_p2949",
+        "mc15_13TeV.423108.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP1000_1500.merge.DAOD_JETM6.e4453_s2726_r7725_r7676_p2949",
+        "mc15_13TeV.423109.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP1500_2000.merge.DAOD_JETM6.e4453_s2726_r7725_r7676_p2949",
+        "mc15_13TeV.423110.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP2000_2500.merge.DAOD_JETM6.e4453_s2726_r7725_r7676_p2949",
+        "mc15_13TeV.423111.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP2500_3000.merge.DAOD_JETM6.e4453_s2726_r7772_r7676_p2949",
+        "mc15_13TeV.423112.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP3000_inf.merge.DAOD_JETM6.e4453_s2726_r7772_r7676_p2949"
+        ]
+
+
+# }}}
+
 
 if __name__ == '__main__':
     f_aod         = open('../data/samples_mc15c_AOD.txt','w')

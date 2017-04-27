@@ -57,7 +57,7 @@ PDFInfo False
 
 IsAFII False
 
-#NEvents 10000
+#NEvents 1000
 
 OutputFileSetAutoFlushZero True
 ObjectSelectionName top::ObjectLoaderStandardCuts
