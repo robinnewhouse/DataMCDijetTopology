@@ -1,0 +1,39 @@
+Index: TopConfiguration/Root/ConfigurationSettings.cxx
+===================================================================
+--- TopConfiguration/Root/ConfigurationSettings.cxx (revision 773818)
++++ TopConfiguration/Root/ConfigurationSettings.cxx (working copy)
+@@ -136,6 +136,7 @@
+     registerParameter("FakesMMDebug","Enables debug mode for matrix-method weight calculation: True, False (default)", "False");
+ 
+     registerParameter("OverlapRemovalLeptonDef","Run overlap removal on : Tight (top default) or Loose (not top default) lepton definitions", "Tight");
++    registerParameter("DoLooseTree","If we dump the Loose in addition to Tight tree: True (default) or False", "True");
+     registerParameter("DoLooseTreeOnly","Only dumps the Loose trees (and activate them for MC): True or False (default)", "False");
+     registerParameter("ApplyTightSFsInLooseTree","In Loose trees, calculate lepton SFs with tight leptons only, and considering they are tight: True or False (default)", "False");
+     registerParameter("ApplyElectronInJetSubtraction","Subtract electrons close to jets for boosted analysis : True or False(top default)", "False");
+Index: TopConfiguration/Root/TopConfig.cxx
+===================================================================
+--- TopConfiguration/Root/TopConfig.cxx (revision 773818)
++++ TopConfiguration/Root/TopConfig.cxx (working copy)
+@@ -461,14 +461,15 @@
+     }
+ 
+     if (!this->isMC()) {
+-      m_doLooseEvents = true;
++      if (settings->value("DoLooseTree") == "True")
++        m_doLooseEvents = true;
+       if (settings->value("FakesMMWeights") == "True") {
+- this->setFakesMMWeightsCalculation();
+- std::string dir = settings->value("FakesMMDir");
+- if (dir != "")
+-   this->setFakesMMDir(dir);
+- if (settings->value("FakesMMDebug") == "True")
+-   this->setFakesMMDebug();
++        this->setFakesMMWeightsCalculation();
++        std::string dir = settings->value("FakesMMDir");
++        if (dir != "")
++          this->setFakesMMDir(dir);
++        if (settings->value("FakesMMDebug") == "True")
++          this->setFakesMMDebug();
+       }
+     }
+ 
