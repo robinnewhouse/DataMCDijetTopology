@@ -13,7 +13,7 @@ class PlotPythiaSystematicsBreakdown(PlotBase):
     def __init__(self, hsys_pythia, **kwargs):
 
         super(PlotPythiaSystematicsBreakdown, self).__init__(
-                legend_loc = [0.5,0.9,0.9,0.6],
+                legend_loc = [0.65,0.9,0.9,0.6],
                 **kwargs)
 
         self.hsys_pythia = hsys_pythia
@@ -45,7 +45,6 @@ class PlotPythiaSystematicsBreakdown(PlotBase):
         line_colors = [2,4,7,8,9,3,5,6]
 
         for i, h in enumerate(self.breakdown_histograms):
-            print i
             h.SetLineWidth(3)
             (st,col) = get_mc15c_systematics_style_color(h.GetName())
             h.SetLineStyle(st)
