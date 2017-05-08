@@ -3,10 +3,10 @@ set -e
 
 #DRY_RUN=true
 
-DESCRIPTION="02072017_gridjobs_withQwSplit23Sys"
+DESCRIPTION="30042017_gammajet_test_v2"
 
-INPUT_DIR=/eos/atlas/atlascerngroupdisk/perf-jets/JSS/TopBosonTagAnalysis2016/NTuples_DataMC_dijets/20170207
-OUTPUT_DIR_BASE=/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/plotting/raw/dijet
+INPUT_DIR=/eos/atlas/user/z/zmeadows/TopBosonTag/gamma_jet/30042017
+OUTPUT_DIR_BASE=/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/plotting/raw/gammajet
 HISTOGRAM_FACTORY_JOB_SCRIPT=/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/Batch/histogram_factory_job.sh
 SUBMIT_DIR=/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/Batch/log
 
@@ -29,6 +29,10 @@ function get_sample_type {
         elif [[ $1 -ge 361020 && $1 -le 361032 ]] then echo "pythia_dijet"
         elif [[ $1 -ge 426040 && $1 -le 426052 ]] then echo "herwig_dijet"
         elif [[ $1 -ge 426131 && $1 -le 426142 ]] then echo "sherpa_dijet"
+        elif [[ $1 -ge 423103 && $1 -le 423112 ]] then echo "pythia_gammajet"
+        elif [[ $1 -ge 361042 && $1 -le 361062 ]] then echo "sherpa_gammajet"
+        elif [[ $1 -ge 305435 && $1 -le 305444 ]] then echo "sherpa_wz_gamma"
+        elif [[ $1 -eq 410087 ]] then echo "ttbar_gamma"
         else
             echo "$0: ERROR: unknown DSID ($1) encountered!" >&2 && exit 1
         fi
@@ -57,13 +61,12 @@ for INPUT_FILE in $(find $INPUT_DIR -type f -name '*root*'); do
             SAMPLE_TYPE=$(get_sample_type DSID)
         fi
 
-        INPUT_FILE=${INPUT_FILE#/titan/*}
         INPUT_FILE="root://eosatlas/$INPUT_FILE"
 
-        echo "INPUT FILE: $INPUT_FILE"
-        echo "OUTPUT FILE: $OUTPUT_FILE"
-        echo "DSID: $DSID"
-        echo "SAMPLE TYPE: $SAMPLE_TYPE"
+        # echo "INPUT FILE: $INPUT_FILE"
+        # echo "OUTPUT FILE: $OUTPUT_FILE"
+        # echo "DSID: $DSID"
+        # echo "SAMPLE TYPE: $SAMPLE_TYPE"
 
         job_cmd="INPUT_FILE=$INPUT_FILE OUTPUT_FILE=$OUTPUT_FILE SAMPLE_TYPE=$SAMPLE_TYPE $HISTOGRAM_FACTORY_JOB_SCRIPT"
 

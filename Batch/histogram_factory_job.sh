@@ -4,11 +4,18 @@
 #PBS -j oe
 
 LUMINOSITY=36.470
-EVENT_SELECTOR=DIJET_LOOSE
+EVENT_SELECTOR=NO_SELECTION
 BUILD_DIR=/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology
 
 DATA_TRIGGER=None
-if [[ $SAMPLE_TYPE = "data16" ]]
+if [[ $INPUT_FILE = *"gamma"* ]]
+then
+    DATA_TRIGGER=HLT_g140_loose
+    if [[ $SAMPLE_TYPE = *"data"* ]]
+    then
+      SAMPLE_TYPE="data"
+    fi
+elif [[ $SAMPLE_TYPE = "data16" ]]
 then
     DATA_TRIGGER=HLT_j420_a10r_L1J100
     SAMPLE_TYPE="data"
@@ -25,9 +32,7 @@ cd /afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/
 lsetup 'rcsetup -u'
 lsetup rcsetup
 
-job_cmd="histogram-factory -i $INPUT_FILE -o $OUTPUT_FILE -t $DATA_TRIGGER -L $LUMINOSITY -E $EVENT_SELECTOR -p $SAMPLE_TYPE -S"
+job_cmd="histogram-factory -i $INPUT_FILE -o $OUTPUT_FILE -t $DATA_TRIGGER -L $LUMINOSITY -E $EVENT_SELECTOR -p $SAMPLE_TYPE"
 
 #echo $job_cmd
 eval $job_cmd
-
-
