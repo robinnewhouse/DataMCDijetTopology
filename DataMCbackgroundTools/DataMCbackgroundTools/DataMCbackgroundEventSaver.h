@@ -51,6 +51,7 @@ namespace top {
         std::shared_ptr<top::TopConfig> m_config;
 
         // variables corresponding to DynamicKeys from AnalysisTop cuts file
+        bool m_gammaJetOverlapRemoval;
         bool m_runHTT;
         bool m_runSD;
         unsigned m_num_fatjets_keep;
@@ -71,7 +72,7 @@ namespace top {
 
         // grabs the btag weights for the leading two track jets
         // of the ungroomed parent large-R calorimeter reco jet
-        void get_trackjet_btags(const xAOD::Jet* jet, double& jet_btag0, double& jet_btag1);
+        // void get_trackjet_btags(const xAOD::Jet* jet, float& jet_btag0, float& jet_btag1);
 
         // grabs the ungroomed parent large-R calorimeter reco jet
         const xAOD::Jet* get_parent_ungroomed(const xAOD::Jet* jet);
@@ -80,7 +81,8 @@ namespace top {
         void reset_containers(const bool on_nominal_branch);
 
         void initializeSD(void);
-        void runSDandFillTree(void);
+        void runSDandFillTree(std::vector<const xAOD::Jet*>& rljets, bool doSystShifts);
+        std::vector<fastjet::PseudoJet> JetconVecToPseudojet ( xAOD::JetConstituentVector input);
         void runHTTAndFillTree(void);
 
         /***********/
@@ -117,13 +119,22 @@ namespace top {
         std::unique_ptr<SmoothedTopTagger> topTagger16_QwTau32_50eff;
         std::unique_ptr<SmoothedTopTagger> topTagger16_QwTau32_80eff;
 
+        std::unique_ptr<SmoothedTopTagger> topTagger16_MassTau32_50eff_nocontain;
+        std::unique_ptr<SmoothedTopTagger> topTagger16_MassTau32_80eff_nocontain;
+
         // W
         std::unique_ptr<SmoothedWZTagger> wTagger16_50eff;
         std::unique_ptr<SmoothedWZTagger> wTagger16_80eff;
 
+        std::unique_ptr<SmoothedWZTagger> wTagger16_50eff_nocontain;
+        std::unique_ptr<SmoothedWZTagger> wTagger16_80eff_nocontain;
+
         // Z
         std::unique_ptr<SmoothedWZTagger> zTagger16_50eff;
         std::unique_ptr<SmoothedWZTagger> zTagger16_80eff;
+
+        std::unique_ptr<SmoothedWZTagger> zTagger16_50eff_nocontain;
+        std::unique_ptr<SmoothedWZTagger> zTagger16_80eff_nocontain;
 
         /*****************/
         /* Other taggers */
@@ -139,8 +150,8 @@ namespace top {
 
         // Shower Deconstruction (SD)
         std::unique_ptr<ShowerDeconstruction> tagger_SDw_win20_btag0;
-        std::unique_ptr<ShowerDeconstruction> tagger_SDz_win20_btag0;
         std::unique_ptr<ShowerDeconstruction> tagger_SDt_win50_btag0;
+        std::unique_ptr<ShowerDeconstruction> tagger_SDt_win50_btag1;
 
         // HEPTopTagger
         int m_nHttTools;
@@ -260,27 +271,48 @@ namespace top {
         std::vector<int> m_rljet_smooth16Top_QwTau32Tag50eff;
         std::vector<int> m_rljet_smooth16Top_QwTau32Tag80eff;
 
+        std::vector<int> m_rljet_smooth16Top_MassTau32Tag50eff_nocontain;
+        std::vector<int> m_rljet_smooth16Top_MassTau32Tag80eff_nocontain;
+
         // 2016 smooth W
         std::vector<int> m_rljet_smooth16W_Tag50eff;
         std::vector<int> m_rljet_smooth16W_Tag80eff;
+
+        std::vector<int> m_rljet_smooth16W_Tag50eff_nocontain;
+        std::vector<int> m_rljet_smooth16W_Tag80eff_nocontain;
 
         // 2016 smooth Z
         std::vector<int> m_rljet_smooth16Z_Tag50eff;
         std::vector<int> m_rljet_smooth16Z_Tag80eff;
 
-        // Shower Deconstruction tags
-        std::vector<double> m_rljet_SDw_win20_btag0;
-        std::vector<double> m_rljet_SDz_win20_btag0;
-        std::vector<double> m_rljet_SDt_win50_btag0;
+        std::vector<int> m_rljet_smooth16Z_Tag50eff_nocontain;
+        std::vector<int> m_rljet_smooth16Z_Tag80eff_nocontain;
 
-        // Shower Deconstruction systematics
-        std::vector<double> m_rljet_SDw_win20_btag0_UP;
-        std::vector<double> m_rljet_SDz_win20_btag0_UP;
-        std::vector<double> m_rljet_SDt_win50_btag0_UP;
-
-        std::vector<double> m_rljet_SDw_win20_btag0_DOWN;
-        std::vector<double> m_rljet_SDz_win20_btag0_DOWN;
-        std::vector<double> m_rljet_SDt_win50_btag0_DOWN;
+        // Shower deconstruction output variables
+        std::vector<float> m_rljet_SDw_calib;
+        std::vector<float> m_rljet_SDw_uncalib;
+        std::vector<float> m_rljet_SDw_combined;
+        std::vector<float> m_rljet_SDw_dcut;
+        std::vector<float> m_rljet_SDt_calib;
+        std::vector<float> m_rljet_SDt_uncalib;
+        std::vector<float> m_rljet_SDt_combined;
+        std::vector<float> m_rljet_SDt_dcut;
+        std::vector<float> m_rljet_SDw_calib_DOWN;
+        std::vector<float> m_rljet_SDw_uncalib_DOWN;
+        std::vector<float> m_rljet_SDw_combined_DOWN;
+        std::vector<float> m_rljet_SDw_dcut_DOWN;
+        std::vector<float> m_rljet_SDt_calib_DOWN;
+        std::vector<float> m_rljet_SDt_uncalib_DOWN;
+        std::vector<float> m_rljet_SDt_combined_DOWN;
+        std::vector<float> m_rljet_SDt_dcut_DOWN;
+        std::vector<float> m_rljet_SDw_calib_UP;
+        std::vector<float> m_rljet_SDw_uncalib_UP;
+        std::vector<float> m_rljet_SDw_combined_UP;
+        std::vector<float> m_rljet_SDw_dcut_UP;
+        std::vector<float> m_rljet_SDt_calib_UP;
+        std::vector<float> m_rljet_SDt_uncalib_UP;
+        std::vector<float> m_rljet_SDt_combined_UP;
+        std::vector<float> m_rljet_SDt_dcut_UP;
 
         // b-tagging
         // std::vector<bool> m_rljet_btag_double;
