@@ -3,6 +3,7 @@
 Batch/log/
 BoostedJetTaggers/
 JetCalibTools/
+JetJvtEfficiency
 JetMatchingTools/
 JetUncertainties/
 NNTaggingTools/
@@ -12,7 +13,13 @@ TopAnalysis/
 TopCPTools/
 TopConfiguration/
 TopDataPreparation/
+TopEvent
+TopEventSelectionTools
+TopObjectSelectionTools
+TopSystematicObjectMaker
 cleanup.sh
+grid/sample_weights.txt
+grid/sample_weights_AnalysisTopFormat.txt
 grid/top-xaod.tar.gz
 local_test/
 plotting/raw/
@@ -21,9 +28,3 @@ rcSetup.sh
 tags
 tags.lock
 tags.temp
-JetJvtEfficiency
-TopEvent
-TopEventSelectionTools
-TopSystematicObjectMaker
-grid/sample_weights.txt
-grid/sample_weights_AnalysisTopFormat.txt
