@@ -72,7 +72,7 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
                     "h_rljet" + std::to_string (i) + "_FoxWolfram20", -0.5 , 2., 0.01));
 
         this->h_rljet_Qw.push_back ( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string (i) + "_Qw", 0. , 1000e3, 2e3));
+                    "h_rljet" + std::to_string (i) + "_Qw", 0. , 1000, 2e3));
 
         this->h_rljet_Angularity.push_back ( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string (i) + "_Angularity", 0. , 0.1, 0.0005));
@@ -99,7 +99,7 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
                     "h_rljet" + std::to_string (i) + "_Split12", 0. , 2500e3, 1e4));
 
         this->h_rljet_Split23.push_back ( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string (i) + "_Split23", 0., 1000e3, 1e4));
+                    "h_rljet" + std::to_string (i) + "_Split23", 0., 1000, 1e4));
 
         this->h_rljet_Split34.push_back ( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string (i) + "_Split34", 0., 500e3, 0.5e4));
