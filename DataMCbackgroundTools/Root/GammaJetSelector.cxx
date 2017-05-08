@@ -1,4 +1,5 @@
 #include "DataMCbackgroundTools/GammaJetSelector.h"
+#include "DataMCbackgroundTools/LocalTools.h"
 #include "TopEvent/EventTools.h"
 
 #include "xAODEgamma/PhotonContainer.h"
@@ -16,31 +17,32 @@ std::string GammaJetSelector::name(void) const {
 
 bool GammaJetSelector::apply(const top::Event& event) const {
 
-    if (event.m_photons.size() == 0) {
+    if (event.m_photons.empty() || event.m_largeJets.empty())
         return false;
-    }
 
     auto pt_sort_func = [&](const xAOD::IParticle* p1, const xAOD::IParticle* p2){
         return p1->pt() > p2->pt();
     };
 
-    const xAOD::Photon* lead_photon = *std::max_element(
-            event.m_photons.begin(), event.m_photons.end(), pt_sort_func);
+    const xAOD::Photon* lead_photon = *std::max_element(event.m_photons.begin(), event.m_photons.end(), pt_sort_func);
 
-    xAOD::JetContainer rljets = event.m_largeJets;
-    rljets.sort(pt_sort_func);
+    if (!lead_photon) return false;
 
-    if (rljets.size() == 0) {
+    std::vector<const xAOD::Jet*> filtered_largeR_jets;
+
+    std::copy_if(event.m_largeJets.begin(), event.m_largeJets.end(),
+            std::back_inserter(filtered_largeR_jets),
+            [&](const xAOD::Jet* j) {
+                return fabs(top::deltaR(*j,*lead_photon)) >= 1.0;
+            });
+
+    if (filtered_largeR_jets.empty())
         return false;
-    }
 
-    if (deltaPhi(*lead_photon, *rljets[0]) < 2.9) {
-        return false;
-    }
+    std::sort(filtered_largeR_jets.begin(), filtered_largeR_jets.end(), pt_sort_func);
 
-    if (rljets.size() > 1 && rljets[1]->pt() > 0.5 * lead_photon->pt()) {
+    if (filtered_largeR_jets.size() > 1 && filtered_largeR_jets.at(1)->pt() > 0.3 * lead_photon->pt())
         return false;
-    }
 
     return true;
 }
