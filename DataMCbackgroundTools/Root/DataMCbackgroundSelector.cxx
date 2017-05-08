@@ -27,9 +27,6 @@ EventSelector DIJET_LOOSE = [](const DataMCbackgroundSelector* sel) {
 };
 
 EventSelector DIJET_TIGHT = [](const DataMCbackgroundSelector* sel) {
-    if (sel->rljet_pt_comb->at(0)/1000. < 500.)
-        return false;
-
     if (sel->rljet_D2->at(0) <= 0.)
         return false;
 
@@ -187,10 +184,12 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         b_weight_mc->GetEntry(entry);
         b_weight_pileup->GetEntry(entry);
         b_weight_leptonSF->GetEntry(entry);
+        b_weight_photonSF->GetEntry(entry);
+        b_weight_photonSF_effIso->GetEntry(entry);
         b_weight_jvt->GetEntry(entry);
         b_randomRunNumber->GetEntry(entry);
     } else {
-        b_HLT_jet_trigger->GetEntry(entry);
+        b_HLT_trigger->GetEntry(entry);
     }
 
     b_eventNumber->GetEntry(entry);
@@ -200,7 +199,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     b_backgroundFlags->GetEntry(entry);
     //b_met_met->GetEntry(entry);
     //b_met_phi->GetEntry(entry);
-    b_dijets->GetEntry(entry);
     b_rljet_eta->GetEntry(entry);
     b_rljet_phi->GetEntry(entry);
     b_rljet_m_comb->GetEntry(entry);
@@ -373,7 +371,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     }
 
     // events in data must pass the specified trigger
-    if (!this->operating_on_mc && HLT_jet_trigger == 0)
+    if (!this->operating_on_mc && HLT_trigger == 0)
         return kFALSE;
 
     // and all events must pass the specified offline cuts
@@ -382,7 +380,13 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
     float weight;
     if (this->operating_on_mc) {
-        weight = weight_mc * weight_pileup * weight_jvt * this->SF_lumi_Fb * this->luminosity;
+        weight = weight_mc
+          * weight_pileup
+          * weight_photonSF
+          * weight_photonSF_effIso
+          * weight_jvt
+          * this->SF_lumi_Fb
+          * this->luminosity;
 
         if (weight > max_weight) {
             max_weight = weight;
@@ -431,11 +435,11 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_Tau32_wta.at(i)->fill(rljet_Tau32_wta->at(i), weight);
         hp->h_rljet_Tau32_wta.at(i)->fill_tagged("_combMgt100GeV", rljet_Tau32_wta->at(i), weight, rljet_m_comb->at(i) / 1000. > 100.);
 
-        hp->h_rljet_Qw.at(i)->fill(rljet_Qw->at(i), weight);
-        hp->h_rljet_Qw.at(i)->fill_tagged("_combMgt100GeV", rljet_Qw->at(i), weight, rljet_m_comb->at(i) / 1000. > 100.);
+        hp->h_rljet_Qw.at(i)->fill(rljet_Qw->at(i)/1000., weight);
+        hp->h_rljet_Qw.at(i)->fill_tagged("_combMgt100GeV", rljet_Qw->at(i)/1000., weight, rljet_m_comb->at(i) / 1000. > 100.);
 
-        hp->h_rljet_Split23.at(i)->fill(rljet_Split23->at(i), weight);
-        hp->h_rljet_Split23.at(i)->fill_tagged("_combMgt100GeV", rljet_Split23->at(i), weight, rljet_m_comb->at(i) / 1000. > 100.);
+        hp->h_rljet_Split23.at(i)->fill(rljet_Split23->at(i)/1000., weight);
+        hp->h_rljet_Split23.at(i)->fill_tagged("_combMgt100GeV", rljet_Split23->at(i)/1000., weight, rljet_m_comb->at(i) / 1000. > 100.);
 
         // SMOOTHED SUBSTRUCTURE TAGGERS
         smooth_tag_map["smooth16Top_Tau32Split23Tag50eff"] = rljet_smooth16Top_Tau32Split23Tag50eff->at(i) == 3;

@@ -60,7 +60,8 @@ class DataMCbackgroundSelector : public TSelector {
         const float luminosity;
         float SF_lumi_Fb;
 
-        // keep track of highest weight event in file for finding bugged events
+        // keep track of highest weight event in file for finding
+        // pesky high-weight events
         float max_weight;
 
         // MVA taggers
@@ -70,7 +71,8 @@ class DataMCbackgroundSelector : public TSelector {
         std::unique_ptr<JSSWTopTaggerDNN> m_topTagger_DNN_qqb;
         std::unique_ptr<JSSWTopTaggerDNN> m_topTagger_DNN_inclusive;
 
-        // various maps used for creating tagged histograms
+        // various maps used to store tag pass/fail status
+        // to be used when creating tagged histograms
         std::unordered_map<std::string, bool> smooth_tag_map;
         std::unordered_map<std::string, bool> smooth_tag_map_nominal;
         std::unordered_map<std::string, bool> ntrk_prerec_tag_map;
@@ -79,10 +81,12 @@ class DataMCbackgroundSelector : public TSelector {
         std::unordered_map<std::string, bool> mva_tag_map;
 
         // Declaration of leaf types
-        Char_t          HLT_jet_trigger;
+        Char_t          HLT_trigger;
         Float_t         weight_mc;
         Float_t         weight_pileup;
         Float_t         weight_leptonSF;
+        Float_t         weight_photonSF;
+        Float_t         weight_photonSF_effIso;
         Float_t         weight_jvt;
         ULong64_t       eventNumber;
         UInt_t          runNumber;
@@ -92,7 +96,6 @@ class DataMCbackgroundSelector : public TSelector {
         UInt_t          backgroundFlags;
         //Float_t         met_met;
         //Float_t         met_phi;
-        Int_t           dijets;
         vector<float>   *rljet_eta;
         vector<float>   *rljet_phi;
         vector<float>   *rljet_m_comb;
@@ -215,10 +218,12 @@ class DataMCbackgroundSelector : public TSelector {
         vector<double>  *rljet_SDt_win50_btag0_DOWN;
 
         // List of branches
-        TBranch        *b_HLT_jet_trigger;  //!
+        TBranch        *b_HLT_trigger;  //!
         TBranch        *b_weight_mc;   //!
         TBranch        *b_weight_pileup;   //!
         TBranch        *b_weight_leptonSF;   //!
+        TBranch        *b_weight_photonSF;   //!
+        TBranch        *b_weight_photonSF_effIso;   //!
         TBranch        *b_weight_jvt;   //!
         TBranch        *b_eventNumber;   //!
         TBranch        *b_runNumber;   //!
@@ -228,7 +233,6 @@ class DataMCbackgroundSelector : public TSelector {
         TBranch        *b_backgroundFlags;   //!
         // TBranch        *b_met_met;   //!
         // TBranch        *b_met_phi;   //!
-        TBranch        *b_dijets;   //!
         TBranch        *b_rljet_eta;   //!
         TBranch        *b_rljet_phi;   //!
         TBranch        *b_rljet_m_comb;   //!
@@ -515,11 +519,13 @@ void DataMCbackgroundSelector::Init(TTree *tree)
         fChain->SetBranchAddress("weight_mc", &weight_mc, &b_weight_mc);
         fChain->SetBranchAddress("weight_pileup", &weight_pileup, &b_weight_pileup);
         fChain->SetBranchAddress("weight_leptonSF", &weight_leptonSF, &b_weight_leptonSF);
+        fChain->SetBranchAddress("weight_photonSF", &weight_photonSF, &b_weight_photonSF);
+        fChain->SetBranchAddress("weight_photonSF_effIso", &weight_photonSF_effIso, &b_weight_photonSF_effIso);
         fChain->SetBranchAddress("weight_jvt", &weight_jvt, &b_weight_jvt);
         fChain->SetBranchAddress("randomRunNumber", &randomRunNumber, &b_randomRunNumber);
         fChain->SetBranchAddress("mu", &mu, &b_mu);
     } else {
-        fChain->SetBranchAddress(this->data_trigger_str.c_str(), &HLT_jet_trigger, &b_HLT_jet_trigger); 
+        fChain->SetBranchAddress(this->data_trigger_str.c_str(), &HLT_trigger, &b_HLT_trigger);
         fChain->SetBranchAddress("mu_original_xAOD", &mu, &b_mu);
     }
 
@@ -529,7 +535,6 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     fChain->SetBranchAddress("backgroundFlags", &backgroundFlags, &b_backgroundFlags);
     //fChain->SetBranchAddress("met_met", &met_met, &b_met_met);
     //fChain->SetBranchAddress("met_phi", &met_phi, &b_met_phi);
-    fChain->SetBranchAddress("dijets", &dijets, &b_dijets);
     fChain->SetBranchAddress("rljet_eta", &rljet_eta, &b_rljet_eta);
     fChain->SetBranchAddress("rljet_phi", &rljet_phi, &b_rljet_phi);
     fChain->SetBranchAddress("rljet_m_comb", &rljet_m_comb, &b_rljet_m_comb);
