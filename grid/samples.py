@@ -4,103 +4,46 @@ samples_JETM6 = {}
 
 # {{{ DATA
 
-samples_JETM6['data_2016_25ns'] = [ # X/pb
-        'data16_13TeV.periodA.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-        'data16_13TeV.periodB.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-        'data16_13TeV.periodC.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-        'data16_13TeV.periodD.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-        'data16_13TeV.periodE.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-        'data16_13TeV.periodF.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-        'data16_13TeV.periodG.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-        'data16_13TeV.periodI.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-        'data16_13TeV.periodK.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-        'data16_13TeV.periodL.physics_Main.PhysCont.DAOD_JETM6.grp16_v02_p2840'
-        ]
+samples_JETM6['data_2016_25ns_p2813_p2840'] = [ # X/pb
+    'data16_13TeV.periodA.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
+    'data16_13TeV.periodB.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
+    'data16_13TeV.periodC.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
+    'data16_13TeV.periodD.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
+    'data16_13TeV.periodE.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
+    'data16_13TeV.periodF.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
+    'data16_13TeV.periodG.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
+    'data16_13TeV.periodI.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
+    'data16_13TeV.periodK.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
+    'data16_13TeV.periodL.physics_Main.PhysCont.DAOD_JETM6.grp16_v02_p2840'
+    ]
 
-samples_JETM6['data_2016_25ns_gammajet'] = [ # X/pb
-        "data16_13TeV.periodA.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
-        "data16_13TeV.periodB.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
-        "data16_13TeV.periodC.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
-        "data16_13TeV.periodD.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
-        "data16_13TeV.periodE.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
-        "data16_13TeV.periodF.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
-        "data16_13TeV.periodG.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
-        "data16_13TeV.periodI.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
-        "data16_13TeV.periodK.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
-        "data16_13TeV.periodL.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950"
-        ]
+samples_JETM6['data_2016_25ns_p2950'] = [ # X/pb
+    "data16_13TeV.periodA.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
+    "data16_13TeV.periodB.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
+    "data16_13TeV.periodC.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
+    "data16_13TeV.periodD.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
+    "data16_13TeV.periodE.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
+    "data16_13TeV.periodF.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
+    "data16_13TeV.periodG.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
+    "data16_13TeV.periodI.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
+    "data16_13TeV.periodK.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
+    "data16_13TeV.periodL.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950"
+    ]
 
-# samples_JETM6['data_2015_25ns'] = [ # 3212.96/pb
-#         'data15_13TeV.00276262.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00276329.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00276336.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00276416.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00276511.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00276689.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00276778.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00276790.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00276952.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00276954.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00278880.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00278912.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00278968.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00279169.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00279259.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00279279.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00279284.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00279345.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00279515.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00279598.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00279685.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00279813.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00279867.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00279928.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00279932.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00279984.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00280231.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00280273.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00280319.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00280368.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00280423.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00280464.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00280500.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00280520.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00280614.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00280673.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00280753.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00280853.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00280862.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00280950.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00280977.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00281070.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00281074.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00281075.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00281317.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00281385.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00281411.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00282625.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00282631.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00282712.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00282784.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00282992.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00283074.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00283155.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00283270.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00283429.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00283608.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00283780.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00284006.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00284154.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00284213.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00284285.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00284420.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00284427.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-#         'data15_13TeV.00284484.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813'
-# ]
+samples_JETM6['data_2015_25ns_p2950'] = [ # 3212.96/pb
+    "data15_13TeV.periodA.physics_Main.PhysCont.DAOD_JETM6.grp15_v01_p2950",
+    "data15_13TeV.periodC.physics_Main.PhysCont.DAOD_JETM6.grp15_v01_p2950",
+    "data15_13TeV.periodD.physics_Main.PhysCont.DAOD_JETM6.grp15_v01_p2950",
+    "data15_13TeV.periodE.physics_Main.PhysCont.DAOD_JETM6.grp15_v01_p2950",
+    "data15_13TeV.periodF.physics_Main.PhysCont.DAOD_JETM6.grp15_v01_p2950",
+    "data15_13TeV.periodG.physics_Main.PhysCont.DAOD_JETM6.grp15_v01_p2950",
+    "data15_13TeV.periodH.physics_Main.PhysCont.DAOD_JETM6.grp15_v01_p2950",
+    "data15_13TeV.periodJ.physics_Main.PhysCont.DAOD_JETM6.grp15_v01_p2950"
+    ]
 
 # }}}
 
-# {{{ PYTHIA DIJET
+# {{{ DIJET
 
 samples_EVNT['pythia_dijet_mc15c'] = [
         "mc15_13TeV.361020.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ0W.evgen.EVNT.e3569",
@@ -119,39 +62,52 @@ samples_EVNT['pythia_dijet_mc15c'] = [
         ]
 
 samples_AOD['pythia_dijet_mc15c'] = [
-        "mc15_13TeV.361020.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ0W.merge.AOD.e3569_s2576_s2132_r7725_r7676",
-        "mc15_13TeV.361021.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ1W.merge.AOD.e3569_s2576_s2132_r7725_r7676",
-        "mc15_13TeV.361022.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ2W.merge.AOD.e3668_s2576_s2132_r7725_r7676",
-        "mc15_13TeV.361023.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ3W.merge.AOD.e3668_s2576_s2132_r7725_r7676",
-        "mc15_13TeV.361024.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ4W.merge.AOD.e3668_s2576_s2132_r7725_r7676",
-        "mc15_13TeV.361025.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ5W.merge.AOD.e3668_s2576_s2132_r7725_r7676",
-        "mc15_13TeV.361026.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ6W.merge.AOD.e3569_s2608_s2183_r7725_r7676",
-        "mc15_13TeV.361027.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ7W.merge.AOD.e3668_s2608_s2183_r7725_r7676",
-        "mc15_13TeV.361028.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ8W.merge.AOD.e3569_s2576_s2132_r7772_r7676",
-        "mc15_13TeV.361029.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ9W.merge.AOD.e3569_s2576_s2132_r7772_r7676",
-        "mc15_13TeV.361030.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ10W.merge.AOD.e3569_s2576_s2132_r7772_r7676",
-        "mc15_13TeV.361031.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ11W.merge.AOD.e3569_s2608_s2183_r7772_r7676",
-        "mc15_13TeV.361032.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ12W.merge.AOD.e3668_s2608_s2183_r7772_r7676"
-        ]
+    "mc15_13TeV.361020.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ0W.merge.AOD.e3569_s2576_s2132_r7725_r7676",
+    "mc15_13TeV.361021.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ1W.merge.AOD.e3569_s2576_s2132_r7725_r7676",
+    "mc15_13TeV.361022.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ2W.merge.AOD.e3668_s2576_s2132_r7725_r7676",
+    "mc15_13TeV.361023.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ3W.merge.AOD.e3668_s2576_s2132_r7725_r7676",
+    "mc15_13TeV.361024.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ4W.merge.AOD.e3668_s2576_s2132_r7725_r7676",
+    "mc15_13TeV.361025.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ5W.merge.AOD.e3668_s2576_s2132_r7725_r7676",
+    "mc15_13TeV.361026.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ6W.merge.AOD.e3569_s2608_s2183_r7725_r7676",
+    "mc15_13TeV.361027.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ7W.merge.AOD.e3668_s2608_s2183_r7725_r7676",
+    "mc15_13TeV.361028.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ8W.merge.AOD.e3569_s2576_s2132_r7772_r7676",
+    "mc15_13TeV.361029.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ9W.merge.AOD.e3569_s2576_s2132_r7772_r7676",
+    "mc15_13TeV.361030.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ10W.merge.AOD.e3569_s2576_s2132_r7772_r7676",
+    "mc15_13TeV.361031.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ11W.merge.AOD.e3569_s2608_s2183_r7772_r7676",
+    "mc15_13TeV.361032.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ12W.merge.AOD.e3668_s2608_s2183_r7772_r7676"
+    ]
 
 samples_JETM6['pythia_dijet_mc15c'] = [
-        "mc15_13TeV.361020.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ0W.merge.DAOD_JETM6.e3569_s2576_s2132_r7725_r7676_p2794",
-        "mc15_13TeV.361021.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ1W.merge.DAOD_JETM6.e3569_s2576_s2132_r7725_r7676_p2794",
-        "mc15_13TeV.361022.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ2W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p2794",
-        "mc15_13TeV.361023.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ3W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p2794",
-        "mc15_13TeV.361024.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ4W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p2794",
-        "mc15_13TeV.361025.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ5W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p2794",
-        "mc15_13TeV.361026.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ6W.merge.DAOD_JETM6.e3569_s2608_s2183_r7725_r7676_p2794",
-        "mc15_13TeV.361027.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ7W.merge.DAOD_JETM6.e3668_s2608_s2183_r7725_r7676_p2794",
-        "mc15_13TeV.361028.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ8W.merge.DAOD_JETM6.e3569_s2576_s2132_r7772_r7676_p2794",
-        "mc15_13TeV.361029.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ9W.merge.DAOD_JETM6.e3569_s2576_s2132_r7772_r7676_p2794",
-        "mc15_13TeV.361030.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ10W.merge.DAOD_JETM6.e3569_s2576_s2132_r7772_r7676_p2794",
-        "mc15_13TeV.361031.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ11W.merge.DAOD_JETM6.e3569_s2608_s2183_r7772_r7676_p2794",
-        "mc15_13TeV.361032.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ12W.merge.DAOD_JETM6.e3668_s2608_s2183_r7772_r7676_p2794"
-        ]
-# }}}
+    "mc15_13TeV.361020.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ0W.merge.DAOD_JETM6.e3569_s2576_s2132_r7725_r7676_p2794",
+    "mc15_13TeV.361021.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ1W.merge.DAOD_JETM6.e3569_s2576_s2132_r7725_r7676_p2794",
+    "mc15_13TeV.361022.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ2W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p2794",
+    "mc15_13TeV.361023.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ3W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p2794",
+    "mc15_13TeV.361024.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ4W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p2794",
+    "mc15_13TeV.361025.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ5W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p2794",
+    "mc15_13TeV.361026.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ6W.merge.DAOD_JETM6.e3569_s2608_s2183_r7725_r7676_p2794",
+    "mc15_13TeV.361027.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ7W.merge.DAOD_JETM6.e3668_s2608_s2183_r7725_r7676_p2794",
+    "mc15_13TeV.361028.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ8W.merge.DAOD_JETM6.e3569_s2576_s2132_r7772_r7676_p2794",
+    "mc15_13TeV.361029.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ9W.merge.DAOD_JETM6.e3569_s2576_s2132_r7772_r7676_p2794",
+    "mc15_13TeV.361030.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ10W.merge.DAOD_JETM6.e3569_s2576_s2132_r7772_r7676_p2794",
+    "mc15_13TeV.361031.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ11W.merge.DAOD_JETM6.e3569_s2608_s2183_r7772_r7676_p2794",
+    "mc15_13TeV.361032.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ12W.merge.DAOD_JETM6.e3668_s2608_s2183_r7772_r7676_p2794"
+    ]
 
-# {{{ HERWIG DIJET
+samples_JETM6['pythia_dijet_mc15c_p2949'] = [
+    #"mc15_13TeV.361020.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ0W.merge.DAOD_JETM6.e3569_s2576_s2132_r7725_r7676_p2949",
+    #"mc15_13TeV.361021.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ1W.merge.DAOD_JETM6.e3569_s2576_s2132_r7725_r7676_p2949",
+    #"mc15_13TeV.361022.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ2W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p2949",
+    #"mc15_13TeV.361023.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ3W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p2949",
+    #"mc15_13TeV.361024.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ4W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p2949",
+    #"mc15_13TeV.361025.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ5W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p2949",
+    #"mc15_13TeV.361026.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ6W.merge.DAOD_JETM6.e3569_s2608_s2183_r7725_r7676_p2949",
+    #"mc15_13TeV.361027.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ7W.merge.DAOD_JETM6.e3668_s2608_s2183_r7725_r7676_p2949",
+    #"mc15_13TeV.361028.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ8W.merge.DAOD_JETM6.e3569_s2576_s2132_r7772_r7676_p2949",
+    "mc15_13TeV.361029.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ9W.merge.DAOD_JETM6.e3569_s2576_s2132_r7772_r7676_p2949",
+    #"mc15_13TeV.361030.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ10W.merge.DAOD_JETM6.e3569_s2576_s2132_r7772_r7676_p2949",
+    #"mc15_13TeV.361031.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ11W.merge.DAOD_JETM6.e3569_s2608_s2183_r7772_r7676_p2949",
+    #"mc15_13TeV.361032.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ12W.merge.DAOD_JETM6.e3668_s2608_s2183_r7772_r7676_p2949"
+    ]
 
 samples_EVNT['herwig_dijet_mc15c'] = [
         "mc15_13TeV.426040.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ0W.evgen.EVNT.e4410",
@@ -202,18 +158,18 @@ samples_JETM6['herwig_dijet_mc15c'] = [
 ]
 
 samples_EVNT['sherpa_dijet_mc15c'] = [
-        #"mc15_13TeV.426131.Sherpa_CT10_jets_JZ1.evgen.EVNT.e4355",
-        #"mc15_13TeV.426132.Sherpa_CT10_jets_JZ2.evgen.EVNT.e4355",
-        #"mc15_13TeV.426133.Sherpa_CT10_jets_JZ3.evgen.EVNT.e4355",
+        "mc15_13TeV.426131.Sherpa_CT10_jets_JZ1.evgen.EVNT.e4355",
+        "mc15_13TeV.426132.Sherpa_CT10_jets_JZ2.evgen.EVNT.e4355",
+        "mc15_13TeV.426133.Sherpa_CT10_jets_JZ3.evgen.EVNT.e4355",
         "mc15_13TeV.426134.Sherpa_CT10_jets_JZ4.evgen.EVNT.e4355",
-        #"mc15_13TeV.426135.Sherpa_CT10_jets_JZ5.evgen.EVNT.e4355",
-        #"mc15_13TeV.426136.Sherpa_CT10_jets_JZ6.evgen.EVNT.e4355",
-        #"mc15_13TeV.426137.Sherpa_CT10_jets_JZ7.evgen.EVNT.e4635",
-        #"mc15_13TeV.426138.Sherpa_CT10_jets_JZ8.evgen.EVNT.e4635",
-        #"mc15_13TeV.426139.Sherpa_CT10_jets_JZ9.evgen.EVNT.e4635",
-        #"mc15_13TeV.426140.Sherpa_CT10_jets_JZ10.evgen.EVNT.e4635",
-        #"mc15_13TeV.426141.Sherpa_CT10_jets_JZ11.evgen.EVNT.e4635",
-        #"mc15_13TeV.426142.Sherpa_CT10_jets_JZ12.evgen.EVNT.e4635"
+        "mc15_13TeV.426135.Sherpa_CT10_jets_JZ5.evgen.EVNT.e4355",
+        "mc15_13TeV.426136.Sherpa_CT10_jets_JZ6.evgen.EVNT.e4355",
+        "mc15_13TeV.426137.Sherpa_CT10_jets_JZ7.evgen.EVNT.e4635",
+        "mc15_13TeV.426138.Sherpa_CT10_jets_JZ8.evgen.EVNT.e4635",
+        "mc15_13TeV.426139.Sherpa_CT10_jets_JZ9.evgen.EVNT.e4635",
+        "mc15_13TeV.426140.Sherpa_CT10_jets_JZ10.evgen.EVNT.e4635",
+        "mc15_13TeV.426141.Sherpa_CT10_jets_JZ11.evgen.EVNT.e4635",
+        "mc15_13TeV.426142.Sherpa_CT10_jets_JZ12.evgen.EVNT.e4635"
 ]
 
 samples_AOD['sherpa_dijet_mc15c'] = [
@@ -232,18 +188,18 @@ samples_AOD['sherpa_dijet_mc15c'] = [
 ]
 
 samples_JETM6['sherpa_dijet_mc15c'] = [
-        #"mc15_13TeV.426131.Sherpa_CT10_jets_JZ1.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p2794",
-        #"mc15_13TeV.426132.Sherpa_CT10_jets_JZ2.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p2794",
-        #"mc15_13TeV.426133.Sherpa_CT10_jets_JZ3.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p2794",
+        "mc15_13TeV.426131.Sherpa_CT10_jets_JZ1.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p2794",
+        "mc15_13TeV.426132.Sherpa_CT10_jets_JZ2.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p2794",
+        "mc15_13TeV.426133.Sherpa_CT10_jets_JZ3.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p2794",
         "mc15_13TeV.426134.Sherpa_CT10_jets_JZ4.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p2794",
-        #"mc15_13TeV.426135.Sherpa_CT10_jets_JZ5.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p2794",
-        #"mc15_13TeV.426136.Sherpa_CT10_jets_JZ6.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p2794",
-        #"mc15_13TeV.426137.Sherpa_CT10_jets_JZ7.merge.DAOD_JETM6.e4635_s2726_r7725_r7676_p2794",
-        #"mc15_13TeV.426138.Sherpa_CT10_jets_JZ8.merge.DAOD_JETM6.e4635_s2726_r7725_r7676_p2794",
-        #"mc15_13TeV.426139.Sherpa_CT10_jets_JZ9.merge.DAOD_JETM6.e4635_s2726_r7725_r7676_p2794",
-        #"mc15_13TeV.426140.Sherpa_CT10_jets_JZ10.merge.DAOD_JETM6.e4635_s2726_r7725_r7676_p2794",
-        #"mc15_13TeV.426141.Sherpa_CT10_jets_JZ11.merge.DAOD_JETM6.e4635_s2726_s2183_r7725_r7676_p2794",
-        #"mc15_13TeV.426142.Sherpa_CT10_jets_JZ12.merge.DAOD_JETM6.e4635_s2726_s2183_r7725_r7676_p2794"
+        "mc15_13TeV.426135.Sherpa_CT10_jets_JZ5.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p2794",
+        "mc15_13TeV.426136.Sherpa_CT10_jets_JZ6.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p2794",
+        "mc15_13TeV.426137.Sherpa_CT10_jets_JZ7.merge.DAOD_JETM6.e4635_s2726_r7725_r7676_p2794",
+        "mc15_13TeV.426138.Sherpa_CT10_jets_JZ8.merge.DAOD_JETM6.e4635_s2726_r7725_r7676_p2794",
+        "mc15_13TeV.426139.Sherpa_CT10_jets_JZ9.merge.DAOD_JETM6.e4635_s2726_r7725_r7676_p2794",
+        "mc15_13TeV.426140.Sherpa_CT10_jets_JZ10.merge.DAOD_JETM6.e4635_s2726_r7725_r7676_p2794",
+        "mc15_13TeV.426141.Sherpa_CT10_jets_JZ11.merge.DAOD_JETM6.e4635_s2726_s2183_r7725_r7676_p2794",
+        "mc15_13TeV.426142.Sherpa_CT10_jets_JZ12.merge.DAOD_JETM6.e4635_s2726_s2183_r7725_r7676_p2794"
 ]
 
 # }}}
@@ -251,32 +207,32 @@ samples_JETM6['sherpa_dijet_mc15c'] = [
 # {{{ W/Z + jets
 
 samples_EVNT["V+jets_mc15c"] = [
-        #"mc15_13TeV.304307.Sherpa_CT10_Wqq_Pt280_500.evgen.EVNT.e4692",
-        #"mc15_13TeV.304308.Sherpa_CT10_Wqq_Pt500_1000.evgen.EVNT.e4692",
-        #"mc15_13TeV.304309.Sherpa_CT10_Wqq_Pt1000.evgen.EVNT.e4692",
-        #"mc15_13TeV.304623.Pythia8EvtGen_A14NNPDF23LO_WHad_280_500.evgen.EVNT.e4581",
-        #"mc15_13TeV.304624.Pythia8EvtGen_A14NNPDF23LO_WHad_500_700.evgen.EVNT.e4581",
-        #"mc15_13TeV.304625.Pythia8EvtGen_A14NNPDF23LO_WHad_700_1000.evgen.EVNT.e4581",
-        #"mc15_13TeV.304626.Pythia8EvtGen_A14NNPDF23LO_WHad_1000_1400.evgen.EVNT.e4581",
-        #"mc15_13TeV.304627.Pythia8EvtGen_A14NNPDF23LO_WHad_1400.evgen.EVNT.e4581",
-        #"mc15_13TeV.304628.Pythia8EvtGen_A14NNPDF23LO_ZHad_280_500.evgen.EVNT.e4581",
-        #"mc15_13TeV.304629.Pythia8EvtGen_A14NNPDF23LO_ZHad_500_700.evgen.EVNT.e4581",
-        #"mc15_13TeV.304630.Pythia8EvtGen_A14NNPDF23LO_ZHad_700_1000.evgen.EVNT.e4581",
-        #"mc15_13TeV.304631.Pythia8EvtGen_A14NNPDF23LO_ZHad_1000_1400.evgen.EVNT.e4581",
-        #"mc15_13TeV.304632.Pythia8EvtGen_A14NNPDF23LO_ZHad_1400.evgen.EVNT.e4581",
-        #"mc15_13TeV.304673.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_280_500.evgen.EVNT.e4571",
-        #"mc15_13TeV.304674.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_500_700.evgen.EVNT.e4571",
-        #"mc15_13TeV.304675.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_700_1000.evgen.EVNT.e4571",
-        #"mc15_13TeV.304676.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_1000_1400.evgen.EVNT.e4571",
-        #"mc15_13TeV.304677.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_1400.evgen.EVNT.e4571",
-        #"mc15_13TeV.304678.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_280_500.evgen.EVNT.e4571",
-        #"mc15_13TeV.304679.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_500_700.evgen.EVNT.e4571",
-        #"mc15_13TeV.304680.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_700_1000.evgen.EVNT.e4571",
-        #"mc15_13TeV.304681.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_1000_1400.evgen.EVNT.e4571",
-        #"mc15_13TeV.304682.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_1400.evgen.EVNT.e4571",
-        #"mc15_13TeV.304707.Sherpa_CT10_Zqq_Pt280_500.evgen.EVNT.e4692",
+        "mc15_13TeV.304307.Sherpa_CT10_Wqq_Pt280_500.evgen.EVNT.e4692",
+        "mc15_13TeV.304308.Sherpa_CT10_Wqq_Pt500_1000.evgen.EVNT.e4692",
+        "mc15_13TeV.304309.Sherpa_CT10_Wqq_Pt1000.evgen.EVNT.e4692",
+        "mc15_13TeV.304623.Pythia8EvtGen_A14NNPDF23LO_WHad_280_500.evgen.EVNT.e4581",
+        "mc15_13TeV.304624.Pythia8EvtGen_A14NNPDF23LO_WHad_500_700.evgen.EVNT.e4581",
+        "mc15_13TeV.304625.Pythia8EvtGen_A14NNPDF23LO_WHad_700_1000.evgen.EVNT.e4581",
+        "mc15_13TeV.304626.Pythia8EvtGen_A14NNPDF23LO_WHad_1000_1400.evgen.EVNT.e4581",
+        "mc15_13TeV.304627.Pythia8EvtGen_A14NNPDF23LO_WHad_1400.evgen.EVNT.e4581",
+        "mc15_13TeV.304628.Pythia8EvtGen_A14NNPDF23LO_ZHad_280_500.evgen.EVNT.e4581",
+        "mc15_13TeV.304629.Pythia8EvtGen_A14NNPDF23LO_ZHad_500_700.evgen.EVNT.e4581",
+        "mc15_13TeV.304630.Pythia8EvtGen_A14NNPDF23LO_ZHad_700_1000.evgen.EVNT.e4581",
+        "mc15_13TeV.304631.Pythia8EvtGen_A14NNPDF23LO_ZHad_1000_1400.evgen.EVNT.e4581",
+        "mc15_13TeV.304632.Pythia8EvtGen_A14NNPDF23LO_ZHad_1400.evgen.EVNT.e4581",
+        "mc15_13TeV.304673.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_280_500.evgen.EVNT.e4571",
+        "mc15_13TeV.304674.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_500_700.evgen.EVNT.e4571",
+        "mc15_13TeV.304675.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_700_1000.evgen.EVNT.e4571",
+        "mc15_13TeV.304676.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_1000_1400.evgen.EVNT.e4571",
+        "mc15_13TeV.304677.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_1400.evgen.EVNT.e4571",
+        "mc15_13TeV.304678.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_280_500.evgen.EVNT.e4571",
+        "mc15_13TeV.304679.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_500_700.evgen.EVNT.e4571",
+        "mc15_13TeV.304680.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_700_1000.evgen.EVNT.e4571",
+        "mc15_13TeV.304681.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_1000_1400.evgen.EVNT.e4571",
+        "mc15_13TeV.304682.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_1400.evgen.EVNT.e4571",
+        "mc15_13TeV.304707.Sherpa_CT10_Zqq_Pt280_500.evgen.EVNT.e4692",
         "mc15_13TeV.304708.Sherpa_CT10_Zqq_Pt500_1000.evgen.EVNT.e4692",
-        #"mc15_13TeV.304709.Sherpa_CT10_Zqq_Pt1000.evgen.EVNT.e4692"
+        "mc15_13TeV.304709.Sherpa_CT10_Zqq_Pt1000.evgen.EVNT.e4692"
         ]
 
 samples_AOD["V+jets_mc15c"] = [
@@ -309,36 +265,36 @@ samples_AOD["V+jets_mc15c"] = [
         ]
 
 samples_JETM6["V+jets_mc15c"] = [
-        #"mc15_13TeV.304307.Sherpa_CT10_Wqq_Pt280_500.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304308.Sherpa_CT10_Wqq_Pt500_1000.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304309.Sherpa_CT10_Wqq_Pt1000.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304707.Sherpa_CT10_Zqq_Pt280_500.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304307.Sherpa_CT10_Wqq_Pt280_500.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304308.Sherpa_CT10_Wqq_Pt500_1000.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304309.Sherpa_CT10_Wqq_Pt1000.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304707.Sherpa_CT10_Zqq_Pt280_500.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p2794",
         "mc15_13TeV.304708.Sherpa_CT10_Zqq_Pt500_1000.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304709.Sherpa_CT10_Zqq_Pt1000.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304623.Pythia8EvtGen_A14NNPDF23LO_WHad_280_500.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304624.Pythia8EvtGen_A14NNPDF23LO_WHad_500_700.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304625.Pythia8EvtGen_A14NNPDF23LO_WHad_700_1000.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304626.Pythia8EvtGen_A14NNPDF23LO_WHad_1000_1400.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304627.Pythia8EvtGen_A14NNPDF23LO_WHad_1400.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304628.Pythia8EvtGen_A14NNPDF23LO_ZHad_280_500.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304629.Pythia8EvtGen_A14NNPDF23LO_ZHad_500_700.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304630.Pythia8EvtGen_A14NNPDF23LO_ZHad_700_1000.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304631.Pythia8EvtGen_A14NNPDF23LO_ZHad_1000_1400.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304632.Pythia8EvtGen_A14NNPDF23LO_ZHad_1400.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304673.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_280_500.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304674.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_500_700.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304675.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_700_1000.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304676.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_1000_1400.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304677.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_1400.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304678.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_280_500.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304679.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_500_700.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304680.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_700_1000.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304681.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_1000_1400.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794",
-        #"mc15_13TeV.304682.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_1400.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794"
+        "mc15_13TeV.304709.Sherpa_CT10_Zqq_Pt1000.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304623.Pythia8EvtGen_A14NNPDF23LO_WHad_280_500.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304624.Pythia8EvtGen_A14NNPDF23LO_WHad_500_700.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304625.Pythia8EvtGen_A14NNPDF23LO_WHad_700_1000.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304626.Pythia8EvtGen_A14NNPDF23LO_WHad_1000_1400.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304627.Pythia8EvtGen_A14NNPDF23LO_WHad_1400.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304628.Pythia8EvtGen_A14NNPDF23LO_ZHad_280_500.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304629.Pythia8EvtGen_A14NNPDF23LO_ZHad_500_700.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304630.Pythia8EvtGen_A14NNPDF23LO_ZHad_700_1000.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304631.Pythia8EvtGen_A14NNPDF23LO_ZHad_1000_1400.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304632.Pythia8EvtGen_A14NNPDF23LO_ZHad_1400.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304673.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_280_500.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304674.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_500_700.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304675.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_700_1000.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304676.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_1000_1400.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304677.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_1400.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304678.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_280_500.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304679.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_500_700.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304680.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_700_1000.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304681.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_1000_1400.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794",
+        "mc15_13TeV.304682.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_1400.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p2794"
         ]
 # }}}
 
-# {{{ ttbar
+# {{{ allhad ttbar
 
 samples_EVNT["ttbar_allhad_mc15c"] = [
         "mc15_13TeV.303722.PowhegPythiaEvtGen_P2012_ttbar_hdamp172p5_allhad_mtt_1.evgen.EVNT.e4321",
@@ -368,8 +324,7 @@ samples_JETM6["ttbar_allhad_mc15c"] = [
 
 # {{{ gamma+jet
 
-samples_EVNT["gammajet_mc15c"] = [
-        "mc15_13TeV.423103.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP70_140.evgen.EVNT.e3791",
+samples_EVNT["pythia_gammajet_mc15c"] = [
         "mc15_13TeV.423104.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP140_280.evgen.EVNT.e3791",
         "mc15_13TeV.423105.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP280_500.evgen.EVNT.e3791",
         "mc15_13TeV.423106.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP500_800.evgen.EVNT.e3791",
@@ -381,8 +336,7 @@ samples_EVNT["gammajet_mc15c"] = [
         "mc15_13TeV.423112.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP3000_inf.evgen.EVNT.e4453"
         ]
 
-samples_AOD["gammajet_mc15c"] = [
-        "mc15_13TeV.423103.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP70_140.merge.AOD.e3791_s2608_s2183_r7725_r7676",
+samples_AOD["pythia_gammajet_mc15c"] = [
         "mc15_13TeV.423104.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP140_280.merge.AOD.e3791_s2608_s2183_r7725_r7676",
         "mc15_13TeV.423105.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP280_500.merge.AOD.e3791_s2608_s2183_r7725_r7676",
         "mc15_13TeV.423106.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP500_800.merge.AOD.e3791_s2608_s2183_r7725_r7676",
@@ -394,8 +348,7 @@ samples_AOD["gammajet_mc15c"] = [
         "mc15_13TeV.423112.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP3000_inf.merge.AOD.e4453_s2726_r7772_r7676"
         ]
 
-samples_JETM6["gammajet_mc15c"] = [
-        "mc15_13TeV.423103.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP70_140.merge.DAOD_JETM6.e3791_s2608_s2183_r7725_r7676_p2949",
+samples_JETM6["pythia_gammajet_mc15c"] = [
         "mc15_13TeV.423104.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP140_280.merge.DAOD_JETM6.e3791_s2608_s2183_r7725_r7676_p2949",
         "mc15_13TeV.423105.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP280_500.merge.DAOD_JETM6.e3791_s2608_s2183_r7725_r7676_p2949",
         "mc15_13TeV.423106.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP500_800.merge.DAOD_JETM6.e3791_s2608_s2183_r7725_r7676_p2949",
@@ -407,9 +360,119 @@ samples_JETM6["gammajet_mc15c"] = [
         "mc15_13TeV.423112.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP3000_inf.merge.DAOD_JETM6.e4453_s2726_r7772_r7676_p2949"
         ]
 
+samples_EVNT["sherpa_gammajet_mc15c"] = [
+    "mc15_13TeV.361045.Sherpa_CT10_SinglePhotonPt140_280_CVetoBVeto.evgen.EVNT.e3587",
+    "mc15_13TeV.361046.Sherpa_CT10_SinglePhotonPt140_280_CFilterBVeto.evgen.EVNT.e3587",
+    "mc15_13TeV.361047.Sherpa_CT10_SinglePhotonPt140_280_BFilter.evgen.EVNT.e3587",
+    "mc15_13TeV.361048.Sherpa_CT10_SinglePhotonPt280_500_CVetoBVeto.evgen.EVNT.e3587",
+    "mc15_13TeV.361049.Sherpa_CT10_SinglePhotonPt280_500_CFilterBVeto.evgen.EVNT.e3587",
+    "mc15_13TeV.361050.Sherpa_CT10_SinglePhotonPt280_500_BFilter.evgen.EVNT.e3587",
+    "mc15_13TeV.361051.Sherpa_CT10_SinglePhotonPt500_1000_CVetoBVeto.evgen.EVNT.e3587",
+    "mc15_13TeV.361052.Sherpa_CT10_SinglePhotonPt500_1000_CFilterBVeto.evgen.EVNT.e3587",
+    "mc15_13TeV.361053.Sherpa_CT10_SinglePhotonPt500_1000_BFilter.evgen.EVNT.e3587",
+    "mc15_13TeV.361054.Sherpa_CT10_SinglePhotonPt1000_2000_CVetoBVeto.evgen.EVNT.e3587",
+    "mc15_13TeV.361055.Sherpa_CT10_SinglePhotonPt1000_2000_CFilterBVeto.evgen.EVNT.e3587",
+    "mc15_13TeV.361056.Sherpa_CT10_SinglePhotonPt1000_2000_BFilter.evgen.EVNT.e3587_s2608",
+    "mc15_13TeV.361057.Sherpa_CT10_SinglePhotonPt2000_4000_CVetoBVeto.evgen.EVNT.e3587",
+    "mc15_13TeV.361058.Sherpa_CT10_SinglePhotonPt2000_4000_CFilterBVeto.evgen.EVNT.e3587",
+    "mc15_13TeV.361059.Sherpa_CT10_SinglePhotonPt2000_4000_BFilter.evgen.EVNT.e3587",
+    "mc15_13TeV.361060.Sherpa_CT10_SinglePhotonPt4000_CVetoBVeto.evgen.EVNT.e3587",
+    "mc15_13TeV.361061.Sherpa_CT10_SinglePhotonPt4000_CFilterBVeto.evgen.EVNT.e3587",
+    "mc15_13TeV.361062.Sherpa_CT10_SinglePhotonPt4000_BFilter.evgen.EVNT.e3587"
+    ]
+
+samples_AOD["sherpa_gammajet_mc15c"] = [
+    "mc15_13TeV.361045.Sherpa_CT10_SinglePhotonPt140_280_CVetoBVeto.merge.AOD.e3587_s2608_s2183_r7725_r7676",
+    "mc15_13TeV.361046.Sherpa_CT10_SinglePhotonPt140_280_CFilterBVeto.merge.AOD.e3587_s2608_s2183_r7725_r7676",
+    "mc15_13TeV.361047.Sherpa_CT10_SinglePhotonPt140_280_BFilter.merge.AOD.e3587_s2608_s2183_r7725_r7676",
+    "mc15_13TeV.361048.Sherpa_CT10_SinglePhotonPt280_500_CVetoBVeto.merge.AOD.e3587_s2608_s2183_r7725_r7676",
+    "mc15_13TeV.361049.Sherpa_CT10_SinglePhotonPt280_500_CFilterBVeto.merge.AOD.e3587_s2608_s2183_r7725_r7676",
+    "mc15_13TeV.361050.Sherpa_CT10_SinglePhotonPt280_500_BFilter.merge.AOD.e3587_s2608_s2183_r7725_r7676",
+    "mc15_13TeV.361051.Sherpa_CT10_SinglePhotonPt500_1000_CVetoBVeto.merge.AOD.e3587_s2608_s2183_r7725_r7676",
+    "mc15_13TeV.361052.Sherpa_CT10_SinglePhotonPt500_1000_CFilterBVeto.merge.AOD.e3587_s2608_s2183_r7725_r7676",
+    "mc15_13TeV.361053.Sherpa_CT10_SinglePhotonPt500_1000_BFilter.merge.AOD.e3587_s2608_s2183_r7725_r7676",
+    "mc15_13TeV.361054.Sherpa_CT10_SinglePhotonPt1000_2000_CVetoBVeto.merge.AOD.e3587_s2608_s2183_r7725_r7676",
+    "mc15_13TeV.361055.Sherpa_CT10_SinglePhotonPt1000_2000_CFilterBVeto.merge.AOD.e3587_s2608_s2183_r7725_r7676",
+    "mc15_13TeV.361056.Sherpa_CT10_SinglePhotonPt1000_2000_BFilter.merge.AOD.e3587_s2608_s2183_r7725_r7676",
+    "mc15_13TeV.361057.Sherpa_CT10_SinglePhotonPt2000_4000_CVetoBVeto.merge.AOD.e3587_s2608_s2183_r7725_r7676",
+    "mc15_13TeV.361058.Sherpa_CT10_SinglePhotonPt2000_4000_CFilterBVeto.merge.AOD.e3587_s2608_s2183_r7725_r7676",
+    "mc15_13TeV.361059.Sherpa_CT10_SinglePhotonPt2000_4000_BFilter.merge.AOD.e3587_s2608_s2183_r7725_r7676",
+    "mc15_13TeV.361060.Sherpa_CT10_SinglePhotonPt4000_CVetoBVeto.merge.AOD.e3587_s2608_s2183_r8084_r7676",
+    "mc15_13TeV.361061.Sherpa_CT10_SinglePhotonPt4000_CFilterBVeto.merge.AOD.e3587_s2608_s2183_r8129_r7676",
+    "mc15_13TeV.361062.Sherpa_CT10_SinglePhotonPt4000_BFilter.merge.AOD.e3587_s2608_s2183_r8084_r7676"
+    ]
+
+samples_JETM6["sherpa_gammajet_mc15c"] = [
+    "mc15_13TeV.361045.Sherpa_CT10_SinglePhotonPt140_280_CVetoBVeto.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p2949",
+    "mc15_13TeV.361046.Sherpa_CT10_SinglePhotonPt140_280_CFilterBVeto.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p2949",
+    "mc15_13TeV.361047.Sherpa_CT10_SinglePhotonPt140_280_BFilter.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p2949",
+    "mc15_13TeV.361048.Sherpa_CT10_SinglePhotonPt280_500_CVetoBVeto.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p2949",
+    "mc15_13TeV.361049.Sherpa_CT10_SinglePhotonPt280_500_CFilterBVeto.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p2949",
+    "mc15_13TeV.361050.Sherpa_CT10_SinglePhotonPt280_500_BFilter.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p2949",
+    "mc15_13TeV.361051.Sherpa_CT10_SinglePhotonPt500_1000_CVetoBVeto.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p2949",
+    "mc15_13TeV.361052.Sherpa_CT10_SinglePhotonPt500_1000_CFilterBVeto.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p2949",
+    "mc15_13TeV.361053.Sherpa_CT10_SinglePhotonPt500_1000_BFilter.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p2949",
+    "mc15_13TeV.361054.Sherpa_CT10_SinglePhotonPt1000_2000_CVetoBVeto.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p2949",
+    "mc15_13TeV.361055.Sherpa_CT10_SinglePhotonPt1000_2000_CFilterBVeto.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p2949",
+    "mc15_13TeV.361056.Sherpa_CT10_SinglePhotonPt1000_2000_BFilter.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p2949",
+    "mc15_13TeV.361057.Sherpa_CT10_SinglePhotonPt2000_4000_CVetoBVeto.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p2949",
+    "mc15_13TeV.361058.Sherpa_CT10_SinglePhotonPt2000_4000_CFilterBVeto.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p2949",
+    "mc15_13TeV.361059.Sherpa_CT10_SinglePhotonPt2000_4000_BFilter.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p2949",
+    "mc15_13TeV.361060.Sherpa_CT10_SinglePhotonPt4000_CVetoBVeto.merge.DAOD_JETM6.e3587_s2608_s2183_r8084_r7676_p2949",
+    "mc15_13TeV.361061.Sherpa_CT10_SinglePhotonPt4000_CFilterBVeto.merge.DAOD_JETM6.e3587_s2608_s2183_r8129_r7676_p2949",
+    "mc15_13TeV.361062.Sherpa_CT10_SinglePhotonPt4000_BFilter.merge.DAOD_JETM6.e3587_s2608_s2183_r8084_r7676_p2949"
+    ]
 
 # }}}
 
+# {{{ SM W/Z + gamma
+
+samples_EVNT["wz_gamma_mc15c"] = [
+    "mc15_13TeV.305435.Sherpa_CT10_WqqGammaPt140_280.evgen.EVNT.e5037",
+    "mc15_13TeV.305436.Sherpa_CT10_WqqGammaPt280_500.evgen.EVNT.e5037",
+    "mc15_13TeV.305437.Sherpa_CT10_WqqGammaPt500_1000.evgen.EVNT.e5037",
+    "mc15_13TeV.305438.Sherpa_CT10_WqqGammaPt1000_2000.evgen.EVNT.e5037",
+    "mc15_13TeV.305439.Sherpa_CT10_WqqGammaPt2000_inf.evgen.EVNT.e5037",
+    "mc15_13TeV.305440.Sherpa_CT10_ZqqGammaPt140_280.evgen.EVNT.e5020",
+    "mc15_13TeV.305441.Sherpa_CT10_ZqqGammaPt280_500.evgen.EVNT.e5020",
+    "mc15_13TeV.305442.Sherpa_CT10_ZqqGammaPt500_1000.evgen.EVNT.e5020",
+    "mc15_13TeV.305443.Sherpa_CT10_ZqqGammaPt1000_2000.evgen.EVNT.e5020",
+    "mc15_13TeV.305444.Sherpa_CT10_ZqqGammaPt2000_inf.evgen.EVNT.e5020"
+    ]
+
+samples_AOD["wz_gamma_mc15c"] = [
+    "mc15_13TeV.305435.Sherpa_CT10_WqqGammaPt140_280.merge.AOD.e5037_s2726_r7772_r7676",
+    "mc15_13TeV.305436.Sherpa_CT10_WqqGammaPt280_500.merge.AOD.e5037_s2726_r7772_r7676",
+    "mc15_13TeV.305437.Sherpa_CT10_WqqGammaPt500_1000.merge.AOD.e5037_s2726_r7772_r7676",
+    "mc15_13TeV.305438.Sherpa_CT10_WqqGammaPt1000_2000.merge.AOD.e5037_s2726_r7772_r7676",
+    "mc15_13TeV.305439.Sherpa_CT10_WqqGammaPt2000_inf.merge.AOD.e5037_s2726_r7772_r7676",
+    "mc15_13TeV.305440.Sherpa_CT10_ZqqGammaPt140_280.merge.AOD.e5020_s2726_r7772_r7676",
+    "mc15_13TeV.305441.Sherpa_CT10_ZqqGammaPt280_500.merge.AOD.e5020_s2726_r7772_r7676",
+    "mc15_13TeV.305442.Sherpa_CT10_ZqqGammaPt500_1000.merge.AOD.e5020_s2726_r7772_r7676",
+    "mc15_13TeV.305443.Sherpa_CT10_ZqqGammaPt1000_2000.merge.AOD.e5020_s2726_r7772_r7676",
+    "mc15_13TeV.305444.Sherpa_CT10_ZqqGammaPt2000_inf.merge.AOD.e5020_s2726_r7772_r7676"
+    ]
+
+samples_JETM6["wz_gamma_mc15c"] = [
+    "mc15_13TeV.305435.Sherpa_CT10_WqqGammaPt140_280.merge.DAOD_EXOT3.e5037_s2726_r7772_r7676_p2949",
+    "mc15_13TeV.305436.Sherpa_CT10_WqqGammaPt280_500.merge.DAOD_EXOT3.e5037_s2726_r7772_r7676_p2949",
+    "mc15_13TeV.305437.Sherpa_CT10_WqqGammaPt500_1000.merge.DAOD_EXOT3.e5037_s2726_r7772_r7676_p2949",
+    "mc15_13TeV.305438.Sherpa_CT10_WqqGammaPt1000_2000.merge.DAOD_EXOT3.e5037_s2726_r7772_r7676_p2949",
+    "mc15_13TeV.305439.Sherpa_CT10_WqqGammaPt2000_inf.merge.DAOD_EXOT3.e5037_s2726_r7772_r7676_p2949",
+    "mc15_13TeV.305440.Sherpa_CT10_ZqqGammaPt140_280.merge.DAOD_EXOT3.e5020_s2726_r7772_r7676_p2949",
+    "mc15_13TeV.305441.Sherpa_CT10_ZqqGammaPt280_500.merge.DAOD_EXOT3.e5020_s2726_r7772_r7676_p2949",
+    "mc15_13TeV.305442.Sherpa_CT10_ZqqGammaPt500_1000.merge.DAOD_EXOT3.e5020_s2726_r7772_r7676_p2949",
+    "mc15_13TeV.305443.Sherpa_CT10_ZqqGammaPt1000_2000.merge.DAOD_EXOT3.e5020_s2726_r7772_r7676_p2949",
+    "mc15_13TeV.305444.Sherpa_CT10_ZqqGammaPt2000_inf.merge.DAOD_EXOT3.e5020_s2726_r7772_r7676_p2949"
+    ]
+
+# }}}
+
+# {{{ SM ttbar + gamma
+samples_EVNT["ttbar_gamma_mc15c"] = [ "mc15_13TeV.410087.MadGraphPythia8EvtGen_A14NNPDF23LO_ttgamma_allhad.evgen.EVNT.e4404" ]
+samples_AOD["ttbar_gamma_mc15c"] = [ "mc15_13TeV.410087.MadGraphPythia8EvtGen_A14NNPDF23LO_ttgamma_allhad.merge.AOD.e4404_s2726_r7772_r7676" ]
+samples_JETM6["ttbar_gamma_mc15c"] = [ "mc15_13TeV.410087.MadGraphPythia8EvtGen_A14NNPDF23LO_ttgamma_allhad.merge.DAOD_EXOT3.e4404_s2726_r7772_r7676_p2949" ]
+# }}}
 
 if __name__ == '__main__':
     f_aod         = open('../data/samples_mc15c_AOD.txt','w')
