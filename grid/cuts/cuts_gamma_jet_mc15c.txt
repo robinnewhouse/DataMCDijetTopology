@@ -12,10 +12,12 @@ PRWDefaultChannel 361025
 ### Custom Settings ###
 #######################
 
-DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass,NumFatjetsKeep,DebugLevel
+DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass,NumFatjetsKeep,DebugLevel,GammaJetOverlapRemoval
 
 HTTConfigs def,sjcalib1030,sjcalib0970,sjcalib1045,sjcalib1015,sjcalib0985,sjcalib0955
 RunHTT True
+
+GammaJetOverlapRemoval True
 
 RunShowerDeconstruction False
 SaveTrackAssistedMass True
@@ -27,11 +29,9 @@ DebugLevel 0
 ### Systematics Configuration ###
 #################################
 
-LargeRJESUncertaintyConfig MultiTagging
-#Systematics AllJets
-#Systematics All
-Systematics Nominal
-#Systematics LARGERJET_Medium_JET_Rtrk_Baseline_Kin__1down,LARGERJET_Medium_JET_Rtrk_Baseline_Kin__1up,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1down,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1up,LARGERJET_Medium_JET_Rtrk_Modelling_Kin__1down,LARGERJET_Medium_JET_Rtrk_Modelling_Kin__1up,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1down,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1up,LARGERJET_Medium_JET_Rtrk_TotalStat_Kin__1down,LARGERJET_Medium_JET_Rtrk_TotalStat_Kin__1up,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1down,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1up,LARGERJET_Medium_JET_Rtrk_Tracking_Kin__1down,LARGERJET_Medium_JET_Rtrk_Tracking_Kin__1up,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1down,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1up
+LargeRJESUncertaintyConfig mass,pT,Tau21WTA,Tau32WTA,D2Beta1,Qw,Split23
+LargeRJESJMSConfig CombinedMass
+Systematics None
 
 ##########################
 ### Object Collections ###
@@ -44,13 +44,15 @@ LargeJetCollectionName AntiKt10LCTopoTrimmedPtFrac5SmallR20Jets
 LargeJetSubstructure None
 TauCollectionName None
 PhotonCollectionName Photons
+PhotonID Tight
+PhotonIsolation FixedCutTight
 METCollectionName MET_Reference_AntiKt4EMTopo
 TruthCollectionName TruthParticles
 TruthJetCollectionName AntiKt4TruthJets
 TruthLargeRJetCollectionName AntiKt10TruthTrimmedPtFrac5SmallR20Jets
 TruthLargeRJetEta 2.5
 TruthLargeRJetPt 25000
-TopPartonHistory None
+TopPartonHistory False
 TruthBlockInfo False
 PDFInfo False
 
@@ -58,7 +60,7 @@ PDFInfo False
 ### General Configuration ###
 #############################
 
-#NEvents 100
+#NEvents 250
 JetUncertainties_BunchSpacing 25ns
 
 OutputFileSetAutoFlushZero True
@@ -95,9 +97,10 @@ INITIAL
 GRL
 GOODCALO
 PRIVTX
-# TRIGDEC HLT_g140_loose
-PH_N 155000 == 1
 JETCLEAN LooseBad
+TRIGDEC HLT_g140_loose
+PH_N 155000 == 1
 LARGEJET_N 125000 >= 1
 GAMMAJET
 SAVE
+

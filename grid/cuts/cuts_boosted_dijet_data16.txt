@@ -18,6 +18,7 @@ HTTConfigs def
 
 RunShowerDeconstruction True
 SaveTrackAssistedMass True
+GammaJetOverlapRemoval False
 
 NumFatjetsKeep 1
 DebugLevel 0
@@ -26,9 +27,7 @@ DebugLevel 0
 ### Systematics Configuration ###
 #################################
 
-LargeRJESUncertaintyConfig CombinedMass
-LargeRJESJMSConfig CombinedMass
-Systematics Nominal
+Systematics None
 
 ##########################
 ### Object Collections ###
@@ -67,8 +66,8 @@ OutputFormat top::DataMCbackgroundEventSaver
 OutputEvents SelectedEvents
 OutputFilename output.root
 
-### handling scale-factors
 CalculateSF False
+DoLooseTree False
 
 ####################
 ### SELECTION(S) ###
