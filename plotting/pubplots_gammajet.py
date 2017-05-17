@@ -16,7 +16,7 @@ sane_defaults()
 TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
-CP_ROOT_FILEPATH = "/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/plotting/raw/gammajet/02-05-2017__10:41:22__30042017_gammajet_test_v2/cp.merged.root"
+CP_ROOT_FILEPATH = "/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/plotting/raw/gammajet/11-05-2017__20:38:48__08052017_gammajet_tight_v0/cp.merged.root"
 RAW = DMDLoader(CP_ROOT_FILEPATH)
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"
 
@@ -29,6 +29,7 @@ SYSTEMATICS = [ ]
 
 class PlotDataMcGammaJet(PlotBase):
     def __init__(self, var_name, flip_legend = False, **kwargs):
+        print var_name
 
         super(PlotDataMcGammaJet, self).__init__(
                 lumi_val = "36.5",
@@ -54,8 +55,6 @@ class PlotDataMcGammaJet(PlotBase):
         # gamma_sys_dict = {}
         # self.hsys_gamma = TH1Sys(self.h_gamma, gamma_sys_dict)
 
-        # self.h_dijet.Smooth(1)
-
         all_mc_histos = [
             self.h_gamma,
             self.h_dijet,
@@ -65,11 +64,16 @@ class PlotDataMcGammaJet(PlotBase):
 
         all_histos = all_mc_histos + [ self.h_data ]
 
+        self.h_dijet.Smooth(1)
+
         if (self.rebin != None):
           for h in all_histos:
             h.Rebin(self.rebin)
 
+        self.h_dijet.Smooth(1)
+
         total_mc_integral = self.h_gamma.Integral() +  self.h_wzgamma.Integral() + self.h_ttbar.Integral() #+ self.h_dijet.Integral()
+        sigsubdata_integral = self.h_gamma.Integral() +  self.h_wzgamma.Integral() + self.h_ttbar.Integral() #+ self.h_dijet.Integral()
         print self.h_data.Integral() / total_mc_integral
         for h in all_mc_histos:
           h.Scale(self.h_data.Integral() / total_mc_integral)
@@ -199,7 +203,7 @@ class PlotDataMcGammaJet(PlotBase):
         self.canvas.cd()
         self.leg.AddEntry(self.h_data, "Data 2015 + 2016")
         self.leg.AddEntry(self.h_gamma, "Sherpa #gamma + jet")
-        self.leg.AddEntry(self.h_dijet, "Pythia8 dijet")
+        #self.leg.AddEntry(self.h_dijet, "Pythia8 dijet")
         self.leg.AddEntry(self.h_wzgamma, "Sherpa W/Z + #gamma")
         self.leg.AddEntry(self.h_ttbar, "MG t#bar{t} + #gamma")
         self.leg.AddEntry(self.h_stat_ratio, "Stat. uncert.")
