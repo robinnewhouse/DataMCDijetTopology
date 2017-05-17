@@ -12,17 +12,15 @@ PRWDefaultChannel 361025
 ### Custom Settings ###
 #######################
 
-DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass,NumFatjetsKeep,DebugLevel,GammaJetOverlapRemoval
+DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass,NumFatjetsKeep,DebugLevel,SavePhoton
 
-HTTConfigs def,sjcalib1030,sjcalib0970,sjcalib1045,sjcalib1015,sjcalib0985,sjcalib0955
+SavePhoton True
 RunHTT True
-
-GammaJetOverlapRemoval True
-
-RunShowerDeconstruction False
+HTTConfigs def,sjcalib1030,sjcalib0970
+RunShowerDeconstruction True
 SaveTrackAssistedMass True
 
-NumFatjetsKeep 1
+NumFatjetsKeep 2
 DebugLevel 0
 
 #################################
@@ -31,7 +29,8 @@ DebugLevel 0
 
 LargeRJESUncertaintyConfig mass,pT,Tau21WTA,Tau32WTA,D2Beta1,Qw,Split23
 LargeRJESJMSConfig CombinedMass
-Systematics None
+Systematics LARGERJET_Medium_JET_Comb_Baseline_Kin__1down,LARGERJET_Medium_JET_Comb_Baseline_Kin__1up,LARGERJET_Medium_JET_Comb_Modelling_Kin__1down,LARGERJET_Medium_JET_Comb_Modelling_Kin__1up,LARGERJET_Medium_JET_Comb_TotalStat_Kin__1down,LARGERJET_Medium_JET_Comb_TotalStat_Kin__1up,LARGERJET_Medium_JET_Comb_Tracking_Kin__1down,LARGERJET_Medium_JET_Comb_Tracking_Kin__1up,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1down,LARGERJET_Medium_JET_Rtrk_Baseline_Sub__1up,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1down,LARGERJET_Medium_JET_Rtrk_Modelling_Sub__1up,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1down,LARGERJET_Medium_JET_Rtrk_TotalStat_Sub__1up,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1down,LARGERJET_Medium_JET_Rtrk_Tracking_Sub__1up,LARGERJET_Strong_JET_Comb_Baseline_All__1down,LARGERJET_Strong_JET_Comb_Baseline_All__1up,LARGERJET_Strong_JET_Comb_Modelling_All__1down,LARGERJET_Strong_JET_Comb_Modelling_All__1up,LARGERJET_Strong_JET_Comb_TotalStat_All__1down,LARGERJET_Strong_JET_Comb_TotalStat_All__1up,LARGERJET_Strong_JET_Comb_Tracking_All__1down,LARGERJET_Strong_JET_Comb_Tracking_All__1up,LARGERJET_Weak_JET_Comb_Baseline_mass__1down,LARGERJET_Weak_JET_Comb_Baseline_mass__1up,LARGERJET_Weak_JET_Comb_Modelling_mass__1down,LARGERJET_Weak_JET_Comb_Modelling_mass__1up,LARGERJET_Weak_JET_Comb_TotalStat_mass__1down,LARGERJET_Weak_JET_Comb_TotalStat_mass__1up,LARGERJET_Weak_JET_Comb_Tracking_mass__1down,LARGERJET_Weak_JET_Comb_Tracking_mass__1up,LARGERJET_Weak_JET_Rtrk_Baseline_D2Beta1__1down,LARGERJET_Weak_JET_Rtrk_Baseline_D2Beta1__1up,LARGERJET_Weak_JET_Rtrk_Baseline_Qw__1down,LARGERJET_Weak_JET_Rtrk_Baseline_Qw__1up,LARGERJET_Weak_JET_Rtrk_Baseline_Split12__1down,LARGERJET_Weak_JET_Rtrk_Baseline_Split12__1up,LARGERJET_Weak_JET_Rtrk_Baseline_Split23__1down,LARGERJET_Weak_JET_Rtrk_Baseline_Split23__1up,LARGERJET_Weak_JET_Rtrk_Baseline_Tau21WTA__1down,LARGERJET_Weak_JET_Rtrk_Baseline_Tau21WTA__1up,LARGERJET_Weak_JET_Rtrk_Baseline_Tau32WTA__1down,LARGERJET_Weak_JET_Rtrk_Baseline_Tau32WTA__1up,LARGERJET_Weak_JET_Rtrk_Baseline_pT__1down,LARGERJET_Weak_JET_Rtrk_Baseline_pT__1up,LARGERJET_Weak_JET_Rtrk_Modelling_D2Beta1__1down,LARGERJET_Weak_JET_Rtrk_Modelling_D2Beta1__1up,LARGERJET_Weak_JET_Rtrk_Modelling_Qw__1down,LARGERJET_Weak_JET_Rtrk_Modelling_Qw__1up,LARGERJET_Weak_JET_Rtrk_Modelling_Split12__1down,LARGERJET_Weak_JET_Rtrk_Modelling_Split12__1up,LARGERJET_Weak_JET_Rtrk_Modelling_Split23__1down,LARGERJET_Weak_JET_Rtrk_Modelling_Split23__1up,LARGERJET_Weak_JET_Rtrk_Modelling_Tau21WTA__1down,LARGERJET_Weak_JET_Rtrk_Modelling_Tau21WTA__1up,LARGERJET_Weak_JET_Rtrk_Modelling_Tau32WTA__1down,LARGERJET_Weak_JET_Rtrk_Modelling_Tau32WTA__1up,LARGERJET_Weak_JET_Rtrk_Modelling_pT__1down,LARGERJET_Weak_JET_Rtrk_Modelling_pT__1up,LARGERJET_Weak_JET_Rtrk_TotalStat_D2Beta1__1down,LARGERJET_Weak_JET_Rtrk_TotalStat_D2Beta1__1up,LARGERJET_Weak_JET_Rtrk_TotalStat_Qw__1down,LARGERJET_Weak_JET_Rtrk_TotalStat_Qw__1up,LARGERJET_Weak_JET_Rtrk_TotalStat_Split12__1down,LARGERJET_Weak_JET_Rtrk_TotalStat_Split12__1up,LARGERJET_Weak_JET_Rtrk_TotalStat_Split23__1down,LARGERJET_Weak_JET_Rtrk_TotalStat_Split23__1up,LARGERJET_Weak_JET_Rtrk_TotalStat_Tau21WTA__1down,LARGERJET_Weak_JET_Rtrk_TotalStat_Tau21WTA__1up,LARGERJET_Weak_JET_Rtrk_TotalStat_Tau32WTA__1down,LARGERJET_Weak_JET_Rtrk_TotalStat_Tau32WTA__1up,LARGERJET_Weak_JET_Rtrk_TotalStat_pT__1down,LARGERJET_Weak_JET_Rtrk_TotalStat_pT__1up,LARGERJET_Weak_JET_Rtrk_Tracking_D2Beta1__1down,LARGERJET_Weak_JET_Rtrk_Tracking_D2Beta1__1up,LARGERJET_Weak_JET_Rtrk_Tracking_Qw__1down,LARGERJET_Weak_JET_Rtrk_Tracking_Qw__1up,LARGERJET_Weak_JET_Rtrk_Tracking_Split12__1down,LARGERJET_Weak_JET_Rtrk_Tracking_Split12__1up,LARGERJET_Weak_JET_Rtrk_Tracking_Split23__1down,LARGERJET_Weak_JET_Rtrk_Tracking_Split23__1up,LARGERJET_Weak_JET_Rtrk_Tracking_Tau21WTA__1down,LARGERJET_Weak_JET_Rtrk_Tracking_Tau21WTA__1up,LARGERJET_Weak_JET_Rtrk_Tracking_Tau32WTA__1down,LARGERJET_Weak_JET_Rtrk_Tracking_Tau32WTA__1up,LARGERJET_Weak_JET_Rtrk_Tracking_pT__1down,LARGERJET_Weak_JET_Rtrk_Tracking_pT__1up
+#Systematics None
 
 ##########################
 ### Object Collections ###
@@ -43,9 +42,9 @@ JetCollectionName AntiKt4EMTopoJets
 LargeJetCollectionName AntiKt10LCTopoTrimmedPtFrac5SmallR20Jets
 LargeJetSubstructure None
 TauCollectionName None
+
 PhotonCollectionName Photons
-PhotonID Tight
-PhotonIsolation FixedCutTight
+
 METCollectionName MET_Reference_AntiKt4EMTopo
 TruthCollectionName TruthParticles
 TruthJetCollectionName AntiKt4TruthJets
@@ -60,12 +59,13 @@ PDFInfo False
 ### General Configuration ###
 #############################
 
-#NEvents 250
+#NEvents 1000
 JetUncertainties_BunchSpacing 25ns
 
 OutputFileSetAutoFlushZero True
 
-ObjectSelectionName top::ObjectLoaderStandardCuts
+#ObjectSelectionName top::ObjectLoaderStandardCuts
+ObjectSelectionName top::GammaJetObjectLoader
 
 #OutputFormat top::EventSaverFlatNtuple
 OutputFormat top::DataMCbackgroundEventSaver
@@ -78,7 +78,7 @@ PerfStats No
 FakesMMWeights False
 
 ### handling scale-factors
-CalculateSF True
+CalculateSF False
 BTaggingWP FixedCutBEff_70
 
 ### to process the loose selection also for MC - default is False
@@ -88,9 +88,25 @@ ApplyElectronInJetSubtraction False
 
 IsAFII False
 
+UseAodMetaData True
+
 ####################
 ### SELECTION(S) ###
 ####################
+
+SELECTION gammajet_trigger
+INITIAL
+GRL
+GOODCALO
+PRIVTX
+JETCLEAN LooseBad
+TRIGDEC HLT_g140_loose
+PH_N 155000 >= 1
+LARGEJET_N 200000 >= 1
+EL_N 25000 == 0
+MU_N 25000 == 0
+GAMMAJET
+SAVE
 
 SELECTION gammajet
 INITIAL
@@ -98,9 +114,9 @@ GRL
 GOODCALO
 PRIVTX
 JETCLEAN LooseBad
-TRIGDEC HLT_g140_loose
-PH_N 155000 == 1
-LARGEJET_N 125000 >= 1
+PH_N 155000 >= 1
+LARGEJET_N 200000 >= 1
+EL_N 25000 == 0
+MU_N 25000 == 0
 GAMMAJET
 SAVE
-
