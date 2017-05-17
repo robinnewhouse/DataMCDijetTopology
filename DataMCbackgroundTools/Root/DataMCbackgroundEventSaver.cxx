@@ -92,17 +92,6 @@ DataMCbackgroundEventSaver::DataMCbackgroundEventSaver(void)
                     m_httJetContainerPrefix, m_httConfigs));
     }
 
-    // configuration switch for HTT
-    m_gammaJetOverlapRemoval = false;
-    try {
-        std::string GammaJetOverlapRemovalString = config_settings->value("GammaJetOverlapRemoval");
-        if(GammaJetOverlapRemovalString.compare("True") == 0)
-            m_gammaJetOverlapRemoval = true;
-    } catch (...) {
-        std::cout << "Not running Gamma + LargeR Jets overlap removal..." << std::endl;
-        std::cout << "add 'GammaJetOverlapRemoval True' to cuts file to enable." << std::endl;
-    }
-
     // configuration switch for shower deconstruction tagging
     m_runSD = false;
     try {
@@ -112,6 +101,16 @@ DataMCbackgroundEventSaver::DataMCbackgroundEventSaver(void)
     } catch (...) {
         std::cout << "Not running Shower Deconstruction because option not set..." << std::endl;
         std::cout << "add 'RunShowerDeconstruction True' to cuts file to enable." << std::endl;
+    }
+
+    m_savePhoton = false;
+    try {
+        std::string PhotonSwitchString = config_settings->value("SavePhoton");
+        if(PhotonSwitchString.compare("True") == 0)
+            m_savePhoton = true;
+    } catch (...) {
+        std::cout << "Not saving lead photon because option not set..." << std::endl;
+        std::cout << "add 'SavePhoton True' to cuts file to enable." << std::endl;
     }
 
     m_num_fatjets_keep = 1;
@@ -191,11 +190,15 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
         systematicTree->makeOutputVariable(m_rljet_smooth16Z_Tag50eff_nocontain , "rljet_smooth16ZTag_50eff_nocontain");
         systematicTree->makeOutputVariable(m_rljet_smooth16Z_Tag80eff_nocontain , "rljet_smooth16ZTag_80eff_nocontain");
 
-        /*
-        if (m_config->isMC()) {
-            systematicTree->makeOutputVariable(m_rljet_pdgid , "rljet_pdgid");
+        if (m_savePhoton) {
+          systematicTree->makeOutputVariable(m_photon0_pt           , "photon0_pt");
+          systematicTree->makeOutputVariable(m_photon0_eta          , "photon0_eta");
+          systematicTree->makeOutputVariable(m_photon0_phi          , "photon0_phi");
+          systematicTree->makeOutputVariable(m_photon0_ptcone20     , "photon0_ptcone20");
+          systematicTree->makeOutputVariable(m_photon0_ptcone40     , "photon0_ptcone40");
+          systematicTree->makeOutputVariable(m_photon0_topoetcone20 , "photon0_topoetcone20");
+          systematicTree->makeOutputVariable(m_photon0_topoetcone40 , "photon0_topoetcone40");
         }
-        */
 
         /*************************************/
         /* PARAMETERS SAVED ONLY FOR NOMINAL */
@@ -203,6 +206,10 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
 
         if (systematicTree->name() == "nominal") {
             systematicTree->makeOutputVariable(m_NPV, "NPV");
+
+            if (m_config->isMC()) {
+              systematicTree->makeOutputVariable(m_rljet_pdgid , "rljet_pdgid");
+            }
 
             // more large-R jet kinematic variables
             systematicTree->makeOutputVariable(m_rljet_count  , "rljet_count");
@@ -225,6 +232,12 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
             systematicTree->makeOutputVariable(m_rljet_smooth15W_Tag25eff , "rljet_smooth15WTag_25eff");
             systematicTree->makeOutputVariable(m_rljet_smooth15Z_Tag50eff , "rljet_smooth15ZTag_50eff");
             systematicTree->makeOutputVariable(m_rljet_smooth15Z_Tag25eff , "rljet_smooth15ZTag_25eff");
+
+            systematicTree->makeOutputVariable(m_rljet_BDT_score_top_qqb       , "rljet_BDT_score_top_qqb");
+            systematicTree->makeOutputVariable(m_rljet_BDT_score_top_inclusive , "rljet_BDT_score_top_inclusive");
+            systematicTree->makeOutputVariable(m_rljet_BDT_score_w             , "rljet_BDT_score_w");
+            systematicTree->makeOutputVariable(m_rljet_DNN_score_top           , "rljet_DNN_score_top");
+            systematicTree->makeOutputVariable(m_rljet_DNN_score_w             , "rljet_DNN_score_w");
 
             // more substructure variables
             systematicTree->makeOutputVariable(m_rljet_Tau1_wta    , "rljet_Tau1_wta");
@@ -250,31 +263,7 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
 
             systematicTree->makeOutputVariable(m_rljet_NTrimSubjets      , "rljet_NTrimSubjets");
             systematicTree->makeOutputVariable(m_rljet_ungroomed_ntrk500 , "rljet_ungroomed_ntrk500");
-
-            /*
-            if (m_config->isMC()) {
-                //truth large jet
-                systematicTree->makeOutputVariable(m_tljet_count , "tljet_count");
-                systematicTree->makeOutputVariable(m_tljet_pt    , "tljet_pt");
-                systematicTree->makeOutputVariable(m_tljet_eta   , "tljet_eta");
-                systematicTree->makeOutputVariable(m_tljet_phi   , "tljet_phi");
-                systematicTree->makeOutputVariable(m_tljet_m     , "tljet_m");
-                systematicTree->makeOutputVariable(m_tljet_dR    , "tljet_dR");
-
-                systematicTree->makeOutputVariable(m_tljet_D2        , "tljet_D2");
-                systematicTree->makeOutputVariable(m_tljet_Tau32_wta , "tljet_Tau32_wta");
-            }
-            */
-
-            /*
-            //trigger jet
-            systematicTree->makeOutputVariable(m_hltjet_count , "hltjet_count");
-            systematicTree->makeOutputVariable(m_hltjet_m     , "hltjet_m");
-            systematicTree->makeOutputVariable(m_hltjet_pt    , "hltjet_pt");
-            systematicTree->makeOutputVariable(m_hltjet_eta   , "hltjet_eta");
-            systematicTree->makeOutputVariable(m_hltjet_phi   , "hltjet_phi");
-            systematicTree->makeOutputVariable(m_hltjet_dR    , "hltjet_dR");
-            */
+            systematicTree->makeOutputVariable(m_rljet_n_constituents    , "rljet_n_constituents");
 
             // have to resize in order to makeOutputVariable below
             m_htt_tag       . resize(m_nHttTools);
@@ -352,16 +341,8 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
               systematicTree->makeOutputVariable(m_rljet_SDt_combined_UP   , "rljet_SDt_combined_UP");
               systematicTree->makeOutputVariable(m_rljet_SDt_dcut_UP       , "rljet_SDt_dcut_UP");
             }
-
-            // b-tagging output variables
-            // systematicTree->makeOutputVariable(m_rljet_btag_double     , "rljet_btag_double");
-            // systematicTree->makeOutputVariable(m_rljet_btag_single     , "rljet_btag_single");
-            // systematicTree->makeOutputVariable(m_rljet_btag_leading_pt , "rljet_btag_leading_pt");
-
         } // end making nominal branch only output variables
     } // end making all output variables
-
-    m_truth_match_tool = make_unique<TruthMatchTool>();
 
     /************************/
     /* SUBSTRUCTURE TAGGERS */
@@ -445,48 +426,70 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
     zTagger16_80eff_nocontain = make_unique<SmoothedWZTagger>("Smooth16ZEff80");
     top::check(zTagger16_80eff_nocontain->setProperty("ConfigFile", "SmoothedWZTaggers/SmoothedZTagger_AntiKt10LCTopoTrimmed_FixedSignalEfficiency80_MC15c_20161219.dat"), "FAILURE");
     top::check(zTagger16_80eff_nocontain->initialize(), "FAILURE");
+
+    // BDT
+    m_topTagger_BDT_qqb = make_unique<JSSWTopTaggerBDT>("topTagger_BDT_qqb");
+    top::check(m_topTagger_BDT_qqb->setProperty("ConfigFile", "JSSWTopTaggerBDT/JSSBDTTagger_AntiKt10LCTopoTrimmed_TopQuarkContained_MC15c_20170511_NOTFORANALYSIS.dat"), "FAILURE");
+    top::check(m_topTagger_BDT_qqb->initialize(), "FAILURE");
+
+    m_topTagger_BDT_inclusive = make_unique<JSSWTopTaggerBDT>("topTagger_BDT_inclusive");
+    top::check(m_topTagger_BDT_inclusive->setProperty("ConfigFile", "JSSWTopTaggerBDT/JSSBDTTagger_AntiKt10LCTopoTrimmed_TopQuarkInclusive_MC15c_20170511_NOTFORANALYSIS.dat"), "FAILURE");
+    top::check(m_topTagger_BDT_inclusive->initialize(), "FAILURE");
+
+    m_wTagger_BDT = make_unique<JSSWTopTaggerBDT>("m_wTagger_BDT");
+    top::check(m_wTagger_BDT->setProperty("ConfigFile", "JSSWTopTaggerBDT/JSSBDTTagger_AntiKt10LCTopoTrimmed_WBoson_MC15c_20170511_NOTFORANALYSIS.dat"), "FAILURE");
+    top::check(m_wTagger_BDT->initialize(), "FAILURE");
+
+    // DNN
+    m_topTagger_DNN = make_unique<JSSWTopTaggerDNN>("m_topTagger_DNN");
+    top::check(m_topTagger_DNN->setProperty("ConfigFile", "JSSWTopTaggerDNN/JSSDNNTagger_AntiKt10LCTopoTrimmed_TopQuark_MC15c_20170511_NOTFORANALYSIS.dat"), "FAILURE");
+    top::check(m_topTagger_DNN->initialize(), "FAILURE");
+
+    m_wTagger_DNN = make_unique<JSSWTopTaggerDNN>("m_wTagger_DNN");
+    top::check(m_wTagger_DNN->setProperty("ConfigFile", "JSSWTopTaggerDNN/JSSDNNTagger_AntiKt10LCTopoTrimmed_WBoson_MC15c_20170511_NOTFORANALYSIS.dat"), "FAILURE");
+    top::check(m_wTagger_DNN->initialize(), "FAILURE");
 } // end of intialization
 
 void
 DataMCbackgroundEventSaver::initializeSD(void)
 {
 
-        tagger_SDw_win20_btag0 = make_unique<ShowerDeconstruction>("SD_W_win20_Btag0");
-        top::check( tagger_SDw_win20_btag0->setProperty("mode", "w/q"), "FAILURE");
-        top::check (tagger_SDw_win20_btag0->setProperty("R", 1.0), "FAILURE");
-        top::check (tagger_SDw_win20_btag0->setProperty("topMass", 170), "FAILURE");
-        top::check (tagger_SDw_win20_btag0->setProperty("topMassWindow", 40.0), "FAILURE");
-        top::check (tagger_SDw_win20_btag0->setProperty("wMass", 80.403), "FAILURE");
-        top::check (tagger_SDw_win20_btag0->setProperty("wMassWindow", 20.0), "FAILURE");
-        top::check (tagger_SDw_win20_btag0->setProperty("hMass", 125.0), "FAILURE");
-        top::check (tagger_SDw_win20_btag0->setProperty("hMassWindow", 20.0), "FAILURE");
-        top::check (tagger_SDw_win20_btag0->setProperty("maxNjets", 6), "FAILURE");
-        top::check (tagger_SDw_win20_btag0->setProperty("useBtag", 0), "FAILURE");
-        top::check (tagger_SDw_win20_btag0->initialize(), "FAILURE" );
-        tagger_SDt_win50_btag0 = make_unique<ShowerDeconstruction>("SD_T_win50_Btag0");
-        top::check (tagger_SDt_win50_btag0->setProperty("mode", "t/g"), "FAILURE" );
-        top::check (tagger_SDt_win50_btag0->setProperty("R", 1.0), "FAILURE" );
-        top::check (tagger_SDt_win50_btag0->setProperty("topMass", 170), "FAILURE" );
-        top::check (tagger_SDt_win50_btag0->setProperty("topMassWindow", 50.0), "FAILURE" );
-        top::check (tagger_SDt_win50_btag0->setProperty("wMass", 80.403), "FAILURE" );
-        top::check (tagger_SDt_win50_btag0->setProperty("wMassWindow", 25.0), "FAILURE" );
-        top::check (tagger_SDt_win50_btag0->setProperty("hMass", 125.0), "FAILURE" );
-        top::check (tagger_SDt_win50_btag0->setProperty("hMassWindow", 20.0), "FAILURE" );
-        top::check (tagger_SDt_win50_btag0->setProperty("maxNjets", 6), "FAILURE" );
-        top::check (tagger_SDt_win50_btag0->setProperty("useBtag", 0), "FAILURE" );
-        top::check (tagger_SDt_win50_btag0->initialize(), "FAILURE" );
-        tagger_SDt_win50_btag1 = make_unique<ShowerDeconstruction>("SD_T_win50_Btag1");
-        top::check (tagger_SDt_win50_btag1->setProperty("mode", "t/g"), "FAILURE" );
-        top::check (tagger_SDt_win50_btag1->setProperty("R", 1.0), "FAILURE" );
-        top::check (tagger_SDt_win50_btag1->setProperty("topMass", 172), "FAILURE" );
-        top::check (tagger_SDt_win50_btag1->setProperty("topMassWindow", 40.0), "FAILURE" );
-        top::check (tagger_SDt_win50_btag1->setProperty("wMass", 80.403), "FAILURE" );
-        top::check (tagger_SDt_win50_btag1->setProperty("wMassWindow", 25.0), "FAILURE" );
-        top::check (tagger_SDt_win50_btag1->setProperty("hMass", 125.0), "FAILURE" );
-        top::check (tagger_SDt_win50_btag1->setProperty("hMassWindow", 20.0), "FAILURE" );
-        top::check (tagger_SDt_win50_btag1->setProperty("maxNjets", 6), "FAILURE" );
-        top::check (tagger_SDt_win50_btag1->setProperty("useBtag", 0), "FAILURE" );
-        top::check (tagger_SDt_win50_btag1->initialize(), "FAILURE" );
+    tagger_SDw_win20_btag0 = make_unique<ShowerDeconstruction>("SD_W_win20_Btag0");
+    top::check( tagger_SDw_win20_btag0->setProperty("mode", "w/q"), "FAILURE");
+    top::check (tagger_SDw_win20_btag0->setProperty("R", 1.0), "FAILURE");
+    top::check (tagger_SDw_win20_btag0->setProperty("topMass", 170), "FAILURE");
+    top::check (tagger_SDw_win20_btag0->setProperty("topMassWindow", 40.0), "FAILURE");
+    top::check (tagger_SDw_win20_btag0->setProperty("wMass", 80.403), "FAILURE");
+    top::check (tagger_SDw_win20_btag0->setProperty("wMassWindow", 20.0), "FAILURE");
+    top::check (tagger_SDw_win20_btag0->setProperty("hMass", 125.0), "FAILURE");
+    top::check (tagger_SDw_win20_btag0->setProperty("hMassWindow", 20.0), "FAILURE");
+    top::check (tagger_SDw_win20_btag0->setProperty("maxNjets", 6), "FAILURE");
+    top::check (tagger_SDw_win20_btag0->setProperty("useBtag", 0), "FAILURE");
+    top::check (tagger_SDw_win20_btag0->initialize(), "FAILURE" );
+    tagger_SDt_win50_btag0 = make_unique<ShowerDeconstruction>("SD_T_win50_Btag0");
+    top::check (tagger_SDt_win50_btag0->setProperty("mode", "t/g"), "FAILURE" );
+    top::check (tagger_SDt_win50_btag0->setProperty("R", 1.0), "FAILURE" );
+    top::check (tagger_SDt_win50_btag0->setProperty("topMass", 170), "FAILURE" );
+    top::check (tagger_SDt_win50_btag0->setProperty("topMassWindow", 50.0), "FAILURE" );
+    top::check (tagger_SDt_win50_btag0->setProperty("wMass", 80.403), "FAILURE" );
+    top::check (tagger_SDt_win50_btag0->setProperty("wMassWindow", 25.0), "FAILURE" );
+    top::check (tagger_SDt_win50_btag0->setProperty("hMass", 125.0), "FAILURE" );
+    top::check (tagger_SDt_win50_btag0->setProperty("hMassWindow", 20.0), "FAILURE" );
+    top::check (tagger_SDt_win50_btag0->setProperty("maxNjets", 6), "FAILURE" );
+    top::check (tagger_SDt_win50_btag0->setProperty("useBtag", 0), "FAILURE" );
+    top::check (tagger_SDt_win50_btag0->initialize(), "FAILURE" );
+    tagger_SDt_win50_btag1 = make_unique<ShowerDeconstruction>("SD_T_win50_Btag1");
+    top::check (tagger_SDt_win50_btag1->setProperty("mode", "t/g"), "FAILURE" );
+    top::check (tagger_SDt_win50_btag1->setProperty("R", 1.0), "FAILURE" );
+    top::check (tagger_SDt_win50_btag1->setProperty("topMass", 172), "FAILURE" );
+    top::check (tagger_SDt_win50_btag1->setProperty("topMassWindow", 40.0), "FAILURE" );
+    top::check (tagger_SDt_win50_btag1->setProperty("wMass", 80.403), "FAILURE" );
+    top::check (tagger_SDt_win50_btag1->setProperty("wMassWindow", 25.0), "FAILURE" );
+    top::check (tagger_SDt_win50_btag1->setProperty("hMass", 125.0), "FAILURE" );
+    top::check (tagger_SDt_win50_btag1->setProperty("hMassWindow", 20.0), "FAILURE" );
+    top::check (tagger_SDt_win50_btag1->setProperty("maxNjets", 6), "FAILURE" );
+    top::check (tagger_SDt_win50_btag1->setProperty("useBtag", 0), "FAILURE" );
+    top::check (tagger_SDt_win50_btag1->initialize(), "FAILURE" );
 
     /*********************************************/
     /* INITIALIZE SUBJET CALIBRATION TOOL FOR SD */
@@ -531,27 +534,36 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
     m_rljet_Qw        . assign(m_num_fatjets_keep, -1000. );
     m_rljet_Split23   . assign(m_num_fatjets_keep, -1000. );
 
-    m_rljet_smooth16Top_Tau32Split23Tag50eff . assign(m_num_fatjets_keep, -1000);
-    m_rljet_smooth16Top_Tau32Split23Tag80eff . assign(m_num_fatjets_keep, -1000);
-    m_rljet_smooth16Top_MassTau32Tag50eff    . assign(m_num_fatjets_keep, -1000);
-    m_rljet_smooth16Top_MassTau32Tag80eff    . assign(m_num_fatjets_keep, -1000);
-    m_rljet_smooth16Top_MassTau32Tag50eff_nocontain    . assign(m_num_fatjets_keep, -1000);
-    m_rljet_smooth16Top_MassTau32Tag80eff_nocontain    . assign(m_num_fatjets_keep, -1000);
-    m_rljet_smooth16Top_QwTau32Tag50eff      . assign(m_num_fatjets_keep, -1000);
-    m_rljet_smooth16Top_QwTau32Tag80eff      . assign(m_num_fatjets_keep, -1000);
-    m_rljet_smooth16W_Tag50eff               . assign(m_num_fatjets_keep, -1000);
-    m_rljet_smooth16W_Tag80eff               . assign(m_num_fatjets_keep, -1000);
-    m_rljet_smooth16Z_Tag50eff               . assign(m_num_fatjets_keep, -1000);
-    m_rljet_smooth16Z_Tag80eff               . assign(m_num_fatjets_keep, -1000);
-    m_rljet_smooth16W_Tag50eff_nocontain               . assign(m_num_fatjets_keep, -1000);
-    m_rljet_smooth16W_Tag80eff_nocontain               . assign(m_num_fatjets_keep, -1000);
-    m_rljet_smooth16Z_Tag50eff_nocontain               . assign(m_num_fatjets_keep, -1000);
-    m_rljet_smooth16Z_Tag80eff_nocontain               . assign(m_num_fatjets_keep, -1000);
+    m_rljet_smooth16Top_Tau32Split23Tag50eff        . assign(m_num_fatjets_keep, -1000.);
+    m_rljet_smooth16Top_Tau32Split23Tag80eff        . assign(m_num_fatjets_keep, -1000.);
+    m_rljet_smooth16Top_MassTau32Tag50eff           . assign(m_num_fatjets_keep, -1000.);
+    m_rljet_smooth16Top_MassTau32Tag80eff           . assign(m_num_fatjets_keep, -1000.);
+    m_rljet_smooth16Top_MassTau32Tag50eff_nocontain . assign(m_num_fatjets_keep, -1000.);
+    m_rljet_smooth16Top_MassTau32Tag80eff_nocontain . assign(m_num_fatjets_keep, -1000.);
+    m_rljet_smooth16Top_QwTau32Tag50eff             . assign(m_num_fatjets_keep, -1000.);
+    m_rljet_smooth16Top_QwTau32Tag80eff             . assign(m_num_fatjets_keep, -1000.);
+    m_rljet_smooth16W_Tag50eff                      . assign(m_num_fatjets_keep, -1000.);
+    m_rljet_smooth16W_Tag80eff                      . assign(m_num_fatjets_keep, -1000.);
+    m_rljet_smooth16Z_Tag50eff                      . assign(m_num_fatjets_keep, -1000.);
+    m_rljet_smooth16Z_Tag80eff                      . assign(m_num_fatjets_keep, -1000.);
+    m_rljet_smooth16W_Tag50eff_nocontain            . assign(m_num_fatjets_keep, -1000.);
+    m_rljet_smooth16W_Tag80eff_nocontain            . assign(m_num_fatjets_keep, -1000.);
+    m_rljet_smooth16Z_Tag50eff_nocontain            . assign(m_num_fatjets_keep, -1000.);
+    m_rljet_smooth16Z_Tag80eff_nocontain            . assign(m_num_fatjets_keep, -1000.);
 
-    // m_rljet_pdgid . assign(m_num_fatjets_keep, -1000 );
+    if (m_savePhoton) {
+      m_photon0_ptcone20 = -1000.;
+      m_photon0_ptcone40 = -1000.;
+      m_photon0_topoetcone20 = -1000.;
+      m_photon0_topoetcone40 = -1000.;
+      m_photon0_pt = -1000.;
+      m_photon0_eta = -1000.;
+      m_photon0_phi = -1000.;
+    }
 
     if (on_nominal_branch) {
         m_NPV = -1000;
+        m_rljet_pdgid . assign(m_num_fatjets_keep, -1000 );
 
         m_rljet_count  = 0;
         m_rljet_mjj    = -1000.;
@@ -589,32 +601,7 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
 
         m_rljet_NTrimSubjets      . assign(m_num_fatjets_keep, -1000 );
         m_rljet_ungroomed_ntrk500 . assign(m_num_fatjets_keep, -1000 );
-
-        /*
-        if (m_config->isMC()) {
-            m_tljet_pt  . assign(m_num_fatjets_keep, -1000.);
-            m_tljet_eta . assign(m_num_fatjets_keep, -1000.);
-            m_tljet_phi . assign(m_num_fatjets_keep, -1000.);
-            m_tljet_m   . assign(m_num_fatjets_keep, -1000.);
-            m_tljet_dR  . assign(m_num_fatjets_keep, -1000.);
-
-            m_tljet_Tau32_wta . assign(m_num_fatjets_keep, -1000. );
-            m_tljet_D2        . assign(m_num_fatjets_keep, -1000. );
-        }
-        */
-
-        // m_rljet_btag_double     . assign(m_num_fatjets_keep, false);
-        // m_rljet_btag_single     . assign(m_num_fatjets_keep, false);
-        // m_rljet_btag_leading_pt . assign(m_num_fatjets_keep, false);
-
-        /*
-        m_hltjet_pt  . assign(m_num_fatjets_keep, -1000. );
-        m_hltjet_eta . assign(m_num_fatjets_keep, -1000. );
-        m_hltjet_phi . assign(m_num_fatjets_keep, -1000. );
-        m_hltjet_m   . assign(m_num_fatjets_keep, -1000. );
-        m_hltjet_dR  . assign(m_num_fatjets_keep, -1000. );
-        m_hltjet_count = 0;
-        */
+        m_rljet_n_constituents    . assign(m_num_fatjets_keep, -1000 );
 
         m_rljet_smooth15Top_MassTau32Tag50eff    . assign(m_num_fatjets_keep, -1000);
         m_rljet_smooth15Top_MassTau32Tag80eff    . assign(m_num_fatjets_keep, -1000);
@@ -622,6 +609,12 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
         m_rljet_smooth15W_Tag25eff               . assign(m_num_fatjets_keep, -1000);
         m_rljet_smooth15Z_Tag50eff               . assign(m_num_fatjets_keep, -1000);
         m_rljet_smooth15Z_Tag25eff               . assign(m_num_fatjets_keep, -1000);
+
+        m_rljet_BDT_score_top_qqb       . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_BDT_score_top_inclusive . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_BDT_score_w             . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_DNN_score_top           . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_DNN_score_w             . assign(m_num_fatjets_keep, -1000. );
 
         if (m_runSD) {
           m_rljet_SDw_calib . assign(m_num_fatjets_keep, -1000.);
@@ -707,70 +700,12 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
       return p1->pt() > p2->pt();
     };
 
-    if (m_gammaJetOverlapRemoval && !event.m_photons.empty()) {
-
-      const xAOD::Photon* lead_photon = *std::max_element(event.m_photons.begin(),
-          event.m_photons.end(), pt_sort_func);
-
-      if (lead_photon) {
-        std::copy_if(event.m_largeJets.begin(),
-            event.m_largeJets.end(),
-            std::back_inserter(rljets),
-            [& lead_photon](const xAOD::Jet* j) {
-                return top::deltaR(*lead_photon, *j) >= 1.0;
-            });
-      }
-
-    } else {
-      for (auto jet : event.m_largeJets) rljets.push_back(jet);
-    }
-
+    for (auto jet : event.m_largeJets) rljets.push_back(jet);
     if (rljets.empty()) return;
-
     std::sort(rljets.begin(), rljets.end(), pt_sort_func);
 
-    /******************/
-    /* TRUTH MATCHING */
-    /******************/
-
-    // truth matching not currently needed
-
-    /*
-    if(m_config->isMC()) {
-            const xAOD::JetContainer* truth_large_jets = nullptr;
-            const xAOD::TruthParticleContainer* truth_particles = nullptr;
-
-            top::check( evtStore()->retrieve(truth_large_jets,
-                                    m_config->sgKeyTruthLargeRJets()), "FAILURE" );
-
-            top::check( evtStore()->retrieve(truth_particles,
-                                    m_config->sgKeyMCParticle()), "FAILURE" );
-
-            m_truth_match_tool->execute(&rljets, truth_large_jets, truth_particles);
-    }
-    */
-
-    /* code (bugged) for Arthur's version
-    if(m_config->isMC()) {
-        const float dRMax = 0.75;
-        const int topPdgId = 6;
-        const int wPdgId = 24;
-        const int zPdgId = 23;
-        const int bPdgId = 5;
-        m_truth_match_tool->DecorateMatchJets(rljets, rljets, 0.,
-                        "deltaRMatchedTruthJet", "deltaRMatchedRecoJet");
-
-        m_truth_match_tool->DecorateMatchTruth(tljets, truth_particles,
-                        topPdgId, dRMax, "dRMatchedTop", true);
-        m_truth_match_tool->DecorateMatchTruth(tljets, truth_particles,
-                        wPdgId, dRMax, "dRMatchedW", true);
-        m_truth_match_tool->DecorateMatchTruth(tljets, truth_particles,
-                        zPdgId, dRMax, "dRMatchedZ", true);
-        m_truth_match_tool->DecorateMatchTruth(tljets, truth_particles,
-                        bPdgId, dRMax, "dRMatchedB", true);
-
-    }
-    */
+    // so that we never waste time looping over or truth-matching un-kept jets
+    if (rljets.size() > m_num_fatjets_keep) rljets.resize(m_num_fatjets_keep);
 
     for (unsigned i = 0; i < m_num_fatjets_keep && i < rljets.size(); i++) {
 
@@ -863,48 +798,19 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
         m_rljet_smooth16Z_Tag50eff_nocontain[i] = zTagger16_50eff_nocontain->result(*rljets[i]);
         m_rljet_smooth16Z_Tag80eff_nocontain[i] = zTagger16_80eff_nocontain->result(*rljets[i]);
 
-        /*****************************/
-        /* PDGID FROM TRUTH MATCHING */
-        /*****************************/
+        if (m_savePhoton) {
+          const xAOD::Photon* lead_photon = *std::max_element(event.m_photons.begin(), event.m_photons.end(), pt_sort_func);
 
-        /*
-        if (m_config->isMC()) {
-            bool was_matched_to_truth_jet    = false;
-            int z_w_top_id                   = -1;
-            int num_quarks_contained         = -1;
-            bool top_child_b_quark_contained = false;
-            int maxE_parton                  = -1;
-
-            if (rljets[i]->isAvailable<int>("dRmatched_reco_truth"))
-                was_matched_to_truth_jet = rljets[i]->auxdata<int>("dRmatched_reco_truth") == 1;
-
-            if (rljets[i]->isAvailable<int>("dRmatched_particle_flavor"))
-                z_w_top_id = abs(rljets[i]->auxdata<int>("dRmatched_particle_flavor"));
-
-            if (rljets[i]->isAvailable<int>("dRmatched_maxEParton_flavor"))
-                maxE_parton = abs(rljets[i]->auxdata<int>("dRmatched_maxEParton_flavor"));
-
-            if (rljets[i]->isAvailable<int>("dRmatched_topBChild"))
-                top_child_b_quark_contained = rljets[i]->auxdata<int>("dRmatched_topBChild") == 1;
-
-            if (rljets[i]->isAvailable<int>("dRmatched_nQuarkChildren"))
-                num_quarks_contained = rljets[i]->auxdata<int>("dRmatched_nQuarkChildren");
-
-            if (was_matched_to_truth_jet) {
-                if (z_w_top_id == 0)
-                    m_rljet_pdgid[i] = maxE_parton;
-
-                else if (z_w_top_id == 6 && top_child_b_quark_contained && num_quarks_contained >= 3)
-                    m_rljet_pdgid[i] = 6;
-
-                else if (z_w_top_id == 23 && num_quarks_contained >= 2)
-                    m_rljet_pdgid[i] = 23;
-
-                else if (z_w_top_id == 24 && num_quarks_contained >= 2)
-                    m_rljet_pdgid[i] = 24;
-            }
+          if (lead_photon) {
+            m_photon0_pt           = lead_photon->pt();
+            m_photon0_eta          = lead_photon->eta();
+            m_photon0_phi          = lead_photon->phi();
+            m_photon0_ptcone20     = lead_photon->auxdata<float>("ptvarcone20");
+            m_photon0_ptcone40     = lead_photon->auxdata<float>("ptvarcone40");
+            m_photon0_topoetcone20 = lead_photon->auxdata<float>("topoetcone20");
+            m_photon0_topoetcone40 = lead_photon->auxdata<float>("topoetcone40");
+          }
         }
-        */
 
         /*****************************************/
         /* PROCESS NOMINAL BRANCH ONLY VARIABLES */
@@ -954,8 +860,9 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
             rljet_ungroomed->getAttribute(xAOD::JetAttribute::NumTrkPt500, ntrk_tmp);
             m_rljet_ungroomed_ntrk500[i] = ntrk_tmp[0];
 
-            // 2015 smoothed taggers
+            m_rljet_n_constituents[i] = rljets[i]->numConstituents();
 
+            // 2015 smoothed taggers
             m_rljet_smooth15Top_MassTau32Tag50eff[i] = combine_bits( topTagger15_Mass_50eff->isTagged(*rljets[i]), topTagger15_Tau32_50eff->isTagged(*rljets[i]) );
             m_rljet_smooth15Top_MassTau32Tag80eff[i] = combine_bits( topTagger15_Mass_80eff->isTagged(*rljets[i]), topTagger15_Tau32_80eff->isTagged(*rljets[i]) );
 
@@ -975,80 +882,54 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
             m_rljet_smooth15Z_Tag50eff[i] = zTagger15_50eff->result(*rljets[i]);
             m_rljet_smooth15Z_Tag25eff[i] = zTagger15_25eff->result(*rljets[i]);
 
-            // if(m_config->isMC())
-            // { // save corresponding truth jet variables
-            //     const xAOD::JetContainer* truth_large_jets = nullptr;
-            //     top::check( evtStore()->retrieve(truth_large_jets, m_config->sgKeyTruthLargeRJets()), "FAILURE" );
+            if (rljets[i]->numConstituents() > 2) {
+              if (rljets[i]->pt() / 1000. > 200) {
+                auto dnn_w = m_wTagger_DNN->tag(*rljets[i], false);
+                auto bdt_w = m_wTagger_BDT->tag(*rljets[i], false);
+                m_rljet_BDT_score_w[i]             = m_wTagger_BDT->getScore(*rljets[i]);
+                m_rljet_DNN_score_w[i]             = m_wTagger_DNN->getScore(*rljets[i]);
+              }
+              if (rljets[i]->pt() / 1000. > 350) {
+                auto bdt_top_qqb = m_topTagger_BDT_qqb->tag(*rljets[i], false);
+                auto bdt_top_inc = m_topTagger_BDT_inclusive->tag(*rljets[i], false);
+                auto dnn_top = m_topTagger_DNN->tag(*rljets[i], false);
+                m_rljet_BDT_score_top_qqb[i]       = m_topTagger_BDT_qqb-> getScore(*rljets[i]);
+                m_rljet_BDT_score_top_inclusive[i] = m_topTagger_BDT_inclusive->getScore(*rljets[i]);
+                m_rljet_DNN_score_top[i]           = m_topTagger_DNN->getScore(*rljets[i]);
+              }
+            }
 
-            //     const xAOD::Jet* matched_tljet = get_nearest_jet_in_collection(rljets[i], truth_large_jets);
+            /*****************************/
+            /* PDGID FROM TRUTH MATCHING */
+            /*****************************/
 
-            //     if (matched_tljet != nullptr) {
-            //         const float dR = top::deltaR(*rljets[i], *matched_tljet);
+            if(m_config->isMC())
+            { // save corresponding truth jet variables
+              const xAOD::JetContainer* truth_large_jets = nullptr;
+              const xAOD::TruthParticleContainer* truth_particles = nullptr;
+              top::check( evtStore()->retrieve(truth_large_jets, m_config->sgKeyTruthLargeRJets()), "FAILURE");
+              top::check( evtStore()->retrieve(truth_particles, m_config->sgKeyMCParticle()), "FAILURE" );
 
-            //         if (dR < 0.4) {
-            //             m_tljet_m[i]   = matched_tljet->m();
-            //             m_tljet_pt[i]  = matched_tljet->pt();
-            //             m_tljet_eta[i] = matched_tljet->eta();
-            //             m_tljet_phi[i] = matched_tljet->phi();
-            //             m_tljet_dR[i]  = dR;
+                const xAOD::Jet* matched_tljet = get_nearest_jet_in_collection(rljets[i], truth_large_jets);
 
-            //             const float ecf1 = matched_tljet->auxdata<float>("ECF1");
-            //             const float ecf2 = matched_tljet->auxdata<float>("ECF2");
-            //             const float ecf3 = matched_tljet->auxdata<float>("ECF3");
-
-            //             m_tljet_D2[i] = fabs(ecf2) > 1.e-6 ? pow(ecf1/ecf2,3)*ecf3 : -1000.;
-
-            //             /*********/
-            //             /* TAU32 */
-            //             /*********/
-
-            //             const float tau2 = matched_tljet->auxdata<float>("Tau2_wta");
-            //             const float tau3 = matched_tljet->auxdata<float>("Tau3_wta");
-
-            //             m_tljet_Tau32_wta[i] = fabs(tau2) > 1.e-6 ? tau3 / tau2 : -1000.;
-            //         }
-            //     }
-            // } // end of saving truth jet variables
-
-            /*
-            // save corresponding trigger jet
-            const xAOD::JetContainer* hlt_jets_a10r_tcemsubjesFS = nullptr;
-            top::check ( evtStore()->retrieve(hlt_jets_a10r_tcemsubjesFS,
-                        "HLT_xAOD__JetContainer_a10r_tcemsubjesFS"), "FAILURE" );
-
-            if (hlt_jets_a10r_tcemsubjesFS != nullptr) {
-                m_hltjet_count = hlt_jets_a10r_tcemsubjesFS->size();
-
-                const xAOD::Jet* hltjet_near = get_nearest_jet_in_collection(rljets[i],
-                        hlt_jets_a10r_tcemsubjesFS);
-
-                if (hltjet_near != nullptr) {
-                    m_hltjet_m[i]   = hltjet_near->m();
-                    m_hltjet_pt[i]  = hltjet_near->pt();
-                    m_hltjet_eta[i] = hltjet_near->eta();
-                    m_hltjet_phi[i] = hltjet_near->phi();
-                    m_hltjet_dR[i]  = top::deltaR(*rljets[i], *hltjet_near);
+                if (matched_tljet != nullptr) {
+                    const float dR = top::deltaR(*rljets[i], *matched_tljet);
+                    if (dR < 0.4) {
+                      QuarkGluonLabelJet(truth_particles, matched_tljet, 0.4);
+                      m_rljet_pdgid[i] = matched_tljet->auxdecor<int>("maxEMatchedPartonPdgId");
+                    }
                 }
-            } // end of saving trigger jet variables
-            */
 
-            /*************/
-            /* B-TAGGING */
-            /*************/
+            } // end of saving truth jet variables
 
-            // float rljet_btag0, rljet_btag1;
-            // this->get_trackjet_btags(rljets[i], rljet_btag0, rljet_btag1);
-
-            // const float BTAG_CUT = 0.6455;
-
-            // m_rljet_btag_double[i]     = rljet_btag0 > BTAG_CUT && rljet_btag1 > BTAG_CUT;
-            // m_rljet_btag_single[i]     = rljet_btag0 > BTAG_CUT || rljet_btag1 > BTAG_CUT;
-            // m_rljet_btag_leading_pt[i] = rljet_btag0 > BTAG_CUT;
         } // end of saving nominal branch large-R jet variables
+
     } // end of saving individual large-R jet variables
+
 
     if (on_nominal_branch) { // other event-level and misc. variables
         m_NPV = event.m_primaryVertices->size();
+
 
         // compute lead/sublead jet quantities
         if (rljets.size() >= 2) {
@@ -1069,6 +950,7 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
 
         if (m_runSD)
             this->runSDandFillTree(rljets, m_config->isMC());
+
     }
 
     // Oh yeah, we want to set all the default AnalysisTop variables too and the call fill on the TTree
@@ -1103,13 +985,7 @@ void DataMCbackgroundEventSaver::runHTTAndFillTree(void) {
                 return j1->pt() > j2->pt();
             });
 
-    // mimic simple dijet selection
-    if ( pt_sorted_ca15jets.size() < 2 ||
-            pt_sorted_ca15jets[0] == nullptr ||
-            pt_sorted_ca15jets[1] == nullptr ||
-            pt_sorted_ca15jets[0]->pt() / 1000. < 525. ||
-            pt_sorted_ca15jets[1]->pt() / 1000. < 225.)
-        return;
+    if (pt_sorted_ca15jets.size() < 2) return;
 
     for (unsigned ijet = 0; ijet < m_num_fatjets_keep && ijet < pt_sorted_ca15jets.size(); ijet++) {
         // save the corresponding C/A 1.5 jet variables (ungroomed, nominal)

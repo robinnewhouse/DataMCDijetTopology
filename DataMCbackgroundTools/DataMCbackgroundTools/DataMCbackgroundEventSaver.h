@@ -20,8 +20,6 @@
 #include "JetRec/JetRecTool.h"
 #include "JetCalibTools/JetCalibrationTool.h"
 
-#include "DataMCbackgroundTools/TruthMatchTool.h"
-
 #include <utility>
 #include <vector>
 
@@ -51,17 +49,15 @@ namespace top {
         std::shared_ptr<top::TopConfig> m_config;
 
         // variables corresponding to DynamicKeys from AnalysisTop cuts file
-        bool m_gammaJetOverlapRemoval;
         bool m_runHTT;
         bool m_runSD;
+        bool m_savePhoton;
         unsigned m_num_fatjets_keep;
         unsigned m_debug_level;
 
         /*********/
         /* TOOLS */
         /*********/
-
-        std::unique_ptr<TruthMatchTool> m_truth_match_tool;
 
         // CA2 Subjet calibration tool
         JetCalibrationTool* m_jetcalib_subjet;
@@ -79,15 +75,6 @@ namespace top {
 
         // set all the relevant variables to sane default values
         void reset_containers(const bool on_nominal_branch);
-
-        void initializeSD(void);
-        void runSDandFillTree(std::vector<const xAOD::Jet*>& rljets, bool doSystShifts);
-        std::vector<fastjet::PseudoJet> JetconVecToPseudojet ( xAOD::JetConstituentVector input);
-        void runHTTAndFillTree(void);
-
-        /***********/
-        /* TAGGERS */
-        /***********/
 
         /*********************************/
         /* 2015 pre-rec smoothed taggers */
@@ -140,21 +127,24 @@ namespace top {
         /* Other taggers */
         /*****************/
 
-        // BDT
+        // MVA taggers
         std::unique_ptr<JSSWTopTaggerBDT> m_topTagger_BDT_qqb;
         std::unique_ptr<JSSWTopTaggerBDT> m_topTagger_BDT_inclusive;
-
-        // DNN
-        std::unique_ptr<JSSWTopTaggerDNN> m_topTagger_DNN_qqb;
-        std::unique_ptr<JSSWTopTaggerDNN> m_topTagger_DNN_inclusive;
+        std::unique_ptr<JSSWTopTaggerBDT> m_wTagger_BDT;
+        std::unique_ptr<JSSWTopTaggerDNN> m_topTagger_DNN;
+        std::unique_ptr<JSSWTopTaggerDNN> m_wTagger_DNN;
 
         // Shower Deconstruction (SD)
+        void initializeSD(void);
+        void runSDandFillTree(std::vector<const xAOD::Jet*>& rljets, bool doSystShifts);
+        std::vector<fastjet::PseudoJet> JetconVecToPseudojet(xAOD::JetConstituentVector input);
         std::unique_ptr<ShowerDeconstruction> tagger_SDw_win20_btag0;
         std::unique_ptr<ShowerDeconstruction> tagger_SDt_win50_btag0;
         std::unique_ptr<ShowerDeconstruction> tagger_SDt_win50_btag1;
 
         // HEPTopTagger
         int m_nHttTools;
+        void runHTTAndFillTree(void);
         std::string m_httJetContainerPrefix;
         std::vector<std::string> m_httConfigs;
         std::unique_ptr<JetRecTool> m_httTool;
@@ -179,13 +169,23 @@ namespace top {
         std::vector<float> m_rljet_m_ta;
         std::vector<float> m_rljet_m_comb;
 
+        std::vector<float> m_rljet_pdgid;
+
         // lead vs. sub-lead jet variables
         float m_rljet_mjj;
         float m_rljet_ptasym;
-        float m_rljet_dy; // rapidity
+        float m_rljet_dy;
         float m_rljet_dR;
         float m_rljet_dphi;
-        float m_rljet_deta; // pseudorapidity
+        float m_rljet_deta;
+
+        float m_photon0_pt;
+        float m_photon0_eta;
+        float m_photon0_phi;
+        float m_photon0_ptcone20;
+        float m_photon0_ptcone40;
+        float m_photon0_topoetcone20;
+        float m_photon0_topoetcone40;
 
         // substructure variables
         std::vector<float> m_rljet_Tau1_wta;
@@ -215,6 +215,7 @@ namespace top {
 
         std::vector<int> m_rljet_NTrimSubjets;
         std::vector<int> m_rljet_ungroomed_ntrk500;
+        std::vector<int> m_rljet_n_constituents;
 
         /*****************/
         /* HTT VARIABLES */
@@ -287,6 +288,13 @@ namespace top {
 
         std::vector<int> m_rljet_smooth16Z_Tag50eff_nocontain;
         std::vector<int> m_rljet_smooth16Z_Tag80eff_nocontain;
+
+        // 2017 MVA
+        std::vector<float> m_rljet_BDT_score_top_qqb;
+        std::vector<float> m_rljet_BDT_score_top_inclusive;
+        std::vector<float> m_rljet_BDT_score_w;
+        std::vector<float> m_rljet_DNN_score_top;
+        std::vector<float> m_rljet_DNN_score_w;
 
         // Shower deconstruction output variables
         std::vector<float> m_rljet_SDw_calib;
