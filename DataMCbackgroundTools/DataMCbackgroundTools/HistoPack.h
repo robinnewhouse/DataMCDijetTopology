@@ -40,6 +40,11 @@ public:
     unique_ptr<TH1Tagged> h_mu;
     unique_ptr<TH1Tagged> h_NPV;
 
+    unique_ptr<TH1Tagged> h_topoetcone40_over_pt;
+    unique_ptr<TH1Tagged> h_topoetcone20_over_pt;
+    unique_ptr<TH1Tagged> h_ptcone40_over_pt;
+    unique_ptr<TH1Tagged> h_ptcone20_over_pt;
+
     // mass/energy response
     vector<unique_ptr<TH1Tagged>> h_rljet_RES_m;
     vector<unique_ptr<TH1Tagged>> h_rljet_RES_pT;
@@ -99,9 +104,7 @@ public:
     vector<unique_ptr<TH1Tagged>> h_htt_pts2;
     vector<unique_ptr<TH1Tagged>> h_htt_pts3;
 
-    vector<unique_ptr<TH1Tagged>> h_rljet_SDw_win20_btag0_logchi;
-    vector<unique_ptr<TH1Tagged>> h_rljet_SDz_win20_btag0_logchi;
-    vector<unique_ptr<TH1Tagged>> h_rljet_SDt_win50_btag0_logchi;
+    vector<unique_ptr<TH1Tagged>> h_rljet_SD_logchi;
 
     vector<unique_ptr<TH1Tagged>> h_rljet_BDT_score;
     vector<unique_ptr<TH1Tagged>> h_rljet_DNN_score;

@@ -72,7 +72,7 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
                     "h_rljet" + std::to_string (i) + "_FoxWolfram20", -0.5 , 2., 0.01));
 
         this->h_rljet_Qw.push_back ( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string (i) + "_Qw", 0. , 1000, 2e3));
+                    "h_rljet" + std::to_string (i) + "_Qw", 0. , 1000, 2));
 
         this->h_rljet_Angularity.push_back ( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string (i) + "_Angularity", 0. , 0.1, 0.0005));
@@ -99,7 +99,7 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
                     "h_rljet" + std::to_string (i) + "_Split12", 0. , 2500e3, 1e4));
 
         this->h_rljet_Split23.push_back ( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string (i) + "_Split23", 0., 1000, 1e4));
+                    "h_rljet" + std::to_string (i) + "_Split23", 0., 1000, 2));
 
         this->h_rljet_Split34.push_back ( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string (i) + "_Split34", 0., 500e3, 0.5e4));
@@ -134,14 +134,8 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
         this->h_rljet_pdgid.push_back ( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string (i) + "_pdgid", -1. , 40., 1.0));
 
-        this->h_rljet_SDw_win20_btag0_logchi.push_back (make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string(i) + "_SDw_win20_btag0_logchi", -25., 25., 0.1));
-
-        this->h_rljet_SDz_win20_btag0_logchi.push_back (make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string(i) + "_SDz_win20_btag0_logchi", -25., 25., 0.1));
-
-        this->h_rljet_SDt_win50_btag0_logchi.push_back (make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string(i) + "_SDt_win50_btag0_logchi", -25., 25., 0.1));
+        this->h_rljet_SD_logchi.push_back (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string(i) + "_SD_logchi", -25., 25., 0.1));
 
         this->h_htt_caJet_pt.push_back  ( make_unique<TH1Tagged>(
                     "h_htt_caJet" + std::to_string (i) + "_pt", 0., 4000., 10.));
@@ -180,19 +174,19 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
                     "h_htt" + std::to_string (i) + "_m", 0., 300, 1.0));
 
         this->h_htt_m23m123 . push_back ( make_unique<TH1Tagged>(
-                    "h_htt" + std::to_string(i) + "_m23m123", 0.35, 0.8, 0.0025));
+                    "h_htt" + std::to_string(i) + "_m23m123", 0.35, 0.8, 0.001));
 
         this->h_htt_atan1312 . push_back ( make_unique<TH1Tagged>(
-                    "h_htt" + std::to_string(i) + "_atan1312", 0.2, 1.3, 0.005));
+                    "h_htt" + std::to_string(i) + "_atan1312", 0.2, 1.3, 0.0025));
 
         this->h_htt_pts1 . push_back ( make_unique<TH1Tagged>(
-                    "h_htt" + std::to_string(i) + "_pts1", 0., 2000., 25));
+                    "h_htt" + std::to_string(i) + "_pts1", 0., 2000., 10));
 
         this->h_htt_pts2 . push_back ( make_unique<TH1Tagged>(
-                    "h_htt" + std::to_string(i) + "_pts2", 0., 2000., 25));
+                    "h_htt" + std::to_string(i) + "_pts2", 0., 2000., 10));
 
         this->h_htt_pts3 . push_back ( make_unique<TH1Tagged>(
-                    "h_htt" + std::to_string(i) + "_pts3", 0., 2000., 25));
+                    "h_htt" + std::to_string(i) + "_pts3", 0., 2000., 10));
 
         this->h_rljet_BDT_score . push_back( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string(i) + "_BDT_score", -1.0, 1.0, 0.01));
@@ -200,6 +194,11 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
         this->h_rljet_DNN_score . push_back( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string(i) + "_DNN_score", 0., 1.0, 0.005));
     }
+
+    this->h_topoetcone40_over_pt = make_unique<TH1Tagged>("h_topoetcone40_over_pt", -12, 2, 1e-3);
+    this->h_topoetcone20_over_pt = make_unique<TH1Tagged>("h_topoetcone20_over_pt", -0.1, 0.1, 1e-4);
+    this->h_ptcone40_over_pt = make_unique<TH1Tagged>("h_ptcone40_over_pt", -0.01, 0.01, 1e-6);
+    this->h_ptcone20_over_pt = make_unique<TH1Tagged>("h_ptcone20_over_pt", -0.01, 0.01, 1e-6);
 
     this->h_rljet_mjj    = make_unique<TH1Tagged>("h_rljet_mjj"    , 0.  , 10000. , 10.);
     this->h_rljet_ptasym = make_unique<TH1Tagged>("h_rljet_ptasym" , 0.  , 1.0    , 0.005);
@@ -238,6 +237,11 @@ void HistoPack::WriteNominalOnlyHistograms() const
     h_rljet_dR->write_all();
     h_rljet_deta->write_all();
     h_rljet_dphi->write_all();
+
+    h_topoetcone40_over_pt->write_all();
+    h_topoetcone20_over_pt->write_all();
+    h_ptcone40_over_pt->write_all();
+    h_ptcone20_over_pt->write_all();
 
     h_mu->write_all();
     h_NPV->write_all();
@@ -296,9 +300,7 @@ void HistoPack::WriteNominalOnlyHistograms() const
     for (auto const &h : h_htt_pts2) h->write_all();
     for (auto const &h : h_htt_pts3) h->write_all();
 
-    for (auto const &h : h_rljet_SDw_win20_btag0_logchi) h->write_all();
-    for (auto const &h : h_rljet_SDz_win20_btag0_logchi) h->write_all();
-    for (auto const &h : h_rljet_SDt_win50_btag0_logchi) h->write_all();
+    for (auto const &h : h_rljet_SD_logchi) h->write_all();
 
     for (auto const &h : h_rljet_BDT_score) h->write_all();
     for (auto const &h : h_rljet_DNN_score) h->write_all();
