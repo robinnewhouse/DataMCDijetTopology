@@ -4,11 +4,11 @@ from samples import samples_JETM6
 
 mc_config = TopExamples.grid.Config()
 mc_config.settingsFile  = 'cuts/cuts_gamma_jet_mc15c.txt'
-mc_config.suffix        = 'gammajet_mc15_v3.1'
+mc_config.suffix        = 'gammajet_mc15_150517_v0'
 
 data_config = TopExamples.grid.Config()
 data_config.settingsFile  = 'cuts/cuts_gamma_jet_data16.txt'
-data_config.suffix        = 'gammajet_data_v3'
+data_config.suffix        = 'gammajet_data_150517_v0'
 
 for config in [mc_config, data_config]:
     config.code          = 'top-xaod'
@@ -22,15 +22,15 @@ for config in [mc_config, data_config]:
 data_sample_names = [ 'data_2016_25ns_p2950', 'data_2015_25ns_p2950' ]
 
 mc_sample_names = [
-    # 'pythia_gammajet_mc15c',
-    # 'sherpa_gammajet_mc15c',
-    # 'ttbar_gamma_mc15c',
-    # 'wz_gamma_mc15c',
+    'pythia_gammajet_mc15c',
+    'sherpa_gammajet_mc15c',
+    'ttbar_gamma_mc15c',
+    'wz_gamma_mc15c',
     'pythia_dijet_mc15c_p2949'
     ]
 
 for sample_name in mc_sample_names + data_sample_names:
     TopExamples.grid.Add(sample_name).datasets = samples_JETM6[sample_name]
 
-#TopExamples.grid.submit(data_config, TopExamples.grid.Samples(data_sample_names))
+TopExamples.grid.submit(data_config, TopExamples.grid.Samples(data_sample_names))
 TopExamples.grid.submit(mc_config, TopExamples.grid.Samples(mc_sample_names))
