@@ -16,51 +16,13 @@
 
 #include "TopExamples/AnalysisTools.h"
 
-EventSelector NO_SELECTION = [](const DataMCbackgroundSelector* /* sel */) {
-    return true;
-};
-
-EventSelector DIJET_LOOSE = [](const DataMCbackgroundSelector* sel) {
-    if (sel->rljet_pt_comb->at(0)/1000. < 450.) return false;
-
-    return true;
-};
-
-EventSelector DIJET_TIGHT = [](const DataMCbackgroundSelector* sel) {
-    if (sel->rljet_D2->at(0) <= 0.)
-        return false;
-
-    return true;
-};
-
-EventSelector VVJJ_SELECTION = [](const DataMCbackgroundSelector* sel ) {
-    if ( sel->rljet_pt_comb->at(0) / 1000. < 450
-            || std::abs(sel->rljet_eta->at(0)) > 2.0
-            || std::abs(sel->rljet_dy) >= 1.2
-            || std::abs(sel->rljet_ptasym) >= 0.15
-            || sel->rljet_mjj / 1000. <= 1000
-            ) return false;
-
-    return true;
-};
-
-EventSelector GAMMAJET_LOOSE = [](const DataMCbackgroundSelector* /* sel */) {
-    return true;
-};
-
-EventSelector GAMMAJET_TIGHT = [](const DataMCbackgroundSelector* /* sel */) {
-    return true;
-};
 
 // so that we can specify the selector by command line argument string
 const std::unordered_map<std::string, EventSelector>
 DataMCbackgroundSelector::available_event_selectors = {
-    { "NO_SELECTION"   , NO_SELECTION   },
-    { "DIJET_LOOSE"    , DIJET_LOOSE    },
-    { "DIJET_TIGHT"    , DIJET_TIGHT    },
-    { "VVJJ_SELECTION" , VVJJ_SELECTION },
-    { "GAMMAJET_LOOSE" , GAMMAJET_LOOSE },
-    { "GAMMAJET_TIGHT" , GAMMAJET_TIGHT }
+    { "NO_SELECTION"   , &DataMCbackgroundSelector::NO_SELECTION   },
+    { "GAMMAJET_TIGHT" , &DataMCbackgroundSelector::GAMMAJET_TIGHT },
+    { "GAMMAJET_LOOSE" , &DataMCbackgroundSelector::GAMMAJET_LOOSE }
 };
 
 DataMCbackgroundSelector::DataMCbackgroundSelector(
@@ -103,32 +65,6 @@ DataMCbackgroundSelector::DataMCbackgroundSelector(
         std::cout << "see DataMCbackgroundSelector.cxx for more details." << std::endl;
     }
 
-    // BDT
-    // top taggers (80% eff. WP, medium variable set)
-    // m_topTagger_BDT_qqb = make_unique<JSSWTopTaggerBDT>("topTagger_BDT_qqb");
-    // m_topTagger_BDT_qqb->setProperty("TopTagger_fullyContained", true);
-    // m_topTagger_BDT_qqb->initialize();
-
-    // m_topTagger_BDT_inclusive = make_unique<JSSWTopTaggerBDT>("topTagger_BDT_inclusive");
-    // m_topTagger_BDT_inclusive->setProperty("TopTagger", true);
-    // m_topTagger_BDT_inclusive->initialize();
-
-    // W tagger (80% eff. WP, medium variable set)
-    // m_wTagger_BDT = make_unique<JSSWTopTaggerBDT>("m_wTagger_BDT");
-    // m_wTagger_BDT->setProperty("WTagger", true);
-    // m_wTagger_BDT->initialize();
-
-    // m_topTagger_DNN_qqb = make_unique<JSSWTopTaggerDNN>("m_topTagger_DNN_qqb");
-    // m_topTagger_DNN_qqb->setProperty("TopTagger", true);
-    // m_topTagger_DNN_qqb->setProperty("KerasConfigFile", "keras_top_dnn_BN_december11_contained.json");
-    // m_topTagger_DNN_qqb->setProperty("KerasOutput", "top_dnn_BN_dec11_contained");
-    // m_topTagger_DNN_qqb->initialize();
-
-    // m_topTagger_DNN_inclusive = make_unique<JSSWTopTaggerDNN>("m_topTagger_DNN_inclusive");
-    // m_topTagger_DNN_inclusive->setProperty("TopTagger", true);
-    // m_topTagger_DNN_inclusive->setProperty("KerasConfigFile", "keras_top_dnn_BN_december11_all.json");
-    // m_topTagger_DNN_inclusive->setProperty("KerasOutput", "top_dnn_BN_dec11_all");
-    // m_topTagger_DNN_inclusive->initialize();
 }
 
 void DataMCbackgroundSelector::log(const std::string& line)
@@ -154,7 +90,7 @@ void DataMCbackgroundSelector::SlaveBegin(TTree * /*tree*/)
     // The tree argument is deprecated (on PROOF 0 is passed).
     TString option = GetOption();
 
-    this->hp = new HistoPack(1);
+    this->hp = new HistoPack(2);
     // save 'anti-tags' for the tagged mass spectra
     // this->hp->h_rljet_m_comb.at(0)->set_fill_veto(true);
     // this->hp->h_rljet_m_calo.at(0)->set_fill_veto(true);
@@ -184,8 +120,8 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         b_weight_mc->GetEntry(entry);
         b_weight_pileup->GetEntry(entry);
         b_weight_leptonSF->GetEntry(entry);
-        b_weight_photonSF->GetEntry(entry);
-        b_weight_photonSF_effIso->GetEntry(entry);
+        // b_weight_photonSF->GetEntry(entry);
+        // b_weight_photonSF_effIso->GetEntry(entry);
         b_weight_jvt->GetEntry(entry);
         b_randomRunNumber->GetEntry(entry);
     } else {
@@ -220,6 +156,22 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
     if (this->on_nominal_branch) {
         b_NPV->GetEntry(entry);
+
+        // 2017 MVA
+        b_rljet_BDT_score_top_qqb->GetEntry(entry);
+        b_rljet_BDT_score_top_inclusive->GetEntry(entry);
+        b_rljet_BDT_score_w->GetEntry(entry);
+        b_rljet_DNN_score_top->GetEntry(entry);
+        b_rljet_DNN_score_w->GetEntry(entry);
+
+        // b_photon_ptcone20->GetEntry(entry);
+        // b_photon_ptcone40->GetEntry(entry);
+        // b_photon_topoetcone20->GetEntry(entry);
+        // b_photon_topoetcone40->GetEntry(entry);
+        // b_ph_pt->GetEntry(entry);
+        // b_ph_phi->GetEntry(entry);
+        // b_ph_eta->GetEntry(entry);
+        // b_ph_e->GetEntry(entry);
         b_rljet_count->GetEntry(entry);
         b_rljet_mjj->GetEntry(entry);
         b_rljet_ptasym->GetEntry(entry);
@@ -280,49 +232,67 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         b_htt_caGroomJet_eta_def->GetEntry(entry);
         b_htt_caGroomJet_phi_def->GetEntry(entry);
         b_htt_caGroomJet_m_def->GetEntry(entry);
-        b_rljet_SDw_win20_btag0->GetEntry(entry);
-        b_rljet_SDz_win20_btag0->GetEntry(entry);
-        b_rljet_SDt_win50_btag0->GetEntry(entry);
+
+        b_rljet_SDw_calib->GetEntry(entry);
+        b_rljet_SDw_uncalib->GetEntry(entry);
+        b_rljet_SDw_combined->GetEntry(entry);
+        b_rljet_SDw_dcut->GetEntry(entry);
+        b_rljet_SDt_calib->GetEntry(entry);
+        b_rljet_SDt_uncalib->GetEntry(entry);
+        b_rljet_SDt_combined->GetEntry(entry);
+        b_rljet_SDt_dcut->GetEntry(entry);
 
         if (this->operating_on_mc) {
-            b_rljet_SDw_win20_btag0_UP->GetEntry(entry);
-            b_rljet_SDz_win20_btag0_UP->GetEntry(entry);
-            b_rljet_SDt_win50_btag0_UP->GetEntry(entry);
-            b_rljet_SDw_win20_btag0_DOWN->GetEntry(entry);
-            b_rljet_SDz_win20_btag0_DOWN->GetEntry(entry);
-            b_rljet_SDt_win50_btag0_DOWN->GetEntry(entry);
-            b_htt_caGroomJet_pt_sjcalib1030->GetEntry(entry);
-            b_htt_caGroomJet_eta_sjcalib1030->GetEntry(entry);
-            b_htt_caGroomJet_phi_sjcalib1030->GetEntry(entry);
-            b_htt_caGroomJet_m_sjcalib1030->GetEntry(entry);
-            b_htt_caGroomJet_pt_sjcalib0970->GetEntry(entry);
-            b_htt_caGroomJet_eta_sjcalib0970->GetEntry(entry);
-            b_htt_caGroomJet_phi_sjcalib0970->GetEntry(entry);
-            b_htt_caGroomJet_m_sjcalib0970->GetEntry(entry);
-            b_htt_pt_sjcalib1030->GetEntry(entry);
-            b_htt_eta_sjcalib1030->GetEntry(entry);
-            b_htt_phi_sjcalib1030->GetEntry(entry);
-            b_htt_m_sjcalib1030->GetEntry(entry);
-            b_htt_m123_sjcalib1030->GetEntry(entry);
-            b_htt_m23m123_sjcalib1030->GetEntry(entry);
-            b_htt_atan1312_sjcalib1030->GetEntry(entry);
-            b_htt_nTagCands_sjcalib1030->GetEntry(entry);
-            b_htt_tag_sjcalib1030->GetEntry(entry);
-            b_htt_pts1_sjcalib1030->GetEntry(entry);
-            b_htt_pts2_sjcalib1030->GetEntry(entry);
-            b_htt_pts3_sjcalib1030->GetEntry(entry);
-            b_htt_pt_sjcalib0970->GetEntry(entry);
-            b_htt_eta_sjcalib0970->GetEntry(entry);
-            b_htt_phi_sjcalib0970->GetEntry(entry);
-            b_htt_m_sjcalib0970->GetEntry(entry);
-            b_htt_m123_sjcalib0970->GetEntry(entry);
-            b_htt_m23m123_sjcalib0970->GetEntry(entry);
-            b_htt_atan1312_sjcalib0970->GetEntry(entry);
-            b_htt_nTagCands_sjcalib0970->GetEntry(entry);
-            b_htt_tag_sjcalib0970->GetEntry(entry);
-            b_htt_pts1_sjcalib0970->GetEntry(entry);
-            b_htt_pts2_sjcalib0970->GetEntry(entry);
-            b_htt_pts3_sjcalib0970->GetEntry(entry);
+
+          b_rljet_SDw_calib_DOWN->GetEntry(entry);
+          b_rljet_SDw_uncalib_DOWN->GetEntry(entry);
+          b_rljet_SDw_combined_DOWN->GetEntry(entry);
+          b_rljet_SDw_dcut_DOWN->GetEntry(entry);
+          b_rljet_SDt_calib_DOWN->GetEntry(entry);
+          b_rljet_SDt_uncalib_DOWN->GetEntry(entry);
+          b_rljet_SDt_combined_DOWN->GetEntry(entry);
+          b_rljet_SDt_dcut_DOWN->GetEntry(entry);
+          b_rljet_SDw_calib_UP->GetEntry(entry);
+          b_rljet_SDw_uncalib_UP->GetEntry(entry);
+          b_rljet_SDw_combined_UP->GetEntry(entry);
+          b_rljet_SDw_dcut_UP->GetEntry(entry);
+          b_rljet_SDt_calib_UP->GetEntry(entry);
+          b_rljet_SDt_uncalib_UP->GetEntry(entry);
+          b_rljet_SDt_combined_UP->GetEntry(entry);
+          b_rljet_SDt_dcut_UP->GetEntry(entry);
+
+          b_htt_caGroomJet_pt_sjcalib1030->GetEntry(entry);
+          b_htt_caGroomJet_eta_sjcalib1030->GetEntry(entry);
+          b_htt_caGroomJet_phi_sjcalib1030->GetEntry(entry);
+          b_htt_caGroomJet_m_sjcalib1030->GetEntry(entry);
+          b_htt_caGroomJet_pt_sjcalib0970->GetEntry(entry);
+          b_htt_caGroomJet_eta_sjcalib0970->GetEntry(entry);
+          b_htt_caGroomJet_phi_sjcalib0970->GetEntry(entry);
+          b_htt_caGroomJet_m_sjcalib0970->GetEntry(entry);
+          b_htt_pt_sjcalib1030->GetEntry(entry);
+          b_htt_eta_sjcalib1030->GetEntry(entry);
+          b_htt_phi_sjcalib1030->GetEntry(entry);
+          b_htt_m_sjcalib1030->GetEntry(entry);
+          b_htt_m123_sjcalib1030->GetEntry(entry);
+          b_htt_m23m123_sjcalib1030->GetEntry(entry);
+          b_htt_atan1312_sjcalib1030->GetEntry(entry);
+          b_htt_nTagCands_sjcalib1030->GetEntry(entry);
+          b_htt_tag_sjcalib1030->GetEntry(entry);
+          b_htt_pts1_sjcalib1030->GetEntry(entry);
+          b_htt_pts2_sjcalib1030->GetEntry(entry);
+          b_htt_pts3_sjcalib1030->GetEntry(entry);
+          b_htt_pt_sjcalib0970->GetEntry(entry);
+          b_htt_eta_sjcalib0970->GetEntry(entry);
+          b_htt_phi_sjcalib0970->GetEntry(entry);
+          b_htt_m_sjcalib0970->GetEntry(entry);
+          b_htt_m123_sjcalib0970->GetEntry(entry);
+          b_htt_m23m123_sjcalib0970->GetEntry(entry);
+          b_htt_atan1312_sjcalib0970->GetEntry(entry);
+          b_htt_nTagCands_sjcalib0970->GetEntry(entry);
+          b_htt_tag_sjcalib0970->GetEntry(entry);
+          b_htt_pts1_sjcalib0970->GetEntry(entry);
+          b_htt_pts2_sjcalib0970->GetEntry(entry);
+          b_htt_pts3_sjcalib0970->GetEntry(entry);
         }
     }
 
@@ -375,15 +345,15 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         return kFALSE;
 
     // and all events must pass the specified offline cuts
-    if (!chosen_event_selector(this))
+    if (!(this->*chosen_event_selector)())
         return kFALSE;
 
     float weight;
     if (this->operating_on_mc) {
         weight = weight_mc
           * weight_pileup
-          * weight_photonSF
-          * weight_photonSF_effIso
+          // * weight_photonSF
+          // * weight_photonSF_effIso
           * weight_jvt
           * this->SF_lumi_Fb
           * this->luminosity;
@@ -478,7 +448,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     /* GENERAL EVENT VARIABLES */
     /***************************/
 
-    const bool ranSD = rljet_SDw_win20_btag0->size() > 0;
+    const bool ranSD = rljet_SDw_calib->size() > 0;
 
     hp->h_NPV->fill( (Float_t) NPV, weight);
 
@@ -600,148 +570,38 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         /* MVA TAGGERS */
         /***************/
 
-        /*
-        const bool IS_GOOD_MVA_JET =
-            rljet_m_calo->at(i) / 1000. > 40.
-            && rljet_D2->at(i) > 0
-            && C2 > 0
-            && Tau32_wta > 0
-            && Tau21_wta > 0
-            && rljet_Tau1_wta->at(i) > 0
-            && rljet_Tau2_wta->at(i) > 0
-            && rljet_Tau3_wta->at(i) > 0
-            && rljet_ECF1->at(i) > 0
-            && rljet_ECF2->at(i) > 0
-            && rljet_ECF3->at(i) > 0;
+        hp->h_rljet_BDT_score.at(i)->fill_tagged("top_qqb" , rljet_BDT_score_top_qqb->at(i)       , weight , true);
+        hp->h_rljet_BDT_score.at(i)->fill_tagged("top_inc" , rljet_BDT_score_top_inclusive->at(i) , weight , true);
+        hp->h_rljet_BDT_score.at(i)->fill_tagged("w"       , rljet_BDT_score_w->at(i)             , weight , true);
+        hp->h_rljet_DNN_score.at(i)->fill_tagged("top"     , rljet_DNN_score_top->at(i)           , weight , true);
+        hp->h_rljet_DNN_score.at(i)->fill_tagged("w"       , rljet_DNN_score_w->at(i)             , weight , true);
 
-        if (IS_GOOD_MVA_JET) {
-            // make an xAOD::Jet to pass to the BDT/DNN tools
-            xAOD::Jet* mva_jet = new xAOD::Jet();
-            mva_jet->makePrivateStore();
-
-            mva_jet->setAttribute<float>("pt"  , rljet_pt_calo->at(i));
-            mva_jet->setAttribute<float>("eta" , rljet_eta->at(i));
-            mva_jet->setAttribute<float>("phi" , rljet_phi->at(i));
-            mva_jet->setAttribute<float>("m"   , rljet_m_calo->at(i));
-
-            mva_jet->setAttribute<float>("C2"           , C2);
-            mva_jet->setAttribute<float>("Angularity"   , rljet_Angularity->at(i));
-            mva_jet->setAttribute<float>("Aplanarity"   , rljet_Aplanarity->at(i));
-            mva_jet->setAttribute<float>("D2"           , rljet_D2->at(i));
-            mva_jet->setAttribute<float>("Dip12"        , rljet_Dip12->at(i));
-            mva_jet->setAttribute<float>("ECF1"         , rljet_ECF1->at(i));
-            mva_jet->setAttribute<float>("ECF2"         , rljet_ECF2->at(i));
-            mva_jet->setAttribute<float>("ECF3"         , rljet_ECF3->at(i));
-            mva_jet->setAttribute<float>("FoxWolfram0"  , rljet_FoxWolfram0->at(i));
-            mva_jet->setAttribute<float>("FoxWolfram2"  , rljet_FoxWolfram2->at(i));
-            mva_jet->setAttribute<float>("FoxWolfram20" , fw20);
-            mva_jet->setAttribute<float>("KtDR"         , rljet_KtDR->at(i));
-            mva_jet->setAttribute<float>("Mu12"         , rljet_Mu12->at(i));
-            mva_jet->setAttribute<float>("PlanarFlow"   , rljet_PlanarFlow->at(i));
-            mva_jet->setAttribute<float>("Qw"           , rljet_Qw->at(i));
-            mva_jet->setAttribute<float>("Sphericity"   , rljet_Sphericity->at(i));
-            mva_jet->setAttribute<float>("Split12"      , rljet_Split12->at(i));
-            mva_jet->setAttribute<float>("Split23"      , rljet_Split23->at(i));
-            mva_jet->setAttribute<float>("Split34"      , rljet_Split34->at(i));
-            mva_jet->setAttribute<float>("Tau1_wta"     , rljet_Tau1_wta->at(i));
-            mva_jet->setAttribute<float>("Tau21_wta"    , Tau21_wta);
-            mva_jet->setAttribute<float>("Tau2_wta"     , rljet_Tau2_wta->at(i));
-            mva_jet->setAttribute<float>("Tau32_wta"    , Tau32_wta);
-            mva_jet->setAttribute<float>("Tau3_wta"     , rljet_Tau3_wta->at(i));
-            mva_jet->setAttribute<float>("ThrustMaj"    , rljet_ThrustMaj->at(i));
-            mva_jet->setAttribute<float>("ThrustMin"    , rljet_ThrustMin->at(i));
-            mva_jet->setAttribute<float>("ZCut12"       , rljet_ZCut12->at(i));
-
-            // std::cout << "C2:" << mva_jet->getAttribute<float>("C2") << std::endl;
-            // std::cout << "Angularity:" << mva_jet->getAttribute<float>("Angularity") << std::endl;
-            // std::cout << "Aplanarity:" << mva_jet->getAttribute<float>("Aplanarity") << std::endl;
-            // std::cout << "D2:" << mva_jet->getAttribute<float>("D2") << std::endl;
-            // std::cout << "Dip12:" << mva_jet->getAttribute<float>("Dip12") << std::endl;
-            // std::cout << "ECF1:" << mva_jet->getAttribute<float>("ECF1") << std::endl;
-            // std::cout << "ECF2:" << mva_jet->getAttribute<float>("ECF2") << std::endl;
-            // std::cout << "ECF3:" << mva_jet->getAttribute<float>("ECF3") << std::endl;
-            // std::cout << "FoxWolfram0:" << mva_jet->getAttribute<float>("FoxWolfram0") << std::endl;
-            // std::cout << "FoxWolfram2:" << mva_jet->getAttribute<float>("FoxWolfram2") << std::endl;
-            // std::cout << "FoxWolfram20:" << mva_jet->getAttribute<float>("FoxWolfram20") << std::endl;
-            // std::cout << "KtDR:" << mva_jet->getAttribute<float>("KtDR") << std::endl;
-            // std::cout << "Mu12:" << mva_jet->getAttribute<float>("Mu12") << std::endl;
-            // std::cout << "PlanarFlow:" << mva_jet->getAttribute<float>("PlanarFlow") << std::endl;
-            // std::cout << "Qw:" << mva_jet->getAttribute<float>("Qw") << std::endl;
-            // std::cout << "Sphericity:" << mva_jet->getAttribute<float>("Sphericity") << std::endl;
-            // std::cout << "Split12:" << mva_jet->getAttribute<float>("Split12") << std::endl;
-            // std::cout << "Split23:" << mva_jet->getAttribute<float>("Split23") << std::endl;
-            // std::cout << "Split34:" << mva_jet->getAttribute<float>("Split34") << std::endl;
-            // std::cout << "Tau1_wta:" << mva_jet->getAttribute<float>("Tau1_wta") << std::endl;
-            // std::cout << "Tau21_wta:" << mva_jet->getAttribute<float>("Tau21_wta") << std::endl;
-            // std::cout << "Tau2_wta:" << mva_jet->getAttribute<float>("Tau2_wta") << std::endl;
-            // std::cout << "Tau32_wta:" << mva_jet->getAttribute<float>("Tau32_wta") << std::endl;
-            // std::cout << "Tau3_wta:" << mva_jet->getAttribute<float>("Tau3_wta") << std::endl;
-            // std::cout << "ThrustMaj:" << mva_jet->getAttribute<float>("ThrustMaj") << std::endl;
-            // std::cout << "ThrustMin:" << mva_jet->getAttribute<float>("ThrustMin") << std::endl;
-            // std::cout << "ZCut12:" << mva_jet->getAttribute<float>("ZCut12") << std::endl;
-            // std::cout << std::endl
-
-			const bool CLEAN = rljet_Dip12->at(i) > 0;
-
-            const int BDT_top_qqb_result = static_cast<int>(m_topTagger_BDT_qqb->result(*mva_jet));
-            hp->h_rljet_BDT_score.at(i)->fill_tagged("top_qqb", m_topTagger_BDT_qqb->getBDTScore(), weight, true);
-            hp->h_rljet_BDT_score.at(i)->fill_tagged("top_qqb_CLEAN", m_topTagger_BDT_qqb->getBDTScore(), weight, CLEAN);
-
-            const int BDT_top_inclusive_result = static_cast<int>(m_topTagger_BDT_inclusive->result(*mva_jet));
-            hp->h_rljet_BDT_score.at(i)->fill_tagged("top_inclusive", m_topTagger_BDT_inclusive->getBDTScore(), weight, true);
-            hp->h_rljet_BDT_score.at(i)->fill_tagged("top_inclusive_CLEAN", m_topTagger_BDT_inclusive->getBDTScore(), weight, CLEAN);
-
-            const int BDT_w_result = static_cast<int>(m_wTagger_BDT->result(*mva_jet));
-            hp->h_rljet_BDT_score.at(i)->fill_tagged("w", m_wTagger_BDT->getBDTScore(), weight, true);
-            hp->h_rljet_BDT_score.at(i)->fill_tagged("w_CLEAN", m_wTagger_BDT->getBDTScore(), weight, CLEAN);
-
-            mva_tag_map["BDT_top_qqb_JSSCut"]           =  (BDT_top_qqb_result == 0 || BDT_top_qqb_result == 1);
-            mva_tag_map["BDT_top_qqb_MassJSSCut"]       =  BDT_top_qqb_result == 0;
-            mva_tag_map["BDT_top_inclusive_JSSCut"]     =  (BDT_top_inclusive_result == 0 || BDT_top_inclusive_result == 1);
-            mva_tag_map["BDT_top_inclusive_MassJSSCut"] =  BDT_top_inclusive_result == 0;
-            mva_tag_map["BDT_w_JSSCut"]                 =  (BDT_w_result == 0 || BDT_w_result == 1);
-            mva_tag_map["BDT_w_MassJSSCut"]             =  BDT_w_result == 0;
-
-            const float DNN_top_qqb_score = m_topTagger_DNN_qqb->getScore(*mva_jet);
-            const float DNN_top_inclusive_score = m_topTagger_DNN_inclusive->getScore(*mva_jet);
-            hp->h_rljet_DNN_score.at(i)->fill_tagged("top_qqb"       , DNN_top_qqb_score       , weight , true);
-            hp->h_rljet_DNN_score.at(i)->fill_tagged("top_qqb_CLEAN"       , DNN_top_qqb_score       , weight , CLEAN);
-            hp->h_rljet_DNN_score.at(i)->fill_tagged("top_inclusive" , DNN_top_inclusive_score , weight , true);
-            hp->h_rljet_DNN_score.at(i)->fill_tagged("top_inclusive_CLEAN" , DNN_top_inclusive_score , weight , CLEAN);
-
-            // const int DNN_top_qqb_result = static_cast<int>(m_topTagger_DNN_qqb->result(*mva_jet));
-            // const int DNN_top_inclusive_result = static_cast<int>(m_topTagger_DNN_inclusive->result(*mva_jet));
-
-            // mva_tag_map["DNN_top_qqb_MassJSSCut"]       = DNN_top_qqb_result == 1;
-            // mva_tag_map["DNN_top_inclusive_MassJSSCut"] = DNN_top_inclusive_result == 1;
-
-            for (const auto& itag : mva_tag_map) {
-                hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
-                hp->h_rljet_m_calo.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
-                hp->h_rljet_pt_comb.at(i)->fill_tagged(itag.first, rljet_pt_comb->at(i)/1000., weight, itag.second);
-                hp->h_rljet_pt_calo.at(i)->fill_tagged(itag.first, rljet_pt_comb->at(i)/1000., weight, itag.second);
-            }
-
-            delete mva_jet;
-        }
-        */
+        hp->h_rljet_BDT_score.at(i)->fill_tagged("top_qqb_combMgt100GeV" , rljet_BDT_score_top_qqb->at(i)       , weight , rljet_m_comb->at(i)/1000. > 100);
+        hp->h_rljet_BDT_score.at(i)->fill_tagged("top_inc_combMgt100GeV" , rljet_BDT_score_top_inclusive->at(i) , weight , rljet_m_comb->at(i)/1000. > 100);
+        hp->h_rljet_BDT_score.at(i)->fill_tagged("w_combMgt50GeV"        , rljet_BDT_score_w->at(i)             , weight , rljet_m_comb->at(i)/1000. > 50);
+        hp->h_rljet_DNN_score.at(i)->fill_tagged("top_combMgt100GeV"     , rljet_DNN_score_top->at(i)           , weight , rljet_m_comb->at(i)/1000. > 100);
+        hp->h_rljet_DNN_score.at(i)->fill_tagged("w_combMgt50GeV"        , rljet_DNN_score_w->at(i)             , weight , rljet_m_comb->at(i)/1000. > 50);
 
         // SD log(chi) variables
         if (ranSD) {
-            hp->h_rljet_SDw_win20_btag0_logchi.at(i)->fill(rljet_SDw_win20_btag0->at(i), weight);
-            hp->h_rljet_SDz_win20_btag0_logchi.at(i)->fill(rljet_SDz_win20_btag0->at(i), weight);
-            hp->h_rljet_SDt_win50_btag0_logchi.at(i)->fill(rljet_SDt_win50_btag0->at(i), weight);
 
-            const bool in_SD_W_mass_window   = abs( (rljet_m_comb->at(i) / 1000.) - 80.  ) < 20;
-            const bool in_SD_Z_mass_window   = abs( (rljet_m_comb->at(i) / 1000.) - 91.  ) < 20;
-            const bool in_SD_Top_mass_window = abs( (rljet_m_comb->at(i) / 1000.) - 172. ) < 50;
+            hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_calib", rljet_SDw_calib->at(i), weight, true);
+            hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_uncalib", rljet_SDw_uncalib->at(i), weight, true);
+            hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_combined", rljet_SDw_combined->at(i), weight, true);
+            hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_dcut", rljet_SDw_dcut->at(i), weight, true);
+            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_calib", rljet_SDt_calib->at(i), weight, true);
+            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_uncalib", rljet_SDt_uncalib->at(i), weight, true);
+            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_combined", rljet_SDt_combined->at(i), weight, true);
+            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut", rljet_SDt_dcut->at(i), weight, true);
 
-            SD_nominal_tag_map["SDw_win20_btag0"]    = rljet_SDw_win20_btag0->at(i) > 3.25;
-            SD_nominal_tag_map["SDz_win20_btag0"]    = rljet_SDz_win20_btag0->at(i) > 3.25;
-            SD_nominal_tag_map["SDt_win50_btag0"]    = rljet_SDt_win50_btag0->at(i) > 4.5;
-            SD_nominal_tag_map["SDw_win20CUT_btag0"] = rljet_SDw_win20_btag0->at(i) > 3.25 && in_SD_W_mass_window;
-            SD_nominal_tag_map["SDz_win20CUT_btag0"] = rljet_SDz_win20_btag0->at(i) > 3.25 && in_SD_Z_mass_window;
-            SD_nominal_tag_map["SDt_win50CUT_btag0"] = rljet_SDt_win50_btag0->at(i) > 4.5 && in_SD_Top_mass_window;
+            SD_nominal_tag_map["SDw_calib"]    = rljet_SDw_calib->at(i) > 3.8;
+            SD_nominal_tag_map["SDw_uncalib"]  = rljet_SDw_uncalib->at(i) > 3.8;
+            SD_nominal_tag_map["SDw_combined"] = rljet_SDw_combined->at(i) > 3.8;
+            SD_nominal_tag_map["SDw_dcut"]     = rljet_SDw_dcut->at(i) > 3.8;
+            SD_nominal_tag_map["SDt_calib"]    = rljet_SDt_calib->at(i) > 3.8;
+            SD_nominal_tag_map["SDt_uncalib"]  = rljet_SDt_uncalib->at(i) > 3.8;
+            SD_nominal_tag_map["SDt_combined"] = rljet_SDt_combined->at(i) > 3.8;
+            SD_nominal_tag_map["SDt_dcut"]     = rljet_SDt_dcut->at(i) > 3.8;
 
             for (const auto& itag : SD_nominal_tag_map) {
                 hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
@@ -749,21 +609,39 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             }
 
             if (this->operating_on_mc) {
-                SD_systematic_tag_map["SDw_win20_btag0_UP"] = rljet_SDw_win20_btag0_UP->at(i) > 3;
-                SD_systematic_tag_map["SDz_win20_btag0_UP"] = rljet_SDz_win20_btag0_UP->at(i) > 3;
-                SD_systematic_tag_map["SDt_win50_btag0_UP"] = rljet_SDt_win50_btag0_UP->at(i) > 4.25;
+                SD_systematic_tag_map["SDw_calib_DOWN"]    = rljet_SDw_calib_DOWN->at(i) > 3.8;
+                SD_systematic_tag_map["SDw_uncalib_DOWN"]  = rljet_SDw_uncalib_DOWN->at(i) > 3.8;
+                SD_systematic_tag_map["SDw_combined_DOWN"] = rljet_SDw_combined_DOWN->at(i) > 3.8;
+                SD_systematic_tag_map["SDw_dcut_DOWN"]     = rljet_SDw_dcut_DOWN->at(i) > 3.8;
+                SD_systematic_tag_map["SDt_calib_DOWN"]    = rljet_SDt_calib_DOWN->at(i) > 3.8;
+                SD_systematic_tag_map["SDt_uncalib_DOWN"]  = rljet_SDt_uncalib_DOWN->at(i) > 3.8;
+                SD_systematic_tag_map["SDt_combined_DOWN"] = rljet_SDt_combined_DOWN->at(i) > 3.8;
+                SD_systematic_tag_map["SDt_dcut_DOWN"]     = rljet_SDt_dcut_DOWN->at(i) > 3.8;
+                SD_systematic_tag_map["SDw_calib_UP"]      = rljet_SDw_calib_UP->at(i) > 3.8;
+                SD_systematic_tag_map["SDw_uncalib_UP"]    = rljet_SDw_uncalib_UP->at(i) > 3.8;
+                SD_systematic_tag_map["SDw_combined_UP"]   = rljet_SDw_combined_UP->at(i) > 3.8;
+                SD_systematic_tag_map["SDw_dcut_UP"]       = rljet_SDw_dcut_UP->at(i) > 3.8;
+                SD_systematic_tag_map["SDt_calib_UP"]      = rljet_SDt_calib_UP->at(i) > 3.8;
+                SD_systematic_tag_map["SDt_uncalib_UP"]    = rljet_SDt_uncalib_UP->at(i) > 3.8;
+                SD_systematic_tag_map["SDt_combined_UP"]   = rljet_SDt_combined_UP->at(i) > 3.8;
+                SD_systematic_tag_map["SDt_dcut_UP"]       = rljet_SDt_dcut_UP->at(i) > 3.8;
 
-                SD_systematic_tag_map["SDw_win20_btag0_DOWN"] = rljet_SDw_win20_btag0_DOWN->at(i) > 3;
-                SD_systematic_tag_map["SDz_win20_btag0_DOWN"] = rljet_SDz_win20_btag0_DOWN->at(i) > 3;
-                SD_systematic_tag_map["SDt_win50_btag0_DOWN"] = rljet_SDt_win50_btag0_DOWN->at(i) > 4.25;
-
-                SD_systematic_tag_map["SDw_win20CUT_btag0_UP"] = rljet_SDw_win20_btag0_UP->at(i) > 3 && in_SD_W_mass_window;
-                SD_systematic_tag_map["SDz_win20CUT_btag0_UP"] = rljet_SDz_win20_btag0_UP->at(i) > 3 && in_SD_Z_mass_window;
-                SD_systematic_tag_map["SDt_win50CUT_btag0_UP"] = rljet_SDt_win50_btag0_UP->at(i) > 4.25 && in_SD_Top_mass_window;
-
-                SD_systematic_tag_map["SDw_win20CUT_btag0_DOWN"] = rljet_SDw_win20_btag0_DOWN->at(i) > 3 && in_SD_W_mass_window;
-                SD_systematic_tag_map["SDz_win20CUT_btag0_DOWN"] = rljet_SDz_win20_btag0_DOWN->at(i) > 3 && in_SD_Z_mass_window;
-                SD_systematic_tag_map["SDt_win50CUT_btag0_DOWN"] = rljet_SDt_win50_btag0_DOWN->at(i) > 4.25 && in_SD_Top_mass_window;
+                hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_calib_DOWN", rljet_SDw_calib_DOWN->at(i), weight, true);
+                hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_uncalib_DOWN", rljet_SDw_uncalib_DOWN->at(i), weight, true);
+                hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_combined_DOWN", rljet_SDw_combined_DOWN->at(i), weight, true);
+                hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_dcut_DOWN", rljet_SDw_dcut_DOWN->at(i), weight, true);
+                hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_calib_DOWN", rljet_SDt_calib_DOWN->at(i), weight, true);
+                hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_uncalib_DOWN", rljet_SDt_uncalib_DOWN->at(i), weight, true);
+                hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_combined_DOWN", rljet_SDt_combined_DOWN->at(i), weight, true);
+                hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut_DOWN", rljet_SDt_dcut_DOWN->at(i), weight, true);
+                hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_calib_UP", rljet_SDw_calib_UP->at(i), weight, true);
+                hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_uncalib_UP", rljet_SDw_uncalib_UP->at(i), weight, true);
+                hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_combined_UP", rljet_SDw_combined_UP->at(i), weight, true);
+                hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_dcut_UP", rljet_SDw_dcut_UP->at(i), weight, true);
+                hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_calib_UP", rljet_SDt_calib_UP->at(i), weight, true);
+                hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_uncalib_UP", rljet_SDt_uncalib_UP->at(i), weight, true);
+                hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_combined_UP", rljet_SDt_combined_UP->at(i), weight, true);
+                hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut_UP", rljet_SDt_dcut_UP->at(i), weight, true);
 
                 for (const auto& itag : SD_systematic_tag_map) {
                     hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
@@ -782,6 +660,13 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_deta->fill(rljet_deta, weight);
         hp->h_rljet_dphi->fill(rljet_dphi, weight);
     }
+
+    // if (ph_pt->size() >= 1 && ph_pt->at(0) > 1e-6) {
+    //   hp->h_topoetcone40_over_pt->fill((photon_topoetcone40 - 2.45e6)/ph_pt->at(0), weight);
+    //   hp->h_topoetcone20_over_pt->fill(photon_topoetcone20/ph_pt->at(0), weight);
+    //   hp->h_ptcone40_over_pt->fill(photon_ptcone40/ph_pt->at(0), weight);
+    //   hp->h_ptcone20_over_pt->fill(photon_ptcone20/ph_pt->at(0), weight);
+    // }
 
     /**************************/
     /* C/A 15 JETS (FROM HTT) */

@@ -1,15 +1,15 @@
 #ifndef DataMCbackgroundSelector_h
 #define DataMCbackgroundSelector_h
 
+// Local Package Imports
 #include "DataMCbackgroundTools/HistoPack.h"
 #include "DataMCbackgroundTools/LocalTools.h"
 #include "DataMCbackgroundTools/WeightTool.h"
 
-#include "BoostedJetTaggers/JSSWTopTaggerBDT.h"
-#include "BoostedJetTaggers/JSSWTopTaggerDNN.h"
-
+// ROOTCORE/Athena/Framework imports
 #include "TopExamples/AnalysisTools.h"
 
+// ROOT imports
 #include <TChain.h>
 #include <TFile.h>
 #include <TH1F.h>
@@ -20,6 +20,7 @@
 #include <TSelector.h>
 #include <TStyle.h>
 
+// STL imports
 #include <array>
 #include <fstream>
 #include <iostream>
@@ -28,11 +29,11 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-using std::vector;
+#include <math.h>
 
 class DataMCbackgroundSelector;
 
-typedef std::function<bool(const DataMCbackgroundSelector*)> EventSelector;
+typedef bool (DataMCbackgroundSelector::*EventSelector)(void);
 
 class DataMCbackgroundSelector : public TSelector {
     public :
@@ -43,36 +44,49 @@ class DataMCbackgroundSelector : public TSelector {
         static const std::unordered_map<std::string, EventSelector> available_event_selectors;
         EventSelector chosen_event_selector;
 
+        bool NO_SELECTION(void) { return true; };
+
+        bool GAMMAJET_LOOSE(void) {
+          float jet_pt = rljet_pt_comb->at(0) / 1000;
+          return jet_pt > 200 && ph_pt->size() == 1;
+        };
+
+        bool GAMMAJET_TIGHT(void) {
+          float jet_pt = rljet_pt_comb->at(0) / 1000;
+          float jet_m = rljet_m_comb->at(0) / 1000;
+          float rho_DDT = std::log( std::pow(jet_m,2.0) / jet_pt );
+            return
+              jet_pt > 200
+              && jet_pt > 2 * jet_m
+              && rho_DDT > 1.5
+              && ph_pt->size() == 1;
+        };
+
         std::ofstream output_log;
 
+        // CONFIGURATION OPTIONS
         const std::string output_filepath;
         const std::string root_dir_str;
         const std::string sub_dir_str;
         const std::string data_trigger_str;
 
-        std::unique_ptr<WeightTool> weight_tool;
-
         const bool operating_on_mc;
         const bool on_nominal_branch;
         bool processing_dijet_slice;
         int dijet_slice_number;
-
         const float luminosity;
         float SF_lumi_Fb;
 
-        // keep track of highest weight event in file for finding
-        // pesky high-weight events
+        // keep track of highest weight event in file for finding pesky high-weight events
         float max_weight;
 
-        // MVA taggers
-        std::unique_ptr<JSSWTopTaggerBDT> m_topTagger_BDT_qqb;
-        std::unique_ptr<JSSWTopTaggerBDT> m_topTagger_BDT_inclusive;
-        std::unique_ptr<JSSWTopTaggerBDT> m_wTagger_BDT;
-        std::unique_ptr<JSSWTopTaggerDNN> m_topTagger_DNN_qqb;
-        std::unique_ptr<JSSWTopTaggerDNN> m_topTagger_DNN_inclusive;
+        /******************/
+        /***** TOOLS ******/
+        /******************/
+
+        std::unique_ptr<WeightTool> weight_tool;
 
         // various maps used to store tag pass/fail status
-        // to be used when creating tagged histograms
         std::unordered_map<std::string, bool> smooth_tag_map;
         std::unordered_map<std::string, bool> smooth_tag_map_nominal;
         std::unordered_map<std::string, bool> ntrk_prerec_tag_map;
@@ -80,13 +94,24 @@ class DataMCbackgroundSelector : public TSelector {
         std::unordered_map<std::string, bool> SD_systematic_tag_map;
         std::unordered_map<std::string, bool> mva_tag_map;
 
+        std::unordered_map<std::string, Float_t> fvars;
+        std::unordered_map<std::string, UInt_t> uvars;
+        std::unordered_map<std::string, ULong64_t> lvars;
+        std::unordered_map<std::string, std::vector<float>> vvars;
+
+        std::unordered_map<std::string, TBranch*> branches;
+
+        /***********************************/
+        /***** CONNECT LEAFS/BRANCHES ******/
+        /***********************************/
+
         // Declaration of leaf types
         Char_t          HLT_trigger;
         Float_t         weight_mc;
         Float_t         weight_pileup;
         Float_t         weight_leptonSF;
-        Float_t         weight_photonSF;
-        Float_t         weight_photonSF_effIso;
+        // Float_t         weight_photonSF;
+        // Float_t         weight_photonSF_effIso;
         Float_t         weight_jvt;
         ULong64_t       eventNumber;
         UInt_t          runNumber;
@@ -94,24 +119,41 @@ class DataMCbackgroundSelector : public TSelector {
         UInt_t          mcChannelNumber;
         Float_t         mu;
         UInt_t          backgroundFlags;
-        //Float_t         met_met;
-        //Float_t         met_phi;
-        vector<float>   *rljet_eta;
-        vector<float>   *rljet_phi;
-        vector<float>   *rljet_m_comb;
-        vector<float>   *rljet_pt_comb;
-        vector<float>   *rljet_D2;
-        vector<float>   *rljet_Tau32_wta;
-        vector<int>     *rljet_smooth16Top_Tau32Split23Tag50eff;
-        vector<int>     *rljet_smooth16Top_Tau32Split23Tag80eff;
-        vector<int>     *rljet_smooth16Top_MassTau32Tag50eff;
-        vector<int>     *rljet_smooth16Top_MassTau32Tag80eff;
-        vector<int>     *rljet_smooth16Top_QwTau32Tag50eff;
-        vector<int>     *rljet_smooth16Top_QwTau32Tag80eff;
-        vector<int>     *rljet_smooth16WTag_50eff;
-        vector<int>     *rljet_smooth16WTag_80eff;
-        vector<int>     *rljet_smooth16ZTag_50eff;
-        vector<int>     *rljet_smooth16ZTag_80eff;
+
+        // Float_t         photon_ptcone20;
+        // Float_t         photon_ptcone40;
+        // Float_t         photon_topoetcone20;
+        // Float_t         photon_topoetcone40;
+
+        std::vector<float>   *ph_pt;
+        std::vector<float>   *ph_phi;
+        std::vector<float>   *ph_eta;
+        std::vector<float>   *ph_e;
+
+        std::vector<float>   *rljet_eta;
+        std::vector<float>   *rljet_phi;
+        std::vector<float>   *rljet_m_comb;
+        std::vector<float>   *rljet_pt_comb;
+        std::vector<float>   *rljet_D2;
+        std::vector<float>   *rljet_Tau32_wta;
+        std::vector<int>     *rljet_smooth16Top_Tau32Split23Tag50eff;
+        std::vector<int>     *rljet_smooth16Top_Tau32Split23Tag80eff;
+        std::vector<int>     *rljet_smooth16Top_MassTau32Tag50eff;
+        std::vector<int>     *rljet_smooth16Top_MassTau32Tag80eff;
+        std::vector<int>     *rljet_smooth16Top_QwTau32Tag50eff;
+        std::vector<int>     *rljet_smooth16Top_QwTau32Tag80eff;
+        std::vector<int>     *rljet_smooth16WTag_50eff;
+        std::vector<int>     *rljet_smooth16WTag_80eff;
+        std::vector<int>     *rljet_smooth16ZTag_50eff;
+        std::vector<int>     *rljet_smooth16ZTag_80eff;
+
+        // 2017 MVA
+        std::vector<float> *rljet_BDT_score_top_qqb;
+        std::vector<float> *rljet_BDT_score_top_inclusive;
+        std::vector<float> *rljet_BDT_score_w;
+        std::vector<float> *rljet_DNN_score_top;
+        std::vector<float> *rljet_DNN_score_w;
+
         Int_t           NPV;
         Int_t           rljet_count;
         Float_t         rljet_mjj;
@@ -120,110 +162,126 @@ class DataMCbackgroundSelector : public TSelector {
         Float_t         rljet_dR;
         Float_t         rljet_dphi;
         Float_t         rljet_deta;
-        vector<float>   *rljet_m_calo;
-        vector<float>   *rljet_pt_calo;
-        vector<float>   *rljet_m_ta;
-        vector<float>   *rljet_pt_ta;
-        vector<int>     *rljet_smooth15Top_MassTau32Tag50eff;
-        vector<int>     *rljet_smooth15Top_MassTau32Tag80eff;
-        vector<int>     *rljet_smooth15WTag_50eff;
-        vector<int>     *rljet_smooth15WTag_25eff;
-        vector<int>     *rljet_smooth15ZTag_50eff;
-        vector<int>     *rljet_smooth15ZTag_25eff;
-        vector<float>   *rljet_Tau1_wta;
-        vector<float>   *rljet_Tau2_wta;
-        vector<float>   *rljet_Tau3_wta;
-        vector<float>   *rljet_ECF1;
-        vector<float>   *rljet_ECF2;
-        vector<float>   *rljet_ECF3;
-        vector<float>   *rljet_FoxWolfram0;
-        vector<float>   *rljet_FoxWolfram2;
-        vector<float>   *rljet_Qw;
-        vector<float>   *rljet_Angularity;
-        vector<float>   *rljet_Aplanarity;
-        vector<float>   *rljet_Dip12;
-        vector<float>   *rljet_KtDR;
-        vector<float>   *rljet_Mu12;
-        vector<float>   *rljet_PlanarFlow;
-        vector<float>   *rljet_Sphericity;
-        vector<float>   *rljet_Split12;
-        vector<float>   *rljet_Split23;
-        vector<float>   *rljet_Split34;
-        vector<float>   *rljet_ThrustMaj;
-        vector<float>   *rljet_ThrustMin;
-        vector<float>   *rljet_ZCut12;
-        vector<int>     *rljet_NTrimSubjets;
-        vector<int>     *rljet_ungroomed_ntrk500;
-        vector<float>   *htt_pt_def;
-        vector<float>   *htt_eta_def;
-        vector<float>   *htt_phi_def;
-        vector<float>   *htt_m_def;
-        vector<float>   *htt_m123_def;
-        vector<float>   *htt_m23m123_def;
-        vector<float>   *htt_atan1312_def;
-        vector<int>     *htt_nTagCands_def;
-        vector<int>     *htt_tag_def;
-        vector<float>   *htt_pts1_def;
-        vector<float>   *htt_pts2_def;
-        vector<float>   *htt_pts3_def;
-        vector<float>   *htt_pt_sjcalib1030;
-        vector<float>   *htt_eta_sjcalib1030;
-        vector<float>   *htt_phi_sjcalib1030;
-        vector<float>   *htt_m_sjcalib1030;
-        vector<float>   *htt_m123_sjcalib1030;
-        vector<float>   *htt_m23m123_sjcalib1030;
-        vector<float>   *htt_atan1312_sjcalib1030;
-        vector<int>     *htt_nTagCands_sjcalib1030;
-        vector<int>     *htt_tag_sjcalib1030;
-        vector<float>   *htt_pts1_sjcalib1030;
-        vector<float>   *htt_pts2_sjcalib1030;
-        vector<float>   *htt_pts3_sjcalib1030;
-        vector<float>   *htt_pt_sjcalib0970;
-        vector<float>   *htt_eta_sjcalib0970;
-        vector<float>   *htt_phi_sjcalib0970;
-        vector<float>   *htt_m_sjcalib0970;
-        vector<float>   *htt_m123_sjcalib0970;
-        vector<float>   *htt_m23m123_sjcalib0970;
-        vector<float>   *htt_atan1312_sjcalib0970;
-        vector<int>     *htt_nTagCands_sjcalib0970;
-        vector<int>     *htt_tag_sjcalib0970;
-        vector<float>   *htt_pts1_sjcalib0970;
-        vector<float>   *htt_pts2_sjcalib0970;
-        vector<float>   *htt_pts3_sjcalib0970;
-        vector<float>   *htt_caJet_pt;
-        vector<float>   *htt_caJet_eta;
-        vector<float>   *htt_caJet_phi;
-        vector<float>   *htt_caJet_m;
+        std::vector<float>   *rljet_m_calo;
+        std::vector<float>   *rljet_pt_calo;
+        std::vector<float>   *rljet_m_ta;
+        std::vector<float>   *rljet_pt_ta;
+        std::vector<int>     *rljet_smooth15Top_MassTau32Tag50eff;
+        std::vector<int>     *rljet_smooth15Top_MassTau32Tag80eff;
+        std::vector<int>     *rljet_smooth15WTag_50eff;
+        std::vector<int>     *rljet_smooth15WTag_25eff;
+        std::vector<int>     *rljet_smooth15ZTag_50eff;
+        std::vector<int>     *rljet_smooth15ZTag_25eff;
+        std::vector<float>   *rljet_Tau1_wta;
+        std::vector<float>   *rljet_Tau2_wta;
+        std::vector<float>   *rljet_Tau3_wta;
+        std::vector<float>   *rljet_ECF1;
+        std::vector<float>   *rljet_ECF2;
+        std::vector<float>   *rljet_ECF3;
+        std::vector<float>   *rljet_FoxWolfram0;
+        std::vector<float>   *rljet_FoxWolfram2;
+        std::vector<float>   *rljet_Qw;
+        std::vector<float>   *rljet_Angularity;
+        std::vector<float>   *rljet_Aplanarity;
+        std::vector<float>   *rljet_Dip12;
+        std::vector<float>   *rljet_KtDR;
+        std::vector<float>   *rljet_Mu12;
+        std::vector<float>   *rljet_PlanarFlow;
+        std::vector<float>   *rljet_Sphericity;
+        std::vector<float>   *rljet_Split12;
+        std::vector<float>   *rljet_Split23;
+        std::vector<float>   *rljet_Split34;
+        std::vector<float>   *rljet_ThrustMaj;
+        std::vector<float>   *rljet_ThrustMin;
+        std::vector<float>   *rljet_ZCut12;
+        std::vector<int>     *rljet_NTrimSubjets;
+        std::vector<int>     *rljet_ungroomed_ntrk500;
+        std::vector<float>   *htt_pt_def;
+        std::vector<float>   *htt_eta_def;
+        std::vector<float>   *htt_phi_def;
+        std::vector<float>   *htt_m_def;
+        std::vector<float>   *htt_m123_def;
+        std::vector<float>   *htt_m23m123_def;
+        std::vector<float>   *htt_atan1312_def;
+        std::vector<int>     *htt_nTagCands_def;
+        std::vector<int>     *htt_tag_def;
+        std::vector<float>   *htt_pts1_def;
+        std::vector<float>   *htt_pts2_def;
+        std::vector<float>   *htt_pts3_def;
+        std::vector<float>   *htt_pt_sjcalib1030;
+        std::vector<float>   *htt_eta_sjcalib1030;
+        std::vector<float>   *htt_phi_sjcalib1030;
+        std::vector<float>   *htt_m_sjcalib1030;
+        std::vector<float>   *htt_m123_sjcalib1030;
+        std::vector<float>   *htt_m23m123_sjcalib1030;
+        std::vector<float>   *htt_atan1312_sjcalib1030;
+        std::vector<int>     *htt_nTagCands_sjcalib1030;
+        std::vector<int>     *htt_tag_sjcalib1030;
+        std::vector<float>   *htt_pts1_sjcalib1030;
+        std::vector<float>   *htt_pts2_sjcalib1030;
+        std::vector<float>   *htt_pts3_sjcalib1030;
+        std::vector<float>   *htt_pt_sjcalib0970;
+        std::vector<float>   *htt_eta_sjcalib0970;
+        std::vector<float>   *htt_phi_sjcalib0970;
+        std::vector<float>   *htt_m_sjcalib0970;
+        std::vector<float>   *htt_m123_sjcalib0970;
+        std::vector<float>   *htt_m23m123_sjcalib0970;
+        std::vector<float>   *htt_atan1312_sjcalib0970;
+        std::vector<int>     *htt_nTagCands_sjcalib0970;
+        std::vector<int>     *htt_tag_sjcalib0970;
+        std::vector<float>   *htt_pts1_sjcalib0970;
+        std::vector<float>   *htt_pts2_sjcalib0970;
+        std::vector<float>   *htt_pts3_sjcalib0970;
+        std::vector<float>   *htt_caJet_pt;
+        std::vector<float>   *htt_caJet_eta;
+        std::vector<float>   *htt_caJet_phi;
+        std::vector<float>   *htt_caJet_m;
         Int_t           caJet_count;
-        vector<float>   *htt_caGroomJet_pt_def;
-        vector<float>   *htt_caGroomJet_eta_def;
-        vector<float>   *htt_caGroomJet_phi_def;
-        vector<float>   *htt_caGroomJet_m_def;
-        vector<float>   *htt_caGroomJet_pt_sjcalib1030;
-        vector<float>   *htt_caGroomJet_eta_sjcalib1030;
-        vector<float>   *htt_caGroomJet_phi_sjcalib1030;
-        vector<float>   *htt_caGroomJet_m_sjcalib1030;
-        vector<float>   *htt_caGroomJet_pt_sjcalib0970;
-        vector<float>   *htt_caGroomJet_eta_sjcalib0970;
-        vector<float>   *htt_caGroomJet_phi_sjcalib0970;
-        vector<float>   *htt_caGroomJet_m_sjcalib0970;
-        vector<double>  *rljet_SDw_win20_btag0;
-        vector<double>  *rljet_SDz_win20_btag0;
-        vector<double>  *rljet_SDt_win50_btag0;
-        vector<double>  *rljet_SDw_win20_btag0_UP;
-        vector<double>  *rljet_SDz_win20_btag0_UP;
-        vector<double>  *rljet_SDt_win50_btag0_UP;
-        vector<double>  *rljet_SDw_win20_btag0_DOWN;
-        vector<double>  *rljet_SDz_win20_btag0_DOWN;
-        vector<double>  *rljet_SDt_win50_btag0_DOWN;
+        std::vector<float>   *htt_caGroomJet_pt_def;
+        std::vector<float>   *htt_caGroomJet_eta_def;
+        std::vector<float>   *htt_caGroomJet_phi_def;
+        std::vector<float>   *htt_caGroomJet_m_def;
+        std::vector<float>   *htt_caGroomJet_pt_sjcalib1030;
+        std::vector<float>   *htt_caGroomJet_eta_sjcalib1030;
+        std::vector<float>   *htt_caGroomJet_phi_sjcalib1030;
+        std::vector<float>   *htt_caGroomJet_m_sjcalib1030;
+        std::vector<float>   *htt_caGroomJet_pt_sjcalib0970;
+        std::vector<float>   *htt_caGroomJet_eta_sjcalib0970;
+        std::vector<float>   *htt_caGroomJet_phi_sjcalib0970;
+        std::vector<float>   *htt_caGroomJet_m_sjcalib0970;
+
+        std::vector<float>* rljet_SDw_calib;
+        std::vector<float>* rljet_SDw_uncalib;
+        std::vector<float>* rljet_SDw_combined;
+        std::vector<float>* rljet_SDw_dcut;
+        std::vector<float>* rljet_SDt_calib;
+        std::vector<float>* rljet_SDt_uncalib;
+        std::vector<float>* rljet_SDt_combined;
+        std::vector<float>* rljet_SDt_dcut;
+        std::vector<float>* rljet_SDw_calib_DOWN;
+        std::vector<float>* rljet_SDw_uncalib_DOWN;
+        std::vector<float>* rljet_SDw_combined_DOWN;
+        std::vector<float>* rljet_SDw_dcut_DOWN;
+        std::vector<float>* rljet_SDt_calib_DOWN;
+        std::vector<float>* rljet_SDt_uncalib_DOWN;
+        std::vector<float>* rljet_SDt_combined_DOWN;
+        std::vector<float>* rljet_SDt_dcut_DOWN;
+        std::vector<float>* rljet_SDw_calib_UP;
+        std::vector<float>* rljet_SDw_uncalib_UP;
+        std::vector<float>* rljet_SDw_combined_UP;
+        std::vector<float>* rljet_SDw_dcut_UP;
+        std::vector<float>* rljet_SDt_calib_UP;
+        std::vector<float>* rljet_SDt_uncalib_UP;
+        std::vector<float>* rljet_SDt_combined_UP;
+        std::vector<float>* rljet_SDt_dcut_UP;
 
         // List of branches
         TBranch        *b_HLT_trigger;  //!
         TBranch        *b_weight_mc;   //!
         TBranch        *b_weight_pileup;   //!
         TBranch        *b_weight_leptonSF;   //!
-        TBranch        *b_weight_photonSF;   //!
-        TBranch        *b_weight_photonSF_effIso;   //!
+        // TBranch        *b_weight_photonSF;   //!
+        // TBranch        *b_weight_photonSF_effIso;   //!
         TBranch        *b_weight_jvt;   //!
         TBranch        *b_eventNumber;   //!
         TBranch        *b_runNumber;   //!
@@ -231,6 +289,17 @@ class DataMCbackgroundSelector : public TSelector {
         TBranch        *b_mcChannelNumber;   //!
         TBranch        *b_mu;   //!
         TBranch        *b_backgroundFlags;   //!
+
+        // TBranch* b_photon_ptcone20; //!
+        // TBranch* b_photon_ptcone40; //!
+        // TBranch* b_photon_topoetcone20; //!
+        // TBranch* b_photon_topoetcone40; //!
+
+        TBranch* b_ph_pt; //!
+        TBranch* b_ph_phi; //!
+        TBranch* b_ph_eta; //!
+        TBranch* b_ph_e; //!
+
         // TBranch        *b_met_met;   //!
         // TBranch        *b_met_phi;   //!
         TBranch        *b_rljet_eta;   //!
@@ -249,6 +318,14 @@ class DataMCbackgroundSelector : public TSelector {
         TBranch        *b_rljet_smooth16WTag_80eff;   //!
         TBranch        *b_rljet_smooth16ZTag_50eff;   //!
         TBranch        *b_rljet_smooth16ZTag_80eff;   //!
+
+        // 2017 MVA
+        TBranch* b_rljet_BDT_score_top_qqb; //!
+        TBranch* b_rljet_BDT_score_top_inclusive; //!
+        TBranch* b_rljet_BDT_score_w; //!
+        TBranch* b_rljet_DNN_score_top; //!
+        TBranch* b_rljet_DNN_score_w; //!
+
         TBranch        *b_NPV;   //!
         TBranch        *b_rljet_count;   //!
         TBranch        *b_rljet_mjj;   //!
@@ -344,15 +421,32 @@ class DataMCbackgroundSelector : public TSelector {
         TBranch        *b_htt_caGroomJet_eta_sjcalib0970;   //!
         TBranch        *b_htt_caGroomJet_phi_sjcalib0970;   //!
         TBranch        *b_htt_caGroomJet_m_sjcalib0970;   //!
-        TBranch        *b_rljet_SDw_win20_btag0;   //!
-        TBranch        *b_rljet_SDz_win20_btag0;   //!
-        TBranch        *b_rljet_SDt_win50_btag0;   //!
-        TBranch        *b_rljet_SDw_win20_btag0_UP;   //!
-        TBranch        *b_rljet_SDz_win20_btag0_UP;   //!
-        TBranch        *b_rljet_SDt_win50_btag0_UP;   //!
-        TBranch        *b_rljet_SDw_win20_btag0_DOWN;   //!
-        TBranch        *b_rljet_SDz_win20_btag0_DOWN;   //!
-        TBranch        *b_rljet_SDt_win50_btag0_DOWN;   //!
+
+        TBranch*  b_rljet_SDw_calib; //!
+        TBranch*  b_rljet_SDw_uncalib; //!
+        TBranch*  b_rljet_SDw_combined; //!
+        TBranch*  b_rljet_SDw_dcut; //!
+        TBranch*  b_rljet_SDt_calib; //!
+        TBranch*  b_rljet_SDt_uncalib; //!
+        TBranch*  b_rljet_SDt_combined; //!
+        TBranch*  b_rljet_SDt_dcut; //!
+
+        TBranch*  b_rljet_SDw_calib_DOWN; //!
+        TBranch*  b_rljet_SDw_uncalib_DOWN; //!
+        TBranch*  b_rljet_SDw_combined_DOWN; //!
+        TBranch*  b_rljet_SDw_dcut_DOWN; //!
+        TBranch*  b_rljet_SDt_calib_DOWN; //!
+        TBranch*  b_rljet_SDt_uncalib_DOWN; //!
+        TBranch*  b_rljet_SDt_combined_DOWN; //!
+        TBranch*  b_rljet_SDt_dcut_DOWN; //!
+        TBranch*  b_rljet_SDw_calib_UP; //!
+        TBranch*  b_rljet_SDw_uncalib_UP; //!
+        TBranch*  b_rljet_SDw_combined_UP; //!
+        TBranch*  b_rljet_SDw_dcut_UP; //!
+        TBranch*  b_rljet_SDt_calib_UP; //!
+        TBranch*  b_rljet_SDt_uncalib_UP; //!
+        TBranch*  b_rljet_SDt_combined_UP; //!
+        TBranch*  b_rljet_SDt_dcut_UP; //!
 
         DataMCbackgroundSelector(
                 std::string output_filepath_,
@@ -398,6 +492,10 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     // (once per file to be processed).
 
     // Set object pointer
+    ph_pt = 0;
+    ph_phi = 0;
+    ph_eta = 0;
+    ph_e = 0;
     rljet_eta = 0;
     rljet_phi = 0;
     rljet_m_comb = 0;
@@ -414,6 +512,13 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     rljet_smooth16WTag_80eff = 0;
     rljet_smooth16ZTag_50eff = 0;
     rljet_smooth16ZTag_80eff = 0;
+
+    rljet_BDT_score_top_qqb = 0;
+    rljet_BDT_score_top_inclusive = 0;
+    rljet_BDT_score_w = 0;
+    rljet_DNN_score_top = 0;
+    rljet_DNN_score_w = 0;
+
     rljet_m_calo = 0;
     rljet_pt_calo = 0;
     rljet_m_ta = 0;
@@ -500,15 +605,31 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     htt_caGroomJet_eta_sjcalib0970 = 0;
     htt_caGroomJet_phi_sjcalib0970 = 0;
     htt_caGroomJet_m_sjcalib0970 = 0;
-    rljet_SDw_win20_btag0 = 0;
-    rljet_SDz_win20_btag0 = 0;
-    rljet_SDt_win50_btag0 = 0;
-    rljet_SDw_win20_btag0_UP = 0;
-    rljet_SDz_win20_btag0_UP = 0;
-    rljet_SDt_win50_btag0_UP = 0;
-    rljet_SDw_win20_btag0_DOWN = 0;
-    rljet_SDz_win20_btag0_DOWN = 0;
-    rljet_SDt_win50_btag0_DOWN = 0;
+
+    rljet_SDw_calib = 0;
+    rljet_SDw_uncalib = 0;
+    rljet_SDw_combined = 0;
+    rljet_SDw_dcut = 0;
+    rljet_SDt_calib = 0;
+    rljet_SDt_uncalib = 0;
+    rljet_SDt_combined = 0;
+    rljet_SDt_dcut = 0;
+    rljet_SDw_calib_DOWN = 0;
+    rljet_SDw_uncalib_DOWN = 0;
+    rljet_SDw_combined_DOWN = 0;
+    rljet_SDw_dcut_DOWN = 0;
+    rljet_SDt_calib_DOWN = 0;
+    rljet_SDt_uncalib_DOWN = 0;
+    rljet_SDt_combined_DOWN = 0;
+    rljet_SDt_dcut_DOWN = 0;
+    rljet_SDw_calib_UP = 0;
+    rljet_SDw_uncalib_UP = 0;
+    rljet_SDw_combined_UP = 0;
+    rljet_SDw_dcut_UP = 0;
+    rljet_SDt_calib_UP = 0;
+    rljet_SDt_uncalib_UP = 0;
+    rljet_SDt_combined_UP = 0;
+    rljet_SDt_dcut_UP = 0;
 
     // Set branch addresses and branch pointers
     if (!tree) return;
@@ -519,8 +640,8 @@ void DataMCbackgroundSelector::Init(TTree *tree)
         fChain->SetBranchAddress("weight_mc", &weight_mc, &b_weight_mc);
         fChain->SetBranchAddress("weight_pileup", &weight_pileup, &b_weight_pileup);
         fChain->SetBranchAddress("weight_leptonSF", &weight_leptonSF, &b_weight_leptonSF);
-        fChain->SetBranchAddress("weight_photonSF", &weight_photonSF, &b_weight_photonSF);
-        fChain->SetBranchAddress("weight_photonSF_effIso", &weight_photonSF_effIso, &b_weight_photonSF_effIso);
+        // fChain->SetBranchAddress("weight_photonSF", &weight_photonSF, &b_weight_photonSF);
+        // fChain->SetBranchAddress("weight_photonSF_effIso", &weight_photonSF_effIso, &b_weight_photonSF_effIso);
         fChain->SetBranchAddress("weight_jvt", &weight_jvt, &b_weight_jvt);
         fChain->SetBranchAddress("randomRunNumber", &randomRunNumber, &b_randomRunNumber);
         fChain->SetBranchAddress("mu", &mu, &b_mu);
@@ -556,6 +677,23 @@ void DataMCbackgroundSelector::Init(TTree *tree)
 
     if (sub_dir_str == "nominal") {
         fChain->SetBranchAddress("NPV", &NPV, &b_NPV);
+
+        fChain->SetBranchAddress("rljet_BDT_score_top_qqb"       , &rljet_BDT_score_top_qqb       , &b_rljet_BDT_score_top_qqb);
+        fChain->SetBranchAddress("rljet_BDT_score_top_inclusive" , &rljet_BDT_score_top_inclusive , &b_rljet_BDT_score_top_inclusive);
+        fChain->SetBranchAddress("rljet_BDT_score_w"             , &rljet_BDT_score_w             , &b_rljet_BDT_score_w);
+        fChain->SetBranchAddress("rljet_DNN_score_top"           , &rljet_DNN_score_top           , &b_rljet_DNN_score_top);
+        fChain->SetBranchAddress("rljet_DNN_score_w"             , &rljet_DNN_score_w             , &b_rljet_DNN_score_w);
+
+        fChain->SetBranchAddress("ph_pt"  , &ph_pt  , &b_ph_pt);
+        fChain->SetBranchAddress("ph_phi" , &ph_phi  , &b_ph_phi);
+        fChain->SetBranchAddress("ph_eta" , &ph_eta , &b_ph_eta);
+        fChain->SetBranchAddress("ph_e"   , &ph_e   , &b_ph_e);
+
+        // fChain->SetBranchAddress("photon_ptcone20", &photon_ptcone20, &b_photon_ptcone20);
+        // fChain->SetBranchAddress("photon_ptcone40", &photon_ptcone40, &b_photon_ptcone40);
+        // fChain->SetBranchAddress("photon_topoetcone20", &photon_topoetcone20, &b_photon_topoetcone20);
+        // fChain->SetBranchAddress("photon_topoetcone40", &photon_topoetcone40, &b_photon_topoetcone40);
+        //
         fChain->SetBranchAddress("rljet_count", &rljet_count, &b_rljet_count);
         fChain->SetBranchAddress("rljet_mjj", &rljet_mjj, &b_rljet_mjj);
         fChain->SetBranchAddress("rljet_ptasym", &rljet_ptasym, &b_rljet_ptasym);
@@ -616,9 +754,15 @@ void DataMCbackgroundSelector::Init(TTree *tree)
         fChain->SetBranchAddress("htt_caGroomJet_eta_def", &htt_caGroomJet_eta_def, &b_htt_caGroomJet_eta_def);
         fChain->SetBranchAddress("htt_caGroomJet_phi_def", &htt_caGroomJet_phi_def, &b_htt_caGroomJet_phi_def);
         fChain->SetBranchAddress("htt_caGroomJet_m_def", &htt_caGroomJet_m_def, &b_htt_caGroomJet_m_def);
-        fChain->SetBranchAddress("rljet_SDw_win20_btag0", &rljet_SDw_win20_btag0, &b_rljet_SDw_win20_btag0);
-        fChain->SetBranchAddress("rljet_SDz_win20_btag0", &rljet_SDz_win20_btag0, &b_rljet_SDz_win20_btag0);
-        fChain->SetBranchAddress("rljet_SDt_win50_btag0", &rljet_SDt_win50_btag0, &b_rljet_SDt_win50_btag0);
+
+        fChain->SetBranchAddress("rljet_SDw_calib"         , &rljet_SDw_calib         , &b_rljet_SDw_calib);
+        fChain->SetBranchAddress("rljet_SDw_uncalib"       , &rljet_SDw_uncalib       , &b_rljet_SDw_uncalib);
+        fChain->SetBranchAddress("rljet_SDw_combined"      , &rljet_SDw_combined      , &b_rljet_SDw_combined);
+        fChain->SetBranchAddress("rljet_SDw_dcut"          , &rljet_SDw_dcut          , &b_rljet_SDw_dcut);
+        fChain->SetBranchAddress("rljet_SDt_calib"         , &rljet_SDt_calib         , &b_rljet_SDt_calib);
+        fChain->SetBranchAddress("rljet_SDt_uncalib"       , &rljet_SDt_uncalib       , &b_rljet_SDt_uncalib);
+        fChain->SetBranchAddress("rljet_SDt_combined"      , &rljet_SDt_combined      , &b_rljet_SDt_combined);
+        fChain->SetBranchAddress("rljet_SDt_dcut"          , &rljet_SDt_dcut          , &b_rljet_SDt_dcut);
 
         if (this->operating_on_mc) {
             fChain->SetBranchAddress("htt_pt_sjcalib1030", &htt_pt_sjcalib1030, &b_htt_pt_sjcalib1030);
@@ -653,12 +797,23 @@ void DataMCbackgroundSelector::Init(TTree *tree)
             fChain->SetBranchAddress("htt_caGroomJet_eta_sjcalib0970", &htt_caGroomJet_eta_sjcalib0970, &b_htt_caGroomJet_eta_sjcalib0970);
             fChain->SetBranchAddress("htt_caGroomJet_phi_sjcalib0970", &htt_caGroomJet_phi_sjcalib0970, &b_htt_caGroomJet_phi_sjcalib0970);
             fChain->SetBranchAddress("htt_caGroomJet_m_sjcalib0970", &htt_caGroomJet_m_sjcalib0970, &b_htt_caGroomJet_m_sjcalib0970);
-            fChain->SetBranchAddress("rljet_SDw_win20_btag0_UP", &rljet_SDw_win20_btag0_UP, &b_rljet_SDw_win20_btag0_UP);
-            fChain->SetBranchAddress("rljet_SDz_win20_btag0_UP", &rljet_SDz_win20_btag0_UP, &b_rljet_SDz_win20_btag0_UP);
-            fChain->SetBranchAddress("rljet_SDt_win50_btag0_UP", &rljet_SDt_win50_btag0_UP, &b_rljet_SDt_win50_btag0_UP);
-            fChain->SetBranchAddress("rljet_SDw_win20_btag0_DOWN", &rljet_SDw_win20_btag0_DOWN, &b_rljet_SDw_win20_btag0_DOWN);
-            fChain->SetBranchAddress("rljet_SDz_win20_btag0_DOWN", &rljet_SDz_win20_btag0_DOWN, &b_rljet_SDz_win20_btag0_DOWN);
-            fChain->SetBranchAddress("rljet_SDt_win50_btag0_DOWN", &rljet_SDt_win50_btag0_DOWN, &b_rljet_SDt_win50_btag0_DOWN);
+
+            fChain->SetBranchAddress("rljet_SDw_calib_DOWN"    , &rljet_SDw_calib_DOWN    , &b_rljet_SDw_calib_DOWN);
+            fChain->SetBranchAddress("rljet_SDw_uncalib_DOWN"  , &rljet_SDw_uncalib_DOWN  , &b_rljet_SDw_uncalib_DOWN);
+            fChain->SetBranchAddress("rljet_SDw_combined_DOWN" , &rljet_SDw_combined_DOWN , &b_rljet_SDw_combined_DOWN);
+            fChain->SetBranchAddress("rljet_SDw_dcut_DOWN"     , &rljet_SDw_dcut_DOWN     , &b_rljet_SDw_dcut_DOWN);
+            fChain->SetBranchAddress("rljet_SDt_calib_DOWN"    , &rljet_SDt_calib_DOWN    , &b_rljet_SDt_calib_DOWN);
+            fChain->SetBranchAddress("rljet_SDt_uncalib_DOWN"  , &rljet_SDt_uncalib_DOWN  , &b_rljet_SDt_uncalib_DOWN);
+            fChain->SetBranchAddress("rljet_SDt_combined_DOWN" , &rljet_SDt_combined_DOWN , &b_rljet_SDt_combined_DOWN);
+            fChain->SetBranchAddress("rljet_SDt_dcut_DOWN"     , &rljet_SDt_dcut_DOWN     , &b_rljet_SDt_dcut_DOWN);
+            fChain->SetBranchAddress("rljet_SDw_calib_UP"      , &rljet_SDw_calib_UP      , &b_rljet_SDw_calib_UP);
+            fChain->SetBranchAddress("rljet_SDw_uncalib_UP"    , &rljet_SDw_uncalib_UP    , &b_rljet_SDw_uncalib_UP);
+            fChain->SetBranchAddress("rljet_SDw_combined_UP"   , &rljet_SDw_combined_UP   , &b_rljet_SDw_combined_UP);
+            fChain->SetBranchAddress("rljet_SDw_dcut_UP"       , &rljet_SDw_dcut_UP       , &b_rljet_SDw_dcut_UP);
+            fChain->SetBranchAddress("rljet_SDt_calib_UP"      , &rljet_SDt_calib_UP      , &b_rljet_SDt_calib_UP);
+            fChain->SetBranchAddress("rljet_SDt_uncalib_UP"    , &rljet_SDt_uncalib_UP    , &b_rljet_SDt_uncalib_UP);
+            fChain->SetBranchAddress("rljet_SDt_combined_UP"   , &rljet_SDt_combined_UP   , &b_rljet_SDt_combined_UP);
+            fChain->SetBranchAddress("rljet_SDt_dcut_UP"       , &rljet_SDt_dcut_UP       , &b_rljet_SDt_dcut_UP);
         }
     }
 }
