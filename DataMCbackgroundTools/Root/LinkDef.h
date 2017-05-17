@@ -1,5 +1,6 @@
 #include "DataMCbackgroundTools/DataMCbackgroundToolsLoader.h"
 #include "DataMCbackgroundTools/DataMCbackgroundEventSaver.h"
+#include "DataMCbackgroundTools/GammaJetObjectLoader.h"
 
 #include "DataMCbackgroundTools/DataMCbackgroundSelector.h"
 #include "DataMCbackgroundTools/HistoPack.h"
@@ -13,6 +14,7 @@
 #pragma link off all functions;
 #pragma link C++ nestedclass;
 
+#pragma link C++ class top::GammaJetObjectLoader+;
 #pragma link C++ class top::DataMCbackgroundToolsLoader+;
 #pragma link C++ class top::DataMCbackgroundEventSaver+;
 
