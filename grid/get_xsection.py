@@ -16,6 +16,10 @@ client = pyAMI.client.Client('atlas')
 my_weights_file.write("# DSID NUM_EVENTS X_SECTION(fb) FILTER_EFFICIENCY GENERATOR\n")
 
 for sample_name in samples_AOD.keys():
+    # if ("gamma" not in sample_name and "Photon" not in sample_name):
+    #   continue
+    if ("sherpa_gamma" not in sample_name):
+      continue
     my_weights_file.write("# " + sample_name + "\n")
     analysis_top_weights_file.write("# " + sample_name + "\n")
 
@@ -43,11 +47,14 @@ for sample_name in samples_AOD.keys():
             print "WARNING: could not find file: ", f_evnt
             sys.exit(1)
 
+        dsid           = evnt_res_dict[0]["datasetNumber"]
+        if (dsid != "361062"): continue
         total_events   = aod_res_dict[0]["totalEvents"]
         filt_eff_mean  = evnt_res_dict[0]["GenFiltEff_mean"]
         xsection_mean  = evnt_res_dict[0]["crossSection_mean"]
-        dsid           = evnt_res_dict[0]["datasetNumber"]
         generator_name = evnt_res_dict[0]["generatorName"]
+
+        if "N/A" in filt_eff_mean: continue
 
         if (evnt_res_dict[0]["crossSection_unit"] == "nano barn"):
             xsection_mean = str(float(xsection_mean) * 1e6)
