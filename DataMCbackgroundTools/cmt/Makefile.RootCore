@@ -13,10 +13,10 @@ PACKAGE              = DataMCbackgroundTools
 PACKAGE_PRELOAD      =
 
 # additional compilation flags to pass (not propagated to dependent packages):
-PACKAGE_CXXFLAGS     =
+PACKAGE_CXXFLAGS     = -O3
 
 # additional compilation flags to pass (propagated to dependent packages):
-PACKAGE_OBJFLAGS     =
+PACKAGE_OBJFLAGS     = -O3
 
 # additional linker flags to pass (for compiling the library):
 PACKAGE_LDFLAGS      =
