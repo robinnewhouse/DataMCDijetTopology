@@ -1,11 +1,11 @@
 #!/bin/zsh
 set -e
 
-#DRY_RUN=true
+DRY_RUN=true
 
-DESCRIPTION="30042017_gammajet_test_v2"
+DESCRIPTION="08052017_gammajet_newMVAtest_v0"
 
-INPUT_DIR=/eos/atlas/user/z/zmeadows/TopBosonTag/gamma_jet/30042017
+INPUT_DIR=/eos/atlas/user/z/zmeadows/TopBosonTag/gamma_jet/08052017
 OUTPUT_DIR_BASE=/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/plotting/raw/gammajet
 HISTOGRAM_FACTORY_JOB_SCRIPT=/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/Batch/histogram_factory_job.sh
 SUBMIT_DIR=/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/Batch/log
@@ -39,8 +39,6 @@ function get_sample_type {
 }
 
 
-echo "SUBMITTING JOBS..."
-echo ""
 cd $SUBMIT_DIR
 for INPUT_FILE in $(find $INPUT_DIR -type f -name '*root*'); do
         DSID=${INPUT_FILE#*user.zmeadows.}
@@ -72,12 +70,9 @@ for INPUT_FILE in $(find $INPUT_DIR -type f -name '*root*'); do
 
         if [ $DRY_RUN ]
         then
-            echo "COMMAND: $job_cmd"
+            echo $job_cmd
         else
             eval "bsub -R \"pool>3000\" -q 8nh \"$job_cmd\""
         fi
         echo ""
 done
-
-echo ""
-echo "DONE SUBMITTING... CROSS YOUR FINGERS!"
