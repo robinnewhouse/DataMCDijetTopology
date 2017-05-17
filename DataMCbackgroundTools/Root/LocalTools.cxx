@@ -143,11 +143,31 @@ std::vector<TChain*> get_branch_tchains(const std::string input_filepath)
 }
 
 
-int 
+int
 combine_bits(const bool bit_one, const bool bit_two)
 {
     int one = bit_one ? 1 : 0;
     int two = (bit_two ? 1 : 0) << 1;
 
     return (one | two);
+}
+
+void QuarkGluonLabelJet(const xAOD::TruthParticleContainer* truthparticles, const xAOD::Jet* jet, double dRmax)
+{
+  int maxEPartonMatchPdgId = 0;
+  double Emax = 0;
+  TLorentzVector jet_vector;
+  jet_vector.SetPtEtaPhiM(jet->pt(), jet->eta(), jet->phi(), jet->m());
+  for(auto parton : *truthparticles){
+    if( parton->pt() < 5000) continue; // avoid errors for pt = 0 particles
+    if( !parton->isParton() ) continue; // is a parton
+    if( parton->e() < Emax) continue;  // want the one with the highest energy
+    TLorentzVector parton_vector;
+    parton_vector.SetPtEtaPhiM(parton->pt(), parton->eta(), parton->phi(), parton->m());
+    if( jet_vector.DeltaR(parton_vector) < dRmax ){
+      maxEPartonMatchPdgId = parton->pdgId();
+      Emax = parton->e();
+    }
+  }
+  jet->auxdecor< int >( "maxEMatchedPartonPdgId" )       = maxEPartonMatchPdgId;
 }

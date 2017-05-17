@@ -1,12 +1,14 @@
 #ifndef LOCALTOOLS_H_
 #define LOCALTOOLS_H_
 
+#include "xAODCore/ShallowAuxContainer.h"
+#include "xAODCore/ShallowCopy.h"
 #include "xAODJet/Jet.h"
 #include "xAODJet/JetContainer.h"
-#include <xAODCaloEvent/CaloClusterContainer.h>
 #include <xAODCaloEvent/CaloCluster.h>
-#include "xAODCore/ShallowCopy.h"
-#include "xAODCore/ShallowAuxContainer.h"
+#include <xAODCaloEvent/CaloClusterContainer.h>
+#include <xAODTruth/TruthParticle.h>
+#include <xAODTruth/TruthParticleContainer.h>
 
 #include <TFile.h>
 #include "TChain.h"
@@ -97,5 +99,7 @@ void fakeClusterEMScale(const xAOD::CaloClusterContainer* cont);
 std::vector<TChain*> get_branch_tchains(const std::string input_filepath);
 
 int combine_bits(const bool bit_one, const bool bit_two);
+
+void QuarkGluonLabelJet(const xAOD::TruthParticleContainer* truthparticles, const xAOD::Jet* jet, double dRmax);
 
 #endif
