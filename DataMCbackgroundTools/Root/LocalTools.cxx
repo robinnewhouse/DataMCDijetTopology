@@ -1,5 +1,8 @@
 #include "DataMCbackgroundTools/LocalTools.h"
 
+#include <xAODTruth/TruthParticle.h>
+#include <xAODTruth/TruthParticleContainer.h>
+
 #include "TLorentzVector.h"
 #include "TopEvent/EventTools.h"
 #include "TTree.h"
@@ -152,22 +155,26 @@ combine_bits(const bool bit_one, const bool bit_two)
     return (one | two);
 }
 
-void QuarkGluonLabelJet(const xAOD::TruthParticleContainer* truthparticles, const xAOD::Jet* jet, double dRmax)
+const xAOD::TruthParticle* match_jet_to_parton(
+    const xAOD::TruthParticleContainer* truthparticles, const xAOD::Jet* jet, double dRmax)
 {
-  int maxEPartonMatchPdgId = 0;
-  double Emax = 0;
-  TLorentzVector jet_vector;
+
+  TLorentzVector jet_vector, parton_vector;
   jet_vector.SetPtEtaPhiM(jet->pt(), jet->eta(), jet->phi(), jet->m());
-  for(auto parton : *truthparticles){
-    if( parton->pt() < 5000) continue; // avoid errors for pt = 0 particles
-    if( !parton->isParton() ) continue; // is a parton
-    if( parton->e() < Emax) continue;  // want the one with the highest energy
-    TLorentzVector parton_vector;
-    parton_vector.SetPtEtaPhiM(parton->pt(), parton->eta(), parton->phi(), parton->m());
+
+  double e_max = 0.0;
+  const xAOD::TruthParticle* matched_parton = nullptr;
+
+  for(const xAOD::TruthParticle* p : *truthparticles)
+  {
+    if( p->pt() < 5000 || p->e() < e_max )
+      continue;
+    parton_vector.SetPtEtaPhiM(p->pt(), p->eta(), p->phi(), p->m());
     if( jet_vector.DeltaR(parton_vector) < dRmax ){
-      maxEPartonMatchPdgId = parton->pdgId();
-      Emax = parton->e();
+      matched_parton = p;
+      e_max = p->e();
     }
   }
-  jet->auxdecor< int >( "maxEMatchedPartonPdgId" )       = maxEPartonMatchPdgId;
+
+  return matched_parton;
 }

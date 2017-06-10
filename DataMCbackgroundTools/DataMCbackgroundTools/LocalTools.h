@@ -100,6 +100,7 @@ std::vector<TChain*> get_branch_tchains(const std::string input_filepath);
 
 int combine_bits(const bool bit_one, const bool bit_two);
 
-void QuarkGluonLabelJet(const xAOD::TruthParticleContainer* truthparticles, const xAOD::Jet* jet, double dRmax);
+const xAOD::TruthParticle* match_jet_to_parton(
+    const xAOD::TruthParticleContainer* truthparticles, const xAOD::Jet* jet, double dRmax);
 
 #endif
