@@ -128,14 +128,38 @@ main(int argc, char** argv)
         const std::string tchain_name = std::string(t->GetName());
         const bool is_a_desired_tchain = process_systematics || tchain_name == "nominal" || tchain_name == "Nominal";
 
+        if (t->GetEntries() == 0) {
+          std::cout << "SKIPPING EMPTY FILE: " << input_filepath << std::endl;
+          continue;
+        }
+
         if (is_a_desired_tchain) {
             std::cout << tchain_name << std::endl;
             dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
                             tchain_name, data_trigger, event_selector, luminosity);
 
             t->Process(dmd_selector);
-
             delete dmd_selector;
+
+            if (process_systematics && tchain_name == "nominal" && event_selector.find("GAMMA") != std::string::npos && sample_type.find("data") == std::string::npos) {
+              dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
+                              "photonSF_ID_UP", data_trigger, event_selector, luminosity);
+              t->Process(dmd_selector);
+              delete dmd_selector;
+              dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
+                              "photonSF_ID_DOWN", data_trigger, event_selector, luminosity);
+              t->Process(dmd_selector);
+              delete dmd_selector;
+              dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
+                              "photonSF_effTrkIso_UP", data_trigger, event_selector, luminosity);
+              t->Process(dmd_selector);
+              delete dmd_selector;
+              dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
+                              "photonSF_effTrkIso_DOWN", data_trigger, event_selector, luminosity);
+              t->Process(dmd_selector);
+              delete dmd_selector;
+            }
+
         }
 
     }
