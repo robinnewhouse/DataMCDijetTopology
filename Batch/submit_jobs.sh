@@ -3,9 +3,9 @@ set -e
 
 DRY_RUN=true
 
-DESCRIPTION="08052017_gammajet_newMVAtest_v0"
+DESCRIPTION="15052017_gammajet_newSD_newHTToverlapRemoval_gridMVA_sysfixed"
 
-INPUT_DIR=/eos/atlas/user/z/zmeadows/TopBosonTag/gamma_jet/08052017
+INPUT_DIR=/eos/atlas/atlascerngroupdisk/perf-jets/JSS/TopBosonTagAnalysis2016/NTuples_DataMC_gammajet/20170515
 OUTPUT_DIR_BASE=/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/plotting/raw/gammajet
 HISTOGRAM_FACTORY_JOB_SCRIPT=/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/Batch/histogram_factory_job.sh
 SUBMIT_DIR=/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/Batch/log
@@ -30,7 +30,7 @@ function get_sample_type {
         elif [[ $1 -ge 426040 && $1 -le 426052 ]] then echo "herwig_dijet"
         elif [[ $1 -ge 426131 && $1 -le 426142 ]] then echo "sherpa_dijet"
         elif [[ $1 -ge 423103 && $1 -le 423112 ]] then echo "pythia_gammajet"
-        elif [[ $1 -ge 361042 && $1 -le 361062 ]] then echo "sherpa_gammajet"
+        elif [[ $1 -ge 361039 && $1 -le 361062 ]] then echo "sherpa_gammajet"
         elif [[ $1 -ge 305435 && $1 -le 305444 ]] then echo "sherpa_wz_gamma"
         elif [[ $1 -eq 410087 ]] then echo "ttbar_gamma"
         else
@@ -41,8 +41,6 @@ function get_sample_type {
 
 cd $SUBMIT_DIR
 for INPUT_FILE in $(find $INPUT_DIR -type f -name '*root*'); do
-        DSID=${INPUT_FILE#*user.zmeadows.}
-        DSID=${DSID%%.*}
 
         OUTPUT_FILE=$OUTPUT_DIR${INPUT_FILE#$INPUT_DIR/}
         OUTPUT_FILE=${OUTPUT_FILE%.root*}.cp.root
@@ -56,6 +54,8 @@ for INPUT_FILE in $(find $INPUT_DIR -type f -name '*root*'); do
                 SAMPLE_TYPE="data15"
             fi
         else
+            DSID=$(basename $INPUT_FILE)
+            DSID=${DSID%%.*}
             SAMPLE_TYPE=$(get_sample_type DSID)
         fi
 
