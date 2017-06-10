@@ -16,21 +16,23 @@ sane_defaults()
 TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
-CP_ROOT_FILEPATH = "/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/plotting/raw/gammajet/11-05-2017__20:38:48__08052017_gammajet_tight_v0/cp.merged.root"
-RAW = DMDLoader(CP_ROOT_FILEPATH)
+CP_ROOT_FILEPATH = "/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/plotting/raw/gammajet/30-05-2017__10:40:01__15052017_gammajet_newSD_newHTToverlapRemoval_gridMVA_sysfixed/cp.merged.root"
+RAW = GammaJetLoader(CP_ROOT_FILEPATH)
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/pubplots"
 make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
 
-SYSTEMATICS = [ ]
-#SYSTEMATICS = SYSTEMATICS_MC15C_MEDIUM
+#SYSTEMATICS = [ ]
+PHOTON_SYSTEMATICS = [
+    "photonSF_ID"
+    "photonSF_effTrkIso"
+    ]
+SYSTEMATICS = SYSTEMATICS_MC15C_MEDIUM + PHOTON_SYSTEMATICS
 
 class PlotDataMcGammaJet(PlotBase):
-    def __init__(self, var_name, flip_legend = False, **kwargs):
-        print var_name
-
+    def __init__(self, var_name, flip_legend = False, do_systematics = True, **kwargs):
         super(PlotDataMcGammaJet, self).__init__(
                 lumi_val = "36.5",
                 width = 600,
@@ -42,98 +44,72 @@ class PlotDataMcGammaJet(PlotBase):
                 x_title = get_axis_title(var_name),
                 **kwargs)
 
-        self.var_name  = var_name
+        self.h_data = RAW.get_hist(["data"            , "nominal"] , var_name)
 
-        # print var_name, "\n"
+        self.hs    = RAW.get_stack_plot(var_name)
+        self.h_sum = RAW.get_sum_plot(var_name, "nominal")
+        self.h_gamma = RAW.get_normalized_gamma(var_name, "nominal")
+        self.h_sum_stat = self.h_sum.Clone(self.h_sum.GetName() + "_stat")
 
-        self.h_data    = RAW.get_hist(["data", "nominal"] , var_name)
-        self.h_gamma   = RAW.get_hist(["sherpa_gammajet", "nominal"] , var_name)
-        self.h_dijet   = RAW.get_hist(["pythia_dijet", "nominal"] , var_name)
-        self.h_wzgamma = RAW.get_hist(["sherpa_wz_gamma", "nominal"] , var_name)
-        self.h_ttbar   = RAW.get_hist(["ttbar_gamma", "nominal"] , var_name)
+        if (do_systematics):
+            gammajet_sysdict = RAW.get_systematics_dictionary(var_name, SYSTEMATICS)
+        else:
+            gammajet_sysdict = {}
 
-        # gamma_sys_dict = {}
-        # self.hsys_gamma = TH1Sys(self.h_gamma, gamma_sys_dict)
+        self.hsys_sum = TH1Sys(self.h_gamma, gammajet_sysdict)
+        self.hsys_sum._compute_errors()
+        self.h_sum_sys = self.hsys_sum.get_histo_with_systematic_errs()
+        self.h_sum_sys.SetName(self.h_sum.GetName() + "_sys")
+        self.h_sum_sys.Add(RAW.get_wzgamma(var_name))
+        self.h_sum_sys.Add(RAW.get_ttbar(var_name))
 
-        all_mc_histos = [
-            self.h_gamma,
-            self.h_dijet,
-            self.h_wzgamma,
-            self.h_ttbar
-            ]
+        all_hists = [self.h_data, self.h_sum, self.h_sum_stat, self.h_sum_sys]
 
-        all_histos = all_mc_histos + [ self.h_data ]
+        for h in self.hs.GetHists():
+          all_hists.append(h)
 
-        self.h_dijet.Smooth(1)
+        for h in all_hists:
+          if (self.rebin): h.Rebin(self.rebin)
+          self.set_x_axis_bounds(h)
 
-        if (self.rebin != None):
-          for h in all_histos:
-            h.Rebin(self.rebin)
-
-        self.h_dijet.Smooth(1)
-
-        total_mc_integral = self.h_gamma.Integral() +  self.h_wzgamma.Integral() + self.h_ttbar.Integral() #+ self.h_dijet.Integral()
-        sigsubdata_integral = self.h_gamma.Integral() +  self.h_wzgamma.Integral() + self.h_ttbar.Integral() #+ self.h_dijet.Integral()
-        print self.h_data.Integral() / total_mc_integral
-        for h in all_mc_histos:
-          h.Scale(self.h_data.Integral() / total_mc_integral)
-
-        for h in all_histos: self.set_x_axis_bounds(h)
         self.determine_y_axis_title(self.h_data)
 
-        for h in all_histos:
+        for h in all_hists:
             h.GetYaxis().SetTitle("Events / " + self.x_units if self.x_units else "Events")
             h.GetXaxis().SetLabelSize(0)
             h.GetYaxis().SetTitleOffset(2.0)
             self.set_y_min(h)
             self.set_y_max(h)
 
-        self.pad_empty_space(all_histos)
+        self.pad_empty_space(all_hists)
 
-        self.hs = THStack("hs_gammajet", "hs_gammajet")
-        self.hs.Add(self.h_ttbar)
-        self.hs.Add(self.h_wzgamma)
-        #self.hs.Add(self.h_dijet)
-        self.hs.Add(self.h_gamma)
-
-        self.h_stack = self.h_ttbar.Clone("h_stack")
-        self.h_stack.Add(self.h_wzgamma)
-        #self.h_stack.Add(self.h_dijet)
-        self.h_stack.Add(self.h_gamma)
-
-        self.h_stack_err = self.h_stack.Clone("h_stack_err")
-        set_mc_sys_err_style(self.h_stack_err)
-        self.h_stack_err.SetFillStyle(3144)
-        self.h_stack_err.SetFillColorAlpha(1,0.3)
-
-        # print "dijet %: ", 100 * self.h_dijet.Integral() / total_mc_integral
-        # print "gamma %: ", 100 * self.h_gamma.Integral() / total_mc_integral
-        # print "wzgamma %: ", 100 * self.h_wzgamma.Integral() / total_mc_integral
-        # print "ttbar %: ", 100 * self.h_ttbar.Integral() / total_mc_integral
-        # print ""
-
-        # self.hsys_gamma._compute_errors()
-        # self.h_gamma_sys = self.hsys_gamma.get_histo_with_systematic_errs()
 
         # CREATE RATIO PLOTS
 
-        self.h_ratio = self.h_stack.Clone("h_ratio")
+        self.h_ratio = self.h_sum.Clone("h_ratio")
         self.h_ratio.Divide(self.h_data, self.h_ratio, 1, 1, "")
         self.h_stat_ratio = self.h_ratio.Clone("h_ratio")
+        self.h_sys_ratio = self.h_sum_sys.Clone("h_ratio_sys")
+        self.h_sys_ratio.Divide(self.h_data, self.h_sys_ratio, 1, 1, "")
 
         # center the stat. and syst. errors around data/mc ratio = 1.0
         for ibin in range(self.h_stat_ratio.GetSize()):
             self.h_stat_ratio.SetBinContent(ibin, 1.0)
+            self.h_sys_ratio.SetBinContent(ibin, 1.0)
 
         ratio_title = "#frac{Data}{MC}"
-        for h in [self.h_ratio, self.h_stat_ratio]:
-            set_style_ratio(h, y_title = ratio_title, y_min = 0.0, y_max = 2.0)
+        for h in [self.h_ratio, self.h_stat_ratio, self.h_sys_ratio]:
+            set_style_ratio(h, y_title = ratio_title, y_min = 0.5, y_max = 1.5)
             h.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
             h.GetXaxis().SetTitleOffset(4.0)
             h.GetYaxis().SetTitleOffset(2.0)
             h.GetXaxis().SetLabelSize(19)
 
-        self.name = self.var_name + "_data_mc_gammajet"
+        set_mc_sys_err_style(self.h_sum_sys, col = kGreen+2, alpha = 0.7)
+        set_mc_sys_err_style(self.h_sys_ratio, col = kGreen - 8, alpha = 0.7)
+        set_mc_sys_err_style(self.h_stat_ratio, col = kGreen - 5, alpha = 0.7)
+
+        self.name = var_name + "_data_mc_gammajet"
         if self.log_scale: self.name += "_log"
 
         # TODO: necessary?
@@ -144,27 +120,6 @@ class PlotDataMcGammaJet(PlotBase):
 
         set_data_style_simple(self.h_data)
         set_data_style_simple(self.h_ratio)
-        self.h_gamma.SetFillColor(kRed)
-        self.h_dijet.SetFillColor(kBlue)
-        self.h_wzgamma.SetFillColor(kGreen)
-        self.h_ttbar.SetFillColor(kViolet)
-
-        self.h_gamma.SetMarkerSize(0)
-        self.h_dijet.SetMarkerSize(0)
-        self.h_wzgamma.SetMarkerSize(0)
-        self.h_ttbar.SetMarkerSize(0)
-
-        self.h_gamma.SetLineWidth(0)
-        self.h_dijet.SetLineWidth(0)
-        self.h_wzgamma.SetLineWidth(0)
-        self.h_ttbar.SetLineWidth(0)
-
-        set_mc_sys_err_style(self.h_stat_ratio)
-        self.h_stat_ratio.SetFillStyle(3144)
-        self.h_stat_ratio.SetFillColorAlpha(1,0.3)
-
-        #self.h_gamma_ratio.SetFillStyle(0)
-        #self.h_gamma_ratio.SetFillColorAlpha(kRed, 0.85)
 
         # SET UP THE CANVAS
         self.canvas.Divide(1,2)
@@ -190,28 +145,34 @@ class PlotDataMcGammaJet(PlotBase):
 
         self.pad1.cd()
 
-        #self.h_gamma.Draw("PE")
-        #self.h_wzgamma.Draw("hist,same")
-        #self.h_dijet.Draw("hist,same")
         self.h_data.Draw("PE,same")
         self.hs.Draw("histo,same")
-        self.h_stack_err.Draw("E2,same")
         self.h_data.Draw("PE,same")
 
         self.pad1.RedrawAxis()
 
         self.canvas.cd()
-        self.leg.AddEntry(self.h_data, "Data 2015 + 2016")
-        self.leg.AddEntry(self.h_gamma, "Sherpa #gamma + jet")
-        #self.leg.AddEntry(self.h_dijet, "Pythia8 dijet")
-        self.leg.AddEntry(self.h_wzgamma, "Sherpa W/Z + #gamma")
-        self.leg.AddEntry(self.h_ttbar, "MG t#bar{t} + #gamma")
-        self.leg.AddEntry(self.h_stat_ratio, "Stat. uncert.")
+        self.leg.AddEntry(self.h_data       , "Data 2015 + 2016")
+        xss = self.hs.GetHists()
+        xss.reverse()
+        for h in xss:
+          if ("gamma" in h.GetName()):
+            self.leg.AddEntry(h      , "Sherpa #gamma + jet"  , "f")
+          elif ("wz" in h.GetName()):
+            self.leg.AddEntry(h    , "Sherpa W/Z + #gamma"  , "f")
+          elif ("ttbar" in h.GetName()):
+            self.leg.AddEntry(h      , "MG t#bar{t} + #gamma" , "f")
+        self.leg.AddEntry(self.h_stat_ratio , "Stat. uncert.")
+        if (do_systematics):
+            self.leg.AddEntry(self.h_sys_ratio , "Sys. #oplus Stat. uncert.")
         self.leg.Draw()
+        xss.reverse()
 
         self.pad2.cd()
 
         #self.h_herwig_sys_ratio.Draw("E2,same")
+        if (do_systematics):
+            self.h_sys_ratio.Draw("E2,same")
         self.h_stat_ratio.Draw("E2,same")
         self.h_ratio.Draw("PE,same")
         self.pad2.RedrawAxis("g")
@@ -225,7 +186,7 @@ class PlotDataMcGammaJet(PlotBase):
         self.canvas.Clear()
 
 DEF_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", "#gamma + jet selection" ]
-MASS_PLOT_REBIN = 8
+MASS_PLOT_REBIN = 5
 
 data_mc_plots = []
 
@@ -236,7 +197,17 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_MassT
         x_max = 400,
         y_min = 1,
         log_scale = True,
-        rebin = MASS_PLOT_REBIN,
+        rebin = MASS_PLOT_REBIN + 4,
+        ))
+
+data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_MassTau32Tag50eff_nocontain_JSSCut",
+        empty_scale = 2.1,
+        extra_legend_lines = DEF_LINES + ["Top-tagged"],
+        x_min = 20,
+        x_max = 400,
+        y_min = 1,
+        log_scale = True,
+        rebin = MASS_PLOT_REBIN + 4,
         ))
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_MassTau32Tag80eff_JSSCut",
@@ -246,7 +217,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_MassT
         x_max = 400,
         y_min = 1,
         log_scale = True,
-        rebin = MASS_PLOT_REBIN,
+        rebin = MASS_PLOT_REBIN + 4,
         ))
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_QwTau32Tag50eff",
@@ -255,16 +226,16 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_QwTau
         x_min = 90,
         x_max = 400,
         y_min = 0.01,
-        rebin = MASS_PLOT_REBIN,
+        rebin = MASS_PLOT_REBIN+4,
         ))
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_QwTau32Tag80eff",
         empty_scale = 2.0,
         extra_legend_lines = DEF_LINES + ["Top-tagged"],
-        x_min = 70,
+        x_min = 90,
         x_max = 400,
         y_min = 0.01,
-        rebin = MASS_PLOT_REBIN,
+        rebin = MASS_PLOT_REBIN+4,
         ))
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_Tau32Split23Tag50eff",
@@ -273,7 +244,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_Tau32
         x_min = 50.01,
         x_max = 400,
         y_min = 0.01,
-        rebin = MASS_PLOT_REBIN,
+        rebin = MASS_PLOT_REBIN + 4,
         ))
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_Tau32Split23Tag80eff",
@@ -282,6 +253,47 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_Tau32
         x_min = 50,
         x_max = 400,
         y_min = 0.01,
+        rebin = MASS_PLOT_REBIN + 4,
+        ))
+
+data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16WTag_50eff_nocontain_JSSCut",
+        empty_scale = 1.6,
+        extra_legend_lines = DEF_LINES + ["W-tagged"],
+        x_min = 20,
+	      y_min = 0.01,
+        x_max = 300,
+        #log_scale = True,
+        rebin = MASS_PLOT_REBIN,
+        ))
+
+data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16WTag_80eff_nocontain_JSSCut",
+        empty_scale = 1.75,
+        extra_legend_lines = DEF_LINES + ["W-tagged"],
+        x_min = 20,
+	      y_min = 0.01,
+        x_max = 300,
+        #log_scale = True,
+        rebin = MASS_PLOT_REBIN,
+        ))
+
+data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16ZTag_50eff_nocontain_JSSCut",
+        empty_scale = 1.6,
+        extra_legend_lines = DEF_LINES + ["Z-tagged"],
+        x_min = 20,
+	      y_min = 0.01,
+        x_max = 300,
+        #y_max = 20e3,
+        #log_scale = True,
+        rebin = MASS_PLOT_REBIN,
+        ))
+
+data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16ZTag_80eff_nocontain_JSSCut",
+        empty_scale = 1.75,
+        extra_legend_lines = DEF_LINES + ["Z-tagged"],
+        x_min = 20,
+	      y_min = 0.01,
+        x_max = 300,
+        #log_scale = True,
         rebin = MASS_PLOT_REBIN,
         ))
 
@@ -341,19 +353,23 @@ data_mc_plots += [
             extra_legend_lines = DEF_LINES,
             x_max = 2000,
             x_min = 200,
-            #y_min = 6e3 + 0.1,
             log_scale = True,
             rebin = 4,
+            ),
+
+        PlotDataMcGammaJet("h_rljet0_pt_comb_smooth16WTag_50eff_JSSCut",
+            empty_scale = 2.5,
+            extra_legend_lines = DEF_LINES,
+            x_max = 600,
+            x_min = 300,
+            log_scale = True,
             ),
 
         PlotDataMcGammaJet("h_rljet0_Split23__combMgt100GeV",
             empty_scale = 6,
             extra_legend_lines = DEF_LINES + ["m^{comb} > 100 GeV"],
             log_scale = True,
-            x_max = 200e3,
-            x_units = "MeV",
-            #x_max = 200,
-            #x_axis_scale = 0.001,
+            x_max = 140,
             ),
 
         PlotDataMcGammaJet("h_rljet0_D2__combMgt50GeV",
@@ -365,25 +381,114 @@ data_mc_plots += [
             y_min = 0.01,
             ),
 
-        PlotDataMcGammaJet("h_rljet0_Tau32_wta__combMgt100GeV",
-            empty_scale = 1.9,
-            flip_legend = True,
-            extra_legend_lines = DEF_LINES + ["m^{comb} > 100 GeV"],
+        PlotDataMcGammaJet("h_rljet0_BDT_score_top_inc",
+            empty_scale = 4,
+            do_systematics = False,
             x_units = "",
-            x_min = 0.01,
-            x_max = 0.9,
-            y_min = 0.01,
-            rebin = 4
+            rebin = 3,
+            y_min = 0.1,
+            log_scale = True,
             ),
+        PlotDataMcGammaJet("h_rljet0_BDT_score_top_qqb",
+            empty_scale = 2.5,
+            do_systematics = False,
+            x_units = "",
+            rebin = 3,
+            y_min = 0.1,
+            log_scale = True,
+            ),
+        PlotDataMcGammaJet("h_rljet0_BDT_score_w",
+            empty_scale = 4,
+            do_systematics = False,
+            x_units = "",
+            rebin = 3,
+            y_min = 0.1,
+            log_scale = True,
+            ),
+        PlotDataMcGammaJet("h_rljet0_DNN_score_top",
+            empty_scale = 1.9,
+            do_systematics = False,
+            x_units = "",
+            rebin = 3,
+            y_min = 0.1,
+            log_scale = True,
+            ),
+
+
+        PlotDataMcGammaJet( "h_htt0_atan1312",
+               empty_scale = 1.9,
+               extra_legend_lines = DEF_LINES + ["HTT-tagged"],
+               rebin = 5,
+               ),
+
+        PlotDataMcGammaJet( "h_htt0_m23m123",
+               empty_scale = 2.0,
+               extra_legend_lines = DEF_LINES + ["HTT-tagged"],
+               rebin = 8,
+               ),
+
+        PlotDataMcGammaJet( "h_htt0_m",
+               empty_scale = 2.35,
+               x_min = 20,
+               x_max = 250,
+               extra_legend_lines = DEF_LINES + ["HTT-tagged"],
+               rebin = 4,
+               ),
+
+        PlotDataMcGammaJet( "h_htt_caGroomJet0_m",
+                empty_scale = 2.15,
+                log_scale = True,
+                x_min = 0,
+                x_max = 1200,
+                extra_legend_lines = DEF_LINES,
+                rebin = 14,
+                ),
+
+        PlotDataMcGammaJet( "h_htt_caGroomJet0_m_HTT_CAND",
+                empty_scale = 2.15,
+                log_scale = True,
+                x_min = 0,
+                x_max = 1200,
+                extra_legend_lines = DEF_LINES,
+                rebin = 14,
+                ),
+
+        PlotDataMcGammaJet( "h_htt_caGroomJet0_pt",
+                empty_scale = 2.15,
+                log_scale = True,
+                x_min = 200,
+                x_max = 3000,
+                extra_legend_lines = DEF_LINES,
+                rebin = 4,
+                ),
+
+        PlotDataMcGammaJet( "h_htt_caGroomJet0_pt_HTT_CAND",
+                empty_scale = 2.15,
+                log_scale = True,
+                x_min = 200,
+                x_max = 3000,
+                extra_legend_lines = DEF_LINES,
+                rebin = 4,
+                ),
 
         PlotDataMcGammaJet("h_rljet0_Qw__combMgt100GeV",
             extra_legend_lines = DEF_LINES + ["m^{comb} > 100 GeV"],
             log_scale = True,
-            x_max = 200e3,
-            x_units = "MeV",
+            x_max = 200,
             rebin = 2,
-	          #y_min = 10e0 + 0.1,
-            # x_axis_scale = 0.001,
             empty_scale = 5,
             )
         ]
+
+for masstag in ["", "combMgt100GeV", "combMlt100GeV", "combMgt180GeV", "combMgt100lt150GeV", "combMgt150lt180GeV"]:
+  PlotDataMcGammaJet(
+              "h_rljet0_Tau32_wta" if not masstag else "h_rljet0_Tau32_wta__" + masstag,
+              empty_scale = 2.0,
+              flip_legend = True,
+              extra_legend_lines = DEF_LINES,
+              x_units = "",
+              x_min = 0.01,
+              x_max = 0.9,
+              y_min = 0.01,
+              rebin = 4
+              )

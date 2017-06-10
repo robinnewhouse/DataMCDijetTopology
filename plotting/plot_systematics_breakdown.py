@@ -14,6 +14,7 @@ class PlotPythiaSystematicsBreakdown(PlotBase):
 
         super(PlotPythiaSystematicsBreakdown, self).__init__(
                 legend_loc = [0.65,0.9,0.9,0.6],
+                width = 600,
                 **kwargs)
 
         self.hsys_pythia = hsys_pythia

@@ -15,25 +15,30 @@ from plot_systematics_breakdown import *
 
 BIN_BOUNDS = array.array('d', [
     200,
-    250,
+    220,
+    240,
+    260,
+    285,
     300,
+    325,
     350,
+    375,
     400,
+    425,
     450,
     500,
     650,
+    1000
     ]
     )
-
-TOTAL_VAR_NAME = "h_rljet0_pt_comb"
 
 gROOT.SetBatch()
 sane_defaults()
 TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
-CP_ROOT_FILEPATH = "/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/plotting/raw/gammajet/11-05-2017__20:38:48__08052017_gammajet_tight_v0/cp.merged.root"
-RAW = DMDLoader(CP_ROOT_FILEPATH)
+CP_ROOT_FILEPATH = "/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/plotting/raw/gammajet/30-05-2017__10:40:01__15052017_gammajet_newSD_newHTToverlapRemoval_gridMVA_sysfixed/cp.merged.root"
+RAW = GammaJetLoader(CP_ROOT_FILEPATH)
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/efficiency_plots"
@@ -45,7 +50,7 @@ def rej_rebin(h):
 
 def get_sys_dict_eff(var_name):
     # get the Rtrk systematics and rebin them
-    dict = RAW.get_systematics_dict(var_name, SYSTEMATICS_MC15C_MEDIUM, ["sherpa_gammajet"])
+    dict = RAW.get_systematics_dictionary(var_name, SYSTEMATICS_MC15C_MEDIUM, True)
     for sys_name, var_dict in dict.iteritems():
         var_dict["up"] = rej_rebin(var_dict["up"])
         var_dict["down"] = rej_rebin(var_dict["down"])
@@ -53,26 +58,23 @@ def get_sys_dict_eff(var_name):
 
 def make_rej_TH1SysEff(gen_name, tag_name):
     is_data = "data" in gen_name
-    passed_var_name = TOTAL_VAR_NAME + "_" + tag_name
+    if ("HTT" in tag_name):
+      total_var_name = "h_htt_caGroomJet0_pt"
+    else:
+      total_var_name = "h_rljet0_pt_comb"
 
-    h_total = rej_rebin(RAW.get_hist([gen_name, "nominal"], TOTAL_VAR_NAME))
-    h_total_dijet = rej_rebin(RAW.get_hist(["pythia_dijet", "nominal"], TOTAL_VAR_NAME))
-    h_total.Add(h_total_dijet)
-
-    h_passed = rej_rebin(RAW.get_hist([gen_name, "nominal"], passed_var_name))
-    h_passed_dijet = rej_rebin(RAW.get_hist(["pythia_dijet", "nominal"], passed_var_name))
-    h_passed.Add(h_passed_dijet)
+    passed_var_name = total_var_name + "_" + tag_name
 
     if (is_data):
+        h_total = rej_rebin(RAW.get_data(total_var_name))
+        h_passed = rej_rebin(RAW.get_data(passed_var_name))
         h_total.Divide(h_passed)
         return h_total.Clone()
     else:
-        h_total_data = rej_rebin(RAW.get_hist(["data", "nominal"], TOTAL_VAR_NAME))
-        h_passed_data = rej_rebin(RAW.get_hist(["data", "nominal"], passed_var_name))
-        h_total.Scale(h_total_data.Integral() / h_total.Integral())
-        h_passed.Scale(h_passed_data.Integral() / h_passed.Integral())
-        total_sys_dict = {}
-        passed_sys_dict = {}
+        h_total = rej_rebin(RAW.get_sum_plot(total_var_name, "nominal", normalize_to_pretagged = True))
+        h_passed = rej_rebin(RAW.get_sum_plot(passed_var_name, "nominal", normalize_to_pretagged = True))
+        total_sys_dict = get_sys_dict_eff(total_var_name)
+        passed_sys_dict = get_sys_dict_eff(passed_var_name)
         return TH1SysEff(h_total, total_sys_dict, h_passed, passed_sys_dict)
 
 class PlotGammaJetBkgRej(PlotBase):
@@ -152,10 +154,10 @@ class PlotGammaJetBkgRej(PlotBase):
         set_mc_style_marker(self.h_sherpa_ratio, kBlue, shape = 22)
 
         # TODO: necessary?
-        self.canvas.Clear()
-        self.canvas = None
-        self._make_canvas()
-        self._make_decorations()
+        # self.canvas.Clear()
+        # self.canvas = None
+        # self._make_canvas()
+        # self._make_decorations()
 
         # SET UP THE CANVAS
         self.canvas.Divide(1,2)
@@ -181,7 +183,7 @@ class PlotGammaJetBkgRej(PlotBase):
 
         self.pad1.cd()
 
-        self.h_pythia.Draw("PE1,same")
+        #self.h_pythia.Draw("PE1,same")
         self.h_sherpa.Draw("PE1,same")
         self.h_data.Draw("PE1,same")
 
@@ -189,16 +191,17 @@ class PlotGammaJetBkgRej(PlotBase):
 
         self.canvas.cd()
         self.leg.AddEntry(self.h_data, "Data 2015 + 2016")
-        self.leg.AddEntry(self.h_pythia, "Pythia8 MC")
+        #self.leg.AddEntry(self.h_pythia, "Pythia8 MC")
         self.leg.AddEntry(self.h_sherpa, "Sherpa MC")
-        self.leg.AddEntry(self.h_pythia_sys, "Stat. uncert.")
+        self.leg.AddEntry(self.h_sherpa_stat_ratio, "Stat. uncert.")
+        self.leg.AddEntry(self.h_sherpa_sys_ratio, "Sys. #oplus Stat. uncert.")
         self.leg.Draw()
 
         self.pad2.cd()
         if (self.hsys_sherpa.num_systematics != 0):
             self.h_sherpa_sys_ratio.Draw("E2,same")
         self.h_sherpa_stat_ratio.Draw("E2,same")
-        self.h_pythia_ratio.Draw("PE,same")
+        #self.h_pythia_ratio.Draw("PE,same")
         self.h_sherpa_ratio.Draw("PE,same")
         self.pad2.RedrawAxis("g")
 
@@ -224,7 +227,7 @@ def make_pt_rej_plot( tag_name, **kwargs):
             lumi_val = "36.5",
             atlas_mod = "Internal",
             legend_loc = [0.62,0.93,0.89,0.66],
-            x_title = "Leading Large-R Jet #it{p_{T}}",
+            x_title = "Leading Groomed C/A 1.5 Jet p_{T}" if "HTT" in tag_name else "Leading Large-R Jet #it{p_{T}}",
             x_max = 3000,
             y_min = 0.001,
             width = 600,
@@ -240,6 +243,20 @@ bkg_rej_plots = [
 
         make_pt_rej_plot(
             "smooth16Top_MassTau32Tag80eff_MassJSSCut",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 80%" ],
+            x_min = 350,
+            y_max = 100,
+            ),
+
+        make_pt_rej_plot(
+            "smooth16Top_MassTau32Tag50eff_nocontain_MassJSSCut",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 50%" ],
+            x_min = 350,
+            y_max = 300,
+            ),
+
+        make_pt_rej_plot(
+            "smooth16Top_MassTau32Tag80eff_nocontain_MassJSSCut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 80%" ],
             x_min = 350,
             y_max = 100,
@@ -299,6 +316,40 @@ bkg_rej_plots = [
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
             x_min = 200,
             y_max = 50
+            ),
+
+        make_pt_rej_plot(
+            "smooth16WTag_50eff_nocontain_MassJSSCut",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 50%" ],
+            x_min = 200,
+            y_max = 175
+            ),
+
+        make_pt_rej_plot(
+            "smooth16WTag_80eff_nocontain_MassJSSCut",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
+            x_min = 200,
+            y_max = 50
+            ),
+
+        make_pt_rej_plot(
+            "smooth16ZTag_50eff_nocontain_MassJSSCut",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 50%" ],
+            x_min = 200,
+            y_max = 150
+            ),
+
+        make_pt_rej_plot(
+            "smooth16ZTag_80eff_nocontain_MassJSSCut",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
+            x_min = 200,
+            y_max = 50
+            ),
+
+        make_pt_rej_plot(
+            "HTT_CAND",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "HTT-Tagged" ],
+            y_max = 35
             )
 
         ]

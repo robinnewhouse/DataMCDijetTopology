@@ -224,7 +224,7 @@ def make_pt_efficiency_plot( tag_name, ref_tag_name = None, **kwargs):
             legend_loc = [0.60,0.93,0.91,0.65],
             x_title = "Leading Large-R Jet #it{p_{T}}",
             x_min = 450,
-            x_max = 2500,
+            x_max = 3500,
             y_min = 0.001,
             width = 600,
             **kwargs)
