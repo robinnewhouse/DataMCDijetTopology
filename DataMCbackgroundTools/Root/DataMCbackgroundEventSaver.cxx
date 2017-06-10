@@ -58,8 +58,7 @@ DataMCbackgroundEventSaver::DataMCbackgroundEventSaver(void)
             getline(htt_stream, substr, ',');
             m_httConfigs.push_back(substr);
             std::cout << substr << std::endl;
-        }
-
+        } std::cout << std::endl;
     } catch (...) {
         std::cout << "No HTT Configs found :( ..." << std::endl;
         m_httConfigs.clear();
@@ -68,8 +67,6 @@ DataMCbackgroundEventSaver::DataMCbackgroundEventSaver(void)
     m_nHttTools = m_httConfigs.size();
     std::cout << "Number of HTT Configs: " << m_nHttTools << std::endl;
 
-
-    // protection against missing HTTJetContainerPrefix variable. Default: CA15LCTopoJets_HTT
     try {
         m_httJetContainerPrefix = config_settings->value("HTTJetContainerPrefix");
     } catch (...) {
@@ -77,20 +74,57 @@ DataMCbackgroundEventSaver::DataMCbackgroundEventSaver(void)
     }
 
     // configuration switch for HTT
-    m_runHTT = false;
-    try {
-        std::string HTTswitchString = config_settings->value("RunHTT");
-        if(HTTswitchString.compare("True") == 0)
-            m_runHTT = true;
-    } catch (...) {
-        std::cout << "Not running HTT because option not set..." << std::endl;
-        std::cout << "add 'RunHTT True' to cuts file to enable." << std::endl;
+    m_runHTT = m_nHttTools > 0;
+    if (m_nHttTools > 0) {
+      try {
+        if(config_settings->value("RunHTT").compare("False") == 0) m_runHTT = false;
+      } catch (...) {
+        std::cout << "add 'RunHTT True/False' to cuts file to ensure HTT enabled/disabled." << std::endl;
+      }
     }
 
-    if (m_nHttTools != 0 && m_runHTT) {
-        m_httTool = std::unique_ptr<JetRecTool>(buildFullHTTagger("",
-                    m_httJetContainerPrefix, m_httConfigs));
+    if (m_nHttTools > 0 && m_runHTT)
+        m_httTool = std::unique_ptr<JetRecTool>(buildFullHTTagger("", m_httJetContainerPrefix, m_httConfigs));
+
+    m_runMVAtag = false;
+    try {
+        if(config_settings->value("RunMVATag").compare("True") == 0) m_runMVAtag = true;
+    } catch (...) {
+        std::cout << "Disabling MVA taggers since option not set..." << std::endl;
+        std::cout << "add 'RunMVAtag True' to cuts file to disable." << std::endl;
     }
+
+    m_massOrderJets = false;
+    try {
+        if(config_settings->value("MassOrderJets").compare("True") == 0) m_massOrderJets = true;
+    } catch (...) {
+        std::cout << "add 'MassOrderJets True' to cuts file to mass order (instead of pT-order) jets." << std::endl;
+    }
+
+    m_runSmoothWZtag = true;
+    try {
+        if(config_settings->value("RunSmoothWZTag").compare("True") != 0) m_runSmoothWZtag = false;
+    } catch (...) {
+        std::cout << "Running Smooth W/Z taggers by default because option not set..." << std::endl;
+        std::cout << "add 'RunSmoothWZtag False' to cuts file to disable." << std::endl;
+    }
+
+    m_runSmoothToptag = true;
+    try {
+        if(config_settings->value("RunSmoothTopTag").compare("True") != 0) m_runSmoothToptag = false;
+    } catch (...) {
+        std::cout << "Running Smooth Top taggers by default because option not set..." << std::endl;
+        std::cout << "add 'RunSmoothToptag False' to cuts file to disable." << std::endl;
+    }
+
+    m_runSmoothUncontained = false;
+    try {
+        if(config_settings->value("RunSmoothUncontained").compare("True") == 0) m_runSmoothUncontained = true;
+    } catch (...) {
+        std::cout << "Uncontained Smooth Taggers disabled by default..." << std::endl;
+        std::cout << "add 'RunSmoothUncontained True' to cuts file to enable." << std::endl;
+    }
+
 
     // configuration switch for shower deconstruction tagging
     m_runSD = false;
@@ -126,8 +160,9 @@ DataMCbackgroundEventSaver::DataMCbackgroundEventSaver(void)
                 << " Large-R jets." << std::endl;
         }
     } catch (...) {
+        m_num_fatjets_keep = 1;
         std::cout << "Defaulting to saving only the leading pT large R jet" << std::endl;
-        std::cout << "add 'NumFatjetsKeep X', where X = 1,2,3,..., to cuts file to enable." << std::endl;
+        std::cout << "add 'NumFatjetsKeep X', where X = 1, 2, or 3 to cuts file to enable." << std::endl;
     }
 
     m_debug_level = 0;
@@ -165,30 +200,39 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
         systematicTree->makeOutputVariable(m_rljet_m_comb  , "rljet_m_comb");
         systematicTree->makeOutputVariable(m_rljet_pt_comb , "rljet_pt_comb");
 
+
         systematicTree->makeOutputVariable(m_rljet_D2        , "rljet_D2");
         systematicTree->makeOutputVariable(m_rljet_Tau32_wta , "rljet_Tau32_wta");
         systematicTree->makeOutputVariable(m_rljet_Qw        , "rljet_Qw");
         systematicTree->makeOutputVariable(m_rljet_Split23   , "rljet_Split23");
 
-        systematicTree->makeOutputVariable(m_rljet_smooth16Top_Tau32Split23Tag50eff , "m_rljet_smooth16Top_Tau32Split23Tag50eff");
-        systematicTree->makeOutputVariable(m_rljet_smooth16Top_Tau32Split23Tag80eff , "m_rljet_smooth16Top_Tau32Split23Tag80eff");
-        systematicTree->makeOutputVariable(m_rljet_smooth16Top_MassTau32Tag50eff    , "m_rljet_smooth16Top_MassTau32Tag50eff");
-        systematicTree->makeOutputVariable(m_rljet_smooth16Top_MassTau32Tag80eff    , "m_rljet_smooth16Top_MassTau32Tag80eff");
-        systematicTree->makeOutputVariable(m_rljet_smooth16Top_QwTau32Tag50eff      , "m_rljet_smooth16Top_QwTau32Tag50eff");
-        systematicTree->makeOutputVariable(m_rljet_smooth16Top_QwTau32Tag80eff      , "m_rljet_smooth16Top_QwTau32Tag80eff");
+        if (m_runSmoothToptag) {
+          systematicTree->makeOutputVariable(m_rljet_smooth16Top_Tau32Split23Tag50eff , "m_rljet_smooth16Top_Tau32Split23Tag50eff");
+          systematicTree->makeOutputVariable(m_rljet_smooth16Top_Tau32Split23Tag80eff , "m_rljet_smooth16Top_Tau32Split23Tag80eff");
+          systematicTree->makeOutputVariable(m_rljet_smooth16Top_MassTau32Tag50eff    , "m_rljet_smooth16Top_MassTau32Tag50eff");
+          systematicTree->makeOutputVariable(m_rljet_smooth16Top_MassTau32Tag80eff    , "m_rljet_smooth16Top_MassTau32Tag80eff");
+          systematicTree->makeOutputVariable(m_rljet_smooth16Top_QwTau32Tag50eff      , "m_rljet_smooth16Top_QwTau32Tag50eff");
+          systematicTree->makeOutputVariable(m_rljet_smooth16Top_QwTau32Tag80eff      , "m_rljet_smooth16Top_QwTau32Tag80eff");
+        }
 
-        systematicTree->makeOutputVariable(m_rljet_smooth16Top_MassTau32Tag50eff_nocontain    , "m_rljet_smooth16Top_MassTau32Tag50eff_nocontain");
-        systematicTree->makeOutputVariable(m_rljet_smooth16Top_MassTau32Tag80eff_nocontain    , "m_rljet_smooth16Top_MassTau32Tag80eff_nocontain");
+        if (m_runSmoothToptag && m_runSmoothUncontained) {
+          systematicTree->makeOutputVariable(m_rljet_smooth16Top_MassTau32Tag50eff_nocontain    , "m_rljet_smooth16Top_MassTau32Tag50eff_nocontain");
+          systematicTree->makeOutputVariable(m_rljet_smooth16Top_MassTau32Tag80eff_nocontain    , "m_rljet_smooth16Top_MassTau32Tag80eff_nocontain");
+        }
 
-        systematicTree->makeOutputVariable(m_rljet_smooth16W_Tag50eff , "rljet_smooth16WTag_50eff");
-        systematicTree->makeOutputVariable(m_rljet_smooth16W_Tag80eff , "rljet_smooth16WTag_80eff");
-        systematicTree->makeOutputVariable(m_rljet_smooth16Z_Tag50eff , "rljet_smooth16ZTag_50eff");
-        systematicTree->makeOutputVariable(m_rljet_smooth16Z_Tag80eff , "rljet_smooth16ZTag_80eff");
+        if (m_runSmoothWZtag) {
+          systematicTree->makeOutputVariable(m_rljet_smooth16W_Tag50eff , "rljet_smooth16WTag_50eff");
+          systematicTree->makeOutputVariable(m_rljet_smooth16W_Tag80eff , "rljet_smooth16WTag_80eff");
+          systematicTree->makeOutputVariable(m_rljet_smooth16Z_Tag50eff , "rljet_smooth16ZTag_50eff");
+          systematicTree->makeOutputVariable(m_rljet_smooth16Z_Tag80eff , "rljet_smooth16ZTag_80eff");
+        }
 
-        systematicTree->makeOutputVariable(m_rljet_smooth16W_Tag50eff_nocontain , "rljet_smooth16WTag_50eff_nocontain");
-        systematicTree->makeOutputVariable(m_rljet_smooth16W_Tag80eff_nocontain , "rljet_smooth16WTag_80eff_nocontain");
-        systematicTree->makeOutputVariable(m_rljet_smooth16Z_Tag50eff_nocontain , "rljet_smooth16ZTag_50eff_nocontain");
-        systematicTree->makeOutputVariable(m_rljet_smooth16Z_Tag80eff_nocontain , "rljet_smooth16ZTag_80eff_nocontain");
+        if (m_runSmoothWZtag && m_runSmoothUncontained) {
+          systematicTree->makeOutputVariable(m_rljet_smooth16W_Tag50eff_nocontain , "rljet_smooth16WTag_50eff_nocontain");
+          systematicTree->makeOutputVariable(m_rljet_smooth16W_Tag80eff_nocontain , "rljet_smooth16WTag_80eff_nocontain");
+          systematicTree->makeOutputVariable(m_rljet_smooth16Z_Tag50eff_nocontain , "rljet_smooth16ZTag_50eff_nocontain");
+          systematicTree->makeOutputVariable(m_rljet_smooth16Z_Tag80eff_nocontain , "rljet_smooth16ZTag_80eff_nocontain");
+        }
 
         if (m_savePhoton) {
           systematicTree->makeOutputVariable(m_photon0_pt           , "photon0_pt");
@@ -208,38 +252,39 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
             systematicTree->makeOutputVariable(m_NPV, "NPV");
 
             if (m_config->isMC()) {
-              systematicTree->makeOutputVariable(m_rljet_pdgid , "rljet_pdgid");
+              systematicTree->makeOutputVariable(m_rljet_pdgid              , "rljet_pdgid");
+              systematicTree->makeOutputVariable(m_rljet_matched_parton_pt  , "rljet_matched_parton_pt");
+              systematicTree->makeOutputVariable(m_rljet_matched_parton_eta , "rljet_matched_parton_eta");
+              systematicTree->makeOutputVariable(m_rljet_matched_parton_phi , "rljet_matched_parton_phi");
+              systematicTree->makeOutputVariable(m_rljet_matched_parton_m   , "rljet_matched_parton_m");
+              systematicTree->makeOutputVariable(m_tljet_pt                 , "tljet_pt");
+              systematicTree->makeOutputVariable(m_tljet_eta                , "tljet_eta");
+              systematicTree->makeOutputVariable(m_tljet_phi                , "tljet_phi");
+              systematicTree->makeOutputVariable(m_tljet_m                  , "tljet_m");
+              systematicTree->makeOutputVariable(m_tljet_mjj                , "tljet_mjj");
+              systematicTree->makeOutputVariable(m_parton_mjj               , "parton_mjj");
+
+              systematicTree->makeOutputVariable(m_pid1 , "pid1");
+              systematicTree->makeOutputVariable(m_pid2 , "pid2");
             }
 
             // more large-R jet kinematic variables
-            systematicTree->makeOutputVariable(m_rljet_count  , "rljet_count");
-            systematicTree->makeOutputVariable(m_rljet_mjj    , "rljet_mjj");
-            systematicTree->makeOutputVariable(m_rljet_ptasym , "rljet_ptasym");
-            systematicTree->makeOutputVariable(m_rljet_dy     , "rljet_dy");
-            systematicTree->makeOutputVariable(m_rljet_dR     , "rljet_dR");
-            systematicTree->makeOutputVariable(m_rljet_dphi   , "rljet_dphi");
-            systematicTree->makeOutputVariable(m_rljet_deta   , "rljet_deta");
+            systematicTree->makeOutputVariable(m_rljet_count     , "rljet_count");
+            systematicTree->makeOutputVariable(m_rljet_mjj       , "rljet_mjj");
+            systematicTree->makeOutputVariable(m_rljet_ptasym    , "rljet_ptasym");
+            systematicTree->makeOutputVariable(m_rljet_mass_asym , "rljet_mass_asym");
+            systematicTree->makeOutputVariable(m_rljet_dy        , "rljet_dy");
+            systematicTree->makeOutputVariable(m_rljet_dR        , "rljet_dR");
+            systematicTree->makeOutputVariable(m_rljet_dphi      , "rljet_dphi");
+            systematicTree->makeOutputVariable(m_rljet_deta      , "rljet_deta");
 
             systematicTree->makeOutputVariable(m_rljet_m_calo  , "rljet_m_calo");
             systematicTree->makeOutputVariable(m_rljet_pt_calo , "rljet_pt_calo");
             systematicTree->makeOutputVariable(m_rljet_m_ta    , "rljet_m_ta");
             systematicTree->makeOutputVariable(m_rljet_pt_ta   , "rljet_pt_ta");
 
-            systematicTree->makeOutputVariable(m_rljet_smooth15Top_MassTau32Tag50eff, "m_rljet_smooth15Top_MassTau32Tag50eff");
-            systematicTree->makeOutputVariable(m_rljet_smooth15Top_MassTau32Tag80eff, "m_rljet_smooth15Top_MassTau32Tag80eff");
-
-            systematicTree->makeOutputVariable(m_rljet_smooth15W_Tag50eff , "rljet_smooth15WTag_50eff");
-            systematicTree->makeOutputVariable(m_rljet_smooth15W_Tag25eff , "rljet_smooth15WTag_25eff");
-            systematicTree->makeOutputVariable(m_rljet_smooth15Z_Tag50eff , "rljet_smooth15ZTag_50eff");
-            systematicTree->makeOutputVariable(m_rljet_smooth15Z_Tag25eff , "rljet_smooth15ZTag_25eff");
-
-            systematicTree->makeOutputVariable(m_rljet_BDT_score_top_qqb       , "rljet_BDT_score_top_qqb");
-            systematicTree->makeOutputVariable(m_rljet_BDT_score_top_inclusive , "rljet_BDT_score_top_inclusive");
-            systematicTree->makeOutputVariable(m_rljet_BDT_score_w             , "rljet_BDT_score_w");
-            systematicTree->makeOutputVariable(m_rljet_DNN_score_top           , "rljet_DNN_score_top");
-            systematicTree->makeOutputVariable(m_rljet_DNN_score_w             , "rljet_DNN_score_w");
-
             // more substructure variables
+            systematicTree->makeOutputVariable(m_rljet_C2          , "rljet_C2");
             systematicTree->makeOutputVariable(m_rljet_Tau1_wta    , "rljet_Tau1_wta");
             systematicTree->makeOutputVariable(m_rljet_Tau2_wta    , "rljet_Tau2_wta");
             systematicTree->makeOutputVariable(m_rljet_Tau3_wta    , "rljet_Tau3_wta");
@@ -265,21 +310,22 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
             systematicTree->makeOutputVariable(m_rljet_ungroomed_ntrk500 , "rljet_ungroomed_ntrk500");
             systematicTree->makeOutputVariable(m_rljet_n_constituents    , "rljet_n_constituents");
 
-            // have to resize in order to makeOutputVariable below
-            m_htt_tag       . resize(m_nHttTools);
-            m_htt_pt        . resize(m_nHttTools);
-            m_htt_eta       . resize(m_nHttTools);
-            m_htt_phi       . resize(m_nHttTools);
-            m_htt_m         . resize(m_nHttTools);
-            m_htt_m123      . resize(m_nHttTools);
-            m_htt_m23m123   . resize(m_nHttTools);
-            m_htt_atan1312  . resize(m_nHttTools);
-            m_htt_nTagCands . resize(m_nHttTools);
-            m_htt_pts1      . resize(m_nHttTools);
-            m_htt_pts2      . resize(m_nHttTools);
-            m_htt_pts3      . resize(m_nHttTools);
+            if (m_runHTT) {
+              // have to resize in order to makeOutputVariable below
+              m_htt_tag       . resize(m_nHttTools);
+              m_htt_pt        . resize(m_nHttTools);
+              m_htt_eta       . resize(m_nHttTools);
+              m_htt_phi       . resize(m_nHttTools);
+              m_htt_m         . resize(m_nHttTools);
+              m_htt_m123      . resize(m_nHttTools);
+              m_htt_m23m123   . resize(m_nHttTools);
+              m_htt_atan1312  . resize(m_nHttTools);
+              m_htt_nTagCands . resize(m_nHttTools);
+              m_htt_pts1      . resize(m_nHttTools);
+              m_htt_pts2      . resize(m_nHttTools);
+              m_htt_pts3      . resize(m_nHttTools);
 
-            for (int i=0; i<m_nHttTools; i++) {
+              for (int i=0; i<m_nHttTools; i++) {
                 systematicTree->makeOutputVariable(m_htt_pt[i]        , getHTTBranchName("pt"        , m_httConfigs[i]));
                 systematicTree->makeOutputVariable(m_htt_eta[i]       , getHTTBranchName("eta"       , m_httConfigs[i]));
                 systematicTree->makeOutputVariable(m_htt_phi[i]       , getHTTBranchName("phi"       , m_httConfigs[i]));
@@ -292,54 +338,57 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
                 systematicTree->makeOutputVariable(m_htt_pts1[i]      , getHTTBranchName("pts1"      , m_httConfigs[i]));
                 systematicTree->makeOutputVariable(m_htt_pts2[i]      , getHTTBranchName("pts2"      , m_httConfigs[i]));
                 systematicTree->makeOutputVariable(m_htt_pts3[i]      , getHTTBranchName("pts3"      , m_httConfigs[i]));
-            }
+              }
 
-            systematicTree->makeOutputVariable(m_htt_caJet_pt  , getHTTBranchName("caJet_pt"  , ""));
-            systematicTree->makeOutputVariable(m_htt_caJet_eta , getHTTBranchName("caJet_eta" , ""));
-            systematicTree->makeOutputVariable(m_htt_caJet_phi , getHTTBranchName("caJet_phi" , ""));
-            systematicTree->makeOutputVariable(m_htt_caJet_m   , getHTTBranchName("caJet_m"   , ""));
+              systematicTree->makeOutputVariable(m_htt_caJet_pt  , getHTTBranchName("caJet_pt"  , ""));
+              systematicTree->makeOutputVariable(m_htt_caJet_eta , getHTTBranchName("caJet_eta" , ""));
+              systematicTree->makeOutputVariable(m_htt_caJet_phi , getHTTBranchName("caJet_phi" , ""));
+              systematicTree->makeOutputVariable(m_htt_caJet_m   , getHTTBranchName("caJet_m"   , ""));
 
-            systematicTree->makeOutputVariable(m_cajet_count, "caJet_count");
+              systematicTree->makeOutputVariable(m_cajet_count, "caJet_count");
 
-            m_htt_caGroomJet_pt  . resize(m_nHttTools);
-            m_htt_caGroomJet_eta . resize(m_nHttTools);
-            m_htt_caGroomJet_phi . resize(m_nHttTools);
-            m_htt_caGroomJet_m   . resize(m_nHttTools);
+              m_htt_caGroomJet_pt  . resize(m_nHttTools);
+              m_htt_caGroomJet_eta . resize(m_nHttTools);
+              m_htt_caGroomJet_phi . resize(m_nHttTools);
+              m_htt_caGroomJet_m   . resize(m_nHttTools);
 
-            for (int i=0; i<m_nHttTools; i++) {
+              for (int i=0; i<m_nHttTools; i++) {
                 systematicTree->makeOutputVariable(m_htt_caGroomJet_pt[i]  , getHTTBranchName("caGroomJet_pt"  , m_httConfigs[i]));
                 systematicTree->makeOutputVariable(m_htt_caGroomJet_eta[i] , getHTTBranchName("caGroomJet_eta" , m_httConfigs[i]));
                 systematicTree->makeOutputVariable(m_htt_caGroomJet_phi[i] , getHTTBranchName("caGroomJet_phi" , m_httConfigs[i]));
                 systematicTree->makeOutputVariable(m_htt_caGroomJet_m[i]   , getHTTBranchName("caGroomJet_m"   , m_httConfigs[i]));
+              }
             }
 
-            // Shower Deconstruction tagger output variables
-            systematicTree->makeOutputVariable(m_rljet_SDw_calib         , "rljet_SDw_calib");
-            systematicTree->makeOutputVariable(m_rljet_SDw_uncalib       , "rljet_SDw_uncalib");
-            systematicTree->makeOutputVariable(m_rljet_SDw_combined      , "rljet_SDw_combined");
-            systematicTree->makeOutputVariable(m_rljet_SDw_dcut          , "rljet_SDw_dcut");
-            systematicTree->makeOutputVariable(m_rljet_SDt_calib         , "rljet_SDt_calib");
-            systematicTree->makeOutputVariable(m_rljet_SDt_uncalib       , "rljet_SDt_uncalib");
-            systematicTree->makeOutputVariable(m_rljet_SDt_combined      , "rljet_SDt_combined");
-            systematicTree->makeOutputVariable(m_rljet_SDt_dcut          , "rljet_SDt_dcut");
+            if (m_runSD) {
+              // Shower Deconstruction tagger output variables
+              systematicTree->makeOutputVariable(m_rljet_SDw_calib         , "rljet_SDw_calib");
+              systematicTree->makeOutputVariable(m_rljet_SDw_uncalib       , "rljet_SDw_uncalib");
+              systematicTree->makeOutputVariable(m_rljet_SDw_combined      , "rljet_SDw_combined");
+              systematicTree->makeOutputVariable(m_rljet_SDw_dcut          , "rljet_SDw_dcut");
+              systematicTree->makeOutputVariable(m_rljet_SDt_calib         , "rljet_SDt_calib");
+              systematicTree->makeOutputVariable(m_rljet_SDt_uncalib       , "rljet_SDt_uncalib");
+              systematicTree->makeOutputVariable(m_rljet_SDt_combined      , "rljet_SDt_combined");
+              systematicTree->makeOutputVariable(m_rljet_SDt_dcut          , "rljet_SDt_dcut");
 
-            if (m_config->isMC()) {
-              systematicTree->makeOutputVariable(m_rljet_SDw_calib_DOWN    , "rljet_SDw_calib_DOWN");
-              systematicTree->makeOutputVariable(m_rljet_SDw_uncalib_DOWN  , "rljet_SDw_uncalib_DOWN");
-              systematicTree->makeOutputVariable(m_rljet_SDw_combined_DOWN , "rljet_SDw_combined_DOWN");
-              systematicTree->makeOutputVariable(m_rljet_SDw_dcut_DOWN     , "rljet_SDw_dcut_DOWN");
-              systematicTree->makeOutputVariable(m_rljet_SDt_calib_DOWN    , "rljet_SDt_calib_DOWN");
-              systematicTree->makeOutputVariable(m_rljet_SDt_uncalib_DOWN  , "rljet_SDt_uncalib_DOWN");
-              systematicTree->makeOutputVariable(m_rljet_SDt_combined_DOWN , "rljet_SDt_combined_DOWN");
-              systematicTree->makeOutputVariable(m_rljet_SDt_dcut_DOWN     , "rljet_SDt_dcut_DOWN");
-              systematicTree->makeOutputVariable(m_rljet_SDw_calib_UP      , "rljet_SDw_calib_UP");
-              systematicTree->makeOutputVariable(m_rljet_SDw_uncalib_UP    , "rljet_SDw_uncalib_UP");
-              systematicTree->makeOutputVariable(m_rljet_SDw_combined_UP   , "rljet_SDw_combined_UP");
-              systematicTree->makeOutputVariable(m_rljet_SDw_dcut_UP       , "rljet_SDw_dcut_UP");
-              systematicTree->makeOutputVariable(m_rljet_SDt_calib_UP      , "rljet_SDt_calib_UP");
-              systematicTree->makeOutputVariable(m_rljet_SDt_uncalib_UP    , "rljet_SDt_uncalib_UP");
-              systematicTree->makeOutputVariable(m_rljet_SDt_combined_UP   , "rljet_SDt_combined_UP");
-              systematicTree->makeOutputVariable(m_rljet_SDt_dcut_UP       , "rljet_SDt_dcut_UP");
+              if (m_config->isMC()) {
+                systematicTree->makeOutputVariable(m_rljet_SDw_calib_DOWN    , "rljet_SDw_calib_DOWN");
+                systematicTree->makeOutputVariable(m_rljet_SDw_uncalib_DOWN  , "rljet_SDw_uncalib_DOWN");
+                systematicTree->makeOutputVariable(m_rljet_SDw_combined_DOWN , "rljet_SDw_combined_DOWN");
+                systematicTree->makeOutputVariable(m_rljet_SDw_dcut_DOWN     , "rljet_SDw_dcut_DOWN");
+                systematicTree->makeOutputVariable(m_rljet_SDt_calib_DOWN    , "rljet_SDt_calib_DOWN");
+                systematicTree->makeOutputVariable(m_rljet_SDt_uncalib_DOWN  , "rljet_SDt_uncalib_DOWN");
+                systematicTree->makeOutputVariable(m_rljet_SDt_combined_DOWN , "rljet_SDt_combined_DOWN");
+                systematicTree->makeOutputVariable(m_rljet_SDt_dcut_DOWN     , "rljet_SDt_dcut_DOWN");
+                systematicTree->makeOutputVariable(m_rljet_SDw_calib_UP      , "rljet_SDw_calib_UP");
+                systematicTree->makeOutputVariable(m_rljet_SDw_uncalib_UP    , "rljet_SDw_uncalib_UP");
+                systematicTree->makeOutputVariable(m_rljet_SDw_combined_UP   , "rljet_SDw_combined_UP");
+                systematicTree->makeOutputVariable(m_rljet_SDw_dcut_UP       , "rljet_SDw_dcut_UP");
+                systematicTree->makeOutputVariable(m_rljet_SDt_calib_UP      , "rljet_SDt_calib_UP");
+                systematicTree->makeOutputVariable(m_rljet_SDt_uncalib_UP    , "rljet_SDt_uncalib_UP");
+                systematicTree->makeOutputVariable(m_rljet_SDt_combined_UP   , "rljet_SDt_combined_UP");
+                systematicTree->makeOutputVariable(m_rljet_SDt_dcut_UP       , "rljet_SDt_dcut_UP");
+              }
             }
         } // end making nominal branch only output variables
     } // end making all output variables
@@ -350,104 +399,80 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
 
     if (m_runSD) this->initializeSD();
 
-    // 2015 smoothed taggers
-    topTagger15_Mass_50eff  = STTHelpers::configSubstTagger("SmoothMassCutOnly50eff", std::vector<std::string>{"SmoothMassCut_50"});
-    topTagger15_Mass_80eff  = STTHelpers::configSubstTagger("SmoothMassCutOnly80eff", std::vector<std::string>{"SmoothMassCut_80"});
-    topTagger15_Tau32_50eff = STTHelpers::configSubstTagger("SmoothTau32CutOnly50eff", std::vector<std::string>{"SmoothTau32Cut_50"});
-    topTagger15_Tau32_80eff = STTHelpers::configSubstTagger("SmoothTau32CutOnly80eff", std::vector<std::string>{"SmoothTau32Cut_80"});
-
-    wTagger15_50eff = make_unique<JetSubStructureUtils::BosonTag>("medium", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Wtagging_MC15_Prerecommendations_20150809.dat", false, false);
-    wTagger15_25eff = make_unique<JetSubStructureUtils::BosonTag>("tight", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Wtagging_MC15_Prerecommendations_20150809.dat", false, false);
-
-    zTagger15_50eff = make_unique<JetSubStructureUtils::BosonTag>("medium", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Ztagging_MC15_Prerecommendations_20150809.dat", false, false);
-    zTagger15_25eff = make_unique<JetSubStructureUtils::BosonTag>("tight", "smooth", "$ROOTCOREBIN/data/JetSubStructureUtils/config_13TeV_Ztagging_MC15_Prerecommendations_20150809.dat", false, false);
-
     // 2016 smoothed taggers
-    topTagger16_Tau32Split23_50eff = make_unique<SmoothedTopTagger>("Smooth16Tau32Split23Eff50");
-    top::check(topTagger16_Tau32Split23_50eff->setProperty("ConfigFile", "SmoothedTopTaggers/SmoothedTopTagger_AntiKt10LCTopoTrimmed_Tau32Split23FixedSignalEfficiency50_MC15c_20161209.dat"), "FAILURE");
-    top::check(topTagger16_Tau32Split23_50eff->initialize(), "FAILURE");
 
-    topTagger16_Tau32Split23_80eff = make_unique<SmoothedTopTagger>("Smooth16Tau32Split23Eff80");
-    top::check(topTagger16_Tau32Split23_80eff->setProperty("ConfigFile", "SmoothedTopTaggers/SmoothedTopTagger_AntiKt10LCTopoTrimmed_Tau32Split23FixedSignalEfficiency80_MC15c_20161209.dat"), "FAILURE");
-    top::check(topTagger16_Tau32Split23_80eff->initialize(), "FAILURE");
+    if (m_runSmoothToptag)  {
+      topTagger16_Tau32Split23_50eff = make_unique<SmoothedTopTagger>("Smooth16Tau32Split23Eff50");
+      top::check(topTagger16_Tau32Split23_50eff->setProperty("ConfigFile", "SmoothedTopTaggers/SmoothedTopTagger_AntiKt10LCTopoTrimmed_Tau32Split23FixedSignalEfficiency50_MC15c_20161209.dat"), "FAILURE");
+      top::check(topTagger16_Tau32Split23_50eff->initialize(), "FAILURE");
 
-    topTagger16_MassTau32_50eff = make_unique<SmoothedTopTagger>("Smooth16MassTau32Eff50");
-    top::check(topTagger16_MassTau32_50eff->setProperty("ConfigFile", "SmoothedTopTaggers/SmoothedTopTagger_AntiKt10LCTopoTrimmed_MassTau32FixedSignalEfficiency50_MC15c_20161209.dat"), "FAILURE");
-    top::check(topTagger16_MassTau32_50eff->initialize(), "FAILURE");
+      topTagger16_Tau32Split23_80eff = make_unique<SmoothedTopTagger>("Smooth16Tau32Split23Eff80");
+      top::check(topTagger16_Tau32Split23_80eff->setProperty("ConfigFile", "SmoothedTopTaggers/SmoothedTopTagger_AntiKt10LCTopoTrimmed_Tau32Split23FixedSignalEfficiency80_MC15c_20161209.dat"), "FAILURE");
+      top::check(topTagger16_Tau32Split23_80eff->initialize(), "FAILURE");
 
-    topTagger16_MassTau32_80eff = make_unique<SmoothedTopTagger>("Smooth16MassTau32Eff80");
-    top::check(topTagger16_MassTau32_80eff->setProperty("ConfigFile", "SmoothedTopTaggers/SmoothedTopTagger_AntiKt10LCTopoTrimmed_MassTau32FixedSignalEfficiency80_MC15c_20161209.dat"), "FAILURE");
-    top::check(topTagger16_MassTau32_80eff->initialize(), "FAILURE");
+      topTagger16_MassTau32_50eff = make_unique<SmoothedTopTagger>("Smooth16MassTau32Eff50");
+      top::check(topTagger16_MassTau32_50eff->setProperty("ConfigFile", "SmoothedTopTaggers/SmoothedTopTagger_AntiKt10LCTopoTrimmed_MassTau32FixedSignalEfficiency50_MC15c_20161209.dat"), "FAILURE");
+      top::check(topTagger16_MassTau32_50eff->initialize(), "FAILURE");
 
-    topTagger16_MassTau32_50eff_nocontain = make_unique<SmoothedTopTagger>("Smooth16MassTau32Eff50_nocontain");
-    top::check(topTagger16_MassTau32_50eff_nocontain->setProperty("ConfigFile", "SmoothedTopTaggers/SmoothedNotContainedTopTagger_AntiKt10LCTopoTrimmed_MassTau32FixedSignalEfficiency50_MC15c_20170318.dat"), "FAILURE");
-    top::check(topTagger16_MassTau32_50eff_nocontain->initialize(), "FAILURE");
+      topTagger16_MassTau32_80eff = make_unique<SmoothedTopTagger>("Smooth16MassTau32Eff80");
+      top::check(topTagger16_MassTau32_80eff->setProperty("ConfigFile", "SmoothedTopTaggers/SmoothedTopTagger_AntiKt10LCTopoTrimmed_MassTau32FixedSignalEfficiency80_MC15c_20161209.dat"), "FAILURE");
+      top::check(topTagger16_MassTau32_80eff->initialize(), "FAILURE");
 
-    topTagger16_MassTau32_80eff_nocontain = make_unique<SmoothedTopTagger>("Smooth16MassTau32Eff80");
-    top::check(topTagger16_MassTau32_80eff_nocontain->setProperty("ConfigFile", "SmoothedTopTaggers/SmoothedNotContainedTopTagger_AntiKt10LCTopoTrimmed_MassTau32FixedSignalEfficiency80_MC15c_20170318.dat"), "FAILURE");
-    top::check(topTagger16_MassTau32_80eff_nocontain->initialize(), "FAILURE");
+      topTagger16_QwTau32_50eff = make_unique<SmoothedTopTagger>("Smooth16QwTau32Eff50");
+      top::check(topTagger16_QwTau32_50eff->setProperty("ConfigFile", "SmoothedTopTaggers/SmoothedTopTagger_AntiKt10LCTopoTrimmed_QwTau32FixedSignalEfficiency50_MC15c_20161209.dat"), "FAILURE");
+      top::check(topTagger16_QwTau32_50eff->initialize(), "FAILURE");
 
-    topTagger16_QwTau32_50eff = make_unique<SmoothedTopTagger>("Smooth16QwTau32Eff50");
-    top::check(topTagger16_QwTau32_50eff->setProperty("ConfigFile", "SmoothedTopTaggers/SmoothedTopTagger_AntiKt10LCTopoTrimmed_QwTau32FixedSignalEfficiency50_MC15c_20161209.dat"), "FAILURE");
-    top::check(topTagger16_QwTau32_50eff->initialize(), "FAILURE");
+      topTagger16_QwTau32_80eff = make_unique<SmoothedTopTagger>("Smooth16QwTau32Eff80");
+      top::check(topTagger16_QwTau32_80eff->setProperty("ConfigFile", "SmoothedTopTaggers/SmoothedTopTagger_AntiKt10LCTopoTrimmed_QwTau32FixedSignalEfficiency80_MC15c_20161209.dat"), "FAILURE");
+      top::check(topTagger16_QwTau32_80eff->initialize(), "FAILURE");
+    }
 
-    topTagger16_QwTau32_80eff = make_unique<SmoothedTopTagger>("Smooth16QwTau32Eff80");
-    top::check(topTagger16_QwTau32_80eff->setProperty("ConfigFile", "SmoothedTopTaggers/SmoothedTopTagger_AntiKt10LCTopoTrimmed_QwTau32FixedSignalEfficiency80_MC15c_20161209.dat"), "FAILURE");
-    top::check(topTagger16_QwTau32_80eff->initialize(), "FAILURE");
+    if (m_runSmoothToptag && m_runSmoothUncontained)  {
+      topTagger16_MassTau32_50eff_nocontain = make_unique<SmoothedTopTagger>("Smooth16MassTau32Eff50_nocontain");
+      top::check(topTagger16_MassTau32_50eff_nocontain->setProperty("ConfigFile", "SmoothedTopTaggers/SmoothedNotContainedTopTagger_AntiKt10LCTopoTrimmed_MassTau32FixedSignalEfficiency50_MC15c_20170318.dat"), "FAILURE");
+      top::check(topTagger16_MassTau32_50eff_nocontain->initialize(), "FAILURE");
 
-    wTagger16_50eff = make_unique<SmoothedWZTagger>("Smooth16WEff50");
-    top::check(wTagger16_50eff->setProperty("ConfigFile", "SmoothedWZTaggers/SmoothedContainedWTagger_AntiKt10LCTopoTrimmed_FixedSignalEfficiency50_MC15c_20161215.dat"), "FAILURE");
-    top::check(wTagger16_50eff->initialize(), "FAILURE");
+      topTagger16_MassTau32_80eff_nocontain = make_unique<SmoothedTopTagger>("Smooth16MassTau32Eff80");
+      top::check(topTagger16_MassTau32_80eff_nocontain->setProperty("ConfigFile", "SmoothedTopTaggers/SmoothedNotContainedTopTagger_AntiKt10LCTopoTrimmed_MassTau32FixedSignalEfficiency80_MC15c_20170318.dat"), "FAILURE");
+      top::check(topTagger16_MassTau32_80eff_nocontain->initialize(), "FAILURE");
+    }
 
-    wTagger16_80eff = make_unique<SmoothedWZTagger>("Smooth16WEff80");
-    top::check(wTagger16_80eff->setProperty("ConfigFile", "SmoothedWZTaggers/SmoothedContainedWTagger_AntiKt10LCTopoTrimmed_FixedSignalEfficiency80_MC15c_20161215.dat"), "FAILURE");
-    top::check(wTagger16_80eff->initialize(), "FAILURE");
+    if (m_runSmoothWZtag) {
+      wTagger16_50eff = make_unique<SmoothedWZTagger>("Smooth16WEff50");
+      top::check(wTagger16_50eff->setProperty("ConfigFile", "SmoothedWZTaggers/SmoothedContainedWTagger_AntiKt10LCTopoTrimmed_FixedSignalEfficiency50_MC15c_20161215.dat"), "FAILURE");
+      top::check(wTagger16_50eff->initialize(), "FAILURE");
 
-    zTagger16_50eff = make_unique<SmoothedWZTagger>("Smooth16ZEff50");
-    top::check(zTagger16_50eff->setProperty("ConfigFile", "SmoothedWZTaggers/SmoothedContainedZTagger_AntiKt10LCTopoTrimmed_FixedSignalEfficiency50_MC15c_20161215.dat"), "FAILURE");
-    top::check(zTagger16_50eff->initialize(), "FAILURE");
+      wTagger16_80eff = make_unique<SmoothedWZTagger>("Smooth16WEff80");
+      top::check(wTagger16_80eff->setProperty("ConfigFile", "SmoothedWZTaggers/SmoothedContainedWTagger_AntiKt10LCTopoTrimmed_FixedSignalEfficiency80_MC15c_20161215.dat"), "FAILURE");
+      top::check(wTagger16_80eff->initialize(), "FAILURE");
 
-    zTagger16_80eff = make_unique<SmoothedWZTagger>("Smooth16ZEff80");
-    top::check(zTagger16_80eff->setProperty("ConfigFile", "SmoothedWZTaggers/SmoothedContainedZTagger_AntiKt10LCTopoTrimmed_FixedSignalEfficiency80_MC15c_20161215.dat"), "FAILURE");
-    top::check(zTagger16_80eff->initialize(), "FAILURE");
+      zTagger16_50eff = make_unique<SmoothedWZTagger>("Smooth16ZEff50");
+      top::check(zTagger16_50eff->setProperty("ConfigFile", "SmoothedWZTaggers/SmoothedContainedZTagger_AntiKt10LCTopoTrimmed_FixedSignalEfficiency50_MC15c_20161215.dat"), "FAILURE");
+      top::check(zTagger16_50eff->initialize(), "FAILURE");
 
-    wTagger16_50eff_nocontain = make_unique<SmoothedWZTagger>("Smooth16WEff50_nocontain");
-    top::check(wTagger16_50eff_nocontain->setProperty("ConfigFile", "SmoothedWZTaggers/SmoothedWTagger_AntiKt10LCTopoTrimmed_FixedSignalEfficiency50_MC15c_20161219.dat"), "FAILURE");
-    top::check(wTagger16_50eff_nocontain->initialize(), "FAILURE");
+      zTagger16_80eff = make_unique<SmoothedWZTagger>("Smooth16ZEff80");
+      top::check(zTagger16_80eff->setProperty("ConfigFile", "SmoothedWZTaggers/SmoothedContainedZTagger_AntiKt10LCTopoTrimmed_FixedSignalEfficiency80_MC15c_20161215.dat"), "FAILURE");
+      top::check(zTagger16_80eff->initialize(), "FAILURE");
+    }
 
-    wTagger16_80eff_nocontain = make_unique<SmoothedWZTagger>("Smooth16WEff80_nocontain");
-    top::check(wTagger16_80eff_nocontain->setProperty("ConfigFile", "SmoothedWZTaggers/SmoothedWTagger_AntiKt10LCTopoTrimmed_FixedSignalEfficiency80_MC15c_20161219.dat"), "FAILURE");
-    top::check(wTagger16_80eff_nocontain->initialize(), "FAILURE");
+    if (m_runSmoothWZtag && m_runSmoothUncontained) {
+      wTagger16_50eff_nocontain = make_unique<SmoothedWZTagger>("Smooth16WEff50_nocontain");
+      top::check(wTagger16_50eff_nocontain->setProperty("ConfigFile", "SmoothedWZTaggers/SmoothedWTagger_AntiKt10LCTopoTrimmed_FixedSignalEfficiency50_MC15c_20161219.dat"), "FAILURE");
+      top::check(wTagger16_50eff_nocontain->initialize(), "FAILURE");
 
-    zTagger16_50eff_nocontain = make_unique<SmoothedWZTagger>("Smooth16ZEff50");
-    top::check(zTagger16_50eff_nocontain->setProperty("ConfigFile", "SmoothedWZTaggers/SmoothedZTagger_AntiKt10LCTopoTrimmed_FixedSignalEfficiency50_MC15c_20161219.dat"), "FAILURE");
-    top::check(zTagger16_50eff_nocontain->initialize(), "FAILURE");
+      wTagger16_80eff_nocontain = make_unique<SmoothedWZTagger>("Smooth16WEff80_nocontain");
+      top::check(wTagger16_80eff_nocontain->setProperty("ConfigFile", "SmoothedWZTaggers/SmoothedWTagger_AntiKt10LCTopoTrimmed_FixedSignalEfficiency80_MC15c_20161219.dat"), "FAILURE");
+      top::check(wTagger16_80eff_nocontain->initialize(), "FAILURE");
 
-    zTagger16_80eff_nocontain = make_unique<SmoothedWZTagger>("Smooth16ZEff80");
-    top::check(zTagger16_80eff_nocontain->setProperty("ConfigFile", "SmoothedWZTaggers/SmoothedZTagger_AntiKt10LCTopoTrimmed_FixedSignalEfficiency80_MC15c_20161219.dat"), "FAILURE");
-    top::check(zTagger16_80eff_nocontain->initialize(), "FAILURE");
+      zTagger16_50eff_nocontain = make_unique<SmoothedWZTagger>("Smooth16ZEff50");
+      top::check(zTagger16_50eff_nocontain->setProperty("ConfigFile", "SmoothedWZTaggers/SmoothedZTagger_AntiKt10LCTopoTrimmed_FixedSignalEfficiency50_MC15c_20161219.dat"), "FAILURE");
+      top::check(zTagger16_50eff_nocontain->initialize(), "FAILURE");
 
-    // BDT
-    m_topTagger_BDT_qqb = make_unique<JSSWTopTaggerBDT>("topTagger_BDT_qqb");
-    top::check(m_topTagger_BDT_qqb->setProperty("ConfigFile", "JSSWTopTaggerBDT/JSSBDTTagger_AntiKt10LCTopoTrimmed_TopQuarkContained_MC15c_20170511_NOTFORANALYSIS.dat"), "FAILURE");
-    top::check(m_topTagger_BDT_qqb->initialize(), "FAILURE");
+      zTagger16_80eff_nocontain = make_unique<SmoothedWZTagger>("Smooth16ZEff80");
+      top::check(zTagger16_80eff_nocontain->setProperty("ConfigFile", "SmoothedWZTaggers/SmoothedZTagger_AntiKt10LCTopoTrimmed_FixedSignalEfficiency80_MC15c_20161219.dat"), "FAILURE");
+      top::check(zTagger16_80eff_nocontain->initialize(), "FAILURE");
+    }
 
-    m_topTagger_BDT_inclusive = make_unique<JSSWTopTaggerBDT>("topTagger_BDT_inclusive");
-    top::check(m_topTagger_BDT_inclusive->setProperty("ConfigFile", "JSSWTopTaggerBDT/JSSBDTTagger_AntiKt10LCTopoTrimmed_TopQuarkInclusive_MC15c_20170511_NOTFORANALYSIS.dat"), "FAILURE");
-    top::check(m_topTagger_BDT_inclusive->initialize(), "FAILURE");
-
-    m_wTagger_BDT = make_unique<JSSWTopTaggerBDT>("m_wTagger_BDT");
-    top::check(m_wTagger_BDT->setProperty("ConfigFile", "JSSWTopTaggerBDT/JSSBDTTagger_AntiKt10LCTopoTrimmed_WBoson_MC15c_20170511_NOTFORANALYSIS.dat"), "FAILURE");
-    top::check(m_wTagger_BDT->initialize(), "FAILURE");
-
-    // DNN
-    m_topTagger_DNN = make_unique<JSSWTopTaggerDNN>("m_topTagger_DNN");
-    top::check(m_topTagger_DNN->setProperty("ConfigFile", "JSSWTopTaggerDNN/JSSDNNTagger_AntiKt10LCTopoTrimmed_TopQuark_MC15c_20170511_NOTFORANALYSIS.dat"), "FAILURE");
-    top::check(m_topTagger_DNN->initialize(), "FAILURE");
-
-    m_wTagger_DNN = make_unique<JSSWTopTaggerDNN>("m_wTagger_DNN");
-    top::check(m_wTagger_DNN->setProperty("ConfigFile", "JSSWTopTaggerDNN/JSSDNNTagger_AntiKt10LCTopoTrimmed_WBoson_MC15c_20170511_NOTFORANALYSIS.dat"), "FAILURE");
-    top::check(m_wTagger_DNN->initialize(), "FAILURE");
 } // end of intialization
 
 void
@@ -534,50 +559,81 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
     m_rljet_Qw        . assign(m_num_fatjets_keep, -1000. );
     m_rljet_Split23   . assign(m_num_fatjets_keep, -1000. );
 
-    m_rljet_smooth16Top_Tau32Split23Tag50eff        . assign(m_num_fatjets_keep, -1000.);
-    m_rljet_smooth16Top_Tau32Split23Tag80eff        . assign(m_num_fatjets_keep, -1000.);
-    m_rljet_smooth16Top_MassTau32Tag50eff           . assign(m_num_fatjets_keep, -1000.);
-    m_rljet_smooth16Top_MassTau32Tag80eff           . assign(m_num_fatjets_keep, -1000.);
-    m_rljet_smooth16Top_MassTau32Tag50eff_nocontain . assign(m_num_fatjets_keep, -1000.);
-    m_rljet_smooth16Top_MassTau32Tag80eff_nocontain . assign(m_num_fatjets_keep, -1000.);
-    m_rljet_smooth16Top_QwTau32Tag50eff             . assign(m_num_fatjets_keep, -1000.);
-    m_rljet_smooth16Top_QwTau32Tag80eff             . assign(m_num_fatjets_keep, -1000.);
-    m_rljet_smooth16W_Tag50eff                      . assign(m_num_fatjets_keep, -1000.);
-    m_rljet_smooth16W_Tag80eff                      . assign(m_num_fatjets_keep, -1000.);
-    m_rljet_smooth16Z_Tag50eff                      . assign(m_num_fatjets_keep, -1000.);
-    m_rljet_smooth16Z_Tag80eff                      . assign(m_num_fatjets_keep, -1000.);
-    m_rljet_smooth16W_Tag50eff_nocontain            . assign(m_num_fatjets_keep, -1000.);
-    m_rljet_smooth16W_Tag80eff_nocontain            . assign(m_num_fatjets_keep, -1000.);
-    m_rljet_smooth16Z_Tag50eff_nocontain            . assign(m_num_fatjets_keep, -1000.);
-    m_rljet_smooth16Z_Tag80eff_nocontain            . assign(m_num_fatjets_keep, -1000.);
+    if (m_runSmoothToptag) {
+      m_rljet_smooth16Top_Tau32Split23Tag50eff . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_smooth16Top_Tau32Split23Tag80eff . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_smooth16Top_MassTau32Tag50eff    . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_smooth16Top_MassTau32Tag80eff    . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_smooth16Top_QwTau32Tag50eff      . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_smooth16Top_QwTau32Tag80eff      . assign(m_num_fatjets_keep, -1000. );
+    }
+
+    if (m_runSmoothToptag && m_runSmoothUncontained) {
+      m_rljet_smooth16Top_MassTau32Tag50eff_nocontain . assign(m_num_fatjets_keep, -1000.);
+      m_rljet_smooth16Top_MassTau32Tag80eff_nocontain . assign(m_num_fatjets_keep, -1000.);
+    }
+
+    if (m_runSmoothWZtag) {
+      m_rljet_smooth16W_Tag50eff . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_smooth16W_Tag80eff . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_smooth16Z_Tag50eff . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_smooth16Z_Tag80eff . assign(m_num_fatjets_keep, -1000. );
+    }
+
+    if (m_runSmoothWZtag && m_runSmoothUncontained) {
+      m_rljet_smooth16W_Tag50eff_nocontain . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_smooth16W_Tag80eff_nocontain . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_smooth16Z_Tag50eff_nocontain . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_smooth16Z_Tag80eff_nocontain . assign(m_num_fatjets_keep, -1000. );
+    }
 
     if (m_savePhoton) {
-      m_photon0_ptcone20 = -1000.;
-      m_photon0_ptcone40 = -1000.;
+      m_photon0_ptcone20     = -1000.;
+      m_photon0_ptcone40     = -1000.;
       m_photon0_topoetcone20 = -1000.;
       m_photon0_topoetcone40 = -1000.;
-      m_photon0_pt = -1000.;
-      m_photon0_eta = -1000.;
-      m_photon0_phi = -1000.;
+      m_photon0_pt           = -1000.;
+      m_photon0_eta          = -1000.;
+      m_photon0_phi          = -1000.;
     }
 
     if (on_nominal_branch) {
         m_NPV = -1000;
-        m_rljet_pdgid . assign(m_num_fatjets_keep, -1000 );
 
-        m_rljet_count  = 0;
-        m_rljet_mjj    = -1000.;
-        m_rljet_ptasym = -1000.;
-        m_rljet_dy     = -1000.;
-        m_rljet_dR     = -1000.;
-        m_rljet_dphi   = -1000.;
-        m_rljet_deta   = -1000.;
+        if (m_config->isMC()) {
+          m_rljet_pdgid . assign(m_num_fatjets_keep, 0);
+          m_rljet_matched_parton_pt  . assign(m_num_fatjets_keep, -1000.);
+          m_rljet_matched_parton_eta . assign(m_num_fatjets_keep, -1000.);
+          m_rljet_matched_parton_phi . assign(m_num_fatjets_keep, -1000.);
+          m_rljet_matched_parton_m   . assign(m_num_fatjets_keep, -1000.);
+
+          m_tljet_pt  . assign(m_num_fatjets_keep, -1000.);
+          m_tljet_eta . assign(m_num_fatjets_keep, -1000.);
+          m_tljet_phi . assign(m_num_fatjets_keep, -1000.);
+          m_tljet_m   . assign(m_num_fatjets_keep, -1000.);
+
+          m_tljet_mjj  = -1000.;
+          m_parton_mjj = -1000.;
+
+          m_pid1 = 0;
+          m_pid2 = 0;
+        }
+
+        m_rljet_count     = 0;
+        m_rljet_mjj       = -1000.;
+        m_rljet_ptasym    = -1000.;
+        m_rljet_mass_asym = -1000.;
+        m_rljet_dy        = -1000.;
+        m_rljet_dR        = -1000.;
+        m_rljet_dphi      = -1000.;
+        m_rljet_deta      = -1000.;
 
         m_rljet_pt_calo . assign(m_num_fatjets_keep, -1000. );
         m_rljet_m_calo  . assign(m_num_fatjets_keep, -1000. );
-        m_rljet_m_ta  . assign(m_num_fatjets_keep, -1000. );
-        m_rljet_pt_ta . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_m_ta    . assign(m_num_fatjets_keep, -1000. );
+        m_rljet_pt_ta   . assign(m_num_fatjets_keep, -1000. );
 
+        m_rljet_C2          . assign(m_num_fatjets_keep, -1000. );
         m_rljet_Tau1_wta    . assign(m_num_fatjets_keep, -1000. );
         m_rljet_Tau2_wta    . assign(m_num_fatjets_keep, -1000. );
         m_rljet_Tau3_wta    . assign(m_num_fatjets_keep, -1000. );
@@ -602,19 +658,6 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
         m_rljet_NTrimSubjets      . assign(m_num_fatjets_keep, -1000 );
         m_rljet_ungroomed_ntrk500 . assign(m_num_fatjets_keep, -1000 );
         m_rljet_n_constituents    . assign(m_num_fatjets_keep, -1000 );
-
-        m_rljet_smooth15Top_MassTau32Tag50eff    . assign(m_num_fatjets_keep, -1000);
-        m_rljet_smooth15Top_MassTau32Tag80eff    . assign(m_num_fatjets_keep, -1000);
-        m_rljet_smooth15W_Tag50eff               . assign(m_num_fatjets_keep, -1000);
-        m_rljet_smooth15W_Tag25eff               . assign(m_num_fatjets_keep, -1000);
-        m_rljet_smooth15Z_Tag50eff               . assign(m_num_fatjets_keep, -1000);
-        m_rljet_smooth15Z_Tag25eff               . assign(m_num_fatjets_keep, -1000);
-
-        m_rljet_BDT_score_top_qqb       . assign(m_num_fatjets_keep, -1000. );
-        m_rljet_BDT_score_top_inclusive . assign(m_num_fatjets_keep, -1000. );
-        m_rljet_BDT_score_w             . assign(m_num_fatjets_keep, -1000. );
-        m_rljet_DNN_score_top           . assign(m_num_fatjets_keep, -1000. );
-        m_rljet_DNN_score_w             . assign(m_num_fatjets_keep, -1000. );
 
         if (m_runSD) {
           m_rljet_SDw_calib . assign(m_num_fatjets_keep, -1000.);
@@ -696,13 +739,22 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
 
     std::vector<const xAOD::Jet*> rljets;
 
-    auto pt_sort_func = [&](const xAOD::IParticle* p1, const xAOD::IParticle* p2){
-      return p1->pt() > p2->pt();
-    };
 
     for (auto jet : event.m_largeJets) rljets.push_back(jet);
     if (rljets.empty()) return;
-    std::sort(rljets.begin(), rljets.end(), pt_sort_func);
+
+    auto pt_sort_func = [](const xAOD::IParticle* p1, const xAOD::IParticle* p2){
+      return p1->pt() > p2->pt();
+    };
+    auto mass_sort_func = [](const xAOD::IParticle* p1, const xAOD::IParticle* p2){
+      return p1->m() > p2->m();
+    };
+
+    if (m_massOrderJets) {
+      std::sort(rljets.begin(), rljets.end(), mass_sort_func);
+    } else {
+      std::sort(rljets.begin(), rljets.end(), pt_sort_func);
+    }
 
     // so that we never waste time looping over or truth-matching un-kept jets
     if (rljets.size() > m_num_fatjets_keep) rljets.resize(m_num_fatjets_keep);
@@ -762,41 +814,49 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
         /* SMOOTH (2016) TAGGER VARIABLES */
         /**********************************/
 
-        SmoothedTopTagger::Result res = topTagger16_Tau32Split23_50eff->result(*rljets[i], false);
-        m_rljet_smooth16Top_Tau32Split23Tag50eff[i] = combine_bits( res.tau32Passed(), res.split23Passed() );
+        if (m_runSmoothToptag) {
+          SmoothedTopTagger::Result res = topTagger16_Tau32Split23_50eff->result(*rljets[i], false);
+          m_rljet_smooth16Top_Tau32Split23Tag50eff[i] = combine_bits( res.tau32Passed(), res.split23Passed() );
 
-        res = topTagger16_Tau32Split23_80eff->result(*rljets[i], false);
-        m_rljet_smooth16Top_Tau32Split23Tag80eff[i] = combine_bits( res.tau32Passed(), res.split23Passed() );
+          res = topTagger16_Tau32Split23_80eff->result(*rljets[i], false);
+          m_rljet_smooth16Top_Tau32Split23Tag80eff[i] = combine_bits( res.tau32Passed(), res.split23Passed() );
 
-        res = topTagger16_MassTau32_50eff->result(*rljets[i], false);
-        m_rljet_smooth16Top_MassTau32Tag50eff[i]    = combine_bits( res.massPassed(), res.tau32Passed() );
+          res = topTagger16_MassTau32_50eff->result(*rljets[i], false);
+          m_rljet_smooth16Top_MassTau32Tag50eff[i]    = combine_bits( res.massPassed(), res.tau32Passed() );
 
-        res = topTagger16_MassTau32_80eff->result(*rljets[i], false);
-        m_rljet_smooth16Top_MassTau32Tag80eff[i]    = combine_bits( res.massPassed(), res.tau32Passed() );
+          res = topTagger16_MassTau32_80eff->result(*rljets[i], false);
+          m_rljet_smooth16Top_MassTau32Tag80eff[i]    = combine_bits( res.massPassed(), res.tau32Passed() );
 
-        res = topTagger16_MassTau32_50eff_nocontain->result(*rljets[i], false);
-        m_rljet_smooth16Top_MassTau32Tag50eff_nocontain[i]    = combine_bits( res.massPassed(), res.tau32Passed() );
+          res = topTagger16_QwTau32_50eff->result(*rljets[i], false);
+          m_rljet_smooth16Top_QwTau32Tag50eff[i]      = combine_bits( res.qwPassed(), res.tau32Passed() );
 
-        res = topTagger16_MassTau32_80eff_nocontain->result(*rljets[i], false);
-        m_rljet_smooth16Top_MassTau32Tag80eff_nocontain[i]    = combine_bits( res.massPassed(), res.tau32Passed() );
+          res = topTagger16_QwTau32_80eff->result(*rljets[i], false);
+          m_rljet_smooth16Top_QwTau32Tag80eff[i]      = combine_bits( res.qwPassed(), res.tau32Passed() );
+        }
 
-        res = topTagger16_QwTau32_50eff->result(*rljets[i], false);
-        m_rljet_smooth16Top_QwTau32Tag50eff[i]      = combine_bits( res.qwPassed(), res.tau32Passed() );
+        if (m_runSmoothToptag && m_runSmoothUncontained) {
+          SmoothedTopTagger::Result res = topTagger16_MassTau32_50eff_nocontain->result(*rljets[i], false);
+          m_rljet_smooth16Top_MassTau32Tag50eff_nocontain[i]    = combine_bits( res.massPassed(), res.tau32Passed() );
 
-        res = topTagger16_QwTau32_80eff->result(*rljets[i], false);
-        m_rljet_smooth16Top_QwTau32Tag80eff[i]      = combine_bits( res.qwPassed(), res.tau32Passed() );
+          res = topTagger16_MassTau32_80eff_nocontain->result(*rljets[i], false);
+          m_rljet_smooth16Top_MassTau32Tag80eff_nocontain[i]    = combine_bits( res.massPassed(), res.tau32Passed() );
+        }
 
-        m_rljet_smooth16W_Tag50eff[i] = wTagger16_50eff->result(*rljets[i]);
-        m_rljet_smooth16W_Tag80eff[i] = wTagger16_80eff->result(*rljets[i]);
+        if (m_runSmoothWZtag) {
+          m_rljet_smooth16W_Tag50eff[i] = wTagger16_50eff->result(*rljets[i]);
+          m_rljet_smooth16W_Tag80eff[i] = wTagger16_80eff->result(*rljets[i]);
 
-        m_rljet_smooth16Z_Tag50eff[i] = zTagger16_50eff->result(*rljets[i]);
-        m_rljet_smooth16Z_Tag80eff[i] = zTagger16_80eff->result(*rljets[i]);
+          m_rljet_smooth16Z_Tag50eff[i] = zTagger16_50eff->result(*rljets[i]);
+          m_rljet_smooth16Z_Tag80eff[i] = zTagger16_80eff->result(*rljets[i]);
+        }
 
-        m_rljet_smooth16W_Tag50eff_nocontain[i] = wTagger16_50eff_nocontain->result(*rljets[i]);
-        m_rljet_smooth16W_Tag80eff_nocontain[i] = wTagger16_80eff_nocontain->result(*rljets[i]);
+        if (m_runSmoothWZtag && m_runSmoothUncontained) {
+          m_rljet_smooth16W_Tag50eff_nocontain[i] = wTagger16_50eff_nocontain->result(*rljets[i]);
+          m_rljet_smooth16W_Tag80eff_nocontain[i] = wTagger16_80eff_nocontain->result(*rljets[i]);
 
-        m_rljet_smooth16Z_Tag50eff_nocontain[i] = zTagger16_50eff_nocontain->result(*rljets[i]);
-        m_rljet_smooth16Z_Tag80eff_nocontain[i] = zTagger16_80eff_nocontain->result(*rljets[i]);
+          m_rljet_smooth16Z_Tag50eff_nocontain[i] = zTagger16_50eff_nocontain->result(*rljets[i]);
+          m_rljet_smooth16Z_Tag80eff_nocontain[i] = zTagger16_80eff_nocontain->result(*rljets[i]);
+        }
 
         if (m_savePhoton) {
           const xAOD::Photon* lead_photon = *std::max_element(event.m_photons.begin(), event.m_photons.end(), pt_sort_func);
@@ -825,10 +885,16 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
             const xAOD::JetFourMom_t &calibP4_calo =
                 rljets[i]->getAttribute<xAOD::JetFourMom_t>("JetJMSScaleMomentumCalo");
 
-            m_rljet_pt_ta[i]   = calibP4_TA.Pt();
             m_rljet_m_ta[i]    = calibP4_TA.M();
+            m_rljet_pt_ta[i]   = calibP4_TA.Pt();
             m_rljet_m_calo[i]  = calibP4_calo.M();
             m_rljet_pt_calo[i] = calibP4_calo.Pt();
+
+            if(rljets[i]->isAvailable<float>("C2")) {
+              m_rljet_C2[i] = rljets[i]->auxdata<float>("C2");
+            } else {
+              m_rljet_C2[i] = (ecf2 != 0 ? ecf3 * ecf1 / TMath::Power(ecf2, 2) : -1);
+            }
 
             // substructure variables
             m_rljet_Tau1_wta[i]    = tau1;
@@ -862,64 +928,84 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
 
             m_rljet_n_constituents[i] = rljets[i]->numConstituents();
 
-            // 2015 smoothed taggers
-            m_rljet_smooth15Top_MassTau32Tag50eff[i] = combine_bits( topTagger15_Mass_50eff->isTagged(*rljets[i]), topTagger15_Tau32_50eff->isTagged(*rljets[i]) );
-            m_rljet_smooth15Top_MassTau32Tag80eff[i] = combine_bits( topTagger15_Mass_80eff->isTagged(*rljets[i]), topTagger15_Tau32_80eff->isTagged(*rljets[i]) );
-
-            // W-tag info
-            // 0: failed both mass and substructure cut
-            // 1: passed substructure cut *only*
-            // 2: passed mass window criteria *only*
-            // 3: passed mass window + substructure criteria
-            m_rljet_smooth15W_Tag50eff[i] = wTagger15_50eff->result(*rljets[i]);
-            m_rljet_smooth15W_Tag25eff[i] = wTagger15_25eff->result(*rljets[i]);
-
-            // Z-tag info
-            // 0: failed both mass and substructure cut
-            // 1: passed substructure cut *only*
-            // 2: passed mass window criteria *only*
-            // 3: passed mass window + substructure criteria
-            m_rljet_smooth15Z_Tag50eff[i] = zTagger15_50eff->result(*rljets[i]);
-            m_rljet_smooth15Z_Tag25eff[i] = zTagger15_25eff->result(*rljets[i]);
-
-            if (rljets[i]->numConstituents() > 2) {
-              if (rljets[i]->pt() / 1000. > 200) {
-                auto dnn_w = m_wTagger_DNN->tag(*rljets[i], false);
-                auto bdt_w = m_wTagger_BDT->tag(*rljets[i], false);
-                m_rljet_BDT_score_w[i]             = m_wTagger_BDT->getScore(*rljets[i]);
-                m_rljet_DNN_score_w[i]             = m_wTagger_DNN->getScore(*rljets[i]);
-              }
-              if (rljets[i]->pt() / 1000. > 350) {
-                auto bdt_top_qqb = m_topTagger_BDT_qqb->tag(*rljets[i], false);
-                auto bdt_top_inc = m_topTagger_BDT_inclusive->tag(*rljets[i], false);
-                auto dnn_top = m_topTagger_DNN->tag(*rljets[i], false);
-                m_rljet_BDT_score_top_qqb[i]       = m_topTagger_BDT_qqb-> getScore(*rljets[i]);
-                m_rljet_BDT_score_top_inclusive[i] = m_topTagger_BDT_inclusive->getScore(*rljets[i]);
-                m_rljet_DNN_score_top[i]           = m_topTagger_DNN->getScore(*rljets[i]);
-              }
-            }
-
             /*****************************/
             /* PDGID FROM TRUTH MATCHING */
             /*****************************/
 
-            if(m_config->isMC())
+            if (m_config->isMC())
             { // save corresponding truth jet variables
               const xAOD::JetContainer* truth_large_jets = nullptr;
-              const xAOD::TruthParticleContainer* truth_particles = nullptr;
               top::check( evtStore()->retrieve(truth_large_jets, m_config->sgKeyTruthLargeRJets()), "FAILURE");
-              top::check( evtStore()->retrieve(truth_particles, m_config->sgKeyMCParticle()), "FAILURE" );
 
-                const xAOD::Jet* matched_tljet = get_nearest_jet_in_collection(rljets[i], truth_large_jets);
+              const xAOD::Jet* matched_tljet = get_nearest_jet_in_collection(rljets[i], truth_large_jets);
 
-                if (matched_tljet != nullptr) {
-                    const float dR = top::deltaR(*rljets[i], *matched_tljet);
-                    if (dR < 0.4) {
-                      QuarkGluonLabelJet(truth_particles, matched_tljet, 0.4);
-                      m_rljet_pdgid[i] = matched_tljet->auxdecor<int>("maxEMatchedPartonPdgId");
-                    }
+              if (matched_tljet != nullptr) {
+                const float dR = top::deltaR(*rljets[i], *matched_tljet);
+                if (dR < 0.75) {
+                  m_tljet_pt[i] = matched_tljet->pt();
+                  m_tljet_eta[i] = matched_tljet->eta();
+                  m_tljet_phi[i] = matched_tljet->phi();
+                  m_tljet_m[i] = matched_tljet->m();
+                  const xAOD::TruthParticle* matched_parton = match_jet_to_parton(event.m_truth, matched_tljet, 0.75);
+                  if (matched_parton) {
+                    m_rljet_pdgid[i]              = matched_parton->pdgId();
+                    m_rljet_matched_parton_pt[i]  = matched_parton->pt();
+                    m_rljet_matched_parton_eta[i] = matched_parton->eta();
+                    m_rljet_matched_parton_phi[i] = matched_parton->phi();
+                    m_rljet_matched_parton_m[i]   = matched_parton->m();
+                  }
+                }
+              }
+
+              /*
+              for (const xAOD::TruthParticle* p : *(event.m_truth)) {
+                Int_t pdgid = p->pdgId();
+
+                if (p->m()/1000. > 10) {
+                  std::cout << "truth mass: " << p->m()/1000. << " GeV" << std::endl;
+                  std::cout << "truth pdgid: " << pdgid << std::endl;
+                  std::cout << "has prod vtx: " << p->hasProdVtx() << std::endl;
+                  std::cout << "has decay vtx: " << p->hasDecayVtx() << std::endl;
+                  std::cout << "nParents: " << p->nParents() << std::endl;
+                  std::cout << "nChildren: " << p->nChildren() << std::endl;
                 }
 
+                if (p->pdgId() > 1e6 && p->hasProdVtx() && p->hasDecayVtx()) {
+
+                  const xAOD::TruthVertex* prod_vtx = p->prodVtx();
+                  const xAOD::TruthVertex* decay_vtx = p->decayVtx();
+
+                  if (prod_vtx && decay_vtx && prod_vtx->nIncomingParticles() == 2 && decay_vtx->nOutgoingParticles() == 2)
+                  { // gg or qq -> X -> WW/WZ/ZZ resonance
+
+                    const xAOD::TruthParticle* ip1 = prod_vtx->incomingParticle(0);
+                    const xAOD::TruthParticle* ip2 = prod_vtx->incomingParticle(1);
+                    const xAOD::TruthParticle* op1 = decay_vtx->outgoingParticle(0);
+                    const xAOD::TruthParticle* op2 = decay_vtx->outgoingParticle(1);
+
+                    const Int_t i1_pdg = ip1->pdgId();
+                    const Int_t i2_pdg = ip2->pdgId();
+                    const Int_t o1_pdg = op1->pdgId();
+                    const Int_t o2_pdg = op2->pdgId();
+
+                    const bool quark_produced = fabs(i1_pdg) <= 6 && fabs(i2_pdg) <=6;
+                    const bool gluon_produced = i1_pdg == 21 && i2_pdg == 21;
+
+                    const bool o1_isWZ = fabs(o1_pdg) == 24 || fabs(o1_pdg) == 23;
+                    const bool o2_isWZ = fabs(o2_pdg) == 24 || fabs(o2_pdg) == 23;
+
+                    if ((quark_produced || gluon_produced) && o1_isWZ && o2_isWZ) {
+                      std::cout << "truth resonance mass: " << p->m()/1000. << " GeV" << std::endl;
+                      std::cout << "truth resonance pdgid: " << pdgid << std::endl;
+                      std::cout << "initial parton 1 pdgid: " << i1_pdg << std::endl;
+                      std::cout << "initial parton 2 pdgid: " << i2_pdg << std::endl;
+                      std::cout << "decay product 1 pdgid: " << o1_pdg << std::endl;
+                      std::cout << "decay product 2 pdgid: " << o2_pdg << std::endl;
+                    }
+                  }
+                }
+              } // end of saving truth information for BSM resonance
+              */
             } // end of saving truth jet variables
 
         } // end of saving nominal branch large-R jet variables
@@ -930,26 +1016,50 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
     if (on_nominal_branch) { // other event-level and misc. variables
         m_NPV = event.m_primaryVertices->size();
 
-
         // compute lead/sublead jet quantities
         if (rljets.size() >= 2) {
-            TLorentzVector v_jet0, v_jet1;
-            v_jet0.SetPtEtaPhiM(rljets[0]->pt(), rljets[0]->eta(), rljets[0]->phi(), rljets[0]->m());
-            v_jet1.SetPtEtaPhiM(rljets[1]->pt(), rljets[1]->eta(), rljets[1]->phi(), rljets[1]->m());
-            m_rljet_mjj = (v_jet0 + v_jet1).M();
+          TLorentzVector v_jet0, v_jet1;
+          v_jet0.SetPtEtaPhiM(rljets[0]->pt(), rljets[0]->eta(), rljets[0]->phi(), rljets[0]->m());
+          v_jet1.SetPtEtaPhiM(rljets[1]->pt(), rljets[1]->eta(), rljets[1]->phi(), rljets[1]->m());
+          m_rljet_mjj = (v_jet0 + v_jet1).M();
 
-            m_rljet_ptasym = ( rljets[0]->pt() - rljets[1]->pt() ) / ( rljets[0]->pt() + rljets[1]->pt() );
-            m_rljet_dy     = rljets[0]->rapidity() - rljets[1]->rapidity();
-            m_rljet_dR     = top::deltaR(*rljets[0], *rljets[1]);
-            m_rljet_dphi   = rljets[0]->phi() - rljets[1]->phi();
-            m_rljet_deta   = rljets[0]->eta() - rljets[1]->eta();
+          m_rljet_ptasym    = ( fabs(rljets[0]->pt() - rljets[1]->pt()) ) / ( rljets[0]->pt() + rljets[1]->pt() );
+          m_rljet_mass_asym = ( fabs(rljets[0]->m() - rljets[1]->m()) ) / ( rljets[0]->m() + rljets[1]->m() );
+          m_rljet_dy        = fabs(rljets[0]->rapidity() - rljets[1]->rapidity());
+          m_rljet_dR        = top::deltaR(*rljets[0], *rljets[1]);
+          m_rljet_dphi      = top::deltaPhi(*rljets[0], *rljets[1]);
+          m_rljet_deta      = fabs(rljets[0]->eta() - rljets[1]->eta());
+
+          if (m_config->isMC()) {
+            if (m_tljet_pt[0] > 0 && m_tljet_pt[1] > 0) {
+              v_jet0.SetPtEtaPhiM(m_tljet_pt[0], m_tljet_eta[0], m_tljet_phi[0], m_tljet_m[0]);
+              v_jet1.SetPtEtaPhiM(m_tljet_pt[1], m_tljet_eta[1], m_tljet_phi[1], m_tljet_m[1]);
+              m_tljet_mjj = (v_jet0 + v_jet1).M();
+            }
+
+            if (m_rljet_matched_parton_pt[0] > 0 && m_rljet_matched_parton_pt[1] > 0) {
+              v_jet0.SetPtEtaPhiM(m_rljet_matched_parton_pt[0], m_rljet_matched_parton_eta[0], m_rljet_matched_parton_phi[0], m_rljet_matched_parton_m[0]);
+              v_jet1.SetPtEtaPhiM(m_rljet_matched_parton_pt[1], m_rljet_matched_parton_eta[1], m_rljet_matched_parton_phi[1], m_rljet_matched_parton_m[1]);
+              m_parton_mjj = (v_jet0 + v_jet1).M();
+            }
+
+            if (event.m_truthEvent && event.m_truthEvent->size() > 0) {
+              auto truth_evt = event.m_truthEvent->at(0);
+
+              if (truth_evt) {
+                m_pid1 = truth_evt->pdfInfo().pdgId1;
+                m_pid2 = truth_evt->pdfInfo().pdgId2;
+              }
+            }
+
+          }
         }
 
-        if (m_runHTT && !event.m_isLoose)
-            this->runHTTAndFillTree();
+        // if (m_runHTT && !event.m_isLoose)
+        //     this->runHTTAndFillTree();
 
-        if (m_runSD)
-            this->runSDandFillTree(rljets, m_config->isMC());
+        // if (m_runSD)
+        //     this->runSDandFillTree(rljets, m_config->isMC());
 
     }
 
@@ -1062,6 +1172,11 @@ void DataMCbackgroundEventSaver::runSDandFillTree(std::vector<const xAOD::Jet*>&
     // also get groomed constituents
     const xAOD::JetConstituentVector groomed_clusters = rljets[i]->getConstituents();
     std::vector<fastjet::PseudoJet> groomed_constituents;
+
+    if (groomed_clusters.empty() || AssociatedClusters_forSD.empty()) {
+      return;
+    }
+
     groomed_constituents = JetconVecToPseudojet(groomed_clusters);
     constituents = JetconVecToPseudojet(AssociatedClusters_forSD);
 

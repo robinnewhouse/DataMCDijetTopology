@@ -81,6 +81,35 @@ void DataMCbackgroundSelector::Begin(TTree * /*tree*/)
     TString option = GetOption();
 
     this->output_log.open(output_filepath + ".log", std::ios::app);
+
+    std::string BDTpathPrefix = "$ROOTCOREBIN/data/BDTWTopTagger/";
+    std::string DNNpathPrefix = "$ROOTCOREBIN/data/NNTaggingTools/";
+
+    BDT_topTag = make_unique<BDTWTopTagger>(
+            (BDTpathPrefix + std::string("TMVAClassification_BDTG.TOP3q_NvarM_pT350to2000GeV.01062017.weights.xml")).c_str(),
+            tag::t,
+            BDTpathPrefix + std::string("FitFunctions_BDT_top80.root"),
+            "BDT_TOP3qtag_smooth_cut_BDT_TOP3qtag+BDT_TOP3qtag_80wp");
+
+    // BDT W taggers
+    BDT_WTag = make_unique<BDTWTopTagger>(
+            (BDTpathPrefix + std::string("TMVAClassification_BDTG.W2q_NvarM_pT200to2000GeV.01062017.weights.xml")).c_str(),
+            tag::W,
+            BDTpathPrefix + std::string("FitFunctions_BDT_W50.root"),
+            "BDT_W2qtag_smooth_cut_BDT_W2qtag+BDT_W2qtag_50wp");
+
+    // DNN top tagger
+    DNN_topTag = make_unique<DNNWTopTagger>(
+            DNNpathPrefix + std::string("6JuneTopTaggingContained.json"),
+            "top_dnn_BN_6june",
+            DNNpathPrefix + std::string("FitFunctions_DNN_top80.root"),
+            "top_contained_DNN_june6_smooth_cut_top_contained_DNN_june6+top_contained_DNN_june6_80wp");
+    // DNN W tagger
+    DNN_WTag = make_unique<DNNWTopTagger>(DNNpathPrefix + std::string("6JuneWTaggingContained.json"),
+            "W_dnn_BN_june6",
+            DNNpathPrefix + std::string("FitFunctions_DNN_W50.root"),
+            "W_contained_DNN_june6_smooth_cut_W_contained_DNN_june6+W_contained_DNN_june6_50wp");
+
 }
 
 void DataMCbackgroundSelector::SlaveBegin(TTree * /*tree*/)
@@ -116,25 +145,28 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     //
     // The return value is currently not used.
 
-    if (this->operating_on_mc) {
-        b_weight_mc->GetEntry(entry);
-        b_weight_pileup->GetEntry(entry);
-        b_weight_leptonSF->GetEntry(entry);
-        // b_weight_photonSF->GetEntry(entry);
-        // b_weight_photonSF_effIso->GetEntry(entry);
-        b_weight_jvt->GetEntry(entry);
-        b_randomRunNumber->GetEntry(entry);
-    } else {
-        b_HLT_trigger->GetEntry(entry);
+  if (this->operating_on_mc) {
+    b_weight_mc->GetEntry(entry);
+    b_weight_pileup->GetEntry(entry);
+
+    if (keptPhotons) {
+      b_weight_photonSF->GetEntry(entry);
+      if (sub_dir_str.find("photon") != std::string::npos) {
+        b_weight_photonSF_ID_UP->GetEntry(entry);
+        b_weight_photonSF_ID_DOWN->GetEntry(entry);
+        b_weight_photonSF_effTrkIso_UP->GetEntry(entry);
+        b_weight_photonSF_effTrkIso_DOWN->GetEntry(entry);
+      }
     }
+  } else {
+    b_HLT_trigger->GetEntry(entry);
+  }
 
     b_eventNumber->GetEntry(entry);
     b_runNumber->GetEntry(entry);
     b_mcChannelNumber->GetEntry(entry);
     b_mu->GetEntry(entry);
     b_backgroundFlags->GetEntry(entry);
-    //b_met_met->GetEntry(entry);
-    //b_met_phi->GetEntry(entry);
     b_rljet_eta->GetEntry(entry);
     b_rljet_phi->GetEntry(entry);
     b_rljet_m_comb->GetEntry(entry);
@@ -154,24 +186,37 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     b_rljet_smooth16ZTag_50eff->GetEntry(entry);
     b_rljet_smooth16ZTag_80eff->GetEntry(entry);
 
+    // b_rljet_smooth16Top_MassTau32Tag50eff_nocontain->GetEntry(entry);
+    // b_rljet_smooth16Top_MassTau32Tag80eff_nocontain->GetEntry(entry);
+    // b_rljet_smooth16WTag_50eff_nocontain->GetEntry(entry);
+    // b_rljet_smooth16WTag_80eff_nocontain->GetEntry(entry);
+    // b_rljet_smooth16ZTag_50eff_nocontain->GetEntry(entry);
+    // b_rljet_smooth16ZTag_80eff_nocontain->GetEntry(entry);
+
     if (this->on_nominal_branch) {
         b_NPV->GetEntry(entry);
 
         // 2017 MVA
-        b_rljet_BDT_score_top_qqb->GetEntry(entry);
-        b_rljet_BDT_score_top_inclusive->GetEntry(entry);
-        b_rljet_BDT_score_w->GetEntry(entry);
-        b_rljet_DNN_score_top->GetEntry(entry);
-        b_rljet_DNN_score_w->GetEntry(entry);
+        // b_rljet_BDT_score_top_qqb->GetEntry(entry);
+        // b_rljet_BDT_score_top_inclusive->GetEntry(entry);
+        // b_rljet_BDT_score_w->GetEntry(entry);
+        // b_rljet_DNN_score_top->GetEntry(entry);
+        // b_rljet_DNN_score_w->GetEntry(entry);
 
-        // b_photon_ptcone20->GetEntry(entry);
-        // b_photon_ptcone40->GetEntry(entry);
-        // b_photon_topoetcone20->GetEntry(entry);
-        // b_photon_topoetcone40->GetEntry(entry);
-        // b_ph_pt->GetEntry(entry);
-        // b_ph_phi->GetEntry(entry);
-        // b_ph_eta->GetEntry(entry);
-        // b_ph_e->GetEntry(entry);
+        if (keptPhotons) {
+          //   b_photon_ptcone20->GetEntry(entry);
+          //   b_photon_ptcone40->GetEntry(entry);
+          //   b_photon_topoetcone20->GetEntry(entry);
+          //   b_photon_topoetcone40->GetEntry(entry);
+          if (default_photon_vars) {
+            b_ph_pt->GetEntry(entry);
+            b_ph_phi->GetEntry(entry);
+            b_ph_eta->GetEntry(entry);
+            b_ph_e->GetEntry(entry);
+          } else {
+            b_photon0_phi->GetEntry(entry);
+          }
+        }
         b_rljet_count->GetEntry(entry);
         b_rljet_mjj->GetEntry(entry);
         b_rljet_ptasym->GetEntry(entry);
@@ -183,12 +228,12 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         b_rljet_pt_calo->GetEntry(entry);
         b_rljet_m_ta->GetEntry(entry);
         b_rljet_pt_ta->GetEntry(entry);
-        b_m_rljet_smooth15Top_MassTau32Tag50eff->GetEntry(entry);
-        b_m_rljet_smooth15Top_MassTau32Tag80eff->GetEntry(entry);
-        b_rljet_smooth15WTag_50eff->GetEntry(entry);
-        b_rljet_smooth15WTag_25eff->GetEntry(entry);
-        b_rljet_smooth15ZTag_50eff->GetEntry(entry);
-        b_rljet_smooth15ZTag_25eff->GetEntry(entry);
+        // b_m_rljet_smooth15Top_MassTau32Tag50eff->GetEntry(entry);
+        // b_m_rljet_smooth15Top_MassTau32Tag80eff->GetEntry(entry);
+        // b_rljet_smooth15WTag_50eff->GetEntry(entry);
+        // b_rljet_smooth15WTag_25eff->GetEntry(entry);
+        // b_rljet_smooth15ZTag_50eff->GetEntry(entry);
+        // b_rljet_smooth15ZTag_25eff->GetEntry(entry);
         b_rljet_Tau1_wta->GetEntry(entry);
         b_rljet_Tau2_wta->GetEntry(entry);
         b_rljet_Tau3_wta->GetEntry(entry);
@@ -211,6 +256,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         b_rljet_ZCut12->GetEntry(entry);
         b_rljet_NTrimSubjets->GetEntry(entry);
         b_rljet_ungroomed_ntrk500->GetEntry(entry);
+        b_rljet_n_constituents->GetEntry(entry);
         b_htt_pt_def->GetEntry(entry);
         b_htt_eta_def->GetEntry(entry);
         b_htt_phi_def->GetEntry(entry);
@@ -233,33 +279,37 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         b_htt_caGroomJet_phi_def->GetEntry(entry);
         b_htt_caGroomJet_m_def->GetEntry(entry);
 
-        b_rljet_SDw_calib->GetEntry(entry);
-        b_rljet_SDw_uncalib->GetEntry(entry);
-        b_rljet_SDw_combined->GetEntry(entry);
-        b_rljet_SDw_dcut->GetEntry(entry);
-        b_rljet_SDt_calib->GetEntry(entry);
-        b_rljet_SDt_uncalib->GetEntry(entry);
-        b_rljet_SDt_combined->GetEntry(entry);
-        b_rljet_SDt_dcut->GetEntry(entry);
+        if (ranSD) {
+          b_rljet_SDw_calib->GetEntry(entry);
+          b_rljet_SDw_uncalib->GetEntry(entry);
+          b_rljet_SDw_combined->GetEntry(entry);
+          b_rljet_SDw_dcut->GetEntry(entry);
+          b_rljet_SDt_calib->GetEntry(entry);
+          b_rljet_SDt_uncalib->GetEntry(entry);
+          b_rljet_SDt_combined->GetEntry(entry);
+          b_rljet_SDt_dcut->GetEntry(entry);
+        }
 
         if (this->operating_on_mc) {
 
-          b_rljet_SDw_calib_DOWN->GetEntry(entry);
-          b_rljet_SDw_uncalib_DOWN->GetEntry(entry);
-          b_rljet_SDw_combined_DOWN->GetEntry(entry);
-          b_rljet_SDw_dcut_DOWN->GetEntry(entry);
-          b_rljet_SDt_calib_DOWN->GetEntry(entry);
-          b_rljet_SDt_uncalib_DOWN->GetEntry(entry);
-          b_rljet_SDt_combined_DOWN->GetEntry(entry);
-          b_rljet_SDt_dcut_DOWN->GetEntry(entry);
-          b_rljet_SDw_calib_UP->GetEntry(entry);
-          b_rljet_SDw_uncalib_UP->GetEntry(entry);
-          b_rljet_SDw_combined_UP->GetEntry(entry);
-          b_rljet_SDw_dcut_UP->GetEntry(entry);
-          b_rljet_SDt_calib_UP->GetEntry(entry);
-          b_rljet_SDt_uncalib_UP->GetEntry(entry);
-          b_rljet_SDt_combined_UP->GetEntry(entry);
-          b_rljet_SDt_dcut_UP->GetEntry(entry);
+          if (ranSD) {
+            b_rljet_SDw_calib_DOWN->GetEntry(entry);
+            b_rljet_SDw_uncalib_DOWN->GetEntry(entry);
+            b_rljet_SDw_combined_DOWN->GetEntry(entry);
+            b_rljet_SDw_dcut_DOWN->GetEntry(entry);
+            b_rljet_SDt_calib_DOWN->GetEntry(entry);
+            b_rljet_SDt_uncalib_DOWN->GetEntry(entry);
+            b_rljet_SDt_combined_DOWN->GetEntry(entry);
+            b_rljet_SDt_dcut_DOWN->GetEntry(entry);
+            b_rljet_SDw_calib_UP->GetEntry(entry);
+            b_rljet_SDw_uncalib_UP->GetEntry(entry);
+            b_rljet_SDw_combined_UP->GetEntry(entry);
+            b_rljet_SDw_dcut_UP->GetEntry(entry);
+            b_rljet_SDt_calib_UP->GetEntry(entry);
+            b_rljet_SDt_uncalib_UP->GetEntry(entry);
+            b_rljet_SDt_combined_UP->GetEntry(entry);
+            b_rljet_SDt_dcut_UP->GetEntry(entry);
+          }
 
           b_htt_caGroomJet_pt_sjcalib1030->GetEntry(entry);
           b_htt_caGroomJet_eta_sjcalib1030->GetEntry(entry);
@@ -352,11 +402,23 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     if (this->operating_on_mc) {
         weight = weight_mc
           * weight_pileup
-          // * weight_photonSF
-          // * weight_photonSF_effIso
-          * weight_jvt
           * this->SF_lumi_Fb
           * this->luminosity;
+
+        if (keptPhotons) {
+          if (this->on_nominal_branch) {
+            weight = weight * weight_photonSF;
+          } else {
+            if (sub_dir_str.find("photonSF_ID_UP") != std::string::npos)
+                weight = weight * weight_photonSF_ID_UP;
+            if (sub_dir_str.find("photonSF_ID_DOWN") != std::string::npos)
+                weight = weight * weight_photonSF_ID_DOWN;
+            if (sub_dir_str.find("photonSF_effTrkIso_UP") != std::string::npos)
+                weight = weight * weight_photonSF * weight_photonSF_effTrkIso_UP;
+            if (sub_dir_str.find("photonSF_effTrkIso_DOWN") != std::string::npos)
+                weight = weight * weight_photonSF * weight_photonSF_effTrkIso_DOWN;
+          }
+        }
 
         if (weight > max_weight) {
             max_weight = weight;
@@ -405,6 +467,11 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_Tau32_wta.at(i)->fill(rljet_Tau32_wta->at(i), weight);
         hp->h_rljet_Tau32_wta.at(i)->fill_tagged("_combMgt100GeV", rljet_Tau32_wta->at(i), weight, rljet_m_comb->at(i) / 1000. > 100.);
 
+        hp->h_rljet_Tau32_wta.at(i)->fill_tagged("_combMlt100GeV"      , rljet_Tau32_wta->at(i) , weight , rljet_m_comb->at(i) / 1000. < 100.);
+        hp->h_rljet_Tau32_wta.at(i)->fill_tagged("_combMgt100lt150GeV" , rljet_Tau32_wta->at(i) , weight , rljet_m_comb->at(i) / 1000. >= 100. && rljet_m_comb->at(i) / 1000. < 150.);
+        hp->h_rljet_Tau32_wta.at(i)->fill_tagged("_combMgt150lt180GeV" , rljet_Tau32_wta->at(i) , weight , rljet_m_comb->at(i) / 1000. >= 150. && rljet_m_comb->at(i) / 1000. < 180.);
+        hp->h_rljet_Tau32_wta.at(i)->fill_tagged("_combMgt180GeV"      , rljet_Tau32_wta->at(i) , weight , rljet_m_comb->at(i) / 1000. >= 180.);
+
         hp->h_rljet_Qw.at(i)->fill(rljet_Qw->at(i)/1000., weight);
         hp->h_rljet_Qw.at(i)->fill_tagged("_combMgt100GeV", rljet_Qw->at(i)/1000., weight, rljet_m_comb->at(i) / 1000. > 100.);
 
@@ -430,11 +497,29 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         smooth_tag_map["smooth16ZTag_80eff_JSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 1 || rljet_smooth16ZTag_80eff->at(i) == 16 || rljet_smooth16ZTag_80eff->at(i) == 4;
         smooth_tag_map["smooth16ZTag_80eff_MassJSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 1;
 
+        // smooth_tag_map["smooth16WTag_50eff_nocontain_JSSCut"] = rljet_smooth16WTag_50eff_nocontain->at(i) == 1 || rljet_smooth16WTag_50eff_nocontain->at(i) == 16 || rljet_smooth16WTag_50eff_nocontain->at(i) == 4;
+        // smooth_tag_map["smooth16WTag_50eff_nocontain_MassJSSCut"] = rljet_smooth16WTag_50eff_nocontain->at(i) == 1;
+        // smooth_tag_map["smooth16WTag_80eff_nocontain_JSSCut"] = rljet_smooth16WTag_80eff_nocontain->at(i) == 1 || rljet_smooth16WTag_80eff_nocontain->at(i) == 16 || rljet_smooth16WTag_80eff_nocontain->at(i) == 4;
+        // smooth_tag_map["smooth16WTag_80eff_nocontain_MassJSSCut"] = rljet_smooth16WTag_80eff_nocontain->at(i) == 1;
+        // smooth_tag_map["smooth16ZTag_50eff_nocontain_JSSCut"] = rljet_smooth16ZTag_50eff_nocontain->at(i) == 1 || rljet_smooth16ZTag_50eff_nocontain->at(i) == 16 || rljet_smooth16ZTag_50eff_nocontain->at(i) == 4;
+        // smooth_tag_map["smooth16ZTag_50eff_nocontain_MassJSSCut"] = rljet_smooth16ZTag_50eff_nocontain->at(i) == 1;
+        // smooth_tag_map["smooth16ZTag_80eff_nocontain_JSSCut"] = rljet_smooth16ZTag_80eff_nocontain->at(i) == 1 || rljet_smooth16ZTag_80eff_nocontain->at(i) == 16 || rljet_smooth16ZTag_80eff_nocontain->at(i) == 4;
+        // smooth_tag_map["smooth16ZTag_80eff_nocontain_MassJSSCut"] = rljet_smooth16ZTag_80eff_nocontain->at(i) == 1;
+
+        // smooth_tag_map["smooth16Top_MassTau32Tag50eff_nocontain_JSSCut"] = rljet_smooth16Top_MassTau32Tag50eff_nocontain->at(i) == 3 || rljet_smooth16Top_MassTau32Tag50eff_nocontain->at(i) == 2;
+        // smooth_tag_map["smooth16Top_MassTau32Tag50eff_nocontain_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag50eff_nocontain->at(i) == 3;
+        // smooth_tag_map["smooth16Top_MassTau32Tag80eff_nocontain_JSSCut"] = rljet_smooth16Top_MassTau32Tag80eff_nocontain->at(i) == 3 || rljet_smooth16Top_MassTau32Tag80eff_nocontain->at(i) == 2;
+        // smooth_tag_map["smooth16Top_MassTau32Tag80eff_nocontain_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag80eff_nocontain->at(i) == 3;
+
+
 
         for (const auto& itag : smooth_tag_map) {
             hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
             hp->h_rljet_pt_comb.at(i)->fill_tagged(itag.first, rljet_pt_comb->at(i)/1000., weight, itag.second);
         }
+
+
+
     }
 
     /*********************************************************/
@@ -447,8 +532,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     /***************************/
     /* GENERAL EVENT VARIABLES */
     /***************************/
-
-    const bool ranSD = rljet_SDw_calib->size() > 0;
 
     hp->h_NPV->fill( (Float_t) NPV, weight);
 
@@ -532,20 +615,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_NTrimSubjets.at(i)->fill(rljet_NTrimSubjets->at(i), weight);
         hp->h_rljet_ungroomed_ntrk500.at(i)->fill(rljet_ungroomed_ntrk500->at(i), weight);
 
-        smooth_tag_map_nominal["smooth15WTag_50eff_JSSCut"    ] = rljet_smooth15WTag_50eff->at(i) == 1 || rljet_smooth15WTag_50eff->at(i) == 3;
-        smooth_tag_map_nominal["smooth15WTag_50eff_MassJSSCut"] = rljet_smooth15WTag_50eff->at(i) == 3;
-        smooth_tag_map_nominal["smooth15ZTag_50eff_JSSCut"    ] = rljet_smooth15ZTag_50eff->at(i) == 1 || rljet_smooth15ZTag_50eff->at(i) == 3;
-        smooth_tag_map_nominal["smooth15ZTag_50eff_MassJSSCut"] = rljet_smooth15ZTag_50eff->at(i) == 3;
-        smooth_tag_map_nominal["smooth15Top_MassTau32Tag50eff_MassJSSCut" ] = rljet_smooth15Top_MassTau32Tag50eff->at(i) == 3;
-        smooth_tag_map_nominal["smooth15Top_MassTau32Tag80eff_MassJSSCut" ] = rljet_smooth15Top_MassTau32Tag80eff->at(i) == 3;
-
-        for (const auto& itag : smooth_tag_map_nominal) {
-            hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
-            hp->h_rljet_pt_comb.at(i)->fill_tagged(itag.first, rljet_pt_comb->at(i)/1000., weight, itag.second);
-            hp->h_rljet_m_calo.at(i)->fill_tagged(itag.first, rljet_m_calo->at(i)/1000., weight, itag.second);
-            hp->h_rljet_pt_calo.at(i)->fill_tagged(itag.first, rljet_pt_calo->at(i)/1000., weight, itag.second);
-        }
-
         std::string npv_bin_str;
         if (NPV < 10) {
             npv_bin_str = "NPVLT10";
@@ -570,21 +639,62 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         /* MVA TAGGERS */
         /***************/
 
-        hp->h_rljet_BDT_score.at(i)->fill_tagged("top_qqb" , rljet_BDT_score_top_qqb->at(i)       , weight , true);
-        hp->h_rljet_BDT_score.at(i)->fill_tagged("top_inc" , rljet_BDT_score_top_inclusive->at(i) , weight , true);
-        hp->h_rljet_BDT_score.at(i)->fill_tagged("w"       , rljet_BDT_score_w->at(i)             , weight , true);
-        hp->h_rljet_DNN_score.at(i)->fill_tagged("top"     , rljet_DNN_score_top->at(i)           , weight , true);
-        hp->h_rljet_DNN_score.at(i)->fill_tagged("w"       , rljet_DNN_score_w->at(i)             , weight , true);
+        if (rljet_n_constituents->at(i) > 2 && rljet_m_comb->at(i)/1000. > 40) {
+            jetMoments["Tau1_wta"]                       = rljet_Tau1_wta->at(i);
+            jetMoments["Tau2_wta"]                       = rljet_Tau2_wta->at(i);
+            jetMoments["Tau3_wta"]                       = rljet_Tau3_wta->at(i);
+            jetMoments["Tau21_wta"]                      = Tau21_wta;
+            jetMoments["Tau32_wta"]                      = rljet_Tau32_wta->at(i);
+            jetMoments["Split12"]                        = rljet_Split12->at(i);
+            jetMoments["Split23"]                        = rljet_Split23->at(i);
+            jetMoments["C2"]                             = C2;
+            jetMoments["D2"]                             = rljet_D2->at(i);
+            jetMoments["ECF1"]                           = rljet_ECF1->at(i);
+            jetMoments["ECF2"]                           = rljet_ECF2->at(i);
+            jetMoments["ECF3"]                           = rljet_ECF3->at(i);
+            jetMoments["e3"]                             = ECF3 / TMath::Power(ECF1, 3);
+            jetMoments["Qw"]                             = rljet_Qw->at(i);
+            jetMoments["KtDR"]                           = rljet_KtDR->at(i);
+            jetMoments["Angularity"]                     = rljet_Angularity->at(i);
+            jetMoments["Aplanarity"]                     = rljet_Aplanarity->at(i);
+            jetMoments["PlanarFlow"]                     = rljet_PlanarFlow->at(i);
+            jetMoments["Dip12"]                          = rljet_Dip12->at(i);
+            jetMoments["ZCut12"]                         = rljet_ZCut12->at(i);
+            jetMoments["ThrustMaj"]                      = rljet_ThrustMaj->at(i);
+            jetMoments["ThrustMin"]                      = rljet_ThrustMin->at(i);
+            jetMoments["Sphericity"]                     = rljet_Sphericity->at(i);
+            jetMoments["FoxWolfram20"]                   = fw20;
+            jetMoments["CaloTACombinedMassUncorrelated"] = rljet_m_comb->at(i);
+            jetMoments["JetpTCorrByCombinedMass"]        = rljet_pt_comb->at(i);
 
-        hp->h_rljet_BDT_score.at(i)->fill_tagged("top_qqb_combMgt100GeV" , rljet_BDT_score_top_qqb->at(i)       , weight , rljet_m_comb->at(i)/1000. > 100);
-        hp->h_rljet_BDT_score.at(i)->fill_tagged("top_inc_combMgt100GeV" , rljet_BDT_score_top_inclusive->at(i) , weight , rljet_m_comb->at(i)/1000. > 100);
-        hp->h_rljet_BDT_score.at(i)->fill_tagged("w_combMgt50GeV"        , rljet_BDT_score_w->at(i)             , weight , rljet_m_comb->at(i)/1000. > 50);
-        hp->h_rljet_DNN_score.at(i)->fill_tagged("top_combMgt100GeV"     , rljet_DNN_score_top->at(i)           , weight , rljet_m_comb->at(i)/1000. > 100);
-        hp->h_rljet_DNN_score.at(i)->fill_tagged("w_combMgt50GeV"        , rljet_DNN_score_w->at(i)             , weight , rljet_m_comb->at(i)/1000. > 50);
+            const float bdt_top = BDT_topTag->getMVAdiscriminant(jetMoments);
+            const float bdt_w   = BDT_WTag->getMVAdiscriminant(jetMoments);
+            const float dnn_top = DNN_topTag->GetDiscriminant(jetMoments);
+            const float dnn_w   = DNN_WTag->GetDiscriminant(jetMoments);
+
+            hp->h_rljet_BDT_score.at(i)->fill_tagged("top" , bdt_top , weight , true);
+            hp->h_rljet_BDT_score.at(i)->fill_tagged("w"   , bdt_w   , weight , true);
+            hp->h_rljet_DNN_score.at(i)->fill_tagged("top" , dnn_top , weight , true);
+            hp->h_rljet_DNN_score.at(i)->fill_tagged("w"   , dnn_w   , weight , true);
+
+            hp->h_rljet_BDT_score.at(i)->fill_tagged("top_combMgt100GeV" , bdt_top , weight , rljet_m_comb->at(i)/1000. > 100);
+            hp->h_rljet_BDT_score.at(i)->fill_tagged("w_combMgt50GeV"    , bdt_w   , weight , rljet_m_comb->at(i)/1000. > 50);
+            hp->h_rljet_DNN_score.at(i)->fill_tagged("top_combMgt100GeV" , dnn_top , weight , rljet_m_comb->at(i)/1000. > 100);
+            hp->h_rljet_DNN_score.at(i)->fill_tagged("w_combMgt50GeV"    , dnn_w   , weight , rljet_m_comb->at(i)/1000. > 50);
+
+            mva_tag_map["BDT_Top"] = BDT_topTag->isTagged(jetMoments);
+            mva_tag_map["BDT_W"]   = BDT_WTag->isTagged(jetMoments);
+            mva_tag_map["DNN_Top"] = DNN_topTag->isTagged(jetMoments);
+            mva_tag_map["DNN_W"]   = DNN_WTag->isTagged(jetMoments);
+
+            for (const auto& itag : mva_tag_map) {
+              hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
+              hp->h_rljet_pt_comb.at(i)->fill_tagged(itag.first, rljet_pt_comb->at(i)/1000., weight, itag.second);
+            }
+        }
 
         // SD log(chi) variables
         if (ranSD) {
-
             hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_calib", rljet_SDw_calib->at(i), weight, true);
             hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_uncalib", rljet_SDw_uncalib->at(i), weight, true);
             hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_combined", rljet_SDw_combined->at(i), weight, true);
@@ -661,7 +771,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_dphi->fill(rljet_dphi, weight);
     }
 
-    // if (ph_pt->size() >= 1 && ph_pt->at(0) > 1e-6) {
+    // if (keptPhotons && ph_pt->size() >= 1 && ph_pt->at(0) > 1e-6) {
     //   hp->h_topoetcone40_over_pt->fill((photon_topoetcone40 - 2.45e6)/ph_pt->at(0), weight);
     //   hp->h_topoetcone20_over_pt->fill(photon_topoetcone20/ph_pt->at(0), weight);
     //   hp->h_ptcone40_over_pt->fill(photon_ptcone40/ph_pt->at(0), weight);
@@ -672,9 +782,22 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     /* C/A 15 JETS (FROM HTT) */
     /**************************/
 
-    const UInt_t n_cajets_recorded = htt_caJet_pt->size();
-    if (n_cajets_recorded > 0 && htt_caJet_pt->at(0) / 1000. > 550.) {
-        for (UInt_t ijet = 0; ijet < 3 && ijet < n_cajets_recorded; ijet++)
+    UInt_t n_cajets_recorded = htt_caJet_pt->size();
+    std::vector<UInt_t> ca_jet_indicies;
+
+    if (keptPhotons) {
+      Float_t tmp_phi = default_photon_vars ? ph_phi->at(0) : photon0_phi;
+      for (UInt_t ijet = 0; ijet < n_cajets_recorded; ijet++) {
+        if ( fabs(htt_caJet_phi->at(ijet) - tmp_phi) > M_PI / 2 )
+          ca_jet_indicies.push_back(ijet);
+      }
+    } else {
+      for (UInt_t i = 0; i < n_cajets_recorded; i++)
+        ca_jet_indicies.push_back(i);
+    }
+
+    if (n_cajets_recorded > 0) {
+        for (const UInt_t ijet : ca_jet_indicies)
         {
             hp->h_htt_caJet_pt.at(ijet)->fill(htt_caJet_pt->at(ijet) / 1000., weight);
             hp->h_htt_caJet_eta.at(ijet)->fill(htt_caJet_eta->at(ijet), weight);
@@ -694,6 +817,11 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_htt_caGroomJet_eta.at(ijet)->fill(htt_caGroomJet_eta_def->at(ijet)        , weight);
             hp->h_htt_caGroomJet_phi.at(ijet)->fill(htt_caGroomJet_phi_def->at(ijet)        , weight);
             hp->h_htt_caGroomJet_m.at(ijet)->fill(htt_caGroomJet_m_def->at(ijet) / 1000.  , weight);
+
+            hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("HTT_CAND", htt_caGroomJet_pt_def->at(ijet) / 1000. , weight, htt_tag_def->at(ijet) > 0);
+            hp->h_htt_caGroomJet_eta.at(ijet)->fill_tagged("HTT_CAND", htt_caGroomJet_eta_def->at(ijet)        , weight, htt_tag_def->at(ijet) > 0);
+            hp->h_htt_caGroomJet_phi.at(ijet)->fill_tagged("HTT_CAND", htt_caGroomJet_phi_def->at(ijet)        , weight, htt_tag_def->at(ijet) > 0);
+            hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND", htt_caGroomJet_m_def->at(ijet) / 1000.  , weight, htt_tag_def->at(ijet) > 0);
 
             if (this->operating_on_mc) {
                 hp->h_htt_pt.at(ijet)->fill_tagged("sjcalib0970", htt_pt_sjcalib0970->at(ijet) / 1000. , weight, true);
@@ -723,6 +851,12 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
                 hp->h_htt_caGroomJet_eta.at(ijet)->fill_tagged("sjcalib1030", htt_caGroomJet_eta_sjcalib1030->at(ijet)        , weight, true);
                 hp->h_htt_caGroomJet_phi.at(ijet)->fill_tagged("sjcalib1030", htt_caGroomJet_phi_sjcalib1030->at(ijet)        , weight, true);
                 hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged("sjcalib1030", htt_caGroomJet_m_sjcalib1030->at(ijet) / 1000.  , weight, true);
+
+                hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("HTT_CAND_sjcalib0970", htt_caGroomJet_pt_sjcalib0970->at(ijet) / 1000. , weight, htt_tag_sjcalib0970->at(ijet) > 0);
+                hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND_sjcalib0970", htt_caGroomJet_m_sjcalib0970->at(ijet) / 1000.  , weight, htt_tag_sjcalib0970->at(ijet) > 0);
+
+                hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("HTT_CAND_sjcalib1030", htt_caGroomJet_pt_sjcalib1030->at(ijet) / 1000. , weight, htt_tag_sjcalib1030->at(ijet) > 0);
+                hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND_sjcalib1030", htt_caGroomJet_m_sjcalib1030->at(ijet) / 1000.  , weight, htt_tag_sjcalib1030->at(ijet) > 0);
             }
         }
     }

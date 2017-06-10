@@ -12,8 +12,6 @@
 #include "BoostedJetTaggers/IJSSTagger.h"
 #include "BoostedJetTaggers/SmoothedTopTagger.h"
 #include "BoostedJetTaggers/SmoothedWZTagger.h"
-#include "BoostedJetTaggers/JSSWTopTaggerBDT.h"
-#include "BoostedJetTaggers/JSSWTopTaggerDNN.h"
 
 #include "ShowerDeconstruction/ShowerDeconstruction.h"
 
@@ -52,6 +50,11 @@ namespace top {
         bool m_runHTT;
         bool m_runSD;
         bool m_savePhoton;
+        bool m_runSmoothWZtag;
+        bool m_runSmoothToptag;
+        bool m_runSmoothUncontained;
+        bool m_runMVAtag;
+        bool m_massOrderJets;
         unsigned m_num_fatjets_keep;
         unsigned m_debug_level;
 
@@ -127,13 +130,6 @@ namespace top {
         /* Other taggers */
         /*****************/
 
-        // MVA taggers
-        std::unique_ptr<JSSWTopTaggerBDT> m_topTagger_BDT_qqb;
-        std::unique_ptr<JSSWTopTaggerBDT> m_topTagger_BDT_inclusive;
-        std::unique_ptr<JSSWTopTaggerBDT> m_wTagger_BDT;
-        std::unique_ptr<JSSWTopTaggerDNN> m_topTagger_DNN;
-        std::unique_ptr<JSSWTopTaggerDNN> m_wTagger_DNN;
-
         // Shower Deconstruction (SD)
         void initializeSD(void);
         void runSDandFillTree(std::vector<const xAOD::Jet*>& rljets, bool doSystShifts);
@@ -169,11 +165,25 @@ namespace top {
         std::vector<float> m_rljet_m_ta;
         std::vector<float> m_rljet_m_comb;
 
-        std::vector<float> m_rljet_pdgid;
+        std::vector<int> m_rljet_pdgid;
+        std::vector<float> m_rljet_matched_parton_pt;
+        std::vector<float> m_rljet_matched_parton_eta;
+        std::vector<float> m_rljet_matched_parton_phi;
+        std::vector<float> m_rljet_matched_parton_m;
+
+        std::vector<float> m_tljet_pt;
+        std::vector<float> m_tljet_eta;
+        std::vector<float> m_tljet_phi;
+        std::vector<float> m_tljet_m;
+
+        int m_pid1, m_pid2;
 
         // lead vs. sub-lead jet variables
         float m_rljet_mjj;
+        float m_tljet_mjj;
+        float m_parton_mjj;
         float m_rljet_ptasym;
+        float m_rljet_mass_asym;
         float m_rljet_dy;
         float m_rljet_dR;
         float m_rljet_dphi;
@@ -195,6 +205,7 @@ namespace top {
         std::vector<float> m_rljet_ECF1;
         std::vector<float> m_rljet_ECF2;
         std::vector<float> m_rljet_ECF3;
+        std::vector<float> m_rljet_C2;
         std::vector<float> m_rljet_D2;
         std::vector<float> m_rljet_FoxWolfram0;
         std::vector<float> m_rljet_FoxWolfram2;
@@ -252,18 +263,6 @@ namespace top {
         /* TAGGER VARIABLES */
         /********************/
 
-        // 2015 smooth top
-        std::vector<int> m_rljet_smooth15Top_MassTau32Tag50eff;
-        std::vector<int> m_rljet_smooth15Top_MassTau32Tag80eff;
-
-        // 2015 smooth W
-        std::vector<int> m_rljet_smooth15W_Tag50eff;
-        std::vector<int> m_rljet_smooth15W_Tag25eff;
-
-        // 2015 smooth Z
-        std::vector<int> m_rljet_smooth15Z_Tag50eff;
-        std::vector<int> m_rljet_smooth15Z_Tag25eff;
-
         // 2016 smooth top
         std::vector<int> m_rljet_smooth16Top_Tau32Split23Tag50eff;
         std::vector<int> m_rljet_smooth16Top_Tau32Split23Tag80eff;
@@ -288,13 +287,6 @@ namespace top {
 
         std::vector<int> m_rljet_smooth16Z_Tag50eff_nocontain;
         std::vector<int> m_rljet_smooth16Z_Tag80eff_nocontain;
-
-        // 2017 MVA
-        std::vector<float> m_rljet_BDT_score_top_qqb;
-        std::vector<float> m_rljet_BDT_score_top_inclusive;
-        std::vector<float> m_rljet_BDT_score_w;
-        std::vector<float> m_rljet_DNN_score_top;
-        std::vector<float> m_rljet_DNN_score_w;
 
         // Shower deconstruction output variables
         std::vector<float> m_rljet_SDw_calib;
