@@ -1,12 +1,14 @@
 *.pyc
 .RootCoreBin
 Batch/log/
+Batch/*.txt
 BoostedJetTaggers/
 JetCalibTools/
 JetJvtEfficiency
 JetMatchingTools/
 JetUncertainties/
 NNTaggingTools/
+BDTWTopTagger/
 RootCoreBin/
 ShowerDeconstruction/
 TopAnalysis/
