@@ -1,18 +1,26 @@
 LibraryNames libTopEventSelectionTools libTopEventReconstructionTools libDataMCbackgroundTools libBoostedJetTaggers libJetSubStructureUtils libShowerDeconstruction
 
+GRLDir GoodRunsLists
+GRLFile data15_13TeV/20160720/physics_25ns_20.7.xml data16_13TeV/20170215/physics_25ns_20.7_ignoreToroidStatus.xml
+
 ############################
 ### Pileup Configuration ###
 ############################
 
-PRWConfigFiles DataMCbackgroundTools/PRW/prw.10192016.TopBosonTag.root
-PRWLumiCalcFiles DataMCbackgroundTools/GRL/data15_physics_25ns_20.7.lumicalc.OflLumi-13TeV-005.root DataMCbackgroundTools/GRL/data16_physics_25ns_20.7.lumicalc.OflLumi-13TeV-005.root
-PRWDefaultChannel 361025
+PRWConfigFiles DataMCbackgroundTools/PRW/merged_prw_mc15c_latest.root
+PRWLumiCalcFiles GoodRunsLists/data15_13TeV/20160720/physics_25ns_20.7.lumicalc.OflLumi-13TeV-005.root GoodRunsLists/data16_13TeV/20170215/physics_25ns_20.7_ignoreToroidStatus.lumicalc.OflLumi-13TeV-008.root
+#PRWDefaultChannel 361025
 
 #######################
 ### Custom Settings ###
 #######################
 
-DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass,NumFatjetsKeep,DebugLevel,SavePhoton
+DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass,NumFatjetsKeep,DebugLevel,SavePhoton,RunSmoothWZTag,RunSmoothTopTag,RunSmoothUncontained,RunMVATag
+
+RunSmoothWZTag True
+RunSmoothTopTag True
+RunSmoothUncontained False
+RunMVATag False
 
 SavePhoton False
 RunHTT True
@@ -70,7 +78,8 @@ OutputEvents SelectedEvents
 OutputFilename output.root
 
 CalculateSF False
-DoLooseTree False
+DoLoose False
+DoTight Both
 
 ####################
 ### SELECTION(S) ###

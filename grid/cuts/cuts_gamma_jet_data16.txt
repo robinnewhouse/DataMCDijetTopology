@@ -4,22 +4,27 @@ LibraryNames libTopEventSelectionTools libTopEventReconstructionTools libDataMCb
 ### GRL Configuration ###
 #########################
 
-GRLDir DataMCbackgroundTools/GRL
-GRLFile data15_13TeV.periodAllYear_DetStatus-v79-repro20-02_DQDefects-00-02-02_PHYS_StandardGRL_All_Good_25ns.xml data16_13TeV.periodAllYear_DetStatus-v83-pro20-15_DQDefects-00-02-04_PHYS_StandardGRL_All_Good_25ns.xml
+GRLDir GoodRunsLists
+GRLFile data15_13TeV/20160720/physics_25ns_20.7.xml data16_13TeV/20170215/physics_25ns_20.7.xml
 
 #######################
 ### Custom Settings ###
 #######################
 
-DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass,NumFatjetsKeep,DebugLevel,SavePhoton
+DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass,NumFatjetsKeep,DebugLevel,SavePhoton,RunSmoothWZTag,RunSmoothTopTag,RunSmoothUncontained,RunMVATag
+
+RunSmoothWZTag True
+RunSmoothTopTag True
+RunSmoothUncontained False
+RunMVATag False
 
 SavePhoton True
 RunHTT True
 HTTConfigs def
-RunShowerDeconstruction True
+RunShowerDeconstruction False
 SaveTrackAssistedMass True
 
-NumFatjetsKeep 2
+NumFatjetsKeep 1
 DebugLevel 0
 
 ##########################
@@ -79,6 +84,8 @@ ApplyElectronInJetSubtraction False
 
 OverlapRemovalLeptonDef Tight
 ApplyElectronInJetSubtraction False
+DoLoose False
+DoTight Both
 
 UseAodMetaData True
 
