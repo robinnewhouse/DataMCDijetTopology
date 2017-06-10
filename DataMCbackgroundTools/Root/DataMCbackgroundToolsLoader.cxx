@@ -1,6 +1,7 @@
 #include "DataMCbackgroundTools/DataMCbackgroundToolsLoader.h"
 #include "DataMCbackgroundTools/NLargeJetSelector.h"
 #include "DataMCbackgroundTools/GammaJetSelector.h"
+#include "DataMCbackgroundTools/VVJJSelector.h"
 #include "TopAnalysis/Tools.h" //for the loadLibraries function
 #include "TopConfiguration/TopConfig.h"
 #include <iostream>
@@ -20,10 +21,13 @@ top::EventSelectorBase* DataMCbackgroundToolsLoader::initTool(const std::string&
 	if(line.size() > toolname.size())
 		param = line.substr(toolname.size() + 1);
 
-	if (toolname == "LARGEJET_N") {
-		return new top::NLargeJetSelector(param);
-    } else if (toolname == "GAMMAJET")
-		return new top::GammaJetSelector();
+  if (toolname == "LARGEJET_N") {
+    return new top::NLargeJetSelector(param);
+  } else if (toolname == "GAMMAJET") {
+    return new top::GammaJetSelector();
+  } else if (toolname == "VVJJ") {
+    return new top::VVJJSelector();
+  }
 
 	// we need it to fall through at the end in case the tool is in someone else's library (not yours)
 	// don't worry the main code checks for a nullptr
