@@ -12,7 +12,6 @@
 
 #include <TChain.h>
 #include <TSelector.h>
-//#include <TProof.h>
 
 #include "DataMCbackgroundTools/DataMCbackgroundSelector.h"
 #include "DataMCbackgroundTools/InputManager.h"

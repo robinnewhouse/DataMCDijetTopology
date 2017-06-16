@@ -22,18 +22,21 @@ class DijetLoader(PlotLoader):
     def get_wjets(self, hist_name, branch = "nominal"):
         h_wjets = self.get_hist(["pythia_wjets", branch] , hist_name)
         h_wjets.Scale(PYTHIA_SHERPA_WJETS_SF)
-        set_mc_style_line(h_wjets, self.WJETS_COLOR, 1, 2)
+        #set_mc_style_line(h_wjets, self.WJETS_COLOR, 1, 2)
+        set_mc_style_simple_hist(h_wjets, self.WJETS_COLOR)
         return h_wjets.Clone()
 
     def get_zjets(self, hist_name, branch = "nominal"):
         h_zjets = self.get_hist(["pythia_zjets", branch] , hist_name)
         h_zjets.Scale(PYTHIA_SHERPA_ZJETS_SF)
-        set_mc_style_line(h_zjets, self.ZJETS_COLOR, 1, 2)
+        #set_mc_style_line(h_zjets, self.ZJETS_COLOR, 1, 2)
+        set_mc_style_simple_hist(h_zjets, self.ZJETS_COLOR)
         return h_zjets.Clone()
 
     def get_ttbar(self, hist_name, branch = "nominal"):
         h_ttbar = self.get_hist(["ttbar_allhad", branch] , hist_name)
-        set_mc_style_line(h_ttbar, self.TTBAR_COLOR, 1, 2)
+        #set_mc_style_line(h_ttbar, self.TTBAR_COLOR, 1, 2)
+        set_mc_style_simple_hist(h_ttbar, self.TTBAR_COLOR)
         return h_ttbar.Clone()
 
     def get_data(self, hist_name):
@@ -69,9 +72,9 @@ class DijetLoader(PlotLoader):
           h_sys_up = self.get_normalized_dijet(generator, hist_name + "_sjcalib1030", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
           h_sys_down = self.get_normalized_dijet(generator, hist_name + "_sjcalib0970", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
           systematics["sjcalib"] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
-        elif ("SD" in hist_name and "logchi" in hist_name):
-          h_sys_up = self.get_normalized_dijet(generator, hist_name + "_UP")
-          h_sys_down = self.get_normalized_dijet(generator, hist_name + "_DOWN")
+        elif ("SD" in hist_name):
+          h_sys_up = self.get_normalized_dijet(generator, hist_name + "_UP", "nominal", normalize_to_pretagged = norm_to_pretagged)
+          h_sys_down = self.get_normalized_dijet(generator, hist_name + "_DOWN", "nominal", normalize_to_pretagged = norm_to_pretagged)
           systematics["sjcalib"] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
         else:
           for systematic_name in branch_list:
@@ -116,11 +119,11 @@ class DijetLoader(PlotLoader):
         h_dijet.Scale(dijet_sf)
 
         if ("pythia" in generator):
-          set_mc_style_marker(h_dijet, self.PYTHIA_COLOR, shape = 21, line_style = 3)
+          set_mc_style_line(h_dijet, self.PYTHIA_COLOR, line_width = 3)
         elif ("herwig" in generator):
-          set_mc_style_marker(h_dijet, self.HERWIG_COLOR, shape = 22, line_style = 4)
+          set_mc_style_line(h_dijet, self.HERWIG_COLOR, line_width = 3)
         elif ("sherpa" in generator):
-          set_mc_style_marker(h_dijet, self.SHERPA_COLOR, shape = 23, line_style = 5)
+          set_mc_style_line(h_dijet, self.SHERPA_COLOR, line_width = 3)
 
         return h_dijet.Clone()
 
@@ -131,8 +134,8 @@ class GammaJetLoader(PlotLoader):
         self.WZGAMMA_COLOR = kAzure - 3
         self.TTBAR_COLOR = kOrange + 7
 
-    def get_gamma(self, hist_name, branch = "nominal"):
-        h_gamma = self.get_hist(["sherpa_gammajet" , branch] , hist_name)
+    def get_gamma(self, hist_name, generator = "sherpa_gammajet", branch = "nominal"):
+        h_gamma = self.get_hist([generator, branch] , hist_name)
         h_gamma.SetFillColor(self.GAMMA_COLOR)
         h_gamma.SetMarkerSize(0)
         h_gamma.SetLineWidth(1)
@@ -176,40 +179,40 @@ class GammaJetLoader(PlotLoader):
 
       return h_data.Clone()
 
-    def get_normalized_gamma(self, hist_name, branch = "nominal", sig_sf = 1.0, normalize_to_pretagged = False):
+    def get_normalized_gamma(self, hist_name, generator = "sherpa_gammajet", branch = "nominal", sig_sf = 1.0, normalize_to_pretagged = False):
 
       if (normalize_to_pretagged and is_tagged(hist_name, "h_rljet0_m_comb")):
         h_sigsub_data = self.get_sigsub_data("h_rljet0_m_comb", sig_sf)
-        h_gamma_untagged = self.get_hist(["sherpa_gammajet", "nominal"], "h_rljet0_m_comb")
+        h_gamma_untagged = self.get_hist([generator, "nominal"], "h_rljet0_m_comb")
         gamma_sf = h_sigsub_data.Integral() / h_gamma_untagged.Integral()
       elif (normalize_to_pretagged and is_tagged(hist_name, "h_rljet0_pt_comb")):
         h_sigsub_data = self.get_sigsub_data("h_rljet0_pt_comb", sig_sf)
-        h_gamma_untagged = self.get_hist(["sherpa_gammajet", "nominal"], "h_rljet0_pt_comb")
+        h_gamma_untagged = self.get_hist([generator, "nominal"], "h_rljet0_pt_comb")
         gamma_sf = h_sigsub_data.Integral() / h_gamma_untagged.Integral()
       elif (normalize_to_pretagged and is_tagged(hist_name, "h_htt_caGroomJet0_pt")):
         h_sigsub_data = self.get_sigsub_data("h_htt_caGroomJet0_pt", sig_sf)
-        h_gamma_untagged = self.get_hist(["sherpa_gammajet", "nominal"], "h_htt_caGroomJet0_pt")
+        h_gamma_untagged = self.get_hist([generator, "nominal"], "h_htt_caGroomJet0_pt")
         gamma_sf = h_sigsub_data.Integral() / h_gamma_untagged.Integral()
       elif (normalize_to_pretagged and is_tagged(hist_name, "h_htt_caGroomJet0_m")):
         h_sigsub_data = self.get_sigsub_data("h_htt_caGroomJet0_m", sig_sf)
-        h_gamma_untagged = self.get_hist(["sherpa_gammajet", "nominal"], "h_htt_caGroomJet0_m")
+        h_gamma_untagged = self.get_hist([generator, "nominal"], "h_htt_caGroomJet0_m")
         gamma_sf = h_sigsub_data.Integral() / h_gamma_untagged.Integral()
       else:
         h_sigsub_data = self.get_sigsub_data(hist_name, sig_sf)
-        h_gamma_nominal = self.get_hist(["sherpa_gammajet", "nominal"], hist_name)
+        h_gamma_nominal = self.get_hist([generator, "nominal"], hist_name)
         gamma_sf = h_sigsub_data.Integral() / h_gamma_nominal.Integral()
 
-      h_gamma = self.get_gamma(hist_name, branch)
+      h_gamma = self.get_gamma(hist_name, generator, branch)
       h_gamma.Scale(gamma_sf)
 
       return h_gamma.Clone()
 
-    def get_systematics_dictionary(self, hist_name, branch_list, normalize_to_pretagged = False):
+    def get_systematics_dictionary(self, hist_name, branch_list, generator = "sherpa_dijet", normalize_to_pretagged = False):
         systematics = {}
 
         if ("htt" in hist_name):
-          h_sys_up = self.get_normalized_gamma(hist_name + "_sjcalib1030", "nominal", 1.0, normalize_to_pretagged)
-          h_sys_down = self.get_normalized_gamma(hist_name + "_sjcalib0970", "nominal", 1.0, normalize_to_pretagged)
+          h_sys_up = self.get_normalized_gamma(hist_name + "_sjcalib1030", generator, "nominal", 1.0, normalize_to_pretagged)
+          h_sys_down = self.get_normalized_gamma(hist_name + "_sjcalib0970", generator, "nominal", 1.0, normalize_to_pretagged)
           systematics["sjcalib"] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
         else:
           for systematic_name in branch_list:
@@ -219,8 +222,8 @@ class GammaJetLoader(PlotLoader):
             else:
               up_branch_name = systematic_name + "__1up"
               down_branch_name = systematic_name + "__1down"
-              h_sys_up = self.get_normalized_gamma(hist_name, up_branch_name, 1.0, normalize_to_pretagged)
-              h_sys_down = self.get_normalized_gamma(hist_name, down_branch_name, 1.0, normalize_to_pretagged)
+              h_sys_up = self.get_normalized_gamma(hist_name, generator, up_branch_name, 1.0, normalize_to_pretagged)
+              h_sys_down = self.get_normalized_gamma(hist_name, generator, down_branch_name, 1.0, normalize_to_pretagged)
               systematics[systematic_name] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
 
         return systematics
@@ -377,20 +380,21 @@ AXIS_TITLES = {
         "rljet0_ungroomed_ntrk500"        : "Leading Large-R Jet n_{trk}",
         "rljet0_NTrimSubjets"        : "Leading Large-R Jet: Num. Trimmed Subjets",
         "rljet0_width"                    : "Leading Large-R Jet width",
-        "caGroomJet0_pt"                  : "Leading Groomed C/A 1.5 Jet #it{p_{T}}",
-        "caGroomJet0_eta"                 : "Leading Groomed C/A 1.5 Jet #it{#eta}",
-        "caGroomJet0_phi"                 : "Leading Groomed C/A 1.5 Jet #it{#phi}",
-        "caGroomJet0_m"                   : "Leading Groomed C/A 1.5 Jet Mass",
+        "caGroomJet0_pt"                  : "Leading Large-#it{R} jet #it{p_{T}}",
+        "caGroomJet0_eta"                 : "Leading Large-#it{R} jet #it{#eta}",
+        "caGroomJet0_phi"                 : "Leading Large-#it{R} jet #it{#phi}",
+        "caGroomJet0_m"                   : "Leading Large-#it{R} jet Mass",
         "htt0_pt"                         : "Top Candidate #it{p_{T}}",
         "htt0_eta"                        : "Top Candidate #it{#eta}",
         "htt0_phi"                        : "Top Candidate #it{#phi}",
         "htt0_m"                          : "Top Candidate m_{T}",
         "htt0_m23m123"                    : "Top Candidate m_{23} / m_{123}",
         "htt0_atan1312"                   : "Top Candidate arctan (m_{13} / m_{12})",
-        "BDT_score_TOP"                   : "Leading Large-R Jet BTDG Top Discriminant",
-        "BDT_score_W"                     : "Leading Large-R Jet BTDG W Discriminant",
-        "DNN_score_TEST"                  : "Leading Large-R Jet DNN Top Discriminant",
-        "rljet0_SD"                       : "Leading Large-R Jet log #chi",
+        "BDT_score_top"                   : "Leading Large-#it{R} jet BDT #it{top} tag discriminant",
+        "BDT_score_w"                     : "Leading Large-#it{R} jet BDT #it{W} tag discriminant",
+        "DNN_score_top"                   : "Leading Large-#it{R} jet DNN #it{top} tag discriminant",
+        "DNN_score_w"                     : "Leading Large-#it{R} jet DNN #it{W} tag discriminant",
+        "rljet0_SD"                       : "Leading Large-#it{R} jet log #chi",
         "h_mu_"                           : "<#mu>",
         "h_NPV"                           : "NPV"
         }

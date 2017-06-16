@@ -4,11 +4,11 @@ from samples import samples_DXAOD
 
 mc_config = TopExamples.grid.Config()
 mc_config.settingsFile  = 'cuts/cuts_gamma_jet_mc15c.txt'
-mc_config.suffix        = 'gammajet_mc15_100617_v0'
+mc_config.suffix        = 'gammajet_mc15_100617_v3'
 
 data_config = TopExamples.grid.Config()
 data_config.settingsFile  = 'cuts/cuts_gamma_jet_data16.txt'
-data_config.suffix        = 'gammajet_data_100617_v0'
+data_config.suffix        = 'gammajet_data_100617_v3'
 
 for config in [mc_config, data_config]:
     config.code          = 'top-xaod'

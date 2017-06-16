@@ -110,6 +110,26 @@ void DataMCbackgroundSelector::Begin(TTree * /*tree*/)
             DNNpathPrefix + std::string("FitFunctions_DNN_W50.root"),
             "W_contained_DNN_june6_smooth_cut_W_contained_DNN_june6+W_contained_DNN_june6_50wp");
 
+    if (this->on_nominal_branch) {
+      this->h_bdt_top_vs_mu = new TH2F("h_bdt_top_vs_mu" , "h_bdt_top_vs_mu" , 60 , 0 , 60 , 200 , -1.0 , 1.0);
+      this->h_bdt_w_vs_mu   = new TH2F("h_bdt_w_vs_mu"   , "h_bdt_w_vs_mu"   , 60 , 0 , 60 , 200 , -1.0 , 1.0);
+      this->h_dnn_top_vs_mu = new TH2F("h_dnn_top_vs_mu" , "h_dnn_top_vs_mu" , 60 , 0 , 60 , 200 , 0.0  , 1.0);
+      this->h_dnn_w_vs_mu   = new TH2F("h_dnn_w_vs_mu"   , "h_dnn_w_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
+
+      h_bdt_top_vs_mu->Sumw2();
+      h_bdt_w_vs_mu->Sumw2();
+      h_dnn_top_vs_mu->Sumw2();
+      h_dnn_w_vs_mu->Sumw2();
+    }
+
+    const std::string rc = std::string(getenv("ROOTCOREBIN"));
+    std::string f_sdw_filepath = rc + "/data/DataMCbackgroundTools/SDW.root";
+    std::string f_sdtop_filepath = rc + "/data/DataMCbackgroundTools/SDTop.root";
+    TFile* f_sdw_file = TFile::Open(f_sdw_filepath.c_str(), "READ");
+    TFile* f_sdtop_file = TFile::Open(f_sdtop_filepath.c_str(), "READ");
+
+    this->f_sdw = (TF1*) f_sdw_file->Get("fjet_SDw_win20_btag1_smooth_cut_fjet_SDw_win20_btag1+fjet_SDw_win20_btag1_50wp");
+    this->f_sdtop =(TF1*) f_sdtop_file->Get("fjet_SDt_Dcut1_smooth_cut_fjet_SDt_Dcut1+fjet_SDt_Dcut1_80wp");
 }
 
 void DataMCbackgroundSelector::SlaveBegin(TTree * /*tree*/)
@@ -123,6 +143,7 @@ void DataMCbackgroundSelector::SlaveBegin(TTree * /*tree*/)
     // save 'anti-tags' for the tagged mass spectra
     // this->hp->h_rljet_m_comb.at(0)->set_fill_veto(true);
     // this->hp->h_rljet_m_calo.at(0)->set_fill_veto(true);
+
 }
 
 Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
@@ -186,6 +207,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     b_rljet_smooth16ZTag_50eff->GetEntry(entry);
     b_rljet_smooth16ZTag_80eff->GetEntry(entry);
 
+
     // b_rljet_smooth16Top_MassTau32Tag50eff_nocontain->GetEntry(entry);
     // b_rljet_smooth16Top_MassTau32Tag80eff_nocontain->GetEntry(entry);
     // b_rljet_smooth16WTag_50eff_nocontain->GetEntry(entry);
@@ -195,6 +217,10 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
     if (this->on_nominal_branch) {
         b_NPV->GetEntry(entry);
+
+        if (this->operating_on_mc) {
+          b_rljet_pdgid->GetEntry(entry);
+        }
 
         // 2017 MVA
         // b_rljet_BDT_score_top_qqb->GetEntry(entry);
@@ -464,6 +490,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_D2.at(i)->fill(rljet_D2->at(i), weight);
         hp->h_rljet_D2.at(i)->fill_tagged("_combMgt50GeV", rljet_D2->at(i), weight, rljet_m_comb->at(i) / 1000. > 50.);
 
+
         hp->h_rljet_Tau32_wta.at(i)->fill(rljet_Tau32_wta->at(i), weight);
         hp->h_rljet_Tau32_wta.at(i)->fill_tagged("_combMgt100GeV", rljet_Tau32_wta->at(i), weight, rljet_m_comb->at(i) / 1000. > 100.);
 
@@ -517,9 +544,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
             hp->h_rljet_pt_comb.at(i)->fill_tagged(itag.first, rljet_pt_comb->at(i)/1000., weight, itag.second);
         }
-
-
-
     }
 
     /*********************************************************/
@@ -536,15 +560,13 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     hp->h_NPV->fill( (Float_t) NPV, weight);
 
     if (!this->operating_on_mc) {
-        hp->h_mu->fill(mu, weight);
-        hp->h_mu->fill_tagged("NPV_sf"      , mu * 1./1.16              , weight , true);
-        hp->h_mu->fill_tagged("lumi_NPV_sf" , mu * (1./1.055) * 1./1.16 , weight , true);
+        hp->h_mu->fill(mu              , weight);
+        hp->h_mu->fill_tagged("corrSF" , mu * 1./1.09 , weight , true);
     } else {
         // note: we don't actually correct the mc mu distribution, making the below tagged
         // histograms just makes it easier to do data/mc comparison plots later
-        hp->h_mu->fill(mu, weight);
-        hp->h_mu->fill_tagged("NPV_sf"      , mu, weight, true);
-        hp->h_mu->fill_tagged("lumi_NPV_sf" , mu, weight, true);
+        hp->h_mu->fill(mu              , weight);
+        hp->h_mu->fill_tagged("corrSF" , mu       , weight , true);
     }
 
     /*******************/
@@ -556,6 +578,12 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_m_calo.at(i)->fill(rljet_m_calo->at(i)/1000., weight);
         hp->h_rljet_pt_ta.at(i)->fill(rljet_pt_ta->at(i)/1000., weight);
         hp->h_rljet_m_ta.at(i)->fill(rljet_m_ta->at(i)/1000., weight);
+
+        hp->h_rljet_D2.at(i)->fill_tagged("_NTrimSubjetsEQ1", rljet_D2->at(i), weight, rljet_NTrimSubjets->at(i) > 4);
+        hp->h_rljet_D2.at(i)->fill_tagged("_NTrimSubjetsGT1", rljet_D2->at(i), weight, rljet_NTrimSubjets->at(i) > 4);
+        hp->h_rljet_D2.at(i)->fill_tagged("_NTrimSubjetsGT2", rljet_D2->at(i), weight, rljet_NTrimSubjets->at(i) > 4);
+        hp->h_rljet_D2.at(i)->fill_tagged("_NTrimSubjetsGT3", rljet_D2->at(i), weight, rljet_NTrimSubjets->at(i) > 4);
+        hp->h_rljet_D2.at(i)->fill_tagged("_NTrimSubjetsGT4", rljet_D2->at(i), weight, rljet_NTrimSubjets->at(i) > 4);
 
         // JZX(W) SLICE TAGS
         if (this->operating_on_mc && processing_dijet_slice) {
@@ -635,6 +663,15 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_rljet_pt_comb.at(i)->fill_tagged(tmp_tag_str, rljet_pt_comb->at(i)/1000., weight, itag.second);
         }
 
+        if (this->operating_on_mc) {
+          hp->h_rljet_m_comb.at(i)->fill_tagged("lightquark_b", rljet_m_comb->at(i)/1000., weight, TMath::Abs(rljet_pdgid->at(i)) < 6);
+          hp->h_rljet_pt_comb.at(i)->fill_tagged("lightquark_b", rljet_pt_comb->at(i)/1000., weight, TMath::Abs(rljet_pdgid->at(i)) < 6);
+          hp->h_rljet_m_comb.at(i)->fill_tagged("lightquark", rljet_m_comb->at(i)/1000., weight, TMath::Abs(rljet_pdgid->at(i)) < 3);
+          hp->h_rljet_pt_comb.at(i)->fill_tagged("lightquark", rljet_pt_comb->at(i)/1000., weight, TMath::Abs(rljet_pdgid->at(i)) < 3);
+          hp->h_rljet_m_comb.at(i)->fill_tagged("gluon", rljet_m_comb->at(i)/1000., weight, rljet_pdgid->at(i) == 21);
+          hp->h_rljet_pt_comb.at(i)->fill_tagged("gluon", rljet_pt_comb->at(i)/1000., weight, rljet_pdgid->at(i) == 21);
+        }
+
         /***************/
         /* MVA TAGGERS */
         /***************/
@@ -682,6 +719,18 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_rljet_DNN_score.at(i)->fill_tagged("top_combMgt100GeV" , dnn_top , weight , rljet_m_comb->at(i)/1000. > 100);
             hp->h_rljet_DNN_score.at(i)->fill_tagged("w_combMgt50GeV"    , dnn_w   , weight , rljet_m_comb->at(i)/1000. > 50);
 
+            if (!this->operating_on_mc) {
+              h_bdt_top_vs_mu->Fill(mu/1.09 , bdt_top);
+              h_bdt_w_vs_mu->Fill(mu/1.09   , bdt_w);
+              h_dnn_top_vs_mu->Fill(mu/1.09 , dnn_top);
+              h_dnn_w_vs_mu->Fill(mu/1.09   , dnn_w);
+            } else {
+              h_bdt_top_vs_mu->Fill(mu , bdt_top);
+              h_bdt_w_vs_mu->Fill(mu   , bdt_w);
+              h_dnn_top_vs_mu->Fill(mu , dnn_top);
+              h_dnn_w_vs_mu->Fill(mu   , dnn_w);
+            }
+
             mva_tag_map["BDT_Top"] = BDT_topTag->isTagged(jetMoments);
             mva_tag_map["BDT_W"]   = BDT_WTag->isTagged(jetMoments);
             mva_tag_map["DNN_Top"] = DNN_topTag->isTagged(jetMoments);
@@ -704,14 +753,8 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_combined", rljet_SDt_combined->at(i), weight, true);
             hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut", rljet_SDt_dcut->at(i), weight, true);
 
-            SD_nominal_tag_map["SDw_calib"]    = rljet_SDw_calib->at(i) > 3.8;
-            SD_nominal_tag_map["SDw_uncalib"]  = rljet_SDw_uncalib->at(i) > 3.8;
-            SD_nominal_tag_map["SDw_combined"] = rljet_SDw_combined->at(i) > 3.8;
-            SD_nominal_tag_map["SDw_dcut"]     = rljet_SDw_dcut->at(i) > 3.8;
-            SD_nominal_tag_map["SDt_calib"]    = rljet_SDt_calib->at(i) > 3.8;
-            SD_nominal_tag_map["SDt_uncalib"]  = rljet_SDt_uncalib->at(i) > 3.8;
-            SD_nominal_tag_map["SDt_combined"] = rljet_SDt_combined->at(i) > 3.8;
-            SD_nominal_tag_map["SDt_dcut"]     = rljet_SDt_dcut->at(i) > 3.8;
+            SD_nominal_tag_map["SDw_dcut"]     = rljet_SDw_dcut->at(i) > f_sdw->Eval(rljet_pt_comb->at(i)/1000.);
+            SD_nominal_tag_map["SDt_dcut"]     = rljet_SDt_dcut->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.);
 
             for (const auto& itag : SD_nominal_tag_map) {
                 hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
@@ -719,22 +762,10 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             }
 
             if (this->operating_on_mc) {
-                SD_systematic_tag_map["SDw_calib_DOWN"]    = rljet_SDw_calib_DOWN->at(i) > 3.8;
-                SD_systematic_tag_map["SDw_uncalib_DOWN"]  = rljet_SDw_uncalib_DOWN->at(i) > 3.8;
-                SD_systematic_tag_map["SDw_combined_DOWN"] = rljet_SDw_combined_DOWN->at(i) > 3.8;
-                SD_systematic_tag_map["SDw_dcut_DOWN"]     = rljet_SDw_dcut_DOWN->at(i) > 3.8;
-                SD_systematic_tag_map["SDt_calib_DOWN"]    = rljet_SDt_calib_DOWN->at(i) > 3.8;
-                SD_systematic_tag_map["SDt_uncalib_DOWN"]  = rljet_SDt_uncalib_DOWN->at(i) > 3.8;
-                SD_systematic_tag_map["SDt_combined_DOWN"] = rljet_SDt_combined_DOWN->at(i) > 3.8;
-                SD_systematic_tag_map["SDt_dcut_DOWN"]     = rljet_SDt_dcut_DOWN->at(i) > 3.8;
-                SD_systematic_tag_map["SDw_calib_UP"]      = rljet_SDw_calib_UP->at(i) > 3.8;
-                SD_systematic_tag_map["SDw_uncalib_UP"]    = rljet_SDw_uncalib_UP->at(i) > 3.8;
-                SD_systematic_tag_map["SDw_combined_UP"]   = rljet_SDw_combined_UP->at(i) > 3.8;
-                SD_systematic_tag_map["SDw_dcut_UP"]       = rljet_SDw_dcut_UP->at(i) > 3.8;
-                SD_systematic_tag_map["SDt_calib_UP"]      = rljet_SDt_calib_UP->at(i) > 3.8;
-                SD_systematic_tag_map["SDt_uncalib_UP"]    = rljet_SDt_uncalib_UP->at(i) > 3.8;
-                SD_systematic_tag_map["SDt_combined_UP"]   = rljet_SDt_combined_UP->at(i) > 3.8;
-                SD_systematic_tag_map["SDt_dcut_UP"]       = rljet_SDt_dcut_UP->at(i) > 3.8;
+                SD_systematic_tag_map["SDw_dcut_UP"]     = rljet_SDw_dcut_UP->at(i) > f_sdw->Eval(rljet_pt_comb->at(i)/1000.);
+                SD_systematic_tag_map["SDt_dcut_UP"]     = rljet_SDt_dcut_UP->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.);
+                SD_systematic_tag_map["SDw_dcut_DOWN"]     = rljet_SDw_dcut_DOWN->at(i) > f_sdw->Eval(rljet_pt_comb->at(i)/1000.);
+                SD_systematic_tag_map["SDt_dcut_DOWN"]     = rljet_SDt_dcut_DOWN->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.);
 
                 hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_calib_DOWN", rljet_SDw_calib_DOWN->at(i), weight, true);
                 hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_uncalib_DOWN", rljet_SDw_uncalib_DOWN->at(i), weight, true);
@@ -818,10 +849,14 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_htt_caGroomJet_phi.at(ijet)->fill(htt_caGroomJet_phi_def->at(ijet)        , weight);
             hp->h_htt_caGroomJet_m.at(ijet)->fill(htt_caGroomJet_m_def->at(ijet) / 1000.  , weight);
 
-            hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("HTT_CAND", htt_caGroomJet_pt_def->at(ijet) / 1000. , weight, htt_tag_def->at(ijet) > 0);
-            hp->h_htt_caGroomJet_eta.at(ijet)->fill_tagged("HTT_CAND", htt_caGroomJet_eta_def->at(ijet)        , weight, htt_tag_def->at(ijet) > 0);
-            hp->h_htt_caGroomJet_phi.at(ijet)->fill_tagged("HTT_CAND", htt_caGroomJet_phi_def->at(ijet)        , weight, htt_tag_def->at(ijet) > 0);
-            hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND", htt_caGroomJet_m_def->at(ijet) / 1000.  , weight, htt_tag_def->at(ijet) > 0);
+            const bool is_htt_tagged = htt_tag_def->at(ijet) > 0
+              && htt_m_def->at(ijet)/1000. >= 140
+              && htt_m_def->at(ijet)/1000. <= 210;
+
+            hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("HTT_CAND", htt_caGroomJet_pt_def->at(ijet) / 1000. , weight, is_htt_tagged);
+            hp->h_htt_caGroomJet_eta.at(ijet)->fill_tagged("HTT_CAND", htt_caGroomJet_eta_def->at(ijet)        , weight, is_htt_tagged);
+            hp->h_htt_caGroomJet_phi.at(ijet)->fill_tagged("HTT_CAND", htt_caGroomJet_phi_def->at(ijet)        , weight, is_htt_tagged);
+            hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND", htt_caGroomJet_m_def->at(ijet) / 1000.  , weight, is_htt_tagged);
 
             if (this->operating_on_mc) {
                 hp->h_htt_pt.at(ijet)->fill_tagged("sjcalib0970", htt_pt_sjcalib0970->at(ijet) / 1000. , weight, true);
@@ -852,11 +887,21 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
                 hp->h_htt_caGroomJet_phi.at(ijet)->fill_tagged("sjcalib1030", htt_caGroomJet_phi_sjcalib1030->at(ijet)        , weight, true);
                 hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged("sjcalib1030", htt_caGroomJet_m_sjcalib1030->at(ijet) / 1000.  , weight, true);
 
-                hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("HTT_CAND_sjcalib0970", htt_caGroomJet_pt_sjcalib0970->at(ijet) / 1000. , weight, htt_tag_sjcalib0970->at(ijet) > 0);
-                hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND_sjcalib0970", htt_caGroomJet_m_sjcalib0970->at(ijet) / 1000.  , weight, htt_tag_sjcalib0970->at(ijet) > 0);
+                const bool is_htt_tagged_sjcalib0970 =
+                  htt_tag_sjcalib0970->at(ijet) > 0
+                  && htt_m_sjcalib0970->at(ijet)/1000. >= 140
+                  && htt_m_sjcalib0970->at(ijet)/1000. <= 210;
 
-                hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("HTT_CAND_sjcalib1030", htt_caGroomJet_pt_sjcalib1030->at(ijet) / 1000. , weight, htt_tag_sjcalib1030->at(ijet) > 0);
-                hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND_sjcalib1030", htt_caGroomJet_m_sjcalib1030->at(ijet) / 1000.  , weight, htt_tag_sjcalib1030->at(ijet) > 0);
+                const bool is_htt_tagged_sjcalib1030 =
+                  htt_tag_sjcalib1030->at(ijet) > 0
+                  && htt_m_sjcalib1030->at(ijet)/1000. >= 140
+                  && htt_m_sjcalib1030->at(ijet)/1000. <= 210;
+
+                hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("HTT_CAND_sjcalib0970", htt_caGroomJet_pt_sjcalib0970->at(ijet) / 1000. , weight, is_htt_tagged_sjcalib0970);
+                hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND_sjcalib0970", htt_caGroomJet_m_sjcalib0970->at(ijet) / 1000.  , weight, is_htt_tagged_sjcalib0970);
+
+                hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("HTT_CAND_sjcalib1030", htt_caGroomJet_pt_sjcalib1030->at(ijet) / 1000. , weight, is_htt_tagged_sjcalib1030);
+                hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND_sjcalib1030", htt_caGroomJet_m_sjcalib1030->at(ijet) / 1000.  , weight, is_htt_tagged_sjcalib1030);
             }
         }
     }
@@ -905,8 +950,13 @@ void DataMCbackgroundSelector::Terminate()
 
     // some histograms are only saved for the nominal branch
     hp->WriteCommonHistograms();
-    if (sub_dir_str == "nominal")
+    if (sub_dir_str == "nominal") {
         hp->WriteNominalOnlyHistograms();
+        h_bdt_top_vs_mu->Write();
+        h_bdt_w_vs_mu->Write();
+        h_dnn_top_vs_mu->Write();
+        h_dnn_w_vs_mu->Write();
+    }
 
     output_file->Close();
     delete output_file;

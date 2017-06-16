@@ -207,7 +207,7 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
     this->h_rljet_deta   = make_unique<TH1Tagged>("h_rljet_deta"   , -5. , 5.     , 0.05);
     this->h_rljet_dphi   = make_unique<TH1Tagged>("h_rljet_dphi"   , 0.  , 6.4    , 0.02);
 
-    this->h_mu  = make_unique<TH1Tagged>("h_mu"  , -0.5 , 120.5 , 1.);
+    this->h_mu  = make_unique<TH1Tagged>("h_mu"  , 0.0 , 120.0 , 1.);
     this->h_NPV = make_unique<TH1Tagged>("h_NPV" , -0.5  , 120.5 , 1.);
 }
 

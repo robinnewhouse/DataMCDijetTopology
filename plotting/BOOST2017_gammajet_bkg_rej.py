@@ -15,20 +15,20 @@ from plot_systematics_breakdown import *
 
 BIN_BOUNDS = array.array('d', [
     200,
-    220,
-    240,
-    260,
-    285,
+    #220,
+    250,
+    #260,
+    #285,
     300,
-    325,
+    #325,
+    #350,
     350,
-    375,
-    400,
-    425,
-    450,
+    #400,
+    #425,
     500,
-    650,
-    1000
+    #500,
+    750,
+    1200
     ]
     )
 
@@ -37,7 +37,7 @@ sane_defaults()
 TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
-CP_ROOT_FILEPATH = "/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology/plotting/raw/gammajet/30-05-2017__10:40:01__15052017_gammajet_newSD_newHTToverlapRemoval_gridMVA_sysfixed/cp.merged.root"
+CP_ROOT_FILEPATH = "/eos/atlas/atlascerngroupdisk/perf-jets/JSS/TopBosonTagAnalysis2016/NTuples_DataMC_gammajet/20170515/cp.merged.root"
 RAW = GammaJetLoader(CP_ROOT_FILEPATH)
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"
 
@@ -50,6 +50,8 @@ def rej_rebin(h):
 
 def get_sys_dict_eff(var_name):
     # get the Rtrk systematics and rebin them
+    if ("BDT" in var_name or "DNN" in var_name):
+      return {}
     dict = RAW.get_systematics_dictionary(var_name, SYSTEMATICS_MC15C_MEDIUM, True)
     for sys_name, var_dict in dict.iteritems():
         var_dict["up"] = rej_rebin(var_dict["up"])
@@ -73,8 +75,12 @@ def make_rej_TH1SysEff(gen_name, tag_name):
     else:
         h_total = rej_rebin(RAW.get_sum_plot(total_var_name, "nominal", normalize_to_pretagged = True))
         h_passed = rej_rebin(RAW.get_sum_plot(passed_var_name, "nominal", normalize_to_pretagged = True))
-        total_sys_dict = get_sys_dict_eff(total_var_name)
-        passed_sys_dict = get_sys_dict_eff(passed_var_name)
+        if ("BDT" in tag_name or "DNN" in tag_name):
+            total_sys_dict = {}
+            passed_sys_dict = {}
+        else:
+            total_sys_dict = get_sys_dict_eff(total_var_name)
+            passed_sys_dict = get_sys_dict_eff(passed_var_name)
         return TH1SysEff(h_total, total_sys_dict, h_passed, passed_sys_dict)
 
 class PlotGammaJetBkgRej(PlotBase):
@@ -129,7 +135,7 @@ class PlotGammaJetBkgRej(PlotBase):
 
         ratio_title = "#frac{Data}{MC}"
         for h_ratio in [ self.h_sherpa_ratio, self.h_sherpa_sys_ratio, self.h_sherpa_stat_ratio ]:
-            set_style_ratio(h_ratio, y_title = ratio_title, y_min = 0.5, y_max = 1.5)
+            set_style_ratio(h_ratio, y_title = ratio_title, y_min = 0.0, y_max = 2.0)
             h_ratio.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
             h_ratio.GetXaxis().SetTitleOffset(4.0)
             h_ratio.GetYaxis().SetTitleOffset(2.0)
@@ -190,11 +196,12 @@ class PlotGammaJetBkgRej(PlotBase):
         self.pad1.RedrawAxis()
 
         self.canvas.cd()
-        self.leg.AddEntry(self.h_data, "Data 2015 + 2016")
+        self.leg.AddEntry(self.h_data, "Data - Sig.")
         #self.leg.AddEntry(self.h_pythia, "Pythia8 MC")
-        self.leg.AddEntry(self.h_sherpa, "Sherpa MC")
-        self.leg.AddEntry(self.h_sherpa_stat_ratio, "Stat. uncert.")
-        self.leg.AddEntry(self.h_sherpa_sys_ratio, "Sys. #oplus Stat. uncert.")
+        self.leg.AddEntry(self.h_sherpa, "#gamma + jet")
+        self.leg.AddEntry(self.h_sherpa_stat_ratio, "Stat. uncert.", "f")
+        if (self.hsys_sherpa.num_systematics != 0):
+            self.leg.AddEntry(self.h_sherpa_sys_ratio, "Sys. #oplus Stat. uncert.", "f")
         self.leg.Draw()
 
         self.pad2.cd()
@@ -214,6 +221,7 @@ class PlotGammaJetBkgRej(PlotBase):
         self.canvas.Clear()
 
 DEF_EXTRA_LINES = ["Trimmed anti-#it{k_{t}} #it{R}=1.0", "#gamma + jet selection"]
+HTT_EXTRA_LINES = ["Trimmed C/A #it{R}=1.5", "#gamma + jet selection"]
 
 def make_pt_rej_plot( tag_name, **kwargs):
 
@@ -224,132 +232,119 @@ def make_pt_rej_plot( tag_name, **kwargs):
     return PlotGammaJetBkgRej(
             histos,
             name = tag_name + "_rej",
-            lumi_val = "36.5",
+            lumi_val = "36.1",
             atlas_mod = "Internal",
-            legend_loc = [0.62,0.93,0.89,0.66],
+            legend_loc = [0.62,0.93,0.89,0.75],
             x_title = "Leading Groomed C/A 1.5 Jet p_{T}" if "HTT" in tag_name else "Leading Large-R Jet #it{p_{T}}",
-            x_max = 3000,
+            tex_size_mod = 0.9,
+            tex_spacing_mod = 0.75,
             y_min = 0.001,
+            x_max = 3000,
             width = 600,
             **kwargs)
 
 bkg_rej_plots = [
-        make_pt_rej_plot(
-            "smooth16Top_MassTau32Tag50eff_MassJSSCut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 50%" ],
-            x_min = 350,
-            y_max = 300,
-            ),
+        #make_pt_rej_plot(
+        #    "smooth16Top_MassTau32Tag50eff_MassJSSCut",
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 50%" ],
+        #    x_min = 350,
+        #    y_max = 150,
+        #    ),
 
-        make_pt_rej_plot(
-            "smooth16Top_MassTau32Tag80eff_MassJSSCut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 80%" ],
-            x_min = 350,
-            y_max = 100,
-            ),
+        #make_pt_rej_plot(
+        #    "smooth16Top_MassTau32Tag80eff_MassJSSCut",
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 80%" ],
+        #    x_min = 350,
+        #    y_max = 40,
+        #    ),
 
-        make_pt_rej_plot(
-            "smooth16Top_MassTau32Tag50eff_nocontain_MassJSSCut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 50%" ],
-            x_min = 350,
-            y_max = 300,
-            ),
+        #make_pt_rej_plot(
+        #    "smooth16Top_QwTau32Tag50eff",
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{sig} = 50%" ],
+        #    x_min = 350,
+        #    y_max = 150
+        #    ),
 
-        make_pt_rej_plot(
-            "smooth16Top_MassTau32Tag80eff_nocontain_MassJSSCut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 80%" ],
-            x_min = 350,
-            y_max = 100,
-            ),
+        #make_pt_rej_plot(
+        #    "smooth16Top_QwTau32Tag80eff",
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{sig} = 80%" ],
+        #    x_min = 350,
+        #    y_max = 80,
+        #    ),
 
-        make_pt_rej_plot(
-            "smooth16Top_QwTau32Tag50eff",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{sig} = 50%" ],
-            x_min = 350,
-            y_max = 300
-            ),
-
-        make_pt_rej_plot(
-            "smooth16Top_QwTau32Tag80eff",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{sig} = 80%" ],
-            x_min = 350,
-            y_max = 100,
-            ),
-
-        make_pt_rej_plot(
-            "smooth16Top_Tau32Split23Tag50eff",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + #sqrt{d_{23}}", "#epsilon_{sig} = 50%" ],
-            x_min = 350,
-            y_max = 300,
-            ),
+        #make_pt_rej_plot(
+        #    "smooth16Top_Tau32Split23Tag50eff",
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + #sqrt{d_{23}}", "#epsilon_{sig} = 50%" ],
+        #    x_min = 350,
+        #    y_max = 150,
+        #    ),
 
         make_pt_rej_plot(
             "smooth16Top_Tau32Split23Tag80eff",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + #sqrt{d_{23}}", "#epsilon_{sig} = 80%" ],
             x_min = 350,
-            y_max = 100,
+            y_max = 45,
             ),
 
         make_pt_rej_plot(
             "smooth16WTag_50eff_MassJSSCut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 50%" ],
             x_min = 200,
-            y_max = 175
+            y_max = 175,
             ),
 
-        make_pt_rej_plot(
-            "smooth16WTag_80eff_MassJSSCut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
-            x_min = 200,
-            y_max = 50
-            ),
+        #make_pt_rej_plot(
+        #    "smooth16WTag_80eff_MassJSSCut",
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
+        #    x_min = 200,
+        #    y_max = 50
+        #    ),
 
-        make_pt_rej_plot(
-            "smooth16ZTag_50eff_MassJSSCut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 50%" ],
-            x_min = 200,
-            y_max = 150
-            ),
+        #make_pt_rej_plot(
+        #    "smooth16ZTag_50eff_MassJSSCut",
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 50%" ],
+        #    x_min = 200,
+        #    y_max = 150
+        #    ),
 
-        make_pt_rej_plot(
-            "smooth16ZTag_80eff_MassJSSCut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
-            x_min = 200,
-            y_max = 50
-            ),
-
-        make_pt_rej_plot(
-            "smooth16WTag_50eff_nocontain_MassJSSCut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 50%" ],
-            x_min = 200,
-            y_max = 175
-            ),
-
-        make_pt_rej_plot(
-            "smooth16WTag_80eff_nocontain_MassJSSCut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
-            x_min = 200,
-            y_max = 50
-            ),
-
-        make_pt_rej_plot(
-            "smooth16ZTag_50eff_nocontain_MassJSSCut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 50%" ],
-            x_min = 200,
-            y_max = 150
-            ),
-
-        make_pt_rej_plot(
-            "smooth16ZTag_80eff_nocontain_MassJSSCut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
-            x_min = 200,
-            y_max = 50
-            ),
+        #make_pt_rej_plot(
+        #    "smooth16ZTag_80eff_MassJSSCut",
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
+        #    x_min = 200,
+        #    y_max = 50
+        #    ),
 
         make_pt_rej_plot(
             "HTT_CAND",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "HTT-Tagged" ],
-            y_max = 35
-            )
+            extra_legend_lines = HTT_EXTRA_LINES + [ "HTT-Tagged" ],
+            y_max = 100,
+            x_min = 350,
+            ),
+
+        make_pt_rej_plot(
+            "BDT_Top",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "BDT Top, #epsilon_{sig} = 80%" ],
+            y_max = 100,
+            x_min = 350,
+            ),
+
+        make_pt_rej_plot(
+            "BDT_W",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "BDT W, #epsilon_{sig} = 50%" ],
+            y_max = 350,
+            ),
+
+        make_pt_rej_plot(
+            "DNN_Top",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "DNN Top, #epsilon_{sig} = 80%" ],
+            y_max = 100,
+            x_min = 350,
+            ),
+
+        make_pt_rej_plot(
+            "DNN_W",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "DNN W, #epsilon_{sig} = 50%" ],
+            y_max = 350,
+            ),
 
         ]

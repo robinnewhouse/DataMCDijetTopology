@@ -1055,14 +1055,19 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
           }
         }
 
-        // if (m_runHTT && !event.m_isLoose)
-        //     this->runHTTAndFillTree();
+        // auto mcChannelNumber = event.info->mcChanelNumber();
 
-        // if (m_runSD)
-        //     this->runSDandFillTree(rljets, m_config->isMC());
+        // const bool is_highpT_dijet_slice =
+        //   (mcChannelNumber >= 361029 && mcChannelNumber <= 361032)
+        //   || (mcChannelNumber >= 426049 && mcChannelNumber <= 426052);
+
+        if (m_runHTT && !event.m_isLoose)
+            this->runHTTAndFillTree();
+
+        if (m_runSD && !event.m_isLoose)
+            this->runSDandFillTree(rljets, m_config->isMC());
 
     }
-
     // Oh yeah, we want to set all the default AnalysisTop variables too and the call fill on the TTree
     EventSaverFlatNtuple::saveEvent(event);
 }

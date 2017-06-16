@@ -11,7 +11,6 @@
 
 #include "BDTWTopTagger/BDTWTopTagger.h"
 #include "NNTaggingTools/DNNWTopTagger.h"
-
 // ROOT imports
 #include <TChain.h>
 #include <TFile.h>
@@ -43,6 +42,10 @@ class DataMCbackgroundSelector : public TSelector {
         TTree* fChain;   //!pointer to the analyzed TTree or TChain
 
         HistoPack* hp;
+        TH2F* h_bdt_top_vs_mu;
+        TH2F* h_bdt_w_vs_mu;
+        TH2F* h_dnn_top_vs_mu;
+        TH2F* h_dnn_w_vs_mu;
 
         static const std::unordered_map<std::string, EventSelector> available_event_selectors;
         EventSelector chosen_event_selector;
@@ -89,6 +92,9 @@ class DataMCbackgroundSelector : public TSelector {
         unique_ptr<DNNWTopTagger> DNN_WTag;
 
         std::map<std::string, double> jetMoments;
+
+        TF1* f_sdw;
+        TF1* f_sdtop;
 
         /******************/
         /***** TOOLS ******/
@@ -163,6 +169,8 @@ class DataMCbackgroundSelector : public TSelector {
         std::vector<int>     *rljet_smooth16WTag_80eff;
         std::vector<int>     *rljet_smooth16ZTag_50eff;
         std::vector<int>     *rljet_smooth16ZTag_80eff;
+
+        std::vector<int>     *rljet_pdgid;
 
         // std::vector<int> *rljet_smooth16Top_MassTau32Tag50eff_nocontain;
         // std::vector<int> *rljet_smooth16Top_MassTau32Tag80eff_nocontain;
@@ -349,6 +357,8 @@ class DataMCbackgroundSelector : public TSelector {
         TBranch        *b_rljet_smooth16WTag_80eff;   //!
         TBranch        *b_rljet_smooth16ZTag_50eff;   //!
         TBranch        *b_rljet_smooth16ZTag_80eff;   //!
+
+        TBranch        *b_rljet_pdgid;   //!
 
         // TBranch *b_rljet_smooth16Top_MassTau32Tag50eff_nocontain; //!
         // TBranch *b_rljet_smooth16Top_MassTau32Tag80eff_nocontain; //!
@@ -553,6 +563,8 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     rljet_smooth16ZTag_50eff = 0;
     rljet_smooth16ZTag_80eff = 0;
 
+    rljet_pdgid = 0;
+
     //rljet_smooth16Top_MassTau32Tag50eff_nocontain = 0;
     //rljet_smooth16Top_MassTau32Tag80eff_nocontain = 0;
     //rljet_smooth16WTag_50eff_nocontain = 0;
@@ -752,6 +764,7 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     fChain->SetBranchAddress("rljet_smooth16ZTag_50eff", &rljet_smooth16ZTag_50eff, &b_rljet_smooth16ZTag_50eff);
     fChain->SetBranchAddress("rljet_smooth16ZTag_80eff", &rljet_smooth16ZTag_80eff, &b_rljet_smooth16ZTag_80eff);
 
+
     // fChain->SetBranchAddress("m_rljet_smooth16Top_MassTau32Tag50eff_nocontain", &rljet_smooth16Top_MassTau32Tag50eff_nocontain, &b_rljet_smooth16Top_MassTau32Tag50eff_nocontain);
     // fChain->SetBranchAddress("m_rljet_smooth16Top_MassTau32Tag80eff_nocontain", &rljet_smooth16Top_MassTau32Tag80eff_nocontain, &b_rljet_smooth16Top_MassTau32Tag80eff_nocontain);
     // fChain->SetBranchAddress("rljet_smooth16WTag_50eff_nocontain", &rljet_smooth16WTag_50eff_nocontain, &b_rljet_smooth16WTag_50eff_nocontain);
@@ -761,6 +774,10 @@ void DataMCbackgroundSelector::Init(TTree *tree)
 
     if (sub_dir_str == "nominal") {
         fChain->SetBranchAddress("NPV", &NPV, &b_NPV);
+
+        if (this->operating_on_mc) {
+          fChain->SetBranchAddress("rljet_pdgid", &rljet_pdgid, &b_rljet_pdgid);
+        }
 
         // fChain->SetBranchAddress("rljet_BDT_score_top_qqb"       , &rljet_BDT_score_top_qqb       , &b_rljet_BDT_score_top_qqb);
         // fChain->SetBranchAddress("rljet_BDT_score_top_inclusive" , &rljet_BDT_score_top_inclusive , &b_rljet_BDT_score_top_inclusive);
