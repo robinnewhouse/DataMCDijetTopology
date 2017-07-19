@@ -14,9 +14,9 @@ sane_defaults()
 TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
-CP_ROOT_FILEPATH = "/eos/atlas/atlascerngroupdisk/perf-jets/JSS/TopBosonTagAnalysis2016/NTuples_DataMC_dijets/20170515/cp.merged.root"
+CP_ROOT_FILEPATH = "/eos/atlas/atlascerngroupdisk/perf-jets/JSS/TopBosonTagAnalysis2016/NTuples_DataMC_dijets/20170610/cp.merged.root"
 LOADER = DijetLoader(CP_ROOT_FILEPATH)
-LOADER_SMOOTH = DijetLoader("/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/raw/dijet/17-02-2017__15:37:30__02072017_gridjobs_withQwSplit23Sys/cp.merged.root")
+LOADER_SMOOTH = LOADER
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/BOOST2017_REJ"
@@ -75,13 +75,13 @@ def make_rej_TH1SysEff(gen_name, tag_name):
     passed_var_name = total_var_name + "_" + tag_name
 
     h_total = rej_rebin(
-            tmp_loader.get_hist(["data","nominal"], total_var_name)
+            tmp_loader.get_sigsub_data(total_var_name)
             if is_data
             else tmp_loader.get_normalized_dijet(gen_name, total_var_name, normalize_to_pretagged = True)
             )
 
     h_passed = rej_rebin(
-            tmp_loader.get_hist(["data","nominal"], passed_var_name)
+            tmp_loader.get_sigsub_data(passed_var_name)
             if is_data
             else tmp_loader.get_normalized_dijet(gen_name, passed_var_name, normalize_to_pretagged = True)
             )
@@ -96,8 +96,8 @@ def make_rej_TH1SysEff(gen_name, tag_name):
           total_sys_dict = {}
           passed_sys_dict = {}
         elif ("SD" in tag_name):
-          total_sys_dict = None
-          passed_sys_dict = get_sys_dict_eff(gen_name, passed_var_name)
+          total_sys_dict = {}
+          passed_sys_dict = {}
         else:
           total_sys_dict = get_sys_dict_eff(gen_name, total_var_name)
           passed_sys_dict = get_sys_dict_eff(gen_name, passed_var_name)
@@ -117,11 +117,12 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         self.h_pythia_sys = self.hsys_pythia.get_histo_with_systematic_errs()
 
         self.determine_y_axis_title(self.h_data,
-            "1/#epsilon_{QCD}", show_binwidth = False)
+            "Background rejection (1/#epsilon_{bkg})", show_binwidth = False)
 
         set_data_style_simple(self.h_data)
         set_mc_style_marker(self.h_pythia, kRed, shape = 21)
         set_mc_style_marker(self.h_herwig, kBlue, shape = 22)
+
         for h in [self.h_data, self.h_pythia, self.h_herwig, self.h_pythia_sys, self.h_pythia_stat]:
             h.GetYaxis().SetTitle(self.y_title)
             h.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
@@ -145,10 +146,6 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         self.h_pythia_sys_ratio.SetMarkerSize(0)
         self.h_pythia_stat_ratio.SetMarkerSize(0)
 
-        set_mc_sys_err_style(self.h_pythia_sys_ratio, col = kGreen-8)
-        set_mc_sys_err_style(self.h_pythia_stat_ratio, col = kGreen-2)
-        set_mc_sys_err_style(self.h_pythia_sys, col = kGreen-8)
-        set_mc_sys_err_style(self.h_pythia_stat, col = kGreen-2)
 
         ratio_title = "#frac{Data}{MC}"
         for h_ratio in [ self.h_pythia_ratio, self.h_herwig_ratio, self.h_pythia_sys_ratio, self.h_pythia_stat_ratio ]:
@@ -161,6 +158,14 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         for ibin in range(self.h_pythia_sys_ratio.GetSize()):
             self.h_pythia_sys_ratio.SetBinContent(ibin, 1.0)
             self.h_pythia_stat_ratio.SetBinContent(ibin, 1.0)
+
+        set_mc_sys_err_style(self.h_pythia_sys_ratio, col = kGreen-8)
+        set_mc_sys_err_style(self.h_pythia_stat_ratio, col = kGreen-5)
+        set_mc_sys_err_style(self.h_pythia_sys, col = kGreen-8)
+        set_mc_sys_err_style(self.h_pythia_stat, col = kGreen-5)
+
+        self.h_pythia_stat_ratio.SetFillColor(kGreen-5)
+        self.h_pythia_stat_ratio.SetFillStyle(1001)
 
         # SET UP THE CANVAS
         self.canvas.Divide(1,2)
@@ -186,8 +191,8 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
 
         self.pad1.cd()
 
-        self.h_pythia_sys.Draw("E2")
-        self.h_pythia_stat.Draw("E2,same")
+        #self.h_pythia_sys.Draw("E2")
+        #self.h_pythia_stat.Draw("E2,same")
         self.h_herwig.Draw("PE1,same")
         self.h_pythia.Draw("PE1,same")
         self.h_data.Draw("PE1,same")
@@ -195,10 +200,10 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         self.pad1.RedrawAxis()
 
         self.canvas.cd()
-        self.leg.AddEntry(self.h_data, "Data - Sig")
+        self.leg.AddEntry(self.h_data, "Data - Sig.")
         self.leg.AddEntry(self.h_pythia, "Pythia8 dijet")
         self.leg.AddEntry(self.h_herwig, "Herwig++ dijet")
-        self.leg.AddEntry(self.h_pythia_stat, "Stat. uncert.", "f")
+        self.leg.AddEntry(self.h_pythia_stat_ratio, "Stat. uncert.", "f")
         if (self.hsys_pythia.num_systematics != 0):
           self.leg.AddEntry(self.h_pythia_sys, "Stat. #oplus syst. uncert.", "f")
         self.leg.Draw()
@@ -216,10 +221,11 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         self.canvas.Modified()
 
         self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
+        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
         self.canvas.Clear()
 
 DEF_EXTRA_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", "Dijet Selection" ]
-HTT_EXTRA_LINES = ["Trimmed C/A #it{R}=1.5", "#gamma + jet selection"]
+HTT_EXTRA_LINES = ["Trimmed C/A #it{R}=1.5", "Dijet Selection"]
 
 def make_pt_efficiency_plot( tag_name, ref_tag_name = None, **kwargs):
 
@@ -230,10 +236,6 @@ def make_pt_efficiency_plot( tag_name, ref_tag_name = None, **kwargs):
     if (ref_tag_name != None):
         histos["data_ref"] = make_rej_TH1SysEff("data_ref", ref_tag_name)
 
-    #if ("BDT" not in tag_name and "DNN" not in tag_name):
-    #  p = PlotPythiaSystematicsBreakdown(histos["pythia"], name = tag_name + "_SYS", y_min = 0, y_max = 30, x_title = "Leading Large-R Jet #it{p_{T}}", hide_lumi = True)
-    #  p.print_to_file(OUTPUT_DIR + "/" + p.name + ".pdf")
-
     return PlotDataPythiaHerwigEfficiency(
             histos,
             name = tag_name + "_rej",
@@ -242,7 +244,7 @@ def make_pt_efficiency_plot( tag_name, ref_tag_name = None, **kwargs):
             lumi_val = "36.7",
             atlas_mod = "Internal",
             legend_loc = [0.60,0.93,0.91,0.75],
-            x_title = "Leading Groomed C/A 1.5 Jet p_{T}" if "HTT" in tag_name else "Leading Large-R Jet #it{p_{T}}",
+            x_title = "Leading Groomed C/A 1.5 Jet p_{T}" if "HTT" in tag_name else "Leading large-#it{R} Jet #it{p_{T}}",
             x_min = 450,
             x_max = 2500,
             y_min = 0.001,
@@ -282,13 +284,13 @@ bkg_rej_plots = [
 
         make_pt_efficiency_plot(
             "smooth16Top_Tau32Split23Tag80eff",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + #sqrt{d_{23}}", "#epsilon_{sig} = 80%" ],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): #tau_{32} + #sqrt{d_{23}}"],
             y_max = 45,
             ),
 
         make_pt_efficiency_plot(
             "smooth16WTag_50eff_MassJSSCut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 50%" ],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%):", "D_{2} + m^{comb}"],
             y_max = 175
             ),
 
@@ -312,44 +314,44 @@ bkg_rej_plots = [
 
         make_pt_efficiency_plot(
             "HTT_CAND",
-            extra_legend_lines = HTT_EXTRA_LINES + [ "HTT-Tagged" ],
-            y_max = 100
+            extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
+            y_max = 80,
             ),
 
         make_pt_efficiency_plot(
             "BDT_Top",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "BDT Top, #epsilon_{sig} = 80%" ],
-            y_max = 100,
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): BDT" ],
+            y_max = 80,
             ),
 
         make_pt_efficiency_plot(
             "BDT_W",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "BDT W, #epsilon_{sig} = 50%" ],
-            y_max = 350,
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): BDT" ],
+            y_max = 200,
             ),
 
         make_pt_efficiency_plot(
             "DNN_Top",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "DNN Top, #epsilon_{sig} = 80%" ],
-            y_max = 100,
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): DNN" ],
+            y_max = 75,
             ),
 
         make_pt_efficiency_plot(
             "DNN_W",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "DNN W, #epsilon_{sig} = 50%" ],
-            y_max = 350,
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): DNN" ],
+            y_max = 200,
             ),
 
         make_pt_efficiency_plot(
             "SDt_dcut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "ShD Top, #epsilon_{sig} = 80%" ],
-            y_max = 100,
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): SD" ],
+            y_max = 40,
             ),
 
         make_pt_efficiency_plot(
             "SDw_dcut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "ShD W, #epsilon_{sig} = 50%" ],
-            y_max = 175,
+            extra_legend_lines = DEF_EXTRA_LINES + [ "ShD #font[52]{W}, #epsilon_{sig} = 50%" ],
+            y_max = 60,
             ),
 
         ]

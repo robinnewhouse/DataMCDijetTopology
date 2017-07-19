@@ -37,7 +37,7 @@ sane_defaults()
 TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
-CP_ROOT_FILEPATH = "/eos/atlas/atlascerngroupdisk/perf-jets/JSS/TopBosonTagAnalysis2016/NTuples_DataMC_gammajet/20170515/cp.merged.root"
+CP_ROOT_FILEPATH = "/eos/atlas/atlascerngroupdisk/perf-jets/JSS/TopBosonTagAnalysis2016/NTuples_DataMC_gammajet/20170515/cp.merged.backup.root"
 RAW = GammaJetLoader(CP_ROOT_FILEPATH)
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"
 
@@ -52,7 +52,7 @@ def get_sys_dict_eff(var_name):
     # get the Rtrk systematics and rebin them
     if ("BDT" in var_name or "DNN" in var_name):
       return {}
-    dict = RAW.get_systematics_dictionary(var_name, SYSTEMATICS_MC15C_MEDIUM, True)
+    dict = RAW.get_systematics_dictionary(var_name, SYSTEMATICS_MC15C_MEDIUM, "sherpa_gammajet", True)
     for sys_name, var_dict in dict.iteritems():
         var_dict["up"] = rej_rebin(var_dict["up"])
         var_dict["down"] = rej_rebin(var_dict["down"])
@@ -68,13 +68,13 @@ def make_rej_TH1SysEff(gen_name, tag_name):
     passed_var_name = total_var_name + "_" + tag_name
 
     if (is_data):
-        h_total = rej_rebin(RAW.get_data(total_var_name))
-        h_passed = rej_rebin(RAW.get_data(passed_var_name))
+        h_total = rej_rebin(RAW.get_sigsub_data(total_var_name))
+        h_passed = rej_rebin(RAW.get_sigsub_data(passed_var_name))
         h_total.Divide(h_passed)
         return h_total.Clone()
     else:
-        h_total = rej_rebin(RAW.get_sum_plot(total_var_name, "nominal", normalize_to_pretagged = True))
-        h_passed = rej_rebin(RAW.get_sum_plot(passed_var_name, "nominal", normalize_to_pretagged = True))
+        h_total = rej_rebin(RAW.get_normalized_gamma(total_var_name, normalize_to_pretagged = True))
+        h_passed = rej_rebin(RAW.get_normalized_gamma(passed_var_name, normalize_to_pretagged = True))
         if ("BDT" in tag_name or "DNN" in tag_name):
             total_sys_dict = {}
             passed_sys_dict = {}
@@ -102,11 +102,11 @@ class PlotGammaJetBkgRej(PlotBase):
         set_mc_sys_err_style(self.h_pythia_sys)
         set_mc_sys_err_style(self.h_sherpa_sys)
 
-        self.determine_y_axis_title(self.h_data, "1/#epsilon_{QCD}", show_binwidth = False)
+        self.determine_y_axis_title(self.h_data, "Background rejection (1/#epsilon_{bkg})", show_binwidth = False)
 
         set_data_style_simple(self.h_data)
         set_mc_style_marker(self.h_pythia, kRed, shape = 21)
-        set_mc_style_marker(self.h_sherpa, kBlue, shape = 22)
+        set_mc_style_marker(self.h_sherpa, kBlue, shape = 22, marker_size = 1.0, line_width = 3)
 
         for h in [self.h_data, self.h_pythia, self.h_pythia_sys, self.h_sherpa, self.h_sherpa_sys]:
             h.GetYaxis().SetTitle(self.y_title)
@@ -157,7 +157,7 @@ class PlotGammaJetBkgRej(PlotBase):
         self.h_sherpa_ratio.SetFillColorAlpha(kBlue, 0.85)
 
         set_mc_style_marker(self.h_pythia_ratio, kRed, shape = 21)
-        set_mc_style_marker(self.h_sherpa_ratio, kBlue, shape = 22)
+        set_mc_style_marker(self.h_sherpa_ratio, kBlue, shape = 22, line_width = 3, marker_size = 1.0)
 
         # TODO: necessary?
         # self.canvas.Clear()
@@ -218,6 +218,7 @@ class PlotGammaJetBkgRej(PlotBase):
         self.canvas.Modified()
 
         self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
+        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
         self.canvas.Clear()
 
 DEF_EXTRA_LINES = ["Trimmed anti-#it{k_{t}} #it{R}=1.0", "#gamma + jet selection"]
@@ -235,7 +236,7 @@ def make_pt_rej_plot( tag_name, **kwargs):
             lumi_val = "36.1",
             atlas_mod = "Internal",
             legend_loc = [0.62,0.93,0.89,0.75],
-            x_title = "Leading Groomed C/A 1.5 Jet p_{T}" if "HTT" in tag_name else "Leading Large-R Jet #it{p_{T}}",
+            x_title = "Leading Groomed C/A 1.5 Jet p_{T}" if "HTT" in tag_name else "Leading Large-#it{R} Jet #it{p_{T}}",
             tex_size_mod = 0.9,
             tex_spacing_mod = 0.75,
             y_min = 0.001,
@@ -281,14 +282,14 @@ bkg_rej_plots = [
 
         make_pt_rej_plot(
             "smooth16Top_Tau32Split23Tag80eff",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + #sqrt{d_{23}}", "#epsilon_{sig} = 80%" ],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): #tau_{32} + #sqrt{d_{23}}"],
             x_min = 350,
             y_max = 45,
             ),
 
         make_pt_rej_plot(
             "smooth16WTag_50eff_MassJSSCut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 50%" ],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): D_2 + m^{comb}"],
             x_min = 200,
             y_max = 175,
             ),
@@ -316,35 +317,35 @@ bkg_rej_plots = [
 
         make_pt_rej_plot(
             "HTT_CAND",
-            extra_legend_lines = HTT_EXTRA_LINES + [ "HTT-Tagged" ],
-            y_max = 100,
+            extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
+            y_max = 80,
             x_min = 350,
             ),
 
         make_pt_rej_plot(
             "BDT_Top",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "BDT Top, #epsilon_{sig} = 80%" ],
-            y_max = 100,
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): BDT" ],
+            y_max = 80,
             x_min = 350,
             ),
 
         make_pt_rej_plot(
             "BDT_W",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "BDT W, #epsilon_{sig} = 50%" ],
-            y_max = 350,
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): BDT" ],
+            y_max = 200,
             ),
 
         make_pt_rej_plot(
             "DNN_Top",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "DNN Top, #epsilon_{sig} = 80%" ],
-            y_max = 100,
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): DNN" ],
+            y_max = 75,
             x_min = 350,
             ),
 
         make_pt_rej_plot(
             "DNN_W",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "DNN W, #epsilon_{sig} = 50%" ],
-            y_max = 350,
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): DNN" ],
+            y_max = 200,
             ),
 
         ]

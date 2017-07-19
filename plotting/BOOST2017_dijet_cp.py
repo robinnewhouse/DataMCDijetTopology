@@ -16,9 +16,9 @@ sane_defaults()
 TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
-CP_ROOT_FILEPATH = "/eos/atlas/atlascerngroupdisk/perf-jets/JSS/TopBosonTagAnalysis2016/NTuples_DataMC_dijets/20170515/cp.merged.root"
+CP_ROOT_FILEPATH = "/eos/atlas/atlascerngroupdisk/perf-jets/JSS/TopBosonTagAnalysis2016/NTuples_DataMC_dijets/20170610/cp.merged.root"
 LOADER = DijetLoader(CP_ROOT_FILEPATH)
-LOADER_SMOOTH = DijetLoader("/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/raw/dijet/17-02-2017__15:37:30__02072017_gridjobs_withQwSplit23Sys/cp.merged.root")
+LOADER_SMOOTH = LOADER
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/BOOST2017"
@@ -41,7 +41,7 @@ class PlotDataPythiaHerwig(PlotBase):
                 width = 600,
                 name = var_name,
                 atlas_mod = "Internal",
-                legend_loc = [0.20,0.93,0.56,0.70] if flip_legend else [0.53,0.93,0.90,0.70],
+                legend_loc = [0.20,0.93,0.56,0.66] if flip_legend else [0.53,0.93,0.90,0.66],
                 atlas_loc = [0.6,0.9] if flip_legend else None,
                 extra_lines_loc = [0.6,0.82] if flip_legend else None,
                 tex_size_mod = 0.9,
@@ -257,6 +257,7 @@ class PlotDataPythiaHerwig(PlotBase):
         self.canvas.Modified()
 
         self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
+        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
         self.canvas.Clear()
 
 
@@ -380,24 +381,24 @@ data_mc_plots = []
 
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "smooth16Top_MassTau32Tag50eff_JSSCut",
-        empty_scale = 2.6,
+        empty_scale = 4.5,
         extra_legend_lines = DEF_LINES + ["Top-tagged"],
         log_scale = True,
         x_min = 0,
         x_max = 350,
-        y_min = 1.1e2,
+        y_min = 1.1e1,
         ttbar_sf = 5,
         wzjets_sf = 12,
         rebin = MASS_PLOT_REBIN,
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "smooth16Top_MassTau32Tag80eff_JSSCut",
-        empty_scale = 2.6,
+        empty_scale = 4.5,
         extra_legend_lines = DEF_LINES + ["Top-tagged"],
         log_scale = True,
         x_min = 0,
         x_max = 350,
-        y_min = 1.1e2,
+        y_min = 1.1e1,
         ttbar_sf = 5,
         wzjets_sf = 12,
         rebin = MASS_PLOT_REBIN,
@@ -504,7 +505,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "BDT_W",
         ttbar_sf = 25,
         wzjets_sf = 5,
         do_systematics = False,
-        rebin = MASS_PLOT_REBIN/8,
+        rebin = MASS_PLOT_REBIN,
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "DNN_Top",
@@ -554,7 +555,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "SDw_dcut",
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig("h_rljet0_m_comb",
-            empty_scale = 2.5,
+            empty_scale = 3.0,
             extra_legend_lines = DEF_LINES,
             x_min = 0,
             x_max = 350,
@@ -739,6 +740,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_DNN_score_w",
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_SD_logchi_t_calib",
         empty_scale = 2.2,
         flip_legend = True,
+        do_systematics = False,
         x_units = "",
         extra_legend_lines = DEF_LINES,
         x_min = -10,
@@ -750,6 +752,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_SD_logchi_t_calib",
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_SD_logchi_t_uncalib",
         empty_scale = 2.2,
+        do_systematics = False,
         flip_legend = True,
         x_units = "",
         extra_legend_lines = DEF_LINES,
@@ -762,6 +765,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_SD_logchi_t_uncalib",
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_SD_logchi_t_combined",
         empty_scale = 2.2,
+        do_systematics = False,
         x_units = "",
         flip_legend = True,
         extra_legend_lines = DEF_LINES,
@@ -774,6 +778,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_SD_logchi_t_combined",
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_SD_logchi_t_dcut",
         empty_scale = 2.2,
+        do_systematics = False,
         x_units = "",
         flip_legend = True,
         extra_legend_lines = DEF_LINES,
@@ -818,10 +823,10 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_pt_comb_" + "smooth16WTag_8
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_pt_comb_" + "smooth16Top_MassTau32Tag50eff_JSSCut",
-        empty_scale = 10,
+        empty_scale = 7,
         extra_legend_lines = DEF_LINES + ["Top-tagged"],
         log_scale = True,
-        y_min = 10e2,
+        y_min = 10,
         x_min = 450,
         x_max = 4000,
         ttbar_sf = 25,
@@ -830,10 +835,10 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_pt_comb_" + "smooth16Top_Ma
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_pt_comb_" + "smooth16Top_MassTau32Tag80eff_JSSCut",
-        empty_scale = 10,
+        empty_scale = 7,
         extra_legend_lines = DEF_LINES + ["Top-tagged"],
         log_scale = True,
-        y_min = 10e2,
+        y_min = 10,
         x_min = 450,
         x_max = 4000,
         ttbar_sf = 25,

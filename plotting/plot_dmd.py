@@ -47,9 +47,9 @@ class DijetLoader(PlotLoader):
     def get_sigsub_data(self, hist_name, sig_sf = 1.0):
       if ("htt" in hist_name and "sjcalib" in hist_name):
         hist_name_data = hist_name.split("_sjcalib")[0]
-      elif ("logchi" in hist_name and "_UP" in hist_name):
+      elif ("SD" in hist_name and "_UP" in hist_name):
         hist_name_data = hist_name.split("_UP")[0]
-      elif ("logchi" in hist_name and "_DOWN" in hist_name):
+      elif ("SD" in hist_name and "_DOWN" in hist_name):
         hist_name_data = hist_name.split("_DOWN")[0]
       else:
         hist_name_data = hist_name
@@ -85,6 +85,7 @@ class DijetLoader(PlotLoader):
         return systematics
 
     def get_normalized_dijet(self, generator, hist_name, branch = "nominal", sig_sf = 1.0, normalize_to_pretagged = False):
+
         if ("pythia" in generator):
             generator = "pythia_dijet"
         elif ("herwig" in generator):
@@ -92,6 +93,7 @@ class DijetLoader(PlotLoader):
         elif ("sherpa" in generator):
             generator = "sherpa_dijet"
         else: raise
+        
 
         h_dijet = self.get_hist([generator, branch], hist_name)
         h_dijet_nominal = self.get_hist([generator, "nominal"], hist_name)
@@ -163,9 +165,9 @@ class GammaJetLoader(PlotLoader):
     def get_sigsub_data(self, hist_name, sig_sf = 1.0):
       if ("htt" in hist_name and "sjcalib" in hist_name):
         hist_name_data = hist_name.split("_sjcalib")[0]
-      elif ("logchi" in hist_name and "_UP" in hist_name):
+      elif ("SD" in hist_name and "_UP" in hist_name):
         hist_name_data = hist_name.split("_UP")[0]
-      elif ("logchi" in hist_name and "_DOWN" in hist_name):
+      elif ("SD" in hist_name and "_DOWN" in hist_name):
         hist_name_data = hist_name.split("_DOWN")[0]
       else:
         hist_name_data = hist_name
@@ -248,10 +250,11 @@ class GammaJetLoader(PlotLoader):
     def get_sum_plot(self,
         hist_name,
         branch,
+        generator = "sherpa_gammajet",
         sig_sf = 1.0,
         normalize_to_pretagged = False):
 
-      h_gamma   = self.get_normalized_gamma(hist_name, branch, sig_sf, normalize_to_pretagged)
+      h_gamma   = self.get_normalized_gamma(hist_name, generator, branch, sig_sf, normalize_to_pretagged)
       h_wzgamma = self.get_wzgamma(hist_name, branch)
       h_ttbar   = self.get_ttbar(hist_name, branch)
 
@@ -368,35 +371,35 @@ def get_mc15c_systematics_style_color(sys_name):
 ##########################
 
 AXIS_TITLES = {
-        "rljet0_pt"                       : "Leading Large-R Jet #it{p}_{T}",
-        "rljet0_eta"                      : "Leading Large-R Jet #it{#eta}",
-        "rljet0_phi"                      : "Leading Large-R Jet #it{#phi}",
-        "rljet0_m"                        : "Leading Large-R Jet Combined Mass",
-        "rljet0_D2"    : "Leading Large-R Jet #it{D}_{2}^{#beta=1}",
-        "rljet0_Tau32" : "Leading Large-R Jet #it{#tau}_{32}^{WTA}",
-        "rljet0_Qw"    : "Leading Large-R Jet Q_{w}",
-        "rljet0_Split23"    : "Leading Large-R Jet #sqrt{d_{23}}",
-        "rl_dijet_m"                      : "m_{JJ}",
-        "rljet0_ungroomed_ntrk500"        : "Leading Large-R Jet n_{trk}",
-        "rljet0_NTrimSubjets"        : "Leading Large-R Jet: Num. Trimmed Subjets",
-        "rljet0_width"                    : "Leading Large-R Jet width",
-        "caGroomJet0_pt"                  : "Leading Large-#it{R} jet #it{p_{T}}",
-        "caGroomJet0_eta"                 : "Leading Large-#it{R} jet #it{#eta}",
-        "caGroomJet0_phi"                 : "Leading Large-#it{R} jet #it{#phi}",
-        "caGroomJet0_m"                   : "Leading Large-#it{R} jet Mass",
-        "htt0_pt"                         : "Top Candidate #it{p_{T}}",
-        "htt0_eta"                        : "Top Candidate #it{#eta}",
-        "htt0_phi"                        : "Top Candidate #it{#phi}",
-        "htt0_m"                          : "Top Candidate m_{T}",
-        "htt0_m23m123"                    : "Top Candidate m_{23} / m_{123}",
-        "htt0_atan1312"                   : "Top Candidate arctan (m_{13} / m_{12})",
-        "BDT_score_top"                   : "Leading Large-#it{R} jet BDT #it{top} tag discriminant",
-        "BDT_score_w"                     : "Leading Large-#it{R} jet BDT #it{W} tag discriminant",
-        "DNN_score_top"                   : "Leading Large-#it{R} jet DNN #it{top} tag discriminant",
-        "DNN_score_w"                     : "Leading Large-#it{R} jet DNN #it{W} tag discriminant",
-        "rljet0_SD"                       : "Leading Large-#it{R} jet log #chi",
-        "h_mu_"                           : "<#mu>",
-        "h_NPV"                           : "NPV"
+        "rljet0_pt"                : "Leading Trimmed large-#it{R} jet #it{p_{T}}",
+        "rljet0_eta"               : "Leading Trimmed large-#it{R} Jet #it{#eta}",
+        "rljet0_phi"               : "Leading Trimmed large-#it{R} Jet #it{#phi}",
+        "rljet0_m"                 : "Leading Trimmed large-#it{R} jet combined mass",
+        "rljet0_D2"                : "Leading Trimmed large-#it{R} Jet #it{D}_{2}",
+        "rljet0_Tau32"             : "Leading Trimmed large-#it{R} Jet #it{#tau}_{32}",
+        "rljet0_Qw"                : "Leading Trimmed large-#it{R} Jet Q_{w}",
+        "rljet0_Split23"           : "Leading Trimmed large-#it{R} Jet #sqrt{d_{23}}",
+        "rl_dijet_m"               : "m_{JJ}",
+        "rljet0_ungroomed_ntrk500" : "Leading large-#it{R} Jet n_{trk}",
+        "rljet0_NTrimSubjets"      : "Leading large-#it{R} Jet n_{subjets}",
+        "rljet0_width"             : "Leading large-#it{R} Jet width",
+        "caGroomJet0_pt"           : "Leading Trimmed C/A large-#it{R} jet #it{p_{T}}",
+        "caGroomJet0_eta"          : "Leading large-#it{R} jet #it{#eta}",
+        "caGroomJet0_phi"          : "Leading large-#it{R} jet #it{#phi}",
+        "caGroomJet0_m"            : "Leading Trimmed C/A large-#it{R} jet mass",
+        "htt0_pt"                  : "Top Candidate #it{p_{T}}",
+        "htt0_eta"                 : "Top Candidate #it{#eta}",
+        "htt0_phi"                 : "Top Candidate #it{#phi}",
+        "htt0_m"                   : "Top Candidate m_{T}",
+        "htt0_m23m123"             : "Top Candidate m_{23} / m_{123}",
+        "htt0_atan1312"            : "Top Candidate arctan (m_{13} / m_{12})",
+        "BDT_score_top"            : "Leading large-#it{R} jet BDT #it{top} tag discriminant",
+        "BDT_score_w"              : "Leading large-#it{R} jet BDT #it{W} tag discriminant",
+        "DNN_score_top"            : "Leading large-#it{R} jet DNN #it{top} tag discriminant",
+        "DNN_score_w"              : "Leading large-#it{R} jet DNN #it{W} tag discriminant",
+        "rljet0_SD"                : "Leading large-#it{R} jet log #chi",
+        "h_mu_"                    : "<#mu>",
+        "h_NPV"                    : "NPV"
         }
 
 def get_axis_title(histo_name):

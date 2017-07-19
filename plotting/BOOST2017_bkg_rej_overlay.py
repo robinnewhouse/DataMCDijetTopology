@@ -21,42 +21,28 @@ OUTPUT_DIR = "/eos/user/z/zmeadows/TopWTag/PLOTS/BOOST2017_REJ_OVERLAY"
 make_dir(OUTPUT_DIR)
 print "OUTPUT DIRECTORY: ", OUTPUT_DIR
 
-def rebin_rej(h, topo):
+def rebin_rej(h, topo, pt_cut = True):
   if (topo == "dijet"):
     BIN_BOUNDS = array.array('d', [
-      450, 500, 550, 600, 650, 700, 750, 800, 850, 900, 950,
-      1000, 1100, 1200, 1300, 1400, 1500, 1700, 2500,
+      450, 550, 650, 750, 850, 950,
+      1000, 1150, 1300, 1500, 1700, 2000, 2500
       ])
     return h.Rebin(len(BIN_BOUNDS)-1, h.GetName()+"_rebinned", BIN_BOUNDS)
-  elif (topo == "gamma"):
-    BIN_BOUNDS = array.array('d', [
-        200,
-        #220,
-        250,
-        #260,
-        #285,
-        300,
-        #325,
-        #350,
-        350,
-        #400,
-        #425,
-        500,
-        #500,
-        750,
-        1200
-        ]
+  elif ("gamma" in topo):
+    BIN_BOUNDS = array.array('d',
+        [ 200, 300, 350, 500, 750, 1200, 2500 ]
         )
+
     return h.Rebin(len(BIN_BOUNDS)-1, h.GetName()+"_rebinned", BIN_BOUNDS)
 
 def get_sys_dict(gen_name, var_name, topo):
     # get the Rtrk systematics and rebin them
   if (topo == "gamma"):
     d = GAMMAJET_LOADER.get_systematics_dictionary(
-        var_name, SYSTEMATICS_MC15C_MEDIUM, generator = gen_name)
+        var_name, SYSTEMATICS_MC15C_MEDIUM, gen_name, True)
   elif (topo == "dijet"):
     d = DIJET_LOADER.get_systematics_dictionary(
-        gen_name, var_name, SYSTEMATICS_MC15C_MEDIUM)
+        gen_name, var_name, SYSTEMATICS_MC15C_MEDIUM, norm_to_pretagged = True)
   else:
       print "ERROR: topo = ", topo
       sys.exit(1)
@@ -78,30 +64,30 @@ def make_rej_TH1SysEff(gen_name, tag_name, topo):
 
     if (topo == "dijet"):
       h_total = rebin_rej(
-              DIJET_LOADER.get_hist(["data","nominal"], total_var_name)
+              DIJET_LOADER.get_sigsub_data(total_var_name)
               if is_data
-              else DIJET_LOADER.get_normalized_dijet(gen_name, total_var_name)
+              else DIJET_LOADER.get_normalized_dijet(gen_name, total_var_name, normalize_to_pretagged = True)
               , topo
               )
 
       h_passed = rebin_rej(
-              DIJET_LOADER.get_hist(["data","nominal"], passed_var_name)
+              DIJET_LOADER.get_sigsub_data(passed_var_name)
               if is_data
-              else DIJET_LOADER.get_normalized_dijet(gen_name, passed_var_name)
+              else DIJET_LOADER.get_normalized_dijet(gen_name, passed_var_name, normalize_to_pretagged = True)
               , topo
               )
     else:
       h_total = rebin_rej(
-              GAMMAJET_LOADER.get_hist(["data","nominal"], total_var_name)
+              GAMMAJET_LOADER.get_sigsub_data(total_var_name)
               if is_data
-              else GAMMAJET_LOADER.get_normalized_gamma(total_var_name, generator = gen_name)
+              else GAMMAJET_LOADER.get_normalized_gamma(total_var_name, generator = gen_name, normalize_to_pretagged = True)
               , topo
               )
 
       h_passed = rebin_rej(
-              GAMMAJET_LOADER.get_hist(["data","nominal"], passed_var_name)
+              GAMMAJET_LOADER.get_sigsub_data(passed_var_name)
               if is_data
-              else GAMMAJET_LOADER.get_normalized_gamma(passed_var_name, generator = gen_name)
+              else GAMMAJET_LOADER.get_normalized_gamma(passed_var_name, generator = gen_name, normalize_to_pretagged = True)
               , topo
               )
 
@@ -123,13 +109,12 @@ class PlotCombinedBkgRej(PlotBase):
             name = tag_name + "_datamc_dijet_gamma_rej",
             tex_size_mod = 0.8,
             tex_spacing_mod = 0.7,
-            lumi_val = "36.7",
+            lumi_val = "36.1",
             atlas_mod = "Internal",
             legend_loc = [0.60,0.93,0.91,0.75],
-            x_title = "Leading Groomed C/A 1.5 Jet p_{T}" if "HTT" in tag_name else "Leading Large-R Jet #it{p_{T}}",
+            x_title = "Leading Groomed C/A 1.5 Jet p_{T}" if "HTT" in tag_name else "Leading large-R Jet #it{p_{T}}",
             x_min = 200,
-            x_max = 2500,
-            y_min = 0.001,
+            x_max = 2000 if "BDT_W" in tag_name else 2500,
             width = 600,
             **kwargs)
 
@@ -151,39 +136,41 @@ class PlotCombinedBkgRej(PlotBase):
           else:
             histos[n] = hsys[n]
 
-        self.determine_y_axis_title(histos["data_dijet"], "1/#epsilon_{QCD}", show_binwidth = False)
+        self.determine_y_axis_title(histos["data_dijet"], "Background rejection (1/#epsilon_{bkg})", show_binwidth = False)
 
         set_data_style_simple(histos["data_dijet"], marker_style = 24, marker_size = 1.2)
         set_data_style_simple(histos["data_gamma"], marker_style = 26, marker_size = 1.2)
+
+
 
         histos["data_dijet"].SetFillStyle(3004)
         histos["data_gamma"].SetFillStyle(3005)
         histos["data_dijet"].SetFillColorAlpha(kBlack, 0.7)
         histos["data_gamma"].SetFillColorAlpha(kBlack, 0.7)
 
-        set_mc_style_marker(histos["pythia_dijet"], kRed, line_width = 2)
-        set_mc_style_marker(histos["herwig_dijet"], kRed, line_width = 2)
-        set_mc_style_marker(histos["pythia_gamma"], kBlue, line_width = 2)
-        set_mc_style_marker(histos["sherpa_gamma"], kBlue, line_width = 2)
+        set_mc_style_marker(histos["pythia_dijet_nominal"], kRed, line_width = 2)
+        set_mc_style_marker(histos["herwig_dijet_nominal"], kRed, line_width = 2)
+        set_mc_style_marker(histos["pythia_gamma_nominal"], kBlue, line_width = 2)
+        set_mc_style_marker(histos["sherpa_gamma_nominal"], kBlue, line_width = 2)
 
-        histos["pythia_dijet"].SetFillColorAlpha(kRed, 0.3)
-        histos["herwig_dijet"].SetFillColorAlpha(kRed, 0.3)
-        histos["pythia_gamma"].SetFillColorAlpha(kBlue, 0.3)
-        histos["sherpa_gamma"].SetFillColorAlpha(kBlue, 0.3)
+        # histos["pythia_dijet_nominal"].SetFillColorAlpha(kRed, 0.3)
+        # histos["herwig_dijet_nominal"].SetFillColorAlpha(kRed, 0.3)
+        # histos["pythia_gamma_nominal"].SetFillColorAlpha(kBlue, 0.3)
+        # histos["sherpa_gamma_nominal"].SetFillColorAlpha(kBlue, 0.3)
 
-        histos["pythia_dijet"].SetFillStyle(1001)
-        histos["herwig_dijet"].SetFillStyle(1001)
-        histos["pythia_gamma"].SetFillStyle(1001)
-        histos["sherpa_gamma"].SetFillStyle(1001)
+        # histos["pythia_dijet_nominal"].SetFillStyle(1001)
+        # histos["herwig_dijet_nominal"].SetFillStyle(1001)
+        # histos["pythia_gamma_nominal"].SetFillStyle(1001)
+        # histos["sherpa_gamma_nominal"].SetFillStyle(1001)
 
-        histos["pythia_dijet"].SetMarkerSize(1.2)
-        histos["pythia_dijet"].SetMarkerStyle(20)
-        histos["herwig_dijet"].SetMarkerSize(1.2)
-        histos["herwig_dijet"].SetMarkerStyle(20)
-        histos["sherpa_gamma"].SetMarkerSize(1.2)
-        histos["sherpa_gamma"].SetMarkerStyle(22)
-        histos["pythia_gamma"].SetMarkerSize(1.2)
-        histos["pythia_gamma"].SetMarkerStyle(22)
+        histos["pythia_dijet_nominal"].SetMarkerSize(1.2)
+        histos["pythia_dijet_nominal"].SetMarkerStyle(20)
+        histos["herwig_dijet_nominal"].SetMarkerSize(1.2)
+        histos["herwig_dijet_nominal"].SetMarkerStyle(20)
+        histos["sherpa_gamma_nominal"].SetMarkerSize(1.2)
+        histos["sherpa_gamma_nominal"].SetMarkerStyle(22)
+        histos["pythia_gamma_nominal"].SetMarkerSize(1.2)
+        histos["pythia_gamma_nominal"].SetMarkerStyle(22)
 
         for h in histos.itervalues():
             h.GetYaxis().SetTitle(self.y_title)
@@ -209,9 +196,15 @@ class PlotCombinedBkgRej(PlotBase):
         ratios["pythia_gamma"].Divide(histos["data_gamma"], ratios["pythia_gamma_nominal"], 1, 1, "n")
         ratios["sherpa_gamma"].Divide(histos["data_gamma"], ratios["sherpa_gamma_nominal"], 1, 1, "n")
 
+        ratios["pythia_dijet_nominal"].Divide(histos["data_dijet"], ratios["pythia_dijet_nominal"], 1, 1, "n")
+        ratios["herwig_dijet_nominal"].Divide(histos["data_dijet"], ratios["herwig_dijet_nominal"], 1, 1, "n")
+        ratios["pythia_gamma_nominal"].Divide(histos["data_gamma"], ratios["pythia_gamma_nominal"], 1, 1, "n")
+        ratios["sherpa_gamma_nominal"].Divide(histos["data_gamma"], ratios["sherpa_gamma_nominal"], 1, 1, "n")
+
         ratio_title = "#frac{Data}{MC}"
         for n,r in ratios.iteritems():
-            set_style_ratio(r, y_title = ratio_title, y_min = 0.0, y_max = 2.0)
+            set_style_ratio(r, y_title = ratio_title, y_min = 0.5, y_max = 1.5)
+            self.set_x_axis_bounds(r)
             r.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
             r.GetXaxis().SetTitleOffset(4.0)
             r.GetYaxis().SetTitleOffset(2.0)
@@ -253,31 +246,29 @@ class PlotCombinedBkgRej(PlotBase):
         self.pad1.cd()
 
         #histos["herwig_dijet_nominal"].Draw("PE")
-        histos["pythia_dijet"].Draw("PE3,same")
         #histos["pythia_gamma_nominal"].Draw("PE,same")
-        histos["sherpa_gamma"].Draw("PE3,same")
-        histos["data_dijet"].Draw("E3,same")
-        histos["data_dijet"].Draw("hist,p,same")
-        histos["data_gamma"].Draw("E3,same")
-        histos["data_gamma"].Draw("hist,p,same")
+        histos["sherpa_gamma_nominal"].Draw("PE1,same")
+        histos["pythia_dijet_nominal"].Draw("PE1,same")
+        #histos["data_dijet"].Draw("E3,same")
+        histos["data_dijet"].Draw("PE3,same")
+        #histos["data_gamma"].Draw("E3,same")
+        histos["data_gamma"].Draw("PE3,same")
 
         self.pad1.RedrawAxis()
+        self.canvas.Update()
+        self.canvas.Modified()
 
         self.canvas.cd()
 
-        self.leg.AddEntry(histos["pythia_dijet"], "Pythia8 dijet")
-        #self.leg.AddEntry(histos["herwig_dijet_nominal"], "Herwig++ dijet")
-        self.leg.AddEntry(histos["sherpa_gamma"], "Sherpa #gamma + jet")
-        #self.leg.AddEntry(histos["pythia_gamma_nominal"], "Pythia8 #gamma + jet")
-        self.leg.AddEntry(histos["data_dijet"], "Data (dijet)")
-        self.leg.AddEntry(histos["data_gamma"], "Data (#gamma + jet)")
+        self.leg.AddEntry(histos["pythia_dijet_nominal"], "Pythia8 dijet")
+        self.leg.AddEntry(histos["sherpa_gamma_nominal"], "Sherpa #gamma + jet")
+        self.leg.AddEntry(histos["data_dijet"], "Data - Sig. (dijet)")
+        self.leg.AddEntry(histos["data_gamma"], "Data - Sig. (#gamma  + jet)")
 
         self.pad2.cd()
 
-        ratios["pythia_dijet_sys"].Draw("E2,same")
-        ratios["sherpa_gamma_sys"].Draw("E2,same")
-        ratios["pythia_dijet"].Draw("PE,same")
-        ratios["sherpa_gamma"].Draw("PE,same")
+        ratios["sherpa_gamma_nominal"].Draw("PE")
+        ratios["pythia_dijet_nominal"].Draw("PE,same")
 
         self.pad2.RedrawAxis()
         self.pad1.RedrawAxis()
@@ -285,50 +276,61 @@ class PlotCombinedBkgRej(PlotBase):
         self.canvas.Modified()
 
         self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
+        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
         self.canvas.Clear()
 
-DEF_EXTRA_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", "Dijet Selection" ]
+DEF_EXTRA_LINES = ["Trimmed anti-#it{k_{t}} #it{R}=1.0", "Dijet Selection" ]
 HTT_EXTRA_LINES = ["Trimmed C/A #it{R}=1.5", "#gamma + jet selection"]
 
 PlotCombinedBkgRej(
     "smooth16Top_Tau32Split23Tag80eff",
-    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + #sqrt{d_{23}}", "#epsilon_{sig} = 80%" ],
+    extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): #tau_{32} + #sqrt{d_{23}}"],
     y_max = 45,
+    y_min = 0.001,
     )
 
 PlotCombinedBkgRej(
     "smooth16WTag_50eff_MassJSSCut",
-    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 50%" ],
-    y_max = 175
+    extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): D_2 + m^{comb}"],
+    y_max = 175,
+    y_min = 0.001,
     )
 
 PlotCombinedBkgRej(
     "HTT_CAND",
-    extra_legend_lines = HTT_EXTRA_LINES + [ "HTT-Tagged" ],
-    y_max = 80
+    extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
+    y_max = 2000,
+    y_min = 4,
+    log_scale = True,
     )
 
 PlotCombinedBkgRej(
     "BDT_Top",
-    extra_legend_lines = DEF_EXTRA_LINES + [ "BDT Top, #epsilon_{sig} = 80%" ],
-    y_max = 70,
+    extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): BDT" ],
+    y_max = 2000,
+    y_min = 4,
+    log_scale = True,
     )
 
 PlotCombinedBkgRej(
     "BDT_W",
-    extra_legend_lines = DEF_EXTRA_LINES + [ "BDT W, #epsilon_{sig} = 50%" ],
+    extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): BDT" ],
     y_max = 250,
+    y_min = 0.001,
     )
 
 PlotCombinedBkgRej(
     "DNN_Top",
-    extra_legend_lines = DEF_EXTRA_LINES + [ "DNN Top, #epsilon_{sig} = 80%" ],
-    y_max = 70,
+    extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): DNN" ],
+    y_max = 2000,
+    y_min = 4,
+    log_scale = True
     )
 
 PlotCombinedBkgRej(
     "DNN_W",
-    extra_legend_lines = DEF_EXTRA_LINES + [ "DNN W, #epsilon_{sig} = 50%" ],
+    extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): DNN" ],
     y_max = 250,
+            y_min = 0.001,
     )
 

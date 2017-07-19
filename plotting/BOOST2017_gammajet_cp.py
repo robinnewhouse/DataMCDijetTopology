@@ -16,7 +16,7 @@ sane_defaults()
 TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
-CP_ROOT_FILEPATH = "/eos/atlas/atlascerngroupdisk/perf-jets/JSS/TopBosonTagAnalysis2016/NTuples_DataMC_gammajet/20170610/cp.merged.root"
+CP_ROOT_FILEPATH = "/eos/atlas/atlascerngroupdisk/perf-jets/JSS/TopBosonTagAnalysis2016/NTuples_DataMC_gammajet/20170515/cp.merged.backup.root"
 RAW = GammaJetLoader(CP_ROOT_FILEPATH)
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"
 
@@ -50,11 +50,11 @@ class PlotDataMcGammaJet(PlotBase):
 
         self.hs    = RAW.get_stack_plot(var_name)
         self.h_sum = RAW.get_sum_plot(var_name, "nominal")
-        self.h_gamma = RAW.get_normalized_gamma(var_name, "nominal")
+        self.h_gamma = RAW.get_normalized_gamma(var_name, "sherpa_gammajet", "nominal")
         self.h_sum_stat = self.h_sum.Clone(self.h_sum.GetName() + "_stat")
 
         if (do_systematics):
-            gammajet_sysdict = RAW.get_systematics_dictionary(var_name, SYSTEMATICS)
+            gammajet_sysdict = RAW.get_systematics_dictionary(var_name, SYSTEMATICS, "sherpa_gammajet", True)
         else:
             gammajet_sysdict = {}
 
@@ -77,7 +77,7 @@ class PlotDataMcGammaJet(PlotBase):
         self.determine_y_axis_title(self.h_data)
 
         for h in all_hists:
-            h.GetYaxis().SetTitle("Events / " + self.x_units if self.x_units else "Events")
+            h.GetYaxis().SetTitle(self.y_title)
             h.GetXaxis().SetLabelSize(0)
             h.GetYaxis().SetTitleOffset(2.0)
             self.set_y_min(h)
@@ -107,9 +107,12 @@ class PlotDataMcGammaJet(PlotBase):
             h.GetYaxis().SetTitleOffset(2.0)
             h.GetXaxis().SetLabelSize(19)
 
-        set_mc_sys_err_style(self.h_sum_sys, col = kGreen+2, alpha = 0.7)
-        set_mc_sys_err_style(self.h_sys_ratio, col = kGreen - 8, alpha = 0.7)
-        set_mc_sys_err_style(self.h_stat_ratio, col = kGreen - 5, alpha = 0.7)
+        set_mc_sys_err_style(self.h_sum_sys, col = kGreen+2)
+        set_mc_sys_err_style(self.h_sys_ratio, col = kGreen - 8)
+        set_mc_sys_err_style(self.h_stat_ratio, col = kGreen - 5)
+
+        self.h_stat_ratio.SetFillColor(kGreen-5)
+        self.h_stat_ratio.SetFillStyle(1001)
 
         self.name = var_name + "_data_mc_gammajet"
         if self.log_scale: self.name += "_log"
@@ -185,6 +188,7 @@ class PlotDataMcGammaJet(PlotBase):
         self.canvas.Modified()
 
         self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
+        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
         self.canvas.Clear()
 
 SEL_LINE = [ "#gamma + jet selection" ]
@@ -331,32 +335,32 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "DNN_W",
         rebin = MASS_PLOT_REBIN,
         ))
 
-data_mc_plots.append(PlotDataMcGammaJet( "h_mu",
-        empty_scale = 2.0,
-        extra_legend_lines = DEF_LINES,
-        do_systematics = False,
-        x_units = "",
-        x_min = 5,
-        x_max = 45,
-        rebin = 4,
-        ))
-
-data_mc_plots.append(PlotDataMcGammaJet( "h_mu_corrSF",
-        empty_scale = 2.0,
-        extra_legend_lines = DEF_LINES,
-        do_systematics = False,
-        x_units = "",
-        x_min = 5,
-        x_max = 45,
-        rebin = 4,
-        ))
+#data_mc_plots.append(PlotDataMcGammaJet( "h_mu",
+#        empty_scale = 2.0,
+#        extra_legend_lines = DEF_LINES,
+#        do_systematics = False,
+#        x_units = "",
+#        x_min = 5,
+#        x_max = 45,
+#        rebin = 4,
+#        ))
+#
+#data_mc_plots.append(PlotDataMcGammaJet( "h_mu_corrSF",
+#        empty_scale = 2.0,
+#        extra_legend_lines = DEF_LINES,
+#        do_systematics = False,
+#        x_units = "",
+#        x_min = 5,
+#        x_max = 45,
+#        rebin = 4,
+#        ))
 
 data_mc_plots += [
         PlotDataMcGammaJet("h_rljet0_m_comb",
             empty_scale = 2.5,
             extra_legend_lines = DEF_LINES,
             x_min = 50,
-            x_max = 400,
+            x_max = 350,
             #y_min = 6e3 + 0.1,
             log_scale = True,
             rebin = MASS_PLOT_REBIN,
