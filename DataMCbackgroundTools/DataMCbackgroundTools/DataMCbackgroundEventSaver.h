@@ -5,15 +5,22 @@
 #include "TopAnalysis/EventSaverBase.h"
 
 // OLD smoothed taggers (2015) + HEPTopTagger
-#include "BoostedJetTaggers/SubstructureTopTaggerHelpers.h"
-#include "JetSubStructureUtils/BosonTag.h"
+// #include "BoostedJetTaggers/SubstructureTopTaggerHelpers.h"
 
 // NEW smoothed/MVA taggers (2016-2017)
-#include "BoostedJetTaggers/IJSSTagger.h"
-#include "BoostedJetTaggers/SmoothedTopTagger.h"
-#include "BoostedJetTaggers/SmoothedWZTagger.h"
+// #include "BoostedJetTaggers/IJSSTagger.h"
 
 #include "ShowerDeconstruction/ShowerDeconstruction.h"
+
+// NEW MVA taggers (2017-2018)
+#include "JetAnalysisInterfaces/IJetSelectorTool.h"
+#include "BoostedJetTaggers/JSSWTopTaggerBDT.h"
+#include "BoostedJetTaggers/JSSWTopTaggerDNN.h"
+#include "BoostedJetTaggers/TopoclusterTopTagger.h"
+#include "BoostedJetTaggers/SmoothedTopTagger.h"
+#include "BoostedJetTaggers/SmoothedWZTagger.h"
+#include "JetSubStructureUtils/BosonTag.h"
+
 
 #include "JetRec/JetRecTool.h"
 #include "JetCalibTools/JetCalibrationTool.h"
@@ -84,18 +91,18 @@ namespace top {
         /*********************************/
 
         // Top
-        SubstructureTopTagger *topTagger15_Mass_50eff;
-        SubstructureTopTagger *topTagger15_Mass_80eff;
-        SubstructureTopTagger *topTagger15_Tau32_50eff;
-        SubstructureTopTagger *topTagger15_Tau32_80eff;
+        // SubstructureTopTagger *topTagger15_Mass_50eff;
+        // SubstructureTopTagger *topTagger15_Mass_80eff;
+        // SubstructureTopTagger *topTagger15_Tau32_50eff;
+        // SubstructureTopTagger *topTagger15_Tau32_80eff;
 
         // W
-        std::unique_ptr<JetSubStructureUtils::BosonTag> wTagger15_50eff;
-        std::unique_ptr<JetSubStructureUtils::BosonTag> wTagger15_25eff;
+        // std::unique_ptr<JetSubStructureUtils::BosonTag> wTagger15_50eff;
+        // std::unique_ptr<JetSubStructureUtils::BosonTag> wTagger15_25eff;
 
         // Z
-        std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger15_50eff;
-        std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger15_25eff;
+        // std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger15_50eff;
+        // std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger15_25eff;
 
         /**************************************/
         /* Late 2016 updated smoothed taggers */
