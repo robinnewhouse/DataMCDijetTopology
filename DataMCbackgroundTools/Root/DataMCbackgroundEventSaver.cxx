@@ -560,31 +560,31 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
     m_rljet_Split23   . assign(m_num_fatjets_keep, -1000. );
 
     if (m_runSmoothToptag) {
-      m_rljet_smooth16Top_Tau32Split23Tag50eff . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_smooth16Top_Tau32Split23Tag80eff . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_smooth16Top_MassTau32Tag50eff    . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_smooth16Top_MassTau32Tag80eff    . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_smooth16Top_QwTau32Tag50eff      . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_smooth16Top_QwTau32Tag80eff      . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_smooth16Top_Tau32Split23Tag50eff . clear();
+      m_rljet_smooth16Top_Tau32Split23Tag80eff . clear();
+      m_rljet_smooth16Top_MassTau32Tag50eff    . clear();
+      m_rljet_smooth16Top_MassTau32Tag80eff    . clear();
+      m_rljet_smooth16Top_QwTau32Tag50eff      . clear();
+      m_rljet_smooth16Top_QwTau32Tag80eff      . clear();
     }
 
     if (m_runSmoothToptag && m_runSmoothUncontained) {
-      m_rljet_smooth16Top_MassTau32Tag50eff_nocontain . assign(m_num_fatjets_keep, -1000.);
-      m_rljet_smooth16Top_MassTau32Tag80eff_nocontain . assign(m_num_fatjets_keep, -1000.);
+      m_rljet_smooth16Top_MassTau32Tag50eff_nocontain . clear();
+      m_rljet_smooth16Top_MassTau32Tag80eff_nocontain . clear();
     }
 
     if (m_runSmoothWZtag) {
-      m_rljet_smooth16W_Tag50eff . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_smooth16W_Tag80eff . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_smooth16Z_Tag50eff . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_smooth16Z_Tag80eff . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_smooth16W_Tag50eff . clear();
+      m_rljet_smooth16W_Tag80eff . clear();
+      m_rljet_smooth16Z_Tag50eff . clear();
+      m_rljet_smooth16Z_Tag80eff . clear();
     }
 
     if (m_runSmoothWZtag && m_runSmoothUncontained) {
-      m_rljet_smooth16W_Tag50eff_nocontain . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_smooth16W_Tag80eff_nocontain . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_smooth16Z_Tag50eff_nocontain . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_smooth16Z_Tag80eff_nocontain . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_smooth16W_Tag50eff_nocontain . clear();
+      m_rljet_smooth16W_Tag80eff_nocontain . clear();
+      m_rljet_smooth16Z_Tag50eff_nocontain . clear();
+      m_rljet_smooth16Z_Tag80eff_nocontain . clear();
     }
 
     if (m_savePhoton) {
@@ -814,48 +814,35 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
         /* SMOOTH (2016) TAGGER VARIABLES */
         /**********************************/
 
+        // Storing TAccept objects
         if (m_runSmoothToptag) {
-          SmoothedTopTagger::Result res = topTagger16_Tau32Split23_50eff->result(*rljets[i], false);
-          m_rljet_smooth16Top_Tau32Split23Tag50eff[i] = combine_bits( res.tau32Passed(), res.split23Passed() );
-
-          res = topTagger16_Tau32Split23_80eff->result(*rljets[i], false);
-          m_rljet_smooth16Top_Tau32Split23Tag80eff[i] = combine_bits( res.tau32Passed(), res.split23Passed() );
-
-          res = topTagger16_MassTau32_50eff->result(*rljets[i], false);
-          m_rljet_smooth16Top_MassTau32Tag50eff[i]    = combine_bits( res.massPassed(), res.tau32Passed() );
-
-          res = topTagger16_MassTau32_80eff->result(*rljets[i], false);
-          m_rljet_smooth16Top_MassTau32Tag80eff[i]    = combine_bits( res.massPassed(), res.tau32Passed() );
-
-          res = topTagger16_QwTau32_50eff->result(*rljets[i], false);
-          m_rljet_smooth16Top_QwTau32Tag50eff[i]      = combine_bits( res.qwPassed(), res.tau32Passed() );
-
-          res = topTagger16_QwTau32_80eff->result(*rljets[i], false);
-          m_rljet_smooth16Top_QwTau32Tag80eff[i]      = combine_bits( res.qwPassed(), res.tau32Passed() );
+          m_rljet_smooth16Top_Tau32Split23Tag50eff[i] = topTagger16_Tau32Split23_50eff->tag(*rljets[i]);
+          m_rljet_smooth16Top_Tau32Split23Tag80eff[i] = topTagger16_Tau32Split23_80eff->tag(*rljets[i]);
+          m_rljet_smooth16Top_MassTau32Tag50eff[i]    = topTagger16_MassTau32_50eff->tag(*rljets[i]);
+          m_rljet_smooth16Top_MassTau32Tag80eff[i]    = topTagger16_MassTau32_80eff->tag(*rljets[i]);
+          m_rljet_smooth16Top_QwTau32Tag50eff[i]      = topTagger16_QwTau32_50eff->tag(*rljets[i]);
+          m_rljet_smooth16Top_QwTau32Tag80eff[i]      = topTagger16_QwTau32_80eff->tag(*rljets[i]);
         }
 
         if (m_runSmoothToptag && m_runSmoothUncontained) {
-          SmoothedTopTagger::Result res = topTagger16_MassTau32_50eff_nocontain->result(*rljets[i], false);
-          m_rljet_smooth16Top_MassTau32Tag50eff_nocontain[i]    = combine_bits( res.massPassed(), res.tau32Passed() );
-
-          res = topTagger16_MassTau32_80eff_nocontain->result(*rljets[i], false);
-          m_rljet_smooth16Top_MassTau32Tag80eff_nocontain[i]    = combine_bits( res.massPassed(), res.tau32Passed() );
+          m_rljet_smooth16Top_MassTau32Tag50eff_nocontain[i]    = topTagger16_MassTau32_50eff_nocontain->tag(*rljets[i]);
+          m_rljet_smooth16Top_MassTau32Tag80eff_nocontain[i]    = topTagger16_MassTau32_80eff_nocontain->tag(*rljets[i]);
         }
 
         if (m_runSmoothWZtag) {
-          m_rljet_smooth16W_Tag50eff[i] = wTagger16_50eff->result(*rljets[i]);
-          m_rljet_smooth16W_Tag80eff[i] = wTagger16_80eff->result(*rljets[i]);
+          m_rljet_smooth16W_Tag50eff[i] = wTagger16_50eff->tag(*rljets[i]);
+          m_rljet_smooth16W_Tag80eff[i] = wTagger16_80eff->tag(*rljets[i]);
 
-          m_rljet_smooth16Z_Tag50eff[i] = zTagger16_50eff->result(*rljets[i]);
-          m_rljet_smooth16Z_Tag80eff[i] = zTagger16_80eff->result(*rljets[i]);
+          m_rljet_smooth16Z_Tag50eff[i] = zTagger16_50eff->tag(*rljets[i]);
+          m_rljet_smooth16Z_Tag80eff[i] = zTagger16_80eff->tag(*rljets[i]);
         }
 
         if (m_runSmoothWZtag && m_runSmoothUncontained) {
-          m_rljet_smooth16W_Tag50eff_nocontain[i] = wTagger16_50eff_nocontain->result(*rljets[i]);
-          m_rljet_smooth16W_Tag80eff_nocontain[i] = wTagger16_80eff_nocontain->result(*rljets[i]);
+          m_rljet_smooth16W_Tag50eff_nocontain[i] = wTagger16_50eff_nocontain->tag(*rljets[i]);
+          m_rljet_smooth16W_Tag80eff_nocontain[i] = wTagger16_80eff_nocontain->tag(*rljets[i]);
 
-          m_rljet_smooth16Z_Tag50eff_nocontain[i] = zTagger16_50eff_nocontain->result(*rljets[i]);
-          m_rljet_smooth16Z_Tag80eff_nocontain[i] = zTagger16_80eff_nocontain->result(*rljets[i]);
+          m_rljet_smooth16Z_Tag50eff_nocontain[i] = zTagger16_50eff_nocontain->tag(*rljets[i]);
+          m_rljet_smooth16Z_Tag80eff_nocontain[i] = zTagger16_80eff_nocontain->tag(*rljets[i]);
         }
 
         if (m_savePhoton) {
@@ -1172,7 +1159,7 @@ void DataMCbackgroundEventSaver::runSDandFillTree(std::vector<const xAOD::Jet*>&
     const xAOD::Jet* ungroomed_fatjet = *linkToUngroomed;
 
     xAOD::JetConstituentVector AssociatedClusters_forSD = ungroomed_fatjet->getConstituents();
-    vector<fastjet::PseudoJet> constituents;
+    std::vector<fastjet::PseudoJet> constituents;
 
     // also get groomed constituents
     const xAOD::JetConstituentVector groomed_clusters = rljets[i]->getConstituents();
@@ -1211,8 +1198,8 @@ void DataMCbackgroundEventSaver::runSDandFillTree(std::vector<const xAOD::Jet*>&
     top::check ( evtStore()->record(dynamic_cast<xAOD::JetAuxContainer*>(subjet_container->getStore()), "subjet_container_nameAux."), "FAILURE");
 
     // Create xAOD::Jet's
-    vector<const xAOD::Jet*> subj_ptrs_const;
-    vector<xAOD::Jet*> subj_ptrs;
+    std::vector<const xAOD::Jet*> subj_ptrs_const;
+    std::vector<xAOD::Jet*> subj_ptrs;
     for(auto it = subjets.begin(); it != subjets.end(); it++) {
       xAOD::Jet *subj = new xAOD::Jet();
       subjet_container->push_back(subj);
@@ -1226,9 +1213,9 @@ void DataMCbackgroundEventSaver::runSDandFillTree(std::vector<const xAOD::Jet*>&
 
 
     // To hold the callibrated subjets
-    vector<fastjet::PseudoJet> calib_subjets;
-    vector<fastjet::PseudoJet> calib_subjets_UP;
-    vector<fastjet::PseudoJet> calib_subjets_DOWN;
+    std::vector<fastjet::PseudoJet> calib_subjets;
+    std::vector<fastjet::PseudoJet> calib_subjets_UP;
+    std::vector<fastjet::PseudoJet> calib_subjets_DOWN;
     // Now calibrate the subjets of the container
     for ( auto isubjet : *subjet_container) {
       xAOD::Jet * jet = 0;
@@ -1266,13 +1253,13 @@ void DataMCbackgroundEventSaver::runSDandFillTree(std::vector<const xAOD::Jet*>&
     top::check ( evtStore()->tds()->remove("subjet_container_name"), "FAILURE" );
     top::check ( evtStore()->tds()->remove("subjet_container_nameAux."), "FAILURE" );
     // Get trackjets and their B tag status
-    vector<int> btag_uncalib(uncalib_subjets.size(), 0);
+    std::vector<int> btag_uncalib(uncalib_subjets.size(), 0);
     //std::vector<int> btag_special2(new_subjets_2.size(), 0);
-    vector<int> btag_special3(new_subjets_3.size(), 0);
-    vector<int> btag(calib_subjets.size(), 0);
-    vector<int> tracktag;
-    vector<int> btag_special5(dcut2_subjets.size(),0);
-    vector<int> btag_special6(dcut3_subjets.size(),0);
+    std::vector<int> btag_special3(new_subjets_3.size(), 0);
+    std::vector<int> btag(calib_subjets.size(), 0);
+    std::vector<int> tracktag;
+    std::vector<int> btag_special5(dcut2_subjets.size(),0);
+    std::vector<int> btag_special6(dcut3_subjets.size(),0);
     std::vector<fastjet::PseudoJet> uncalib_subjets_UP;
     std::vector<fastjet::PseudoJet> uncalib_subjets_DOWN;
     for ( unsigned int i = 0; i < uncalib_subjets.size(); i++ ){
@@ -1387,10 +1374,10 @@ DataMCbackgroundEventSaver::get_trackjet_btags(const xAOD::Jet* jet,
 }
 */
 
-vector<fastjet::PseudoJet>
+std::vector<fastjet::PseudoJet>
 DataMCbackgroundEventSaver::JetconVecToPseudojet (xAOD::JetConstituentVector input)
 {
-  vector<fastjet::PseudoJet> constituents;
+  std::vector<fastjet::PseudoJet> constituents;
 
   for ( const auto* con : input){
     fastjet::PseudoJet p(0,0,0,0);

@@ -271,29 +271,29 @@ namespace top {
         /********************/
 
         // 2016 smooth top
-        std::vector<int> m_rljet_smooth16Top_Tau32Split23Tag50eff;
-        std::vector<int> m_rljet_smooth16Top_Tau32Split23Tag80eff;
-        std::vector<int> m_rljet_smooth16Top_MassTau32Tag50eff;
-        std::vector<int> m_rljet_smooth16Top_MassTau32Tag80eff;
-        std::vector<int> m_rljet_smooth16Top_QwTau32Tag50eff;
-        std::vector<int> m_rljet_smooth16Top_QwTau32Tag80eff;
+        std::vector<Root::TAccept> m_rljet_smooth16Top_Tau32Split23Tag50eff;
+        std::vector<Root::TAccept> m_rljet_smooth16Top_Tau32Split23Tag80eff;
+        std::vector<Root::TAccept> m_rljet_smooth16Top_MassTau32Tag50eff;
+        std::vector<Root::TAccept> m_rljet_smooth16Top_MassTau32Tag80eff;
+        std::vector<Root::TAccept> m_rljet_smooth16Top_QwTau32Tag50eff;
+        std::vector<Root::TAccept> m_rljet_smooth16Top_QwTau32Tag80eff;
 
-        std::vector<int> m_rljet_smooth16Top_MassTau32Tag50eff_nocontain;
-        std::vector<int> m_rljet_smooth16Top_MassTau32Tag80eff_nocontain;
+        std::vector<Root::TAccept> m_rljet_smooth16Top_MassTau32Tag50eff_nocontain;
+        std::vector<Root::TAccept> m_rljet_smooth16Top_MassTau32Tag80eff_nocontain;
 
         // 2016 smooth W
-        std::vector<int> m_rljet_smooth16W_Tag50eff;
-        std::vector<int> m_rljet_smooth16W_Tag80eff;
+        std::vector<Root::TAccept> m_rljet_smooth16W_Tag50eff;
+        std::vector<Root::TAccept> m_rljet_smooth16W_Tag80eff;
 
-        std::vector<int> m_rljet_smooth16W_Tag50eff_nocontain;
-        std::vector<int> m_rljet_smooth16W_Tag80eff_nocontain;
+        std::vector<Root::TAccept> m_rljet_smooth16W_Tag50eff_nocontain;
+        std::vector<Root::TAccept> m_rljet_smooth16W_Tag80eff_nocontain;
 
         // 2016 smooth Z
-        std::vector<int> m_rljet_smooth16Z_Tag50eff;
-        std::vector<int> m_rljet_smooth16Z_Tag80eff;
+        std::vector<Root::TAccept> m_rljet_smooth16Z_Tag50eff;
+        std::vector<Root::TAccept> m_rljet_smooth16Z_Tag80eff;
 
-        std::vector<int> m_rljet_smooth16Z_Tag50eff_nocontain;
-        std::vector<int> m_rljet_smooth16Z_Tag80eff_nocontain;
+        std::vector<Root::TAccept> m_rljet_smooth16Z_Tag50eff_nocontain;
+        std::vector<Root::TAccept> m_rljet_smooth16Z_Tag80eff_nocontain;
 
         // Shower deconstruction output variables
         std::vector<float> m_rljet_SDw_calib;
