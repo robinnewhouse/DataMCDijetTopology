@@ -19,6 +19,9 @@ svn co svn+ssh://svn.cern.ch/reps/atlasoff/PhysicsAnalysis/Interfaces/JetAnalysi
 echo '> Clone TopObjectSelectionTools'
 git clone ssh://git@gitlab.cern.ch:7999/rnewhous/TopObjectSelectionTools.git
 
+## Added to make MiscTools run. May be taken out later if tool is not necessary
+git clone ssh://git@gitlab.cern.ch:7999/atlas-jetetmiss-substructure/JetMatchingTools.git
+
 # not all of the necessary dijet background study samples are included in TopDataPreparation xsection lists
 rc checkout_pkg $(rc version | grep "TopDataPreparation")
 cat data/xsections.txt >> TopDataPreparation/data/XSection-MC15-13TeV.data
