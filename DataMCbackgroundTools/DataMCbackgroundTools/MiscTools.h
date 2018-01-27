@@ -21,11 +21,11 @@ extern bool useTrackJets;
 extern std::unique_ptr<DeltaRJetMatchingTool> jetMatchingTool; // new truth-matching tool from MC optimisation
 
 
-/// Shortcut for creation of unique pointers, until we start using C++14 ;-)
-template<typename T, typename ...Args> std::unique_ptr<T> make_unique(Args&& ...args)
-{
-    return std::unique_ptr<T>( new T( std::forward<Args>(args)... ) );
-}
+// /// Shortcut for creation of unique pointers, until we start using C++14 ;-)
+// template<typename T, typename ...Args> std::unique_ptr<T> make_unique(Args&& ...args)
+// {
+//     return std::unique_ptr<T>( new T( std::forward<Args>(args)... ) );
+// }
 
 
 /** check if larget jet has W-like topology
