@@ -43,7 +43,7 @@ main(int argc, char** argv)
 
     int c;
     opterr = 0;
-    while ((c = getopt (argc, argv, "Si:o:E:t:L:p:")) != -1) {
+    while ((c = getopt (argc, argv, "S:i:o:E:t:L:p:")) != -1) {
         switch (c)
         {
             case 'i':
@@ -93,13 +93,13 @@ main(int argc, char** argv)
     }
 
     if (data_trigger.empty()) {
-        std::cout << "ERROR: no output file specified" << std::endl;
+        std::cout << "ERROR: no data trigger specified" << std::endl;
         std::cout << "EXITING..." << std::endl;
         return EXIT_FAILURE;
     }
 
     if (event_selector.empty()) {
-        std::cout << "ERROR: no output file specified" << std::endl;
+        std::cout << "ERROR: no event selector specified" << std::endl;
         std::cout << "EXITING..." << std::endl;
         return EXIT_FAILURE;
     }
