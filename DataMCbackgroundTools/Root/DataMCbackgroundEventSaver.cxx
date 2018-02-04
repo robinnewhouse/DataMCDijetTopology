@@ -658,6 +658,23 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
       m_photon0_phi          = -1000.;
     }
 
+    if(m_runMVAtag) {
+      m_rljet_topTag_BDT_qqb            . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_topTag_BDT_qqb_score      . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_wTag_BDT_qq               . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_wTag_BDT_qq_score         . assign(m_num_fatjets_keep, -1000. );
+
+      m_rljet_topTag_DNN_qqb            . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_topTag_DNN_qqb_score      . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_wTag_DNN_qq               . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_wTag_DNN_qq_score         . assign(m_num_fatjets_keep, -1000. );
+
+      m_rljet_topTag_TopoTagger_20wp    . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_topTag_TopoTagger_50wp    . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_topTag_TopoTagger_80wp    . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_topTag_TopoTagger_score   . assign(m_num_fatjets_keep, -1000. );
+    }
+
     if (on_nominal_branch) {
         m_NPV = -1000;
 
@@ -777,22 +794,7 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
             }
         }
 
-    if(m_runMVAtag) {
-      m_rljet_topTag_BDT_qqb            . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_topTag_BDT_qqb_score      . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_wTag_BDT_qq               . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_wTag_BDT_qq_score         . assign(m_num_fatjets_keep, -1000. );
 
-      m_rljet_topTag_DNN_qqb            . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_topTag_DNN_qqb_score      . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_wTag_DNN_qq               . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_wTag_DNN_qq_score         . assign(m_num_fatjets_keep, -1000. );
-
-      m_rljet_topTag_TopoTagger_20wp    . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_topTag_TopoTagger_50wp    . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_topTag_TopoTagger_80wp    . assign(m_num_fatjets_keep, -1000. );
-      m_rljet_topTag_TopoTagger_score   . assign(m_num_fatjets_keep, -1000. );
-    }
 
     }
 }
@@ -919,8 +921,6 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
           // BDT
           // output information from BDT tool similar to preRecWTagger, reuse the conversion method
           // top-tag (qqb containment top definition)
-
-          Root::TAccept DEBUG = m_topTagger_BDT_qqb->tag(*rljets[i]);
 
           m_rljet_topTag_BDT_qqb[i] = static_cast<int>(convertMVATaggerResult(
                       m_topTagger_BDT_qqb->tag(*rljets[i])));
