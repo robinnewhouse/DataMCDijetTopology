@@ -33,3 +33,4 @@ tags.temp
 JetAnalysisInterfaces/
 *.DS_Store
 run/
+.gz
