@@ -109,6 +109,19 @@ public:
     vector<unique_ptr<TH1Tagged>> h_rljet_BDT_score;
     vector<unique_ptr<TH1Tagged>> h_rljet_DNN_score;
 
+    vector<unique_ptr<TH1Tagged>> h_rljet_topTag_BDT_qqb;
+    vector<unique_ptr<TH1Tagged>> h_rljet_topTag_BDT_qqb_score;
+    vector<unique_ptr<TH1Tagged>> h_rljet_wTag_BDT_qq;
+    vector<unique_ptr<TH1Tagged>> h_rljet_wTag_BDT_qq_score;
+    vector<unique_ptr<TH1Tagged>> h_rljet_topTag_DNN_qqb_score;
+    vector<unique_ptr<TH1Tagged>> h_rljet_topTag_DNN_qqb;
+    vector<unique_ptr<TH1Tagged>> h_rljet_wTag_DNN_qq_score;
+    vector<unique_ptr<TH1Tagged>> h_rljet_wTag_DNN_qq;
+    vector<unique_ptr<TH1Tagged>> h_rljet_topTag_TopoTagger_20wp;
+    vector<unique_ptr<TH1Tagged>> h_rljet_topTag_TopoTagger_50wp;
+    vector<unique_ptr<TH1Tagged>> h_rljet_topTag_TopoTagger_80wp;
+    vector<unique_ptr<TH1Tagged>> h_rljet_topTag_TopoTagger_score;
+
     void WriteCommonHistograms() const;
     void WriteNominalOnlyHistograms() const;
 
