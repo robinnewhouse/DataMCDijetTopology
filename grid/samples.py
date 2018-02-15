@@ -1,4 +1,4 @@
-from atlas_util import *
+# from atlas_util import *
 
 samples_DXAOD = {}
 samples_AOD = {}
@@ -6,110 +6,29 @@ samples_EVNT = {}
 
 # {{{ DATA
 
-samples_DXAOD['data_2016_25ns'] = [ # X/pb
-    'data16_13TeV.periodA.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-    'data16_13TeV.periodB.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-    'data16_13TeV.periodC.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-    'data16_13TeV.periodD.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-    'data16_13TeV.periodE.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-    'data16_13TeV.periodF.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-    'data16_13TeV.periodG.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-    'data16_13TeV.periodI.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-    'data16_13TeV.periodK.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2813',
-    'data16_13TeV.periodL.physics_Main.PhysCont.DAOD_JETM6.grp16_v02_p2840'
+samples_DXAOD['data_2016'] = [ # X/pb
+    'data16_13TeV.periodA.physics_Main.PhysCont.DAOD_JETM6.grp16_v02_p3298',
+    'data16_13TeV.periodB.physics_Main.PhysCont.DAOD_JETM6.grp16_v02_p3298',
+    'data16_13TeV.periodC.physics_Main.PhysCont.DAOD_JETM6.grp16_v02_p3298',
+    'data16_13TeV.periodD.physics_Main.PhysCont.DAOD_JETM6.grp16_v02_p3298',
+    'data16_13TeV.periodE.physics_Main.PhysCont.DAOD_JETM6.grp16_v02_p3298',
+    'data16_13TeV.periodF.physics_Main.PhysCont.DAOD_JETM6.grp16_v02_p3298',
+    'data16_13TeV.periodG.physics_Main.PhysCont.DAOD_JETM6.grp16_v02_p3298',
+    'data16_13TeV.periodI.physics_Main.PhysCont.DAOD_JETM6.grp16_v02_p3298',
+    'data16_13TeV.periodK.physics_Main.PhysCont.DAOD_JETM6.grp16_v02_p3298',
+    'data16_13TeV.periodL.physics_Main.PhysCont.DAOD_JETM6.grp16_v02_p3298'
     ]
 
-samples_DXAOD['data_2016_25ns_p2950'] = [ # X/pb
-    "data16_13TeV.periodA.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
-    "data16_13TeV.periodB.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
-    "data16_13TeV.periodC.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
-    "data16_13TeV.periodD.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
-    "data16_13TeV.periodE.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
-    "data16_13TeV.periodF.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
-    "data16_13TeV.periodG.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
-    "data16_13TeV.periodI.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
-    "data16_13TeV.periodK.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950",
-    "data16_13TeV.periodL.physics_Main.PhysCont.DAOD_JETM6.grp16_v01_p2950"
+samples_DXAOD['data_2015'] = [ # 3212.96/pb
+    "data15_13TeV.periodA.physics_Main.PhysCont.DAOD_JETM6.grp15_v02_p3298",
+    "data15_13TeV.periodC.physics_Main.PhysCont.DAOD_JETM6.grp15_v02_p3298",
+    "data15_13TeV.periodD.physics_Main.PhysCont.DAOD_JETM6.grp15_v02_p3298",
+    "data15_13TeV.periodE.physics_Main.PhysCont.DAOD_JETM6.grp15_v02_p3298",
+    "data15_13TeV.periodF.physics_Main.PhysCont.DAOD_JETM6.grp15_v02_p3298",
+    "data15_13TeV.periodG.physics_Main.PhysCont.DAOD_JETM6.grp15_v02_p3298",
+    "data15_13TeV.periodH.physics_Main.PhysCont.DAOD_JETM6.grp15_v02_p3298",
+    "data15_13TeV.periodJ.physics_Main.PhysCont.DAOD_JETM6.grp15_v02_p3298"
     ]
-
-samples_DXAOD['data_2015_25ns_p2950'] = [ # 3212.96/pb
-    "data15_13TeV.periodA.physics_Main.PhysCont.DAOD_JETM6.grp15_v01_p2950",
-    "data15_13TeV.periodC.physics_Main.PhysCont.DAOD_JETM6.grp15_v01_p2950",
-    "data15_13TeV.periodD.physics_Main.PhysCont.DAOD_JETM6.grp15_v01_p2950",
-    "data15_13TeV.periodE.physics_Main.PhysCont.DAOD_JETM6.grp15_v01_p2950",
-    "data15_13TeV.periodF.physics_Main.PhysCont.DAOD_JETM6.grp15_v01_p2950",
-    "data15_13TeV.periodG.physics_Main.PhysCont.DAOD_JETM6.grp15_v01_p2950",
-    "data15_13TeV.periodH.physics_Main.PhysCont.DAOD_JETM6.grp15_v01_p2950",
-    "data15_13TeV.periodJ.physics_Main.PhysCont.DAOD_JETM6.grp15_v01_p2950"
-    ]
-
-samples_DXAOD['data_2015_25ns'] = [ # 3212.96/pb
-    'data15_13TeV.00276262.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00276329.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00276336.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00276416.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00276511.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00276689.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00276778.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00276790.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00276952.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00276954.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00278880.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00278912.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00278968.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00279169.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00279259.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00279279.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00279284.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00279345.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00279515.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00279598.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00279685.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00279813.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00279867.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00279928.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00279932.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00279984.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00280231.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00280273.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00280319.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00280368.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00280423.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00280464.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00280500.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00280520.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00280614.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00280673.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00280753.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00280853.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00280862.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00280950.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00280977.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00281070.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00281074.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00281075.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00281317.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00281385.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00281411.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00282625.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00282631.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00282712.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00282784.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00282992.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00283074.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00283155.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00283270.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00283429.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00283608.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00283780.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00284006.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00284154.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00284213.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00284285.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00284420.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00284427.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813',
-    'data15_13TeV.00284484.physics_Main.merge.DAOD_JETM6.r7562_p2521_p2813'
-]
 
 # }}}
 
@@ -293,10 +212,10 @@ samples_DXAOD["ttbar_gamma_mc15c"] = [
 # }}}
 
 
-for sample_name, sample_list in samples_DXAOD.iteritems():
-  if "data" not in sample_name:
-    samples_AOD[sample_name]  = map(DAODtoAOD, sample_list)
-    samples_EVNT[sample_name] = map(DAODtoEVNT, sample_list)
+# for sample_name, sample_list in samples_DXAOD.iteritems():
+#   if "data" not in sample_name:
+#     samples_AOD[sample_name]  = map(DAODtoAOD, sample_list)
+#     samples_EVNT[sample_name] = map(DAODtoEVNT, sample_list)
 
 # NOTE: doesn't check if sample names are valid before writing out.
 if __name__ == '__main__':

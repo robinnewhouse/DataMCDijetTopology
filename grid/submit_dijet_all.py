@@ -12,9 +12,9 @@ data_config.suffix        = 'dijet_data_100617_v3'
 
 for config in [mc_config, data_config]:
     config.code          = 'top-xaod'
-    config.gridUsername  = 'zmeadows'
+    config.gridUsername  = 'rnewhous'
     config.excludedSites = 'US,ANALY_BNL_LONG'
-    config.noSubmit      = False
+    config.noSubmit      = True
     config.memory        = '1999' # A lot of sites are short on RAM, so we avoid brokerage issues this way
     config.mergeType     = 'Default' #'None', 'Default' or 'xAOD'
     config.destSE        = '' #This is the default (anywhere), or try e.g. 'UKI-SOUTHGRID-BHAM-HEP_LOCALGROUPDISK'
