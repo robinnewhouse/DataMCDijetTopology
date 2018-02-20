@@ -518,18 +518,18 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_Split23.at(i)->fill_tagged("_combMgt100GeV", rljet_Split23->at(i)/1000., weight, rljet_m_comb->at(i) / 1000. > 100.);
 
         // MVA Taggers
-        // hp->h_rljet_topTag_BDT_qqb.at(i) = rljet_topTag_BDT_qqb;
-        // hp->h_rljet_topTag_BDT_qqb_score.at(i) = rljet_topTag_BDT_qqb_score;
-        // hp->h_rljet_wTag_BDT_qq.at(i) = rljet_wTag_BDT_qq;
-        // hp->h_rljet_wTag_BDT_qq_score.at(i) = rljet_wTag_BDT_qq_score;
-        // hp->h_rljet_topTag_DNN_qqb_score.at(i) = rljet_topTag_DNN_qqb_score;
-        // hp->h_rljet_topTag_DNN_qqb.at(i) = rljet_topTag_DNN_qqb;
-        // hp->h_rljet_wTag_DNN_qq_score.at(i) = rljet_wTag_DNN_qq_score;
-        // hp->h_rljet_wTag_DNN_qq.at(i) = rljet_wTag_DNN_qq;
-        // hp->h_rljet_topTag_TopoTagger_20wp.at(i) = rljet_topTag_TopoTagger_20wp;
-        // hp->h_rljet_topTag_TopoTagger_50wp.at(i) = rljet_topTag_TopoTagger_50wp;
-        // hp->h_rljet_topTag_TopoTagger_80wp.at(i) = rljet_topTag_TopoTagger_80wp;
-        // hp->h_rljet_topTag_TopoTagger_score.at(i) = rljet_topTag_TopoTagger_score;
+        hp->h_rljet_topTag_BDT_qqb.at(i)->fill(rljet_topTag_BDT_qqb->at(i), weight);
+        hp->h_rljet_topTag_BDT_qqb_score.at(i)->fill(rljet_topTag_BDT_qqb_score->at(i), weight);
+        hp->h_rljet_wTag_BDT_qq.at(i)->fill(rljet_wTag_BDT_qq->at(i), weight);
+        hp->h_rljet_wTag_BDT_qq_score.at(i)->fill(rljet_wTag_BDT_qq_score->at(i), weight);
+        hp->h_rljet_topTag_DNN_qqb_score.at(i)->fill(rljet_topTag_DNN_qqb_score->at(i), weight);
+        hp->h_rljet_topTag_DNN_qqb.at(i)->fill(rljet_topTag_DNN_qqb->at(i), weight);
+        hp->h_rljet_wTag_DNN_qq_score.at(i)->fill(rljet_wTag_DNN_qq_score->at(i), weight);
+        hp->h_rljet_wTag_DNN_qq.at(i)->fill(rljet_wTag_DNN_qq->at(i), weight);
+        hp->h_rljet_topTag_TopoTagger_20wp.at(i)->fill(rljet_topTag_TopoTagger_20wp->at(i), weight);
+        hp->h_rljet_topTag_TopoTagger_50wp.at(i)->fill(rljet_topTag_TopoTagger_50wp->at(i), weight);
+        hp->h_rljet_topTag_TopoTagger_80wp.at(i)->fill(rljet_topTag_TopoTagger_80wp->at(i), weight);
+        hp->h_rljet_topTag_TopoTagger_score.at(i)->fill(rljet_topTag_TopoTagger_score->at(i), weight);
 
         // SMOOTHED SUBSTRUCTURE TAGGERS
         smooth_tag_map["smooth16Top_Tau32Split23Tag50eff"] = rljet_smooth16Top_Tau32Split23Tag50eff->at(i) == 3;
