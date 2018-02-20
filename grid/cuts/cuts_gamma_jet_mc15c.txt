@@ -20,7 +20,7 @@ DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass,NumF
 RunSmoothWZTag True
 RunSmoothTopTag True
 RunSmoothUncontained False
-RunMVATag False
+RunMVATag True
 
 SavePhoton True
 RunHTT True

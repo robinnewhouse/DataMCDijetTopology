@@ -2,7 +2,7 @@
 import TopExamples.grid
 from samples import samples_DXAOD
 
-suffix = 'gammajet_20180214'
+suffix = 'gammajet_20180219'
 
 mc_config = TopExamples.grid.Config()
 mc_config.settingsFile  = 'cuts/cuts_gamma_jet_mc15c.txt'
@@ -17,6 +17,7 @@ for config in [mc_config, data_config]:
     config.gridUsername  = 'rnewhous'
     config.excludedSites = 'US,ANALY_BNL_LONG'
     config.noSubmit      = False
+    # config.noSubmit      = True
     config.memory        = '1999' # A lot of sites are short on RAM, so we avoid brokerage issues this way
     config.mergeType     = 'Default' #'None', 'Default' or 'xAOD'
     config.destSE        = '' #This is the default (anywhere), or try e.g. 'UKI-SOUTHGRID-BHAM-HEP_LOCALGROUPDISK'
@@ -24,8 +25,8 @@ for config in [mc_config, data_config]:
 data_sample_names = [ 'data_2016', 'data_2015' ]
 
 mc_sample_names = [
-    # 'pythia_gammajet_mc15c',
-    # 'sherpa_gammajet_mc15c',
+    'pythia_gammajet_mc15c',
+    'sherpa_gammajet_mc15c',
     # 'ttbar_gamma_mc15c',
     # 'wz_gamma_mc15c',
     ]
