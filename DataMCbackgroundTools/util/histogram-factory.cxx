@@ -14,7 +14,7 @@
 #include <TSelector.h>
 
 #include "DataMCbackgroundTools/DataMCbackgroundSelector.h"
-#include "DataMCbackgroundTools/InputManager.h"
+// #include "DataMCbackgroundTools/InputManager.h"
 
 int
 main(int argc, char** argv)
@@ -38,8 +38,20 @@ main(int argc, char** argv)
 
     std::string input_filepath, output_filepath,
         data_trigger, event_selector, sample_type;
-    float luminosity            = -1.;
-    bool process_systematics    = false;
+    float luminosity = -1;
+    bool process_systematics = false;
+
+    bool use_defaults =  true;
+    if (use_defaults)
+    {
+        input_filepath = "output.root";
+        output_filepath = "raw_histograms.root";
+        data_trigger = "HLT_j420_a10r_L1J100";
+        event_selector = "NO_SELECTION";
+        sample_type =  "";
+        luminosity            = 3.20905;
+        process_systematics    = false;
+    }
 
     int c;
     opterr = 0;
