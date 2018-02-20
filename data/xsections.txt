@@ -75,3 +75,9 @@
 361060    2.4843e-06   0.40351 sherpa
 361061    2.5134e-06   0.41614 sherpa
 361062  2.5431e-06   0.14831 sherpa
+
+# tt+gamma (not sure of this -Robin)
+# https://twiki.cern.ch/twiki/bin/view/AtlasProtected/CrossSectionNLOttV#tt_gamma
+410087 0.1801384 1.47 Pythia8+EvtGen
+410088 0.1719432 1.47 Pythia8+EvtGen
+410089 0.1812408 1.47 Pythia8+EvtGen
