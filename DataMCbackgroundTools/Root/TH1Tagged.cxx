@@ -33,6 +33,7 @@ TH1Tagged::~TH1Tagged(void)
 void TH1Tagged::fill_tagged(const std::string tag_name, float val,
         float weight, bool tag_condition)
 {
+    std::cout << "tag_name: " << tag_name << "    val: " << val << "    weight: " << weight << std::endl;
     if (tag_condition) {
         bool tagged_histogram_exists = h_tagged.find(tag_name) != h_tagged.end();
 

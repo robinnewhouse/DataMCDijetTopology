@@ -106,8 +106,8 @@ public:
 
     vector<unique_ptr<TH1Tagged>> h_rljet_SD_logchi;
 
-    vector<unique_ptr<TH1Tagged>> h_rljet_BDT_score;
-    vector<unique_ptr<TH1Tagged>> h_rljet_DNN_score;
+    // vector<unique_ptr<TH1Tagged>> h_rljet_BDT_score;
+    // vector<unique_ptr<TH1Tagged>> h_rljet_DNN_score;
 
     vector<unique_ptr<TH1Tagged>> h_rljet_topTag_BDT_qqb;
     vector<unique_ptr<TH1Tagged>> h_rljet_topTag_BDT_qqb_score;

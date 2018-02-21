@@ -84,12 +84,12 @@ class DataMCbackgroundSelector : public TSelector {
         bool default_photon_vars;
         bool ranSD;
 
-        // BDT's for top and W tagging -- contained top/W def
-        unique_ptr<BDTWTopTagger> BDT_topTag;
-        unique_ptr<BDTWTopTagger> BDT_WTag;
-        // DNN for top tagging -- contained top/W def
-        unique_ptr<DNNWTopTagger> DNN_topTag;
-        unique_ptr<DNNWTopTagger> DNN_WTag;
+        // // BDT's for top and W tagging -- contained top/W def
+        // unique_ptr<BDTWTopTagger> BDT_topTag;
+        // unique_ptr<BDTWTopTagger> BDT_WTag;
+        // // DNN for top tagging -- contained top/W def
+        // unique_ptr<DNNWTopTagger> DNN_topTag;
+        // unique_ptr<DNNWTopTagger> DNN_WTag;
 
         std::map<std::string, double> jetMoments;
 

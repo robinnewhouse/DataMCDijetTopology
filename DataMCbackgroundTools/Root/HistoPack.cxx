@@ -188,21 +188,21 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
         this->h_htt_pts3 . push_back ( make_unique<TH1Tagged>(
                     "h_htt" + std::to_string(i) + "_pts3", 0., 2000., 10));
 
-        this->h_rljet_BDT_score . push_back( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string(i) + "_BDT_score", -1.0, 1.0, 0.01));
+        // this->h_rljet_BDT_score . push_back( make_unique<TH1Tagged>(
+        //             "h_rljet" + std::to_string(i) + "_BDT_score", -1.0, 1.0, 0.01));
 
-        this->h_rljet_DNN_score . push_back( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string(i) + "_DNN_score", 0., 1.0, 0.005));
+        // this->h_rljet_DNN_score . push_back( make_unique<TH1Tagged>(
+        //             "h_rljet" + std::to_string(i) + "_DNN_score", 0., 1.0, 0.005));
 
         // MVA taggers
         this->h_rljet_topTag_BDT_qqb . push_back( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string(i) + "_topTag_BDT_qqb", 0., 1.0, 0.005));
+                    "h_rljet" + std::to_string(i) + "_topTag_BDT_qqb", 0., 4.0, 1.0));
         
         this->h_rljet_topTag_BDT_qqb_score . push_back( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string(i) + "_topTag_BDT_qqb_score", 0., 1.0, 0.005));
         
         this->h_rljet_wTag_BDT_qq . push_back( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string(i) + "_wTag_BDT_qq", 0., 1.0, 0.005));
+                    "h_rljet" + std::to_string(i) + "_wTag_BDT_qq", 0., 4.0, 1.0));
         
         this->h_rljet_wTag_BDT_qq_score . push_back( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string(i) + "_wTag_BDT_qq_score", 0., 1.0, 0.005));
@@ -211,22 +211,22 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
                     "h_rljet" + std::to_string(i) + "_topTag_DNN_qqb_score", 0., 1.0, 0.005));
         
         this->h_rljet_topTag_DNN_qqb . push_back( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string(i) + "_topTag_DNN_qqb", 0., 1.0, 0.005));
+                    "h_rljet" + std::to_string(i) + "_topTag_DNN_qqb", 0., 4.0, 1.0));
         
         this->h_rljet_wTag_DNN_qq_score . push_back( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string(i) + "_wTag_DNN_qq_score", 0., 1.0, 0.005));
         
         this->h_rljet_wTag_DNN_qq . push_back( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string(i) + "_wTag_DNN_qq", 0., 1.0, 0.005));
+                    "h_rljet" + std::to_string(i) + "_wTag_DNN_qq", 0., 4.0, 1.0));
         
         this->h_rljet_topTag_TopoTagger_20wp . push_back( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string(i) + "_topTag_TopoTagger_20wp", 0., 1.0, 0.005));
+                    "h_rljet" + std::to_string(i) + "_topTag_TopoTagger_20wp", 0., 4.0, 1.0));
         
         this->h_rljet_topTag_TopoTagger_50wp . push_back( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string(i) + "_topTag_TopoTagger_50wp", 0., 1.0, 0.005));
+                    "h_rljet" + std::to_string(i) + "_topTag_TopoTagger_50wp", 0., 4.0, 1.0));
         
         this->h_rljet_topTag_TopoTagger_80wp . push_back( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string(i) + "_topTag_TopoTagger_80wp", 0., 1.0, 0.005));
+                    "h_rljet" + std::to_string(i) + "_topTag_TopoTagger_80wp", 0., 4.0, 1.0));
         
         this->h_rljet_topTag_TopoTagger_score . push_back( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string(i) + "_topTag_TopoTagger_score", 0., 1.0, 0.005));
@@ -262,7 +262,18 @@ void HistoPack::WriteCommonHistograms() const
     for (auto const &h : h_rljet_Tau32_wta) h->write_all();
     for (auto const &h : h_rljet_Qw) h->write_all();
     for (auto const &h : h_rljet_Split23) h->write_all();
-}
+    for (auto const &h : h_rljet_topTag_BDT_qqb) h->write_all();
+    for (auto const &h : h_rljet_topTag_BDT_qqb_score) h->write_all();
+    for (auto const &h : h_rljet_wTag_BDT_qq) h->write_all();
+    for (auto const &h : h_rljet_wTag_BDT_qq_score) h->write_all();
+    for (auto const &h : h_rljet_topTag_DNN_qqb_score) h->write_all();
+    for (auto const &h : h_rljet_topTag_DNN_qqb) h->write_all();
+    for (auto const &h : h_rljet_wTag_DNN_qq_score) h->write_all();
+    for (auto const &h : h_rljet_wTag_DNN_qq) h->write_all();
+    for (auto const &h : h_rljet_topTag_TopoTagger_20wp) h->write_all();
+    for (auto const &h : h_rljet_topTag_TopoTagger_50wp) h->write_all();
+    for (auto const &h : h_rljet_topTag_TopoTagger_80wp) h->write_all();
+    for (auto const &h : h_rljet_topTag_TopoTagger_score) h->write_all();}
 
 void HistoPack::WriteNominalOnlyHistograms() const
 {
@@ -342,20 +353,9 @@ void HistoPack::WriteNominalOnlyHistograms() const
 
     for (auto const &h : h_rljet_SD_logchi) h->write_all();
 
-    for (auto const &h : h_rljet_BDT_score) h->write_all();
-    for (auto const &h : h_rljet_DNN_score) h->write_all();
+    // for (auto const &h : h_rljet_BDT_score) h->write_all();
+    // for (auto const &h : h_rljet_DNN_score) h->write_all();
 
-    for (auto const &h : h_rljet_topTag_BDT_qqb) h->write_all();
-    for (auto const &h : h_rljet_topTag_BDT_qqb_score) h->write_all();
-    for (auto const &h : h_rljet_wTag_BDT_qq) h->write_all();
-    for (auto const &h : h_rljet_wTag_BDT_qq_score) h->write_all();
-    for (auto const &h : h_rljet_topTag_DNN_qqb_score) h->write_all();
-    for (auto const &h : h_rljet_topTag_DNN_qqb) h->write_all();
-    for (auto const &h : h_rljet_wTag_DNN_qq_score) h->write_all();
-    for (auto const &h : h_rljet_wTag_DNN_qq) h->write_all();
-    for (auto const &h : h_rljet_topTag_TopoTagger_20wp) h->write_all();
-    for (auto const &h : h_rljet_topTag_TopoTagger_50wp) h->write_all();
-    for (auto const &h : h_rljet_topTag_TopoTagger_80wp) h->write_all();
-    for (auto const &h : h_rljet_topTag_TopoTagger_score) h->write_all();
+
 }
 
