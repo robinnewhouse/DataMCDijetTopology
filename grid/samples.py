@@ -189,16 +189,16 @@ samples_DXAOD["sherpa_gammajet_mc15c"] = [
 # {{{ SM W/Z + gamma
 
 samples_DXAOD["wz_gamma_mc15c"] = [
-    "mc15_13TeV.305435.Sherpa_CT10_WqqGammaPt140_280.merge.DAOD_EXOT3.e5037_s2726_r7772_r7676_p3297",
-    "mc15_13TeV.305436.Sherpa_CT10_WqqGammaPt280_500.merge.DAOD_EXOT3.e5037_s2726_r7772_r7676_p3297",
-    "mc15_13TeV.305437.Sherpa_CT10_WqqGammaPt500_1000.merge.DAOD_EXOT3.e5037_s2726_r7772_r7676_p3297",
-    "mc15_13TeV.305438.Sherpa_CT10_WqqGammaPt1000_2000.merge.DAOD_EXOT3.e5037_s2726_r7772_r7676_p3297",
-    "mc15_13TeV.305439.Sherpa_CT10_WqqGammaPt2000_inf.merge.DAOD_EXOT3.e5037_s2726_r7772_r7676_p3297",
-    "mc15_13TeV.305440.Sherpa_CT10_ZqqGammaPt140_280.merge.DAOD_EXOT3.e5020_s2726_r7772_r7676_p3297",
-    "mc15_13TeV.305441.Sherpa_CT10_ZqqGammaPt280_500.merge.DAOD_EXOT3.e5020_s2726_r7772_r7676_p3297",
-    "mc15_13TeV.305442.Sherpa_CT10_ZqqGammaPt500_1000.merge.DAOD_EXOT3.e5020_s2726_r7772_r7676_p3297",
-    "mc15_13TeV.305443.Sherpa_CT10_ZqqGammaPt1000_2000.merge.DAOD_EXOT3.e5020_s2726_r7772_r7676_p3297",
-    "mc15_13TeV.305444.Sherpa_CT10_ZqqGammaPt2000_inf.merge.DAOD_EXOT3.e5020_s2726_r7772_r7676_p3297"
+    "mc15_13TeV.305435.Sherpa_CT10_WqqGammaPt140_280.merge.DAOD_JETM6.e5037_s2726_r7772_r7676_p3297",
+    "mc15_13TeV.305436.Sherpa_CT10_WqqGammaPt280_500.merge.DAOD_JETM6.e5037_s2726_r7772_r7676_p3297",
+    "mc15_13TeV.305437.Sherpa_CT10_WqqGammaPt500_1000.merge.DAOD_JETM6.e5037_s2726_r7772_r7676_p3297",
+    "mc15_13TeV.305438.Sherpa_CT10_WqqGammaPt1000_2000.merge.DAOD_JETM6.e5037_s2726_r7772_r7676_p3297",
+    "mc15_13TeV.305439.Sherpa_CT10_WqqGammaPt2000_inf.merge.DAOD_JETM6.e5037_s2726_r7772_r7676_p3297",
+    "mc15_13TeV.305440.Sherpa_CT10_ZqqGammaPt140_280.merge.DAOD_JETM6.e5020_s2726_r7772_r7676_p3297",
+    "mc15_13TeV.305441.Sherpa_CT10_ZqqGammaPt280_500.merge.DAOD_JETM6.e5020_s2726_r7772_r7676_p3297",
+    "mc15_13TeV.305442.Sherpa_CT10_ZqqGammaPt500_1000.merge.DAOD_JETM6.e5020_s2726_r7772_r7676_p3297",
+    "mc15_13TeV.305443.Sherpa_CT10_ZqqGammaPt1000_2000.merge.DAOD_JETM6.e5020_s2726_r7772_r7676_p3297",
+    "mc15_13TeV.305444.Sherpa_CT10_ZqqGammaPt2000_inf.merge.DAOD_JETM6.e5020_s2726_r7772_r7676_p3297"
     ]
 
 # }}}
@@ -206,7 +206,7 @@ samples_DXAOD["wz_gamma_mc15c"] = [
 # {{{ SM ttbar + gamma
 
 samples_DXAOD["ttbar_gamma_mc15c"] = [
-    "mc15_13TeV.410087.MadGraphPythia8EvtGen_A14NNPDF23LO_ttgamma_allhad.merge.DAOD_EXOT3.e4404_s2726_r7772_r7676_p3297"
+    "mc15_13TeV.410087.MadGraphPythia8EvtGen_A14NNPDF23LO_ttgamma_allhad.merge.DAOD_JETM6.e4404_s2726_r7772_r7676_p3297"
     ]
 
 # }}}

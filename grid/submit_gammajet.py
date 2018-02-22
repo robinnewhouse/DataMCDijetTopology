@@ -16,7 +16,7 @@ for config in [mc_config, data_config]:
     config.code          = 'top-xaod'
     config.gridUsername  = 'rnewhous'
     config.excludedSites = 'US,ANALY_BNL_LONG'
-    config.noSubmit      = False
+    config.noSubmit      = True
     # config.noSubmit      = True
     config.memory        = '1999' # A lot of sites are short on RAM, so we avoid brokerage issues this way
     config.mergeType     = 'Default' #'None', 'Default' or 'xAOD'
@@ -25,14 +25,14 @@ for config in [mc_config, data_config]:
 data_sample_names = [ 'data_2016', 'data_2015' ]
 
 mc_sample_names = [
-    'pythia_gammajet_mc15c',
-    'sherpa_gammajet_mc15c',
+    # 'pythia_gammajet_mc15c',
+    # 'sherpa_gammajet_mc15c',
     # 'ttbar_gamma_mc15c',
-    # 'wz_gamma_mc15c',
+    'wz_gamma_mc15c',
     ]
 
 for sample_name in mc_sample_names + data_sample_names:
     TopExamples.grid.Add(sample_name).datasets = samples_DXAOD[sample_name]
 
-TopExamples.grid.submit(data_config, TopExamples.grid.Samples(data_sample_names))
+# TopExamples.grid.submit(data_config, TopExamples.grid.Samples(data_sample_names))
 TopExamples.grid.submit(mc_config, TopExamples.grid.Samples(mc_sample_names))
