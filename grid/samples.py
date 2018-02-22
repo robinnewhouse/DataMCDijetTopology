@@ -3,6 +3,7 @@
 samples_DXAOD = {}
 samples_AOD = {}
 samples_EVNT = {}
+samples_DEBUG = {} # just for individual set testing and downloading xsection files. Shouldn't be used in production
 
 # {{{ DATA
 
@@ -35,9 +36,9 @@ samples_DXAOD['data_2015'] = [ # 3212.96/pb
 # {{{ DIJET
 
 samples_DXAOD['pythia_dijet_mc15c'] = [
-    #"mc15_13TeV.361020.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ0W.merge.DAOD_JETM6.e3569_s2576_s2132_r7725_r7676_p3297",
-    #"mc15_13TeV.361021.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ1W.merge.DAOD_JETM6.e3569_s2576_s2132_r7725_r7676_p3297",
-    #"mc15_13TeV.361022.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ2W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p3297",
+    "mc15_13TeV.361020.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ0W.merge.DAOD_JETM6.e3569_s2576_s2132_r7725_r7676_p3297",
+    "mc15_13TeV.361021.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ1W.merge.DAOD_JETM6.e3569_s2576_s2132_r7725_r7676_p3297",
+    "mc15_13TeV.361022.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ2W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p3297",
     "mc15_13TeV.361023.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ3W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p3297",
     "mc15_13TeV.361024.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ4W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p3297",
     "mc15_13TeV.361025.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ5W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p3297",
@@ -67,9 +68,9 @@ samples_DXAOD['pythia_dijet_mc15c_p3297'] = [
     ]
 
 samples_DXAOD['herwig_dijet_mc15c'] = [
-        #"mc15_13TeV.426040.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ0W.merge.DAOD_JETM6.e4410_s2608_r7725_r7676_p3297",
-        #"mc15_13TeV.426041.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ1W.merge.DAOD_JETM6.e4410_s2608_r7725_r7676_p3297",
-        #"mc15_13TeV.426042.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ2W.merge.DAOD_JETM6.e4410_s2608_r7725_r7676_p3297",
+        "mc15_13TeV.426040.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ0W.merge.DAOD_JETM6.e4410_s2608_r7725_r7676_p3297",
+        "mc15_13TeV.426041.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ1W.merge.DAOD_JETM6.e4410_s2608_r7725_r7676_p3297",
+        "mc15_13TeV.426042.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ2W.merge.DAOD_JETM6.e4410_s2608_r7725_r7676_p3297",
         "mc15_13TeV.426043.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ3W.merge.DAOD_JETM6.e4410_s2608_r7725_r7676_p3297",
         "mc15_13TeV.426044.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ4W.merge.DAOD_JETM6.e4410_s2608_r7725_r7676_p3297",
         "mc15_13TeV.426045.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ5W.merge.DAOD_JETM6.e4410_s2608_r7725_r7676_p3297",
@@ -83,8 +84,8 @@ samples_DXAOD['herwig_dijet_mc15c'] = [
 ]
 
 samples_DXAOD['sherpa_dijet_mc15c'] = [
-        #"mc15_13TeV.426131.Sherpa_CT10_jets_JZ1.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p3297",
-        #"mc15_13TeV.426132.Sherpa_CT10_jets_JZ2.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p3297",
+        "mc15_13TeV.426131.Sherpa_CT10_jets_JZ1.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p3297",
+        "mc15_13TeV.426132.Sherpa_CT10_jets_JZ2.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p3297",
         "mc15_13TeV.426133.Sherpa_CT10_jets_JZ3.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p3297",
         "mc15_13TeV.426134.Sherpa_CT10_jets_JZ4.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p3297",
         "mc15_13TeV.426135.Sherpa_CT10_jets_JZ5.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p3297",
