@@ -46,7 +46,7 @@ main(int argc, char** argv)
     {
         input_filepath = "output.root";
         output_filepath = "raw_histograms.root";
-        data_trigger = "HLT_j420_a10r_L1J100";
+        data_trigger = "HLT_g140_loose";
         event_selector = "NO_SELECTION";
         sample_type =  "";
         luminosity            = 3.20905;
