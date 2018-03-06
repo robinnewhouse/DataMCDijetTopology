@@ -1,15 +1,16 @@
 from ROOT import *
-import atlas_style
+import utils.atlas_style
 
 import os
 import math
 from sys import argv, exit
 
-from plot_base import *
-from plot_util import *
 from plot_dmd import *
-from plot_loader import *
-from plot_systematics import *
+from utils.plot_base import *
+from utils.plot_util import *
+from utils.plot_loader import *
+from utils.plot_systematics import *
+
 
 gROOT.SetBatch()
 sane_defaults()
@@ -17,7 +18,7 @@ TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
 # CP_ROOT_FILEPATH = "/eos/atlas/atlascerngroupdisk/perf-jets/JSS/TopBosonTagAnalysis2016/NTuples_DataMC_dijets/20170610/cp.merged.root"
-CP_ROOT_FILEPATH = "/data/newhouse/output/TopBosonTagAnalysis2018/NTuples_DataMC_dijetsl/gammajet_20180219/data/cp.merged.root"
+CP_ROOT_FILEPATH = "/data/newhouse/output/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/gammajet_20180219/data/user.rnewhous.periodI.physics_Main.DAOD_JETM6.grp16_v02_p3298.data_gammajet_20180219_output.root/user.rnewhous.13261344._000062.output.root"
 LOADER = DijetLoader(CP_ROOT_FILEPATH)
 LOADER_SMOOTH = LOADER
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"

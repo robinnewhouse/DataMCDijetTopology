@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import TopExamples.grid
 
-suffix = 'gammajet_20180219'
+suffix = 'dijet_20180227'
 
 scope     = 'user.rnewhous'
 dir_data  = '/data/newhouse/output/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/'+suffix+'/data'
