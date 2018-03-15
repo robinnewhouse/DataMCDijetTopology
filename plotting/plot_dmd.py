@@ -1,5 +1,5 @@
-from utils.plot_util import *
-from utils.plot_loader import *
+from plot_util import *
+from plot_loader import *
 from ROOT import *
 
 # https://twiki.cern.ch/twiki/bin/view/AtlasProtected/MC15HadronicPythiaVJets
