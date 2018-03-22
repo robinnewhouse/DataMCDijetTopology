@@ -9,8 +9,6 @@
 // ROOTCORE/Athena/Framework imports
 #include "TopExamples/AnalysisTools.h"
 
-#include "BDTWTopTagger/BDTWTopTagger.h"
-#include "NNTaggingTools/DNNWTopTagger.h"
 // ROOT imports
 #include <TChain.h>
 #include <TFile.h>
@@ -21,6 +19,7 @@
 #include <TROOT.h>
 #include <TSelector.h>
 #include <TStyle.h>
+#include <TF1.h>
 
 // STL imports
 #include <array>

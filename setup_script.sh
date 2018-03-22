@@ -1,11 +1,5 @@
 #!/bin/bash
-lsetup 'rcsetup Top,2.4.38'
-
-git clone ssh://git@gitlab.cern.ch:7999/omajersk/NNTaggingTools.git
-# cd NNTaggingTools && git checkout tags/2.1 && cd ..
-
-git clone ssh://git@gitlab.cern.ch:7999/omajersk/BDTWTopTagger.git
-# cd BDTWTopTagger && git checkout tags/2.1 && cd ..
+lsetup 'rcsetup Top,2.4.42'
 
 ## Copied from Oliver's l+jets 20.7 setup script
 # ShowerDeconstruction tagger
