@@ -16,9 +16,9 @@ args = parser.parse_args()
 
 assert(args.input_file != args.output_file)
 
-WORKAREA = "/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology"
+WORKAREA = "/home/newhouse/public/DataMCDijetTopology"
 
-os.chdir("/tmp/zmeadows")
+os.chdir("/tmp/newhouse/")
 RECO_TMP_DIR=tempfile.mkdtemp()
 os.chdir(RECO_TMP_DIR)
 
@@ -51,4 +51,5 @@ with open('job.sh', 'w') as fout:
       fout.close()
 
 os.system("chmod 755 job.sh")
-os.system("./job.sh")
+os.system("qsub job.sh")
+print

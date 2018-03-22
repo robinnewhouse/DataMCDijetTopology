@@ -51,7 +51,7 @@ samples_DXAOD['data_2015'] = [ # 3212.96/pb
 #     "mc15_13TeV.361032.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ12W.merge.DAOD_JETM6.e3668_s2608_s2183_r7772_r7676_p3297"
 #     ]
 
-samples_DXAOD['pythia_dijet_mc15c_p3297'] = [
+samples_DXAOD['pythia_dijet'] = [
     "mc15_13TeV.361020.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ0W.merge.DAOD_JETM6.e3569_s2576_s2132_r7725_r7676_p3297",
     "mc15_13TeV.361021.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ1W.merge.DAOD_JETM6.e3569_s2576_s2132_r7725_r7676_p3297",
     "mc15_13TeV.361022.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ2W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p3297",
@@ -67,7 +67,7 @@ samples_DXAOD['pythia_dijet_mc15c_p3297'] = [
     "mc15_13TeV.361032.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ12W.merge.DAOD_JETM6.e3668_s2608_s2183_r7772_r7676_p3297"
     ]
 
-samples_DXAOD['herwig_dijet_mc15c'] = [
+samples_DXAOD['herwig_dijet'] = [
         "mc15_13TeV.426040.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ0W.merge.DAOD_JETM6.e4410_s2608_r7725_r7676_p3297",
         "mc15_13TeV.426041.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ1W.merge.DAOD_JETM6.e4410_s2608_r7725_r7676_p3297",
         "mc15_13TeV.426042.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ2W.merge.DAOD_JETM6.e4410_s2608_r7725_r7676_p3297",
@@ -83,7 +83,7 @@ samples_DXAOD['herwig_dijet_mc15c'] = [
         "mc15_13TeV.426052.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ12W.merge.DAOD_JETM6.e4410_s2608_r7772_r7676_p3297"
 ]
 
-samples_DXAOD['sherpa_dijet_mc15c'] = [
+samples_DXAOD['sherpa_dijet'] = [
         "mc15_13TeV.426131.Sherpa_CT10_jets_JZ1.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p3297",
         "mc15_13TeV.426132.Sherpa_CT10_jets_JZ2.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p3297",
         "mc15_13TeV.426133.Sherpa_CT10_jets_JZ3.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p3297",
@@ -101,40 +101,51 @@ samples_DXAOD['sherpa_dijet_mc15c'] = [
 # }}}
 
 # {{{ W/Z + jets
-
-samples_DXAOD["V+jets_mc15c"] = [
-        "mc15_13TeV.304307.Sherpa_CT10_Wqq_Pt280_500.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p3297",
-        "mc15_13TeV.304308.Sherpa_CT10_Wqq_Pt500_1000.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p3297",
-        "mc15_13TeV.304309.Sherpa_CT10_Wqq_Pt1000.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p3297",
-        "mc15_13TeV.304707.Sherpa_CT10_Zqq_Pt280_500.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p3297",
-        "mc15_13TeV.304708.Sherpa_CT10_Zqq_Pt500_1000.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p3297",
-        "mc15_13TeV.304709.Sherpa_CT10_Zqq_Pt1000.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p3297",
+samples_DXAOD["pythia_wjets"] = [
         "mc15_13TeV.304623.Pythia8EvtGen_A14NNPDF23LO_WHad_280_500.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p3297",
         "mc15_13TeV.304624.Pythia8EvtGen_A14NNPDF23LO_WHad_500_700.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p3297",
         "mc15_13TeV.304625.Pythia8EvtGen_A14NNPDF23LO_WHad_700_1000.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p3297",
         "mc15_13TeV.304626.Pythia8EvtGen_A14NNPDF23LO_WHad_1000_1400.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p3297",
         "mc15_13TeV.304627.Pythia8EvtGen_A14NNPDF23LO_WHad_1400.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p3297",
+        ]
+
+samples_DXAOD["pythia_zjets"] = [
         "mc15_13TeV.304628.Pythia8EvtGen_A14NNPDF23LO_ZHad_280_500.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p3297",
         "mc15_13TeV.304629.Pythia8EvtGen_A14NNPDF23LO_ZHad_500_700.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p3297",
         "mc15_13TeV.304630.Pythia8EvtGen_A14NNPDF23LO_ZHad_700_1000.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p3297",
         "mc15_13TeV.304631.Pythia8EvtGen_A14NNPDF23LO_ZHad_1000_1400.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p3297",
         "mc15_13TeV.304632.Pythia8EvtGen_A14NNPDF23LO_ZHad_1400.merge.DAOD_JETM6.e4581_s2726_r7772_r7676_p3297",
-        #"mc15_13TeV.304673.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_280_500.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297",
-        #"mc15_13TeV.304674.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_500_700.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297",
-        #"mc15_13TeV.304675.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_700_1000.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297",
-        #"mc15_13TeV.304676.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_1000_1400.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297",
-        #"mc15_13TeV.304677.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_1400.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297",
-        #"mc15_13TeV.304678.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_280_500.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297",
-        #"mc15_13TeV.304679.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_500_700.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297",
-        #"mc15_13TeV.304680.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_700_1000.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297",
-        #"mc15_13TeV.304681.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_1000_1400.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297",
-        #"mc15_13TeV.304682.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_1400.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297"
         ]
+
+samples_DXAOD["sherpa_wjets"] = [
+        "mc15_13TeV.304307.Sherpa_CT10_Wqq_Pt280_500.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p3297",
+        "mc15_13TeV.304308.Sherpa_CT10_Wqq_Pt500_1000.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p3297",
+        "mc15_13TeV.304309.Sherpa_CT10_Wqq_Pt1000.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p3297",
+        ]
+
+samples_DXAOD["sherpa_zjets"] = [
+        "mc15_13TeV.304707.Sherpa_CT10_Zqq_Pt280_500.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p3297",
+        "mc15_13TeV.304708.Sherpa_CT10_Zqq_Pt500_1000.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p3297",
+        "mc15_13TeV.304709.Sherpa_CT10_Zqq_Pt1000.merge.DAOD_JETM6.e4692_s2726_r7772_r7676_p3297",
+        ]
+
+# samples_DXAOD["V+jets_mc15c"] = [
+#         #"mc15_13TeV.304673.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_280_500.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297",
+#         #"mc15_13TeV.304674.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_500_700.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297",
+#         #"mc15_13TeV.304675.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_700_1000.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297",
+#         #"mc15_13TeV.304676.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_1000_1400.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297",
+#         #"mc15_13TeV.304677.Herwigpp_UEEE5CTEQ6L1_Wjhadronic_1400.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297",
+#         #"mc15_13TeV.304678.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_280_500.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297",
+#         #"mc15_13TeV.304679.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_500_700.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297",
+#         #"mc15_13TeV.304680.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_700_1000.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297",
+#         #"mc15_13TeV.304681.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_1000_1400.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297",
+#         #"mc15_13TeV.304682.Herwigpp_UEEE5CTEQ6L1_Zjhadronic_1400.merge.DAOD_JETM6.e4571_s2726_r7772_r7676_p3297"
+#         ]
 # }}}
 
 # {{{ allhad ttbar
 
-samples_DXAOD["ttbar_allhad_mc15c"] = [
+samples_DXAOD["ttbar_allhad"] = [
         "mc15_13TeV.303722.PowhegPythiaEvtGen_P2012_ttbar_hdamp172p5_allhad_mtt_1.merge.DAOD_JETM6.e4321_s2608_r7772_r7676_p3297",
         "mc15_13TeV.303723.PowhegPythiaEvtGen_P2012_ttbar_hdamp172p5_allhad_mtt_2.merge.DAOD_JETM6.e4321_s2608_r7772_r7676_p3297",
         "mc15_13TeV.303724.PowhegPythiaEvtGen_P2012_ttbar_hdamp172p5_allhad_mtt_3.merge.DAOD_JETM6.e4321_s2608_r7772_r7676_p3297",
@@ -146,7 +157,7 @@ samples_DXAOD["ttbar_allhad_mc15c"] = [
 
 # {{{ gamma+jet
 
-samples_DXAOD["pythia_gammajet_mc15c"] = [
+samples_DXAOD["pythia_gammajet"] = [
         "mc15_13TeV.423104.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP140_280.merge.DAOD_JETM6.e3791_s2608_s2183_r7725_r7676_p3297",
         "mc15_13TeV.423105.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP280_500.merge.DAOD_JETM6.e3791_s2608_s2183_r7725_r7676_p3297",
         "mc15_13TeV.423106.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP500_800.merge.DAOD_JETM6.e3791_s2608_s2183_r7725_r7676_p3297",
@@ -158,7 +169,7 @@ samples_DXAOD["pythia_gammajet_mc15c"] = [
         "mc15_13TeV.423112.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP3000_inf.merge.DAOD_JETM6.e4453_s2726_r7772_r7676_p3297"
         ]
 
-samples_DXAOD["sherpa_gammajet_mc15c"] = [
+samples_DXAOD["sherpa_gammajet"] = [
     "mc15_13TeV.361039.Sherpa_CT10_SinglePhotonPt35_70_CVetoBVeto.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p3297",
     "mc15_13TeV.361040.Sherpa_CT10_SinglePhotonPt35_70_CFilterBVeto.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p3297",
     "mc15_13TeV.361041.Sherpa_CT10_SinglePhotonPt35_70_BFilter.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p3297",

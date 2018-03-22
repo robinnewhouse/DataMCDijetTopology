@@ -24,11 +24,14 @@ for config in [mc_config, data_config]:
 
 data_sample_names = [ 'data_2015', 'data_2016' ]
 mc_sample_names = [
-        'pythia_dijet_mc15c',
-        'herwig_dijet_mc15c',
-        'sherpa_dijet_mc15c',
-        'V+jets_mc15c',
-        'ttbar_allhad_mc15c'
+        'pythia_dijet',
+        'herwig_dijet',
+        'sherpa_dijet',
+        'pythia_wjets',
+        'pythia_zjets',
+        'sherpa_wjets',
+        'sherpa_zjets',
+        'ttbar_allhad'
         ]
 
 for sample_name in mc_sample_names + data_sample_names:

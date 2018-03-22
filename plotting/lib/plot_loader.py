@@ -17,16 +17,22 @@ class PlotLoader(object):
 
     def get_hist(self, dir_path, hist_name):
         ''' Grab a histogram from the file.  '''
+        try:
+            current_dir = self.tfile
+            for d in dir_path:
+                current_dir = current_dir.Get(d)
 
-        current_dir = self.tfile
-        for d in dir_path:
-            current_dir = current_dir.Get(d)
-
-        hist = current_dir.Get(hist_name)
-        if (not hist):
-            # print "WARNING: histogram ", dir_path, " :: ", hist_name, " not found!"
-            return None
-        return hist.Clone()
+            hist = current_dir.Get(hist_name)
+            if (not hist):
+                return None
+            return hist.Clone()
+        except Exception as e:
+            print "In path: " + str(dir_path)
+            print "tree not found: " + str(hist_name)
+            print "exiting"
+            print
+            quit() # remove this for more information to be raised in the exception
+            raise e
 
     def get_systematics_dict(self,
             hist_name,

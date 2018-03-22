@@ -55,7 +55,7 @@ main(int argc, char** argv)
 
     int c;
     opterr = 0;
-    while ((c = getopt (argc, argv, "S:i:o:E:t:L:p:")) != -1) {
+    while ((c = getopt (argc, argv, "i:o:E:t:L:p:S")) != -1) {
         switch (c)
         {
             case 'i':
