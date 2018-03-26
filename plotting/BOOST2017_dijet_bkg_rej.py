@@ -17,7 +17,7 @@ sane_defaults()
 TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
-CP_ROOT_FILEPATH = "/data/newhouse/tmp/cp.merged.root"
+CP_ROOT_FILEPATH = "/home/newhouse/tmp/jobs_output_2018-03-23-14-16_goodmc/mc15/merged/test.root"
 LOADER = DijetLoader(CP_ROOT_FILEPATH)
 LOADER_SMOOTH = LOADER
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"

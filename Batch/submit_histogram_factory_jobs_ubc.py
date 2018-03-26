@@ -9,7 +9,7 @@ import re
 # CONSTANTS
 
 MY_DATE             = time.strftime("%d%m%Y_%H:%M:%S")
-JOB_SCRIPT          = '/home/newhouse/public/DataMCDijetTopology/Batch/histogram_factory_job.py'
+JOB_SCRIPT          = '/home/newhouse/public/Analysis/TopBosonTagging/DataMCDijetTopology/Batch/histogram_factory_job.py'
 
 # ARGUMENTS
 
@@ -111,9 +111,10 @@ for input_file in INPUT_FILES:
     "--selection", args.selection
     ])
 
-  qsub_cmd = """qsub """  + job_cmd 
+  # qsub_cmd = """qsub """  + job_cmd 
 
   if (args.dry_run):
     print job_cmd
+    print
   else:
     os.system(job_cmd)

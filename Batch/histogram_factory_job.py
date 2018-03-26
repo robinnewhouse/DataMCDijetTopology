@@ -16,9 +16,9 @@ args = parser.parse_args()
 
 assert(args.input_file != args.output_file)
 
-WORKAREA = "/home/newhouse/public/DataMCDijetTopology"
+WORKAREA = "/home/newhouse/public/Analysis/TopBosonTagging/DataMCDijetTopology/"
 
-os.chdir("/tmp/newhouse/")
+os.chdir("/home/newhouse/tmp/")
 RECO_TMP_DIR=tempfile.mkdtemp()
 os.chdir(RECO_TMP_DIR)
 
@@ -48,8 +48,10 @@ with open('job.sh', 'w') as fout:
       #write_cmd("xrdcp -r *.cp.root* root://eosatlas.cern.ch/" + os.path.dirname(args.output_file) + "/")
       write_cmd("cp *.cp.root* " + os.path.dirname(args.output_file) + "/")
       write_cmd("rm -rf *.root")
+      # write_cmd("cd " + WORKAREA)
+      # write_cmd("rm *.root.log")
       fout.close()
 
 os.system("chmod 755 job.sh")
-os.system("qsub job.sh")
+os.system("qsub -V job.sh")
 print
