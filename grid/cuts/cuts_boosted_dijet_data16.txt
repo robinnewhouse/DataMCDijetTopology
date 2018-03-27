@@ -16,7 +16,7 @@ DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass,NumF
 RunSmoothWZTag True
 RunSmoothTopTag True
 RunSmoothUncontained False
-RunMVATag False
+RunMVATag True
 
 SavePhoton False
 RunHTT True
@@ -60,7 +60,7 @@ PDFInfo False
 
 IsAFII False
 
-#NEvents 5000
+NEvents -1
 
 OutputFileSetAutoFlushZero True
 ObjectSelectionName top::ObjectLoaderStandardCuts

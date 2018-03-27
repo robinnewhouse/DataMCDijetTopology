@@ -9,8 +9,6 @@
 // ROOTCORE/Athena/Framework imports
 #include "TopExamples/AnalysisTools.h"
 
-#include "BDTWTopTagger/BDTWTopTagger.h"
-#include "NNTaggingTools/DNNWTopTagger.h"
 // ROOT imports
 #include <TChain.h>
 #include <TFile.h>
@@ -21,6 +19,7 @@
 #include <TROOT.h>
 #include <TSelector.h>
 #include <TStyle.h>
+#include <TF1.h>
 
 // STL imports
 #include <array>
@@ -84,12 +83,12 @@ class DataMCbackgroundSelector : public TSelector {
         bool default_photon_vars;
         bool ranSD;
 
-        // BDT's for top and W tagging -- contained top/W def
-        unique_ptr<BDTWTopTagger> BDT_topTag;
-        unique_ptr<BDTWTopTagger> BDT_WTag;
-        // DNN for top tagging -- contained top/W def
-        unique_ptr<DNNWTopTagger> DNN_topTag;
-        unique_ptr<DNNWTopTagger> DNN_WTag;
+        // // BDT's for top and W tagging -- contained top/W def
+        // unique_ptr<BDTWTopTagger> BDT_topTag;
+        // unique_ptr<BDTWTopTagger> BDT_WTag;
+        // // DNN for top tagging -- contained top/W def
+        // unique_ptr<DNNWTopTagger> DNN_topTag;
+        // unique_ptr<DNNWTopTagger> DNN_WTag;
 
         std::map<std::string, double> jetMoments;
 
@@ -185,6 +184,22 @@ class DataMCbackgroundSelector : public TSelector {
         // std::vector<float> *rljet_BDT_score_w;
         // std::vector<float> *rljet_DNN_score_top;
         // std::vector<float> *rljet_DNN_score_w;
+
+        // BDT's
+        std::vector<int> *rljet_topTag_BDT_qqb;
+        std::vector<float> *rljet_topTag_BDT_qqb_score;
+        std::vector<int> *rljet_wTag_BDT_qq;
+        std::vector<float> *rljet_wTag_BDT_qq_score;
+        // DNN's
+        std::vector<int> *rljet_topTag_DNN_qqb;
+        std::vector<float> *rljet_topTag_DNN_qqb_score;
+        std::vector<int> *rljet_wTag_DNN_qq;
+        std::vector<float> *rljet_wTag_DNN_qq_score;
+        // Topocluster DNN's
+        std::vector<int> *rljet_topTag_TopoTagger_20wp;
+        std::vector<int> *rljet_topTag_TopoTagger_50wp;
+        std::vector<int> *rljet_topTag_TopoTagger_80wp;
+        std::vector<float> *rljet_topTag_TopoTagger_score;
 
         Int_t           NPV;
         Int_t           rljet_count;
@@ -373,6 +388,20 @@ class DataMCbackgroundSelector : public TSelector {
         // TBranch* b_rljet_BDT_score_w; //!
         // TBranch* b_rljet_DNN_score_top; //!
         // TBranch* b_rljet_DNN_score_w; //!
+
+        TBranch        *b_rljet_topTag_BDT_qqb; //!
+        TBranch        *b_rljet_topTag_BDT_qqb_score; //!
+        TBranch        *b_rljet_wTag_BDT_qq; //!
+        TBranch        *b_rljet_wTag_BDT_qq_score; //!
+        TBranch        *b_rljet_topTag_DNN_qqb_score; //!
+        TBranch        *b_rljet_topTag_DNN_qqb; //!
+        TBranch        *b_rljet_wTag_DNN_qq_score; //!
+        TBranch        *b_rljet_wTag_DNN_qq; //!
+        TBranch        *b_rljet_topTag_TopoTagger_20wp; //!
+        TBranch        *b_rljet_topTag_TopoTagger_50wp; //!
+        TBranch        *b_rljet_topTag_TopoTagger_80wp; //!
+        TBranch        *b_rljet_topTag_TopoTagger_score; //!
+
 
         TBranch        *b_NPV;   //!
         TBranch        *b_rljet_count;   //!
@@ -578,6 +607,19 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     // rljet_DNN_score_top = 0;
     // rljet_DNN_score_w = 0;
 
+    rljet_topTag_BDT_qqb = 0;
+    rljet_topTag_BDT_qqb_score = 0;
+    rljet_wTag_BDT_qq = 0;
+    rljet_wTag_BDT_qq_score = 0;
+    rljet_topTag_DNN_qqb_score = 0;
+    rljet_topTag_DNN_qqb = 0;
+    rljet_wTag_DNN_qq_score = 0;
+    rljet_wTag_DNN_qq = 0;
+    rljet_topTag_TopoTagger_20wp = 0;
+    rljet_topTag_TopoTagger_50wp = 0;
+    rljet_topTag_TopoTagger_80wp = 0;
+    rljet_topTag_TopoTagger_score = 0;
+
     rljet_m_calo = 0;
     rljet_pt_calo = 0;
     rljet_m_ta = 0;
@@ -771,6 +813,21 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     // fChain->SetBranchAddress("rljet_smooth16WTag_80eff_nocontain", &rljet_smooth16WTag_80eff_nocontain, &b_rljet_smooth16WTag_80eff_nocontain);
     // fChain->SetBranchAddress("rljet_smooth16ZTag_50eff_nocontain", &rljet_smooth16ZTag_50eff_nocontain, &b_rljet_smooth16ZTag_50eff_nocontain);
     // fChain->SetBranchAddress("rljet_smooth16ZTag_80eff_nocontain", &rljet_smooth16ZTag_80eff_nocontain, &b_rljet_smooth16ZTag_80eff_nocontain);
+
+    fChain->SetBranchAddress("rljet_topTag_BDT_qqb", &rljet_topTag_BDT_qqb, &b_rljet_topTag_BDT_qqb);
+    fChain->SetBranchAddress("rljet_topTag_BDT_qqb_score", &rljet_topTag_BDT_qqb_score, &b_rljet_topTag_BDT_qqb_score);
+    fChain->SetBranchAddress("rljet_wTag_BDT_qq", &rljet_wTag_BDT_qq, &b_rljet_wTag_BDT_qq);
+    fChain->SetBranchAddress("rljet_wTag_BDT_qq_score", &rljet_wTag_BDT_qq_score, &b_rljet_wTag_BDT_qq_score);
+    fChain->SetBranchAddress("rljet_topTag_DNN_qqb_score", &rljet_topTag_DNN_qqb_score, &b_rljet_topTag_DNN_qqb_score);
+    fChain->SetBranchAddress("rljet_topTag_DNN_qqb", &rljet_topTag_DNN_qqb, &b_rljet_topTag_DNN_qqb);
+    fChain->SetBranchAddress("rljet_wTag_DNN_qq_score", &rljet_wTag_DNN_qq_score, &b_rljet_wTag_DNN_qq_score);
+    fChain->SetBranchAddress("rljet_wTag_DNN_qq", &rljet_wTag_DNN_qq, &b_rljet_wTag_DNN_qq);
+    fChain->SetBranchAddress("rljet_topTag_TopoTagger_20wp", &rljet_topTag_TopoTagger_20wp, &b_rljet_topTag_TopoTagger_20wp);
+    fChain->SetBranchAddress("rljet_topTag_TopoTagger_50wp", &rljet_topTag_TopoTagger_50wp, &b_rljet_topTag_TopoTagger_50wp);
+    fChain->SetBranchAddress("rljet_topTag_TopoTagger_80wp", &rljet_topTag_TopoTagger_80wp, &b_rljet_topTag_TopoTagger_80wp);
+    fChain->SetBranchAddress("rljet_topTag_TopoTagger_score", &rljet_topTag_TopoTagger_score, &b_rljet_topTag_TopoTagger_score);
+
+
 
     if (sub_dir_str == "nominal") {
         fChain->SetBranchAddress("NPV", &NPV, &b_NPV);

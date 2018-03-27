@@ -53,6 +53,7 @@ def merge_data(data_dirs):
     input_files = []
     for dd in data_dirs:
         input_files += glob.glob(dd + '*.root*')
+    print input_files
     hadd_cmd = 'hadd -f ' + args.output + 'data.merged.root' + ' ' + ' '.join(input_files)
     os.system(hadd_cmd)
 

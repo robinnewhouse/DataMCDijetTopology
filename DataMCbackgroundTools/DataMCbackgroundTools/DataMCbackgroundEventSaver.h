@@ -5,15 +5,22 @@
 #include "TopAnalysis/EventSaverBase.h"
 
 // OLD smoothed taggers (2015) + HEPTopTagger
-#include "BoostedJetTaggers/SubstructureTopTaggerHelpers.h"
-#include "JetSubStructureUtils/BosonTag.h"
+// #include "BoostedJetTaggers/SubstructureTopTaggerHelpers.h"
 
 // NEW smoothed/MVA taggers (2016-2017)
-#include "BoostedJetTaggers/IJSSTagger.h"
-#include "BoostedJetTaggers/SmoothedTopTagger.h"
-#include "BoostedJetTaggers/SmoothedWZTagger.h"
+// #include "BoostedJetTaggers/IJSSTagger.h"
 
 #include "ShowerDeconstruction/ShowerDeconstruction.h"
+
+// NEW MVA taggers (2017-2018)
+#include "JetAnalysisInterfaces/IJetSelectorTool.h"
+#include "BoostedJetTaggers/JSSWTopTaggerBDT.h"
+#include "BoostedJetTaggers/JSSWTopTaggerDNN.h"
+#include "BoostedJetTaggers/TopoclusterTopTagger.h"
+#include "BoostedJetTaggers/SmoothedTopTagger.h"
+#include "BoostedJetTaggers/SmoothedWZTagger.h"
+#include "JetSubStructureUtils/BosonTag.h"
+
 
 #include "JetRec/JetRecTool.h"
 #include "JetCalibTools/JetCalibrationTool.h"
@@ -84,18 +91,18 @@ namespace top {
         /*********************************/
 
         // Top
-        SubstructureTopTagger *topTagger15_Mass_50eff;
-        SubstructureTopTagger *topTagger15_Mass_80eff;
-        SubstructureTopTagger *topTagger15_Tau32_50eff;
-        SubstructureTopTagger *topTagger15_Tau32_80eff;
+        // SubstructureTopTagger *topTagger15_Mass_50eff;
+        // SubstructureTopTagger *topTagger15_Mass_80eff;
+        // SubstructureTopTagger *topTagger15_Tau32_50eff;
+        // SubstructureTopTagger *topTagger15_Tau32_80eff;
 
         // W
-        std::unique_ptr<JetSubStructureUtils::BosonTag> wTagger15_50eff;
-        std::unique_ptr<JetSubStructureUtils::BosonTag> wTagger15_25eff;
+        // std::unique_ptr<JetSubStructureUtils::BosonTag> wTagger15_50eff;
+        // std::unique_ptr<JetSubStructureUtils::BosonTag> wTagger15_25eff;
 
         // Z
-        std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger15_50eff;
-        std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger15_25eff;
+        // std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger15_50eff;
+        // std::unique_ptr<JetSubStructureUtils::BosonTag> zTagger15_25eff;
 
         /**************************************/
         /* Late 2016 updated smoothed taggers */
@@ -143,6 +150,18 @@ namespace top {
         void runHTTAndFillTree(void);
         std::string m_httJetContainerPrefix;
         std::vector<std::string> m_httConfigs;
+
+        // ML Taggers
+        // top/W taggers -- BDTs
+        std::unique_ptr<JSSWTopTaggerBDT> m_topTagger_BDT_qqb;
+        std::unique_ptr<JSSWTopTaggerBDT> m_wTagger_BDT_qq;
+        // top/W taggers -- DNNs
+        std::unique_ptr<JSSWTopTaggerDNN> m_topTagger_DNN_qqb;
+        std::unique_ptr<JSSWTopTaggerDNN> m_wTagger_DNN_qq;
+        // top/W taggers -- TopoclusterTagger
+        std::unique_ptr<TopoclusterTopTagger> m_topTagger_TopoTagger;
+
+
         std::unique_ptr<JetRecTool> m_httTool;
 
         int m_NPV;
@@ -318,6 +337,29 @@ namespace top {
         // std::vector<bool> m_rljet_btag_double;
         // std::vector<bool> m_rljet_btag_single;
         // std::vector<bool> m_rljet_btag_leading_pt;
+            // BDT's
+        std::vector<int> m_rljet_topTag_BDT_qqb;
+        std::vector<float> m_rljet_topTag_BDT_qqb_score;
+        std::vector<int> m_rljet_wTag_BDT_qq;
+        std::vector<float> m_rljet_wTag_BDT_qq_score;
+        // DNN's
+        std::vector<int> m_rljet_topTag_DNN_qqb;
+        std::vector<float> m_rljet_topTag_DNN_qqb_score;
+        std::vector<int> m_rljet_wTag_DNN_qq;
+        std::vector<float> m_rljet_wTag_DNN_qq_score;
+        // Topocluster DNN's
+        std::vector<int> m_rljet_topTag_TopoTagger_20wp;
+        std::vector<int> m_rljet_topTag_TopoTagger_50wp;
+        std::vector<int> m_rljet_topTag_TopoTagger_80wp;
+        std::vector<float> m_rljet_topTag_TopoTagger_score;
+        // // W taggers -- new 2016
+        // int m_rljet_wTag_cut16_80eff_incl;
+        // int m_rljet_wTag_cut16_50eff_incl;
+        // int m_rljet_wTag_cut16_80eff_cont;
+        // int m_rljet_wTag_cut16_50eff_cont;
+        // BDT's
+        std::vector<int> m_rljet_wTag_BDT;
+        std::vector<float> m_rljet_wTag_BDT_score;
 
         ClassDef(top::DataMCbackgroundEventSaver, 0);
     };

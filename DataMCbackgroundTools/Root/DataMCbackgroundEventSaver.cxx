@@ -1,5 +1,6 @@
 #include "DataMCbackgroundTools/DataMCbackgroundEventSaver.h"
 #include "DataMCbackgroundTools/LocalTools.h"
+#include "DataMCbackgroundTools/MiscTools.h"
 
 // xAOD/Athena
 #include <AthContainers/AuxTypeRegistry.h>
@@ -232,6 +233,29 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
           systematicTree->makeOutputVariable(m_rljet_smooth16W_Tag80eff_nocontain , "rljet_smooth16WTag_80eff_nocontain");
           systematicTree->makeOutputVariable(m_rljet_smooth16Z_Tag50eff_nocontain , "rljet_smooth16ZTag_50eff_nocontain");
           systematicTree->makeOutputVariable(m_rljet_smooth16Z_Tag80eff_nocontain , "rljet_smooth16ZTag_80eff_nocontain");
+        }
+
+        if(m_runMVAtag) {
+          // BDT tagger outputs
+          // top taggers
+          systematicTree->makeOutputVariable( m_rljet_topTag_BDT_qqb              , "rljet_topTag_BDT_qqb");
+          systematicTree->makeOutputVariable( m_rljet_topTag_BDT_qqb_score        , "rljet_topTag_BDT_qqb_score");
+          // W taggers
+          systematicTree->makeOutputVariable( m_rljet_wTag_BDT_qq              , "rljet_wTag_BDT_qq");
+          systematicTree->makeOutputVariable( m_rljet_wTag_BDT_qq_score        , "rljet_wTag_BDT_qq_score");
+
+          // DNN tagger outputs
+          // top taggers
+          systematicTree->makeOutputVariable( m_rljet_topTag_DNN_qqb_score        , "rljet_topTag_DNN_qqb_score");
+          systematicTree->makeOutputVariable( m_rljet_topTag_DNN_qqb              , "rljet_topTag_DNN_qqb");
+          // W taggers
+          systematicTree->makeOutputVariable( m_rljet_wTag_DNN_qq_score        , "rljet_wTag_DNN_qq_score");
+          systematicTree->makeOutputVariable( m_rljet_wTag_DNN_qq              , "rljet_wTag_DNN_qq");
+          // Topocluster Tagger
+          systematicTree->makeOutputVariable( m_rljet_topTag_TopoTagger_20wp   , "rljet_topTag_TopoTagger_20wp");
+          systematicTree->makeOutputVariable( m_rljet_topTag_TopoTagger_50wp   , "rljet_topTag_TopoTagger_50wp");
+          systematicTree->makeOutputVariable( m_rljet_topTag_TopoTagger_80wp   , "rljet_topTag_TopoTagger_80wp");
+          systematicTree->makeOutputVariable( m_rljet_topTag_TopoTagger_score  , "rljet_topTag_TopoTagger_score");
         }
 
         if (m_savePhoton) {
@@ -473,6 +497,43 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
       top::check(zTagger16_80eff_nocontain->initialize(), "FAILURE");
     }
 
+    if(m_runMVAtag) {
+      std::string cfg_topTagger_TopoTagger_205080eff = "TopoclusterTopTagger/TopoclusterTopTagger_AntiKt10LCTopoTrimmed_TopQuark_MC15c_20170511_ptweighted.dat";
+      std::string cfg_topTagger_DNN_80eff_qqb = "JSSWTopTaggerDNN/JSSDNNTagger_AntiKt10LCTopoTrimmed_TopQuarkContained_MC15c_20170824_BOOSTSetup80Eff.dat";
+      std::string cfg_topTagger_BDT_80eff_qqb = "JSSWTopTaggerBDT/JSSBDTTagger_AntiKt10LCTopoTrimmed_TopQuarkContained_MC15c_20170824_BOOSTSetup80Eff.dat";
+      std::string cfg_wTagger_DNN_50eff_qq = "JSSWTopTaggerDNN/JSSDNNTagger_AntiKt10LCTopoTrimmed_WBosonContained_MC15c_20170824_BOOSTSetup50Eff.dat";
+      std::string cfg_wTagger_BDT_50eff_qq = "JSSWTopTaggerBDT/JSSBDTTagger_AntiKt10LCTopoTrimmed_WBosonContained_MC15c_20170824_BOOSTSetup50Eff.dat";
+
+      // BDT
+      // top tagger (80% eff WP)
+      m_topTagger_BDT_qqb = make_unique<JSSWTopTaggerBDT>("m_topTagger_BDT_qqb");
+      top::check(m_topTagger_BDT_qqb->setProperty("ConfigFile", cfg_topTagger_BDT_80eff_qqb), "ERROR while setting BDT top qqb tagger properties");
+      top::check(m_topTagger_BDT_qqb->initialize(), "ERROR while initializing BDT top qqb tagger");
+
+      // W tagger (50% eff WP)
+      m_wTagger_BDT_qq = make_unique<JSSWTopTaggerBDT>("m_wTagger_BDT_qq");
+      top::check(m_wTagger_BDT_qq->setProperty("ConfigFile", cfg_wTagger_BDT_50eff_qq), "ERROR while setting BDT W tagger properties");
+      top::check(m_wTagger_BDT_qq->initialize(), "ERROR while initializing BDT W tagger");
+
+      // DNN
+      // top tagger (80% eff WP)
+      m_topTagger_DNN_qqb = make_unique<JSSWTopTaggerDNN>("m_topTagger_DNN_qqb");
+      top::check(m_topTagger_DNN_qqb->setProperty("ConfigFile", cfg_topTagger_DNN_80eff_qqb), "ERROR while setting DNN top qqb tagger properties");
+      top::check(m_topTagger_DNN_qqb->initialize(), "ERROR while initializing DNN top qqb tagger");
+      // W tagger (50% eff WP)
+      m_wTagger_DNN_qq = make_unique<JSSWTopTaggerDNN>("m_wTagger_DNN_qq");
+      top::check(m_wTagger_DNN_qq->setProperty("ConfigFile", cfg_wTagger_DNN_50eff_qq), "ERROR while setting DNN W qq tagger properties");
+      top::check(m_wTagger_DNN_qq->initialize(), "ERROR while initializing DNN W qq tagger");
+  
+      // Topocluster Tagger
+      // top tagger (20%, 50%, 80% wp. all cuts provided from single tag)
+      m_topTagger_TopoTagger = make_unique<TopoclusterTopTagger>("m_topTagger_TopoTagger");
+      top::check(m_topTagger_TopoTagger->setProperty("ConfigFile", cfg_topTagger_TopoTagger_205080eff), "ERROR while setting Topocluster top tagger properties");
+      top::check(m_topTagger_TopoTagger->initialize(), "ERROR while initializing Topocluster top tagger");
+
+    }
+
+
 } // end of intialization
 
 void
@@ -569,8 +630,8 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
     }
 
     if (m_runSmoothToptag && m_runSmoothUncontained) {
-      m_rljet_smooth16Top_MassTau32Tag50eff_nocontain . assign(m_num_fatjets_keep, -1000.);
-      m_rljet_smooth16Top_MassTau32Tag80eff_nocontain . assign(m_num_fatjets_keep, -1000.);
+      m_rljet_smooth16Top_MassTau32Tag50eff_nocontain . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_smooth16Top_MassTau32Tag80eff_nocontain . assign(m_num_fatjets_keep, -1000. );
     }
 
     if (m_runSmoothWZtag) {
@@ -595,6 +656,23 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
       m_photon0_pt           = -1000.;
       m_photon0_eta          = -1000.;
       m_photon0_phi          = -1000.;
+    }
+
+    if(m_runMVAtag) {
+      m_rljet_topTag_BDT_qqb            . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_topTag_BDT_qqb_score      . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_wTag_BDT_qq               . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_wTag_BDT_qq_score         . assign(m_num_fatjets_keep, -1000. );
+
+      m_rljet_topTag_DNN_qqb            . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_topTag_DNN_qqb_score      . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_wTag_DNN_qq               . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_wTag_DNN_qq_score         . assign(m_num_fatjets_keep, -1000. );
+
+      m_rljet_topTag_TopoTagger_20wp    . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_topTag_TopoTagger_50wp    . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_topTag_TopoTagger_80wp    . assign(m_num_fatjets_keep, -1000. );
+      m_rljet_topTag_TopoTagger_score   . assign(m_num_fatjets_keep, -1000. );
     }
 
     if (on_nominal_branch) {
@@ -715,6 +793,9 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
                 m_htt_caGroomJet_m[i]   . assign(m_num_fatjets_keep, -1000.);
             }
         }
+
+
+
     }
 }
 
@@ -814,48 +895,80 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
         /* SMOOTH (2016) TAGGER VARIABLES */
         /**********************************/
 
+        // Storing TAccept objects
         if (m_runSmoothToptag) {
-          SmoothedTopTagger::Result res = topTagger16_Tau32Split23_50eff->result(*rljets[i], false);
-          m_rljet_smooth16Top_Tau32Split23Tag50eff[i] = combine_bits( res.tau32Passed(), res.split23Passed() );
 
-          res = topTagger16_Tau32Split23_80eff->result(*rljets[i], false);
-          m_rljet_smooth16Top_Tau32Split23Tag80eff[i] = combine_bits( res.tau32Passed(), res.split23Passed() );
+          m_rljet_smooth16Top_Tau32Split23Tag50eff[i] = static_cast<int>(convertSmoothedTopTaggerResult(
+            topTagger16_Tau32Split23_50eff->tag(*rljets[i]), smoothedTopTaggerConfig::Tau32Split23));
 
-          res = topTagger16_MassTau32_50eff->result(*rljets[i], false);
-          m_rljet_smooth16Top_MassTau32Tag50eff[i]    = combine_bits( res.massPassed(), res.tau32Passed() );
+          m_rljet_smooth16Top_Tau32Split23Tag80eff[i] = static_cast<int>(convertSmoothedTopTaggerResult(
+          	topTagger16_Tau32Split23_80eff->tag(*rljets[i]), smoothedTopTaggerConfig::Tau32Split23));
 
-          res = topTagger16_MassTau32_80eff->result(*rljets[i], false);
-          m_rljet_smooth16Top_MassTau32Tag80eff[i]    = combine_bits( res.massPassed(), res.tau32Passed() );
+          m_rljet_smooth16Top_MassTau32Tag50eff[i]    = static_cast<int>(convertSmoothedTopTaggerResult(
+           topTagger16_MassTau32_50eff->tag(*rljets[i]), smoothedTopTaggerConfig::MassTau32));
 
-          res = topTagger16_QwTau32_50eff->result(*rljets[i], false);
-          m_rljet_smooth16Top_QwTau32Tag50eff[i]      = combine_bits( res.qwPassed(), res.tau32Passed() );
+          m_rljet_smooth16Top_MassTau32Tag80eff[i]    = static_cast<int>(convertSmoothedTopTaggerResult(
+          	topTagger16_MassTau32_80eff->tag(*rljets[i]), smoothedTopTaggerConfig::MassTau32));
 
-          res = topTagger16_QwTau32_80eff->result(*rljets[i], false);
-          m_rljet_smooth16Top_QwTau32Tag80eff[i]      = combine_bits( res.qwPassed(), res.tau32Passed() );
+          m_rljet_smooth16Top_QwTau32Tag50eff[i]      = static_cast<int>(convertSmoothedTopTaggerResult(
+          	topTagger16_QwTau32_50eff->tag(*rljets[i]), smoothedTopTaggerConfig::QwTau32));
+
+          m_rljet_smooth16Top_QwTau32Tag80eff[i]      = static_cast<int>(convertSmoothedTopTaggerResult(
+          	topTagger16_QwTau32_80eff->tag(*rljets[i]), smoothedTopTaggerConfig::QwTau32));
+        }
+        
+        if(m_runMVAtag) {
+          // BDT
+          // output information from BDT tool similar to preRecWTagger, reuse the conversion method
+          // top-tag (qqb containment top definition)
+
+          m_rljet_topTag_BDT_qqb[i] = static_cast<int>(convertMVATaggerResult(
+                      m_topTagger_BDT_qqb->tag(*rljets[i])));
+          m_rljet_topTag_BDT_qqb_score[i] = rljets[i]->auxdata<float>("BDTTaggerTopQuark80_Score");
+
+          // W-tag (qq containment W definition)
+          m_rljet_wTag_BDT_qq[i] = static_cast<int>(convertMVATaggerResult(
+                      m_wTagger_BDT_qq->tag(*rljets[i])));
+          m_rljet_wTag_BDT_qq_score[i] = rljets[i]->auxdata<float>("BDTTaggerWBoson50_Score");
+
+          // DNN
+          // top-tag (qqb contiainment top definition)
+          m_rljet_topTag_DNN_qqb[i] = static_cast<int>(convertMVATaggerResult(
+                      m_topTagger_DNN_qqb->tag(*rljets[i])));
+          m_rljet_topTag_DNN_qqb_score[i] = rljets[i]->auxdata<float>("DNNTaggerTopQuark80_Score");
+
+          // W-tag (qq contiainment top definition)
+          m_rljet_wTag_DNN_qq[i] = static_cast<int>(convertMVATaggerResult(
+                      m_wTagger_DNN_qq->tag(*rljets[i])));
+          m_rljet_wTag_DNN_qq_score[i] = rljets[i]->auxdata<float>("DNNTaggerWBoson50_Score");
+
+          // TopoTagger
+          Root::TAccept topoTaggerResult = m_topTagger_TopoTagger->tag(*rljets[i]);
+          m_rljet_topTag_TopoTagger_20wp[i] = static_cast<int>(convertMVATaggerResult(topoTaggerResult, "PassScore20"));
+          m_rljet_topTag_TopoTagger_50wp[i] = static_cast<int>(convertMVATaggerResult(topoTaggerResult, "PassScore50"));
+          m_rljet_topTag_TopoTagger_80wp[i] = static_cast<int>(convertMVATaggerResult(topoTaggerResult, "PassScore80"));
+          m_rljet_topTag_TopoTagger_score[i] = rljets[i]->auxdata<float>("TopotaggerTopQuark_Score");
         }
 
         if (m_runSmoothToptag && m_runSmoothUncontained) {
-          SmoothedTopTagger::Result res = topTagger16_MassTau32_50eff_nocontain->result(*rljets[i], false);
-          m_rljet_smooth16Top_MassTau32Tag50eff_nocontain[i]    = combine_bits( res.massPassed(), res.tau32Passed() );
-
-          res = topTagger16_MassTau32_80eff_nocontain->result(*rljets[i], false);
-          m_rljet_smooth16Top_MassTau32Tag80eff_nocontain[i]    = combine_bits( res.massPassed(), res.tau32Passed() );
+          m_rljet_smooth16Top_MassTau32Tag50eff_nocontain[i]    = topTagger16_MassTau32_50eff_nocontain->tag(*rljets[i]);
+          m_rljet_smooth16Top_MassTau32Tag80eff_nocontain[i]    = topTagger16_MassTau32_80eff_nocontain->tag(*rljets[i]);
         }
 
         if (m_runSmoothWZtag) {
-          m_rljet_smooth16W_Tag50eff[i] = wTagger16_50eff->result(*rljets[i]);
-          m_rljet_smooth16W_Tag80eff[i] = wTagger16_80eff->result(*rljets[i]);
+          m_rljet_smooth16W_Tag50eff[i] = wTagger16_50eff->tag(*rljets[i]);
+          m_rljet_smooth16W_Tag80eff[i] = wTagger16_80eff->tag(*rljets[i]);
 
-          m_rljet_smooth16Z_Tag50eff[i] = zTagger16_50eff->result(*rljets[i]);
-          m_rljet_smooth16Z_Tag80eff[i] = zTagger16_80eff->result(*rljets[i]);
+          m_rljet_smooth16Z_Tag50eff[i] = zTagger16_50eff->tag(*rljets[i]);
+          m_rljet_smooth16Z_Tag80eff[i] = zTagger16_80eff->tag(*rljets[i]);
         }
 
         if (m_runSmoothWZtag && m_runSmoothUncontained) {
-          m_rljet_smooth16W_Tag50eff_nocontain[i] = wTagger16_50eff_nocontain->result(*rljets[i]);
-          m_rljet_smooth16W_Tag80eff_nocontain[i] = wTagger16_80eff_nocontain->result(*rljets[i]);
+          m_rljet_smooth16W_Tag50eff_nocontain[i] = wTagger16_50eff_nocontain->tag(*rljets[i]);
+          m_rljet_smooth16W_Tag80eff_nocontain[i] = wTagger16_80eff_nocontain->tag(*rljets[i]);
 
-          m_rljet_smooth16Z_Tag50eff_nocontain[i] = zTagger16_50eff_nocontain->result(*rljets[i]);
-          m_rljet_smooth16Z_Tag80eff_nocontain[i] = zTagger16_80eff_nocontain->result(*rljets[i]);
+          m_rljet_smooth16Z_Tag50eff_nocontain[i] = zTagger16_50eff_nocontain->tag(*rljets[i]);
+          m_rljet_smooth16Z_Tag80eff_nocontain[i] = zTagger16_80eff_nocontain->tag(*rljets[i]);
         }
 
         if (m_savePhoton) {
@@ -1172,7 +1285,7 @@ void DataMCbackgroundEventSaver::runSDandFillTree(std::vector<const xAOD::Jet*>&
     const xAOD::Jet* ungroomed_fatjet = *linkToUngroomed;
 
     xAOD::JetConstituentVector AssociatedClusters_forSD = ungroomed_fatjet->getConstituents();
-    vector<fastjet::PseudoJet> constituents;
+    std::vector<fastjet::PseudoJet> constituents;
 
     // also get groomed constituents
     const xAOD::JetConstituentVector groomed_clusters = rljets[i]->getConstituents();
@@ -1211,8 +1324,8 @@ void DataMCbackgroundEventSaver::runSDandFillTree(std::vector<const xAOD::Jet*>&
     top::check ( evtStore()->record(dynamic_cast<xAOD::JetAuxContainer*>(subjet_container->getStore()), "subjet_container_nameAux."), "FAILURE");
 
     // Create xAOD::Jet's
-    vector<const xAOD::Jet*> subj_ptrs_const;
-    vector<xAOD::Jet*> subj_ptrs;
+    std::vector<const xAOD::Jet*> subj_ptrs_const;
+    std::vector<xAOD::Jet*> subj_ptrs;
     for(auto it = subjets.begin(); it != subjets.end(); it++) {
       xAOD::Jet *subj = new xAOD::Jet();
       subjet_container->push_back(subj);
@@ -1226,9 +1339,9 @@ void DataMCbackgroundEventSaver::runSDandFillTree(std::vector<const xAOD::Jet*>&
 
 
     // To hold the callibrated subjets
-    vector<fastjet::PseudoJet> calib_subjets;
-    vector<fastjet::PseudoJet> calib_subjets_UP;
-    vector<fastjet::PseudoJet> calib_subjets_DOWN;
+    std::vector<fastjet::PseudoJet> calib_subjets;
+    std::vector<fastjet::PseudoJet> calib_subjets_UP;
+    std::vector<fastjet::PseudoJet> calib_subjets_DOWN;
     // Now calibrate the subjets of the container
     for ( auto isubjet : *subjet_container) {
       xAOD::Jet * jet = 0;
@@ -1266,13 +1379,13 @@ void DataMCbackgroundEventSaver::runSDandFillTree(std::vector<const xAOD::Jet*>&
     top::check ( evtStore()->tds()->remove("subjet_container_name"), "FAILURE" );
     top::check ( evtStore()->tds()->remove("subjet_container_nameAux."), "FAILURE" );
     // Get trackjets and their B tag status
-    vector<int> btag_uncalib(uncalib_subjets.size(), 0);
+    std::vector<int> btag_uncalib(uncalib_subjets.size(), 0);
     //std::vector<int> btag_special2(new_subjets_2.size(), 0);
-    vector<int> btag_special3(new_subjets_3.size(), 0);
-    vector<int> btag(calib_subjets.size(), 0);
-    vector<int> tracktag;
-    vector<int> btag_special5(dcut2_subjets.size(),0);
-    vector<int> btag_special6(dcut3_subjets.size(),0);
+    std::vector<int> btag_special3(new_subjets_3.size(), 0);
+    std::vector<int> btag(calib_subjets.size(), 0);
+    std::vector<int> tracktag;
+    std::vector<int> btag_special5(dcut2_subjets.size(),0);
+    std::vector<int> btag_special6(dcut3_subjets.size(),0);
     std::vector<fastjet::PseudoJet> uncalib_subjets_UP;
     std::vector<fastjet::PseudoJet> uncalib_subjets_DOWN;
     for ( unsigned int i = 0; i < uncalib_subjets.size(); i++ ){
@@ -1387,10 +1500,10 @@ DataMCbackgroundEventSaver::get_trackjet_btags(const xAOD::Jet* jet,
 }
 */
 
-vector<fastjet::PseudoJet>
+std::vector<fastjet::PseudoJet>
 DataMCbackgroundEventSaver::JetconVecToPseudojet (xAOD::JetConstituentVector input)
 {
-  vector<fastjet::PseudoJet> constituents;
+  std::vector<fastjet::PseudoJet> constituents;
 
   for ( const auto* con : input){
     fastjet::PseudoJet p(0,0,0,0);

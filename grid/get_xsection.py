@@ -1,10 +1,11 @@
+#!/usr/bin/env python2
 import pyAMI.client
 import pyAMI.atlas.api as api
 import json
 import sys
-from samples_vvjj import *
+from samples import *
 
-these_samples = samples_EXOT3
+these_samples = samples_DXAOD
 
 my_weights_file = open("sample_weights.txt", 'w')
 analysis_top_weights_file = open("sample_weights_AnalysisTopFormat.txt", 'w')

@@ -7,7 +7,8 @@ LibraryNames libTopEventSelectionTools libTopEventReconstructionTools libDataMCb
 GRLDir GoodRunsLists
 GRLFile data15_13TeV/20160720/physics_25ns_20.7.xml data16_13TeV/20170215/physics_25ns_20.7.xml
 
-PRWConfigFiles DataMCbackgroundTools/PRW/merged_prw_mc15c_latest.root
+#PRWConfigFiles DataMCbackgroundTools/PRW/merged_prw_mc15c_latest.root
+PRWConfigFiles dev/PileupReweighting/mc15c_v2_defaults.NotRecommended.prw.root 
 PRWLumiCalcFiles GoodRunsLists/data15_13TeV/20160720/physics_25ns_20.7.lumicalc.OflLumi-13TeV-005.root GoodRunsLists/data16_13TeV/20170215/physics_25ns_20.7.lumicalc.OflLumi-13TeV-008.root
 #PRWDefaultChannel 361025
 
@@ -20,7 +21,7 @@ DynamicKeys RunHTT,HTTConfigs,RunShowerDeconstruction,SaveTrackAssistedMass,NumF
 RunSmoothWZTag True
 RunSmoothTopTag True
 RunSmoothUncontained False
-RunMVATag False
+RunMVATag True
 
 SavePhoton True
 RunHTT True

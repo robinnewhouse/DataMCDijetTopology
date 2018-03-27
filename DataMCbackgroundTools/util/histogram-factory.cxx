@@ -14,12 +14,12 @@
 #include <TSelector.h>
 
 #include "DataMCbackgroundTools/DataMCbackgroundSelector.h"
-#include "DataMCbackgroundTools/InputManager.h"
+// #include "DataMCbackgroundTools/InputManager.h"
 
 int
 main(int argc, char** argv)
 {
-    if (argc < 2) {
+    if (argc < 1) {
         std::cout << "USAGE: histogram-factory [FLAG]..." << std::endl;
         std::cout << "where FLAG is one of:" << std::endl;
         std::cout << "-i <input_file>: path to ntuple produced by AnalysisTop." << std::endl;
@@ -38,12 +38,24 @@ main(int argc, char** argv)
 
     std::string input_filepath, output_filepath,
         data_trigger, event_selector, sample_type;
-    float luminosity            = -1.;
-    bool process_systematics    = false;
+    float luminosity = -1;
+    bool process_systematics = false;
+
+    bool use_defaults =  true;
+    if (use_defaults)
+    {
+        input_filepath = "output.root";
+        output_filepath = "raw_histograms.root";
+        data_trigger = "HLT_g140_loose";
+        event_selector = "NO_SELECTION";
+        sample_type =  "";
+        luminosity            = 3.20905;
+        process_systematics    = false;
+    }
 
     int c;
     opterr = 0;
-    while ((c = getopt (argc, argv, "Si:o:E:t:L:p:")) != -1) {
+    while ((c = getopt (argc, argv, "i:o:E:t:L:p:S")) != -1) {
         switch (c)
         {
             case 'i':
@@ -93,13 +105,13 @@ main(int argc, char** argv)
     }
 
     if (data_trigger.empty()) {
-        std::cout << "ERROR: no output file specified" << std::endl;
+        std::cout << "ERROR: no data trigger specified" << std::endl;
         std::cout << "EXITING..." << std::endl;
         return EXIT_FAILURE;
     }
 
     if (event_selector.empty()) {
-        std::cout << "ERROR: no output file specified" << std::endl;
+        std::cout << "ERROR: no event selector specified" << std::endl;
         std::cout << "EXITING..." << std::endl;
         return EXIT_FAILURE;
     }
