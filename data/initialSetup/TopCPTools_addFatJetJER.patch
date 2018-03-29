@@ -1,0 +1,17 @@
+Index: TopCPTools/Root/TopJetMETCPTools.cxx
+===================================================================
+--- TopCPTools/Root/TopJetMETCPTools.cxx	(revision 813526)
++++ TopCPTools/Root/TopJetMETCPTools.cxx	(working copy)
+@@ -366,10 +366,10 @@
+     // so just put it here for now.
+     std::string calibConfigLargeR = "";
+     const std::string calibChoice = m_config->largeRJESJMSConfig();
+-    if (calibChoice == "CombinedMass") {
++    if (calibChoice == "CombinedMass" || calibChoice == "CombinedMass_WithJXR") {
+       calibConfigLargeR = "JES_MC15recommendation_FatJet_Nov2016_QCDCombinationUncorrelatedWeights.config";
+     }
+-    else if (calibChoice == "CaloMass") {
++    else if (calibChoice == "CaloMass" || calibChoice == "CaloMass_WithJXR") {
+       calibConfigLargeR = "JES_MC15recommendation_FatJet_June2015.config";
+     }
+     else {

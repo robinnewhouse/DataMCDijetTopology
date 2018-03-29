@@ -22,7 +22,16 @@ cat data/xsections.txt >> TopDataPreparation/data/XSection-MC15-13TeV.data
 
 # JetEtMiss recs
 rc checkout_pkg atlasoff/Reconstruction/Jet/JetCalibTools/tags/JetCalibTools-00-04-76
-rc checkout_pkg atlasoff/Reconstruction/Jet/JetUncertainties/tags/JetUncertainties-00-09-63
+# rc checkout_pkg atlasoff/Reconstruction/Jet/JetUncertainties/tags/JetUncertainties-00-09-63
+
+# Checkout fork of JetUncertainties package with support for pT resolution uncertainty for fat jets
+# at some point this will be added to the official SVN repo
+git clone ssh://git@gitlab.cern.ch:7999/omajersk/JetUncertainties.git
+
+# checkout TopCPTools where we have to add support for these uncertainties
+rc checkout_pkg `rc version | grep TopCPTools`
+patch -p0 -i ./data/initialSetup/TopCPTools_addFatJetJER.patch
+
 
 mkdir -p JetCalibTools/share/JetCalibTools
 cd JetCalibTools/share/JetCalibTools
