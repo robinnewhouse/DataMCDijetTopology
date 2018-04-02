@@ -166,6 +166,10 @@ namespace top {
 
         int m_NPV;
 
+        // nClusters study
+        TH1 * l_jet_nClusters_hist;
+        TH1 * s_jet_nClusters_hist;
+
         /*************************/
         /* LARGE-R JET VARIABLES */
         /*************************/
