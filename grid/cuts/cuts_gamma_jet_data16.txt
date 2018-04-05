@@ -21,7 +21,7 @@ RunMVATag True
 SavePhoton True
 RunHTT True
 HTTConfigs def
-RunShowerDeconstruction False
+RunShowerDeconstruction True
 SaveTrackAssistedMass True
 
 NumFatjetsKeep 1

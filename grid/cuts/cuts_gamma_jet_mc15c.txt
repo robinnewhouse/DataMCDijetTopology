@@ -26,7 +26,7 @@ RunMVATag True
 SavePhoton True
 RunHTT True
 HTTConfigs def,sjcalib1030,sjcalib0970
-RunShowerDeconstruction False
+RunShowerDeconstruction True
 SaveTrackAssistedMass True
 
 NumFatjetsKeep 1
