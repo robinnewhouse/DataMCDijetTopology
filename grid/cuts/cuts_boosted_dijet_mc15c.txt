@@ -8,10 +8,10 @@ GRLFile data15_13TeV/20160720/physics_25ns_20.7.xml data16_13TeV/20170215/physic
 ### Pileup Configuration ###
 ############################
 
-#PRWConfigFiles DataMCbackgroundTools/PRW/merged_prw_mc15c_latest.root
-PRWConfigFiles dev/PileupReweighting/mc15c_v2_defaults.NotRecommended.prw.root 
-#PRWLumiCalcFiles GoodRunsLists/data15_13TeV/20160720/physics_25ns_20.7.lumicalc.OflLumi-13TeV-005.root GoodRunsLists/data16_13TeV/20170215/physics_25ns_20.7_ignoreToroidStatus.lumicalc.OflLumi-13TeV-008.root
-PRWLumiCalcFiles GoodRunsLists/data15_13TeV/20160720/physics_25ns_20.7.lumicalc.OflLumi-13TeV-005.root GoodRunsLists/data16_13TeV/20161101/physics_25ns_20.7.lumicalc.OflLumi-13TeV-005.root
+PRWConfigFiles DataMCbackgroundTools/PRW/merged_prw_mc15c_latest.root
+PRWLumiCalcFiles GoodRunsLists/data15_13TeV/20160720/physics_25ns_20.7.lumicalc.OflLumi-13TeV-005.root GoodRunsLists/data16_13TeV/20170215/physics_25ns_20.7_ignoreToroidStatus.lumicalc.OflLumi-13TeV-008.root
+#PRWConfigFiles dev/PileupReweighting/mc15c_v2_defaults.NotRecommended.prw.root 
+#PRWLumiCalcFiles GoodRunsLists/data15_13TeV/20160720/physics_25ns_20.7.lumicalc.OflLumi-13TeV-005.root GoodRunsLists/data16_13TeV/20161101/physics_25ns_20.7.lumicalc.OflLumi-13TeV-005.root
 #PRWDefaultChannel 361025
 
 #######################

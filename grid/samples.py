@@ -200,7 +200,7 @@ samples_DXAOD["sherpa_gammajet"] = [
 
 # {{{ SM W/Z + gamma
 
-samples_DXAOD["wz_gamma_mc15c"] = [
+samples_DXAOD["wz_gamma"] = [
     "mc15_13TeV.305435.Sherpa_CT10_WqqGammaPt140_280.merge.DAOD_JETM6.e5037_s2726_r7772_r7676_p3297",
     "mc15_13TeV.305436.Sherpa_CT10_WqqGammaPt280_500.merge.DAOD_JETM6.e5037_s2726_r7772_r7676_p3297",
     "mc15_13TeV.305437.Sherpa_CT10_WqqGammaPt500_1000.merge.DAOD_JETM6.e5037_s2726_r7772_r7676_p3297",
@@ -217,7 +217,7 @@ samples_DXAOD["wz_gamma_mc15c"] = [
 
 # {{{ SM ttbar + gamma
 
-samples_DXAOD["ttbar_gamma_mc15c"] = [
+samples_DXAOD["ttbar_gamma"] = [
     "mc15_13TeV.410087.MadGraphPythia8EvtGen_A14NNPDF23LO_ttgamma_allhad.merge.DAOD_JETM6.e4404_s2726_r7772_r7676_p3297"
     ]
 
