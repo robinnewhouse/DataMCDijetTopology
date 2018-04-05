@@ -197,6 +197,7 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
         l_jet_nClusters_hist = new TH1F("n_l_jet_clusters","Number of Clusters Per Large-R Jet",50,0,50);
         s_jet_nClusters_hist = new TH1F("n_s_jet_clusters","Number of Clusters Per Small-R Jet",50,0,50);
 
+        l_jet_fractional_pt = new TH1F("l_jet_fractional_pt","Fractional pt of 10th cluster of each large-R jet",200,0,1);
 
         /**************************************************/
         /* PARAMETERS SAVED FOR NOMINAL + ALL SYSTEMATICS */
@@ -817,7 +818,27 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
       // printf("large pt: %f\n", large_jet->pt());
       if (large_jet->pt() > pt_cut){
         l_jet_nClusters_hist->Fill(large_jet->numConstituents());
+
+        // double large_r_jet_pt = large_jet->pt();
+        try{
+
+          // Extract jet constituents from jet
+          std::vector<xAOD::JetConstituent> clusters = large_jet->getConstituents().asSTLVector();
+          // Sort them by pt (using lambda function for sorting)
+          std::sort(clusters.begin(), clusters.end(),
+            [](const xAOD::JetConstituent & a, const xAOD::JetConstituent & b) -> bool
+            {
+              return a.pt() > b.pt();
+            });
+
+          float cluster_pt = clusters[9]->pt();
+          l_jet_fractional_pt->Fill(cluster_pt/large_jet->pt());
+        }catch(...){
+          // l_jet_fractional_pt->Fill(-1);
+        }
+
       }
+      
       // printf("Large-R Jet nclusters %d\n", large_jet->numConstituents());
     }
 
