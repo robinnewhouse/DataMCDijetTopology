@@ -544,6 +544,25 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         mva_tag_map["TopoTag_Top_50"]   = rljet_topTag_TopoTagger_50wp->at(i) == static_cast<int>(simpleTaggerPass::both);
         mva_tag_map["TopoTag_Top_80"]   = rljet_topTag_TopoTagger_80wp->at(i) == static_cast<int>(simpleTaggerPass::both);
 
+          if (rljet_topTag_TopoTagger_20wp->at(i) == 3 ||
+          rljet_topTag_TopoTagger_50wp->at(i) == 3 ||
+          rljet_topTag_TopoTagger_80wp->at(i) == 3 )
+          {
+            printf("A tag passed both, this is also good:\n");
+          printf("\tTopoTagger_20wp %d \t", rljet_topTag_TopoTagger_20wp->at(i));
+          printf("TopoTagger_50wp %d \t", rljet_topTag_TopoTagger_50wp->at(i));
+          printf("TopoTagger_80wp %d \n", rljet_topTag_TopoTagger_80wp->at(i));
+          }
+
+          if ((rljet_topTag_TopoTagger_20wp->at(i) != rljet_topTag_TopoTagger_50wp->at(i)) || 
+            (rljet_topTag_TopoTagger_20wp->at(i) != rljet_topTag_TopoTagger_80wp->at(i)) || 
+            (rljet_topTag_TopoTagger_50wp->at(i) != rljet_topTag_TopoTagger_80wp->at(i)) ){
+            printf("Tagger cut mismatch (this is good):\n");
+          printf("\tTopoTagger_20wp %d \t", rljet_topTag_TopoTagger_20wp->at(i));
+          printf("TopoTagger_50wp %d \t", rljet_topTag_TopoTagger_50wp->at(i));
+          printf("TopoTagger_80wp %d \n", rljet_topTag_TopoTagger_80wp->at(i));
+          }
+
         for (const auto& itag : mva_tag_map) {
           hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
           hp->h_rljet_pt_comb.at(i)->fill_tagged(itag.first, rljet_pt_comb->at(i)/1000., weight, itag.second);
