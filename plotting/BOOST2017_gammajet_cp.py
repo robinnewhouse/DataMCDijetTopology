@@ -1,4 +1,6 @@
-from ROOT import *
+import sys
+sys.path.append('lib/')
+
 import atlas_style
 
 import os
@@ -16,9 +18,10 @@ sane_defaults()
 TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
-CP_ROOT_FILEPATH = "/eos/atlas/atlascerngroupdisk/perf-jets/JSS/TopBosonTagAnalysis2016/NTuples_DataMC_gammajet/20170515/cp.merged.backup.root"
+CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/gammajet_20180219/merged.cp.root"
 RAW = GammaJetLoader(CP_ROOT_FILEPATH)
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"
+DO_SYSTEMATICS_DEFAULT = False
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/pubplots"
 make_dir(ROOT_OUTPUT_DIR)
@@ -32,7 +35,7 @@ PHOTON_SYSTEMATICS = [
 SYSTEMATICS = SYSTEMATICS_MC15C_MEDIUM + PHOTON_SYSTEMATICS
 
 class PlotDataMcGammaJet(PlotBase):
-    def __init__(self, var_name, flip_legend = False, do_systematics = True, **kwargs):
+    def __init__(self, var_name, flip_legend = False, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwargs):
         super(PlotDataMcGammaJet, self).__init__(
                 lumi_val = "36.1",
                 width = 600,

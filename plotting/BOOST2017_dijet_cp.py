@@ -23,6 +23,7 @@ CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets
 LOADER = DijetLoader(CP_ROOT_FILEPATH)
 LOADER_SMOOTH = LOADER
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"
+DO_SYSTEMATICS_DEFAULT = False
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/BOOST2017"
 make_dir(ROOT_OUTPUT_DIR)
@@ -36,7 +37,7 @@ MASS_PLOT_REBIN = 8
 SYSTEMATICS = SYSTEMATICS_MC15C_MEDIUM
 
 class PlotDataPythiaHerwig(PlotBase):
-    def __init__(self, var_name, flip_legend = False, do_systematics = True,
+    def __init__(self, var_name, flip_legend = False, do_systematics = DO_SYSTEMATICS_DEFAULT,
                  wzjets_sf = 50, ttbar_sf = 50, **kwargs):
 
         super(PlotDataPythiaHerwig, self).__init__(
