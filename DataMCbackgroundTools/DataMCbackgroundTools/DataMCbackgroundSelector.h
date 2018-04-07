@@ -5,6 +5,7 @@
 #include "DataMCbackgroundTools/HistoPack.h"
 #include "DataMCbackgroundTools/LocalTools.h"
 #include "DataMCbackgroundTools/WeightTool.h"
+#include "DataMCbackgroundTools/classification.h"
 
 // ROOTCORE/Athena/Framework imports
 #include "TopExamples/AnalysisTools.h"

@@ -314,6 +314,7 @@ simpleTaggerPass convertMVATaggerResult(const Root::TAccept &res, std::string va
 
         if(passMass && !passScore) return simpleTaggerPass::var1;
         if(!passMass && passScore) return simpleTaggerPass::var2;
+        if(!passMass && !passScore) return simpleTaggerPass::none;
 
     } else {
         return simpleTaggerPass::invalid;

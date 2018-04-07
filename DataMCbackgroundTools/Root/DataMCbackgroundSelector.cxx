@@ -533,6 +533,25 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_topTag_TopoTagger_80wp.at(i)->fill_tagged("mva",rljet_topTag_TopoTagger_80wp->at(i), weight, true);
         hp->h_rljet_topTag_TopoTagger_score.at(i)->fill_tagged("mva",rljet_topTag_TopoTagger_score->at(i), weight, true);
 
+
+
+        // Check if tagged
+        mva_tag_map["BDT_Top"] = rljet_topTag_BDT_qqb->at(i) == static_cast<int>(simpleTaggerPass::both);
+        mva_tag_map["BDT_W"]   = rljet_wTag_BDT_qq->at(i) == static_cast<int>(simpleTaggerPass::both);
+        mva_tag_map["DNN_Top"] = rljet_topTag_DNN_qqb->at(i) == static_cast<int>(simpleTaggerPass::both);
+        mva_tag_map["DNN_W"]   = rljet_wTag_DNN_qq->at(i) == static_cast<int>(simpleTaggerPass::both);
+        mva_tag_map["TopoTag_Top_20"]   = rljet_topTag_TopoTagger_20wp->at(i) == static_cast<int>(simpleTaggerPass::both);
+        mva_tag_map["TopoTag_Top_50"]   = rljet_topTag_TopoTagger_50wp->at(i) == static_cast<int>(simpleTaggerPass::both);
+        mva_tag_map["TopoTag_Top_80"]   = rljet_topTag_TopoTagger_80wp->at(i) == static_cast<int>(simpleTaggerPass::both);
+
+        for (const auto& itag : mva_tag_map) {
+          hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
+          hp->h_rljet_pt_comb.at(i)->fill_tagged(itag.first, rljet_pt_comb->at(i)/1000., weight, itag.second);
+        }
+
+
+
+
         // SMOOTHED SUBSTRUCTURE TAGGERS
         smooth_tag_map["smooth16Top_Tau32Split23Tag50eff"] = rljet_smooth16Top_Tau32Split23Tag50eff->at(i) == 3;
         smooth_tag_map["smooth16Top_Tau32Split23Tag80eff"] = rljet_smooth16Top_Tau32Split23Tag80eff->at(i) == 3;
