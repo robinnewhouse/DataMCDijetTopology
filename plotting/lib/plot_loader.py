@@ -24,11 +24,15 @@ class PlotLoader(object):
 
             hist = current_dir.Get(hist_name)
             if (not hist):
+                print "In path: " + str(dir_path)
+                print "hist not found: " + str(hist_name)
+                print "Returning None" + str(hist_name)
                 return None
+                print
             return hist.Clone()
         except Exception as e:
             print "In path: " + str(dir_path)
-            print "tree not found: " + str(hist_name)
+            print "hist not found: " + str(hist_name)
             print "exiting"
             print
             quit() # remove this for more information to be raised in the exception
