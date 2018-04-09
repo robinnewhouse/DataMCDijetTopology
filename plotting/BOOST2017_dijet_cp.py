@@ -25,7 +25,7 @@ LOADER_SMOOTH = LOADER
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"
 DO_SYSTEMATICS_DEFAULT = False
 
-OUTPUT_DIR = ROOT_OUTPUT_DIR + "/BOOST2017"
+OUTPUT_DIR = ROOT_OUTPUT_DIR + "/BOOST2018"
 make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
 
@@ -489,8 +489,6 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "smooth16ZTag_80
         rebin = MASS_PLOT_REBIN,
         ))
 
-print "DEBUG FROM HERE!!!!!"
-
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "BDT_Top",
         empty_scale = 2.0,
         extra_legend_lines = DEF_LINES + ["BDT Top-tagged"],
@@ -529,6 +527,42 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "DNN_W",
         empty_scale = 2.0,
         flip_legend = True,
         extra_legend_lines = DEF_LINES + ["DNN W-tagged"],
+        x_min = 0,
+        x_max = 350,
+        ttbar_sf = 25,
+        wzjets_sf = 5,
+        do_systematics = False,
+        rebin = MASS_PLOT_REBIN,
+        ))
+
+data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "TopoTag_Top_20",
+        empty_scale = 2.0,
+        flip_legend = True,
+        extra_legend_lines = DEF_LINES + ["Topocluster Top-tagged 50wp"],
+        x_min = 0,
+        x_max = 350,
+        ttbar_sf = 25,
+        wzjets_sf = 5,
+        do_systematics = False,
+        rebin = MASS_PLOT_REBIN,
+        ))
+
+data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "TopoTag_Top_50",
+        empty_scale = 2.0,
+        flip_legend = True,
+        extra_legend_lines = DEF_LINES + ["Topocluster Top-tagged 50wp"],
+        x_min = 0,
+        x_max = 350,
+        ttbar_sf = 25,
+        wzjets_sf = 5,
+        do_systematics = False,
+        rebin = MASS_PLOT_REBIN,
+        ))
+
+data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "TopoTag_Top_80",
+        empty_scale = 2.0,
+        flip_legend = True,
+        extra_legend_lines = DEF_LINES + ["Topocluster Top-tagged 80wp"],
         x_min = 0,
         x_max = 350,
         ttbar_sf = 25,
@@ -734,6 +768,18 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_wTag_BDT_qq_score_mva",
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_wTag_DNN_qq_score_mva",
+        empty_scale = 3,
+        extra_legend_lines = DEF_LINES + ["m^{comb} > 40 GeV"],
+        x_units = "",
+        y_min = 1e2,
+        ttbar_sf = 20,
+        wzjets_sf = 10,
+        log_scale = True,
+        rebin = 4,
+        do_systematics = False
+        ))
+
+data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_topTag_TopoTagger_score_mva",
         empty_scale = 3,
         extra_legend_lines = DEF_LINES + ["m^{comb} > 40 GeV"],
         x_units = "",
