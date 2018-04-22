@@ -192,6 +192,13 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
 
     for(auto systematicTree : treeManagers()) {
 
+
+        // nClusters study
+        l_jet_nClusters_hist = new TH1F("n_l_jet_clusters","Number of Clusters Per Large-R Jet",50,0,50);
+        s_jet_nClusters_hist = new TH1F("n_s_jet_clusters","Number of Clusters Per Small-R Jet",50,0,50);
+
+        l_jet_fractional_pt = new TH1F("l_jet_fractional_pt","Fractional pt of 10th cluster of each large-R jet",200,0,1);
+
         /**************************************************/
         /* PARAMETERS SAVED FOR NOMINAL + ALL SYSTEMATICS */
         /**************************************************/
@@ -234,6 +241,8 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
           systematicTree->makeOutputVariable(m_rljet_smooth16Z_Tag50eff_nocontain , "rljet_smooth16ZTag_50eff_nocontain");
           systematicTree->makeOutputVariable(m_rljet_smooth16Z_Tag80eff_nocontain , "rljet_smooth16ZTag_80eff_nocontain");
         }
+
+        // counting number of clusters per jet
 
         if(m_runMVAtag) {
           // BDT tagger outputs
@@ -802,6 +811,45 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
 void
 DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
 {
+    int pt_cut = 600000; // MeV
+    // Before any cuts
+    // count clusters in large r jets
+    for (auto large_jet : event.m_largeJets){
+      // printf("large pt: %f\n", large_jet->pt());
+      if (large_jet->pt() > pt_cut){
+        l_jet_nClusters_hist->Fill(large_jet->numConstituents());
+
+        // double large_r_jet_pt = large_jet->pt();
+        try{
+
+          // Extract jet constituents from jet
+          std::vector<xAOD::JetConstituent> clusters = large_jet->getConstituents().asSTLVector();
+          // Sort them by pt (using lambda function for sorting)
+          std::sort(clusters.begin(), clusters.end(),
+            [](const xAOD::JetConstituent & a, const xAOD::JetConstituent & b) -> bool
+            {
+              return a.pt() > b.pt();
+            });
+
+          float cluster_pt = clusters[9]->pt();
+          l_jet_fractional_pt->Fill(cluster_pt/large_jet->pt());
+        }catch(...){
+          // l_jet_fractional_pt->Fill(-1);
+        }
+
+      }
+      
+      // printf("Large-R Jet nclusters %d\n", large_jet->numConstituents());
+    }
+
+    for (auto small_jet : event.m_jets){
+      // printf("small pt: %f\n", small_jet->pt());
+      if (small_jet->pt() > pt_cut){
+        s_jet_nClusters_hist->Fill(small_jet->numConstituents());
+      }
+      // printf("Small-R Jet nclusters %d\n", small_jet->numConstituents());
+    }
+    
     if (!event.m_saveEvent && m_config->saveOnlySelectedEvents()) {
         // if the event did not pass the given cuts, don't bother processing it
         return;
