@@ -29,6 +29,7 @@ with open('job.sh', 'w') as fout:
           fout.write(cmd_str)
           fout.write("\n")
       write_cmd("#!/bin/sh\n")
+      write_cmd("#PBS -l  walltime=24:00:00\n\n")
       write_cmd("export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase")
       write_cmd("source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh")
       write_cmd("cd " + WORKAREA)
