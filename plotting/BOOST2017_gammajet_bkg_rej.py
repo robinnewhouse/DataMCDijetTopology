@@ -1,10 +1,12 @@
-from ROOT import *
+import sys
+sys.path.append('lib/')
+
 import atlas_style
 
-#import os
+import os
 #from math import *
 import array
-#from sys import argv, exit
+from sys import argv, exit
 #
 from plot_base import *
 from plot_util import *
@@ -12,6 +14,8 @@ from plot_dmd import *
 from plot_loader import *
 from plot_systematics import *
 from plot_systematics_breakdown import *
+
+DO_SYSTEMATICS_DEFAULT = False
 
 BIN_BOUNDS = array.array('d', [
     200,
@@ -37,7 +41,7 @@ sane_defaults()
 TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
-CP_ROOT_FILEPATH = "/eos/atlas/atlascerngroupdisk/perf-jets/JSS/TopBosonTagAnalysis2016/NTuples_DataMC_gammajet/20170515/cp.merged.backup.root"
+CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/gammajet_20180219/merged.cp.root"
 RAW = GammaJetLoader(CP_ROOT_FILEPATH)
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"
 
@@ -75,12 +79,15 @@ def make_rej_TH1SysEff(gen_name, tag_name):
     else:
         h_total = rej_rebin(RAW.get_normalized_gamma(total_var_name, normalize_to_pretagged = True))
         h_passed = rej_rebin(RAW.get_normalized_gamma(passed_var_name, normalize_to_pretagged = True))
-        if ("BDT" in tag_name or "DNN" in tag_name):
-            total_sys_dict = {}
-            passed_sys_dict = {}
-        else:
-            total_sys_dict = get_sys_dict_eff(total_var_name)
-            passed_sys_dict = get_sys_dict_eff(passed_var_name)
+        
+        total_sys_dict = {}
+        passed_sys_dict = {}
+        if DO_SYSTEMATICS_DEFAULT:
+            if ("BDT" in tag_name or "DNN" in tag_name):
+                pass
+            else:
+                total_sys_dict = get_sys_dict_eff(total_var_name)
+                passed_sys_dict = get_sys_dict_eff(passed_var_name)
         return TH1SysEff(h_total, total_sys_dict, h_passed, passed_sys_dict)
 
 class PlotGammaJetBkgRej(PlotBase):

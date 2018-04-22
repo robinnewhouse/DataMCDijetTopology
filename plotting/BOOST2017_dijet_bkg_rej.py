@@ -1,8 +1,8 @@
 import sys
 sys.path.append('lib/')
 
-from ROOT import *
 import atlas_style
+
 import array
 
 from plot_base import *
@@ -10,17 +10,19 @@ from plot_util import *
 from plot_dmd import *
 from plot_loader import *
 from plot_systematics import *
-from plot_systematics_breakdown import *
+# from plot_systematics_breakdown import *
 
 gROOT.SetBatch()
 sane_defaults()
 TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
-CP_ROOT_FILEPATH = "/home/newhouse/tmp/jobs_output_2018-03-23-14-16_goodmc/mc15/merged/test.root"
+CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/dijet_20180227/merged.cp.root"
 LOADER = DijetLoader(CP_ROOT_FILEPATH)
 LOADER_SMOOTH = LOADER
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"
+
+DO_SYSTEMATICS_DEFAULT = False
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/BOOST2017_REJ"
 make_dir(ROOT_OUTPUT_DIR)
