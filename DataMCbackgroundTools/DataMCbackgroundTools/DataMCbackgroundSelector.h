@@ -83,7 +83,9 @@ class DataMCbackgroundSelector : public TSelector {
         bool keptPhotons;
         bool default_photon_vars;
         bool ranSD;
-
+        bool ranMVA;
+        bool ranHTT;
+  
         // // BDT's for top and W tagging -- contained top/W def
         // unique_ptr<BDTWTopTagger> BDT_topTag;
         // unique_ptr<BDTWTopTagger> BDT_WTag;
@@ -210,6 +212,16 @@ class DataMCbackgroundSelector : public TSelector {
         Float_t         rljet_dR;
         Float_t         rljet_dphi;
         Float_t         rljet_deta;
+        std::vector<float>   *rljet_fractional_pt_0;
+        std::vector<float>   *rljet_fractional_pt_1;
+        std::vector<float>   *rljet_fractional_pt_2;
+        std::vector<float>   *rljet_fractional_pt_3;
+        std::vector<float>   *rljet_fractional_pt_4;
+        std::vector<float>   *rljet_fractional_pt_5;
+        std::vector<float>   *rljet_fractional_pt_6;
+        std::vector<float>   *rljet_fractional_pt_7;
+        std::vector<float>   *rljet_fractional_pt_8;
+        std::vector<float>   *rljet_fractional_pt_9;
         std::vector<float>   *rljet_m_calo;
         std::vector<float>   *rljet_pt_calo;
         std::vector<float>   *rljet_m_ta;
@@ -412,6 +424,18 @@ class DataMCbackgroundSelector : public TSelector {
         TBranch        *b_rljet_dR;   //!
         TBranch        *b_rljet_dphi;   //!
         TBranch        *b_rljet_deta;   //!
+
+        TBranch        *b_rljet_fractional_pt_0;  //!
+        TBranch        *b_rljet_fractional_pt_1;  //!
+        TBranch        *b_rljet_fractional_pt_2;  //!
+        TBranch        *b_rljet_fractional_pt_3;  //!
+        TBranch        *b_rljet_fractional_pt_4;  //!
+        TBranch        *b_rljet_fractional_pt_5;  //!
+        TBranch        *b_rljet_fractional_pt_6;  //!
+        TBranch        *b_rljet_fractional_pt_7;  //!
+        TBranch        *b_rljet_fractional_pt_8;  //!
+        TBranch        *b_rljet_fractional_pt_9;  //!
+
         TBranch        *b_rljet_m_calo;   //!
         TBranch        *b_rljet_pt_calo;   //!
         TBranch        *b_rljet_m_ta;   //!
@@ -621,6 +645,17 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     rljet_topTag_TopoTagger_80wp = 0;
     rljet_topTag_TopoTagger_score = 0;
 
+    rljet_fractional_pt_0 = 0;
+    rljet_fractional_pt_1 = 0;
+    rljet_fractional_pt_2 = 0;
+    rljet_fractional_pt_3 = 0;
+    rljet_fractional_pt_4 = 0;
+    rljet_fractional_pt_5 = 0;
+    rljet_fractional_pt_6 = 0;
+    rljet_fractional_pt_7 = 0;
+    rljet_fractional_pt_8 = 0;
+    rljet_fractional_pt_9 = 0;
+
     rljet_m_calo = 0;
     rljet_pt_calo = 0;
     rljet_m_ta = 0;
@@ -740,6 +775,8 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     fChain->SetMakeClass(1);
 
     ranSD = false;
+    ranMVA = false;
+    ranHTT = false;
     keptPhotons = false;
     auto array = fChain->GetListOfBranches();
     for(int i = 0; i < array->GetEntries(); ++i) {
@@ -748,6 +785,12 @@ void DataMCbackgroundSelector::Init(TTree *tree)
       }
       if (std::string(array->At(i)->GetName()).find("SD") != std::string::npos) {
         ranSD = true;
+      }
+      if (std::string(array->At(i)->GetName()).find("MVA") != std::string::npos) {
+        ranMVA = true;
+      }
+      if (std::string(array->At(i)->GetName()).find("HTT") != std::string::npos) {
+        ranHTT = true;
       }
     }
 
@@ -796,37 +839,38 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     fChain->SetBranchAddress("rljet_Tau32_wta", &rljet_Tau32_wta, &b_rljet_Tau32_wta);
     fChain->SetBranchAddress("rljet_Qw", &rljet_Qw, &b_rljet_Qw);
     fChain->SetBranchAddress("rljet_Split23", &rljet_Split23, &b_rljet_Split23);
-    fChain->SetBranchAddress("m_rljet_smooth16Top_Tau32Split23Tag50eff", &rljet_smooth16Top_Tau32Split23Tag50eff, &b_m_rljet_smooth16Top_Tau32Split23Tag50eff);
-    fChain->SetBranchAddress("m_rljet_smooth16Top_Tau32Split23Tag80eff", &rljet_smooth16Top_Tau32Split23Tag80eff, &b_m_rljet_smooth16Top_Tau32Split23Tag80eff);
-    fChain->SetBranchAddress("m_rljet_smooth16Top_MassTau32Tag50eff", &rljet_smooth16Top_MassTau32Tag50eff, &b_m_rljet_smooth16Top_MassTau32Tag50eff);
-    fChain->SetBranchAddress("m_rljet_smooth16Top_MassTau32Tag80eff", &rljet_smooth16Top_MassTau32Tag80eff, &b_m_rljet_smooth16Top_MassTau32Tag80eff);
-    fChain->SetBranchAddress("m_rljet_smooth16Top_QwTau32Tag50eff", &rljet_smooth16Top_QwTau32Tag50eff, &b_m_rljet_smooth16Top_QwTau32Tag50eff);
-    fChain->SetBranchAddress("m_rljet_smooth16Top_QwTau32Tag80eff", &rljet_smooth16Top_QwTau32Tag80eff, &b_m_rljet_smooth16Top_QwTau32Tag80eff);
-    fChain->SetBranchAddress("rljet_smooth16WTag_50eff", &rljet_smooth16WTag_50eff, &b_rljet_smooth16WTag_50eff);
-    fChain->SetBranchAddress("rljet_smooth16WTag_80eff", &rljet_smooth16WTag_80eff, &b_rljet_smooth16WTag_80eff);
-    fChain->SetBranchAddress("rljet_smooth16ZTag_50eff", &rljet_smooth16ZTag_50eff, &b_rljet_smooth16ZTag_50eff);
-    fChain->SetBranchAddress("rljet_smooth16ZTag_80eff", &rljet_smooth16ZTag_80eff, &b_rljet_smooth16ZTag_80eff);
 
-
-    // fChain->SetBranchAddress("m_rljet_smooth16Top_MassTau32Tag50eff_nocontain", &rljet_smooth16Top_MassTau32Tag50eff_nocontain, &b_rljet_smooth16Top_MassTau32Tag50eff_nocontain);
-    // fChain->SetBranchAddress("m_rljet_smooth16Top_MassTau32Tag80eff_nocontain", &rljet_smooth16Top_MassTau32Tag80eff_nocontain, &b_rljet_smooth16Top_MassTau32Tag80eff_nocontain);
-    // fChain->SetBranchAddress("rljet_smooth16WTag_50eff_nocontain", &rljet_smooth16WTag_50eff_nocontain, &b_rljet_smooth16WTag_50eff_nocontain);
-    // fChain->SetBranchAddress("rljet_smooth16WTag_80eff_nocontain", &rljet_smooth16WTag_80eff_nocontain, &b_rljet_smooth16WTag_80eff_nocontain);
-    // fChain->SetBranchAddress("rljet_smooth16ZTag_50eff_nocontain", &rljet_smooth16ZTag_50eff_nocontain, &b_rljet_smooth16ZTag_50eff_nocontain);
-    // fChain->SetBranchAddress("rljet_smooth16ZTag_80eff_nocontain", &rljet_smooth16ZTag_80eff_nocontain, &b_rljet_smooth16ZTag_80eff_nocontain);
-
-    fChain->SetBranchAddress("rljet_topTag_BDT_qqb", &rljet_topTag_BDT_qqb, &b_rljet_topTag_BDT_qqb);
-    fChain->SetBranchAddress("rljet_topTag_BDT_qqb_score", &rljet_topTag_BDT_qqb_score, &b_rljet_topTag_BDT_qqb_score);
-    fChain->SetBranchAddress("rljet_wTag_BDT_qq", &rljet_wTag_BDT_qq, &b_rljet_wTag_BDT_qq);
-    fChain->SetBranchAddress("rljet_wTag_BDT_qq_score", &rljet_wTag_BDT_qq_score, &b_rljet_wTag_BDT_qq_score);
-    fChain->SetBranchAddress("rljet_topTag_DNN_qqb_score", &rljet_topTag_DNN_qqb_score, &b_rljet_topTag_DNN_qqb_score);
-    fChain->SetBranchAddress("rljet_topTag_DNN_qqb", &rljet_topTag_DNN_qqb, &b_rljet_topTag_DNN_qqb);
-    fChain->SetBranchAddress("rljet_wTag_DNN_qq_score", &rljet_wTag_DNN_qq_score, &b_rljet_wTag_DNN_qq_score);
-    fChain->SetBranchAddress("rljet_wTag_DNN_qq", &rljet_wTag_DNN_qq, &b_rljet_wTag_DNN_qq);
-    fChain->SetBranchAddress("rljet_topTag_TopoTagger_20wp", &rljet_topTag_TopoTagger_20wp, &b_rljet_topTag_TopoTagger_20wp);
-    fChain->SetBranchAddress("rljet_topTag_TopoTagger_50wp", &rljet_topTag_TopoTagger_50wp, &b_rljet_topTag_TopoTagger_50wp);
-    fChain->SetBranchAddress("rljet_topTag_TopoTagger_80wp", &rljet_topTag_TopoTagger_80wp, &b_rljet_topTag_TopoTagger_80wp);
-    fChain->SetBranchAddress("rljet_topTag_TopoTagger_score", &rljet_topTag_TopoTagger_score, &b_rljet_topTag_TopoTagger_score);
+    if (ranMVA)
+    {
+        fChain->SetBranchAddress("m_rljet_smooth16Top_Tau32Split23Tag50eff", &rljet_smooth16Top_Tau32Split23Tag50eff, &b_m_rljet_smooth16Top_Tau32Split23Tag50eff);
+        fChain->SetBranchAddress("m_rljet_smooth16Top_Tau32Split23Tag80eff", &rljet_smooth16Top_Tau32Split23Tag80eff, &b_m_rljet_smooth16Top_Tau32Split23Tag80eff);
+        fChain->SetBranchAddress("m_rljet_smooth16Top_MassTau32Tag50eff", &rljet_smooth16Top_MassTau32Tag50eff, &b_m_rljet_smooth16Top_MassTau32Tag50eff);
+        fChain->SetBranchAddress("m_rljet_smooth16Top_MassTau32Tag80eff", &rljet_smooth16Top_MassTau32Tag80eff, &b_m_rljet_smooth16Top_MassTau32Tag80eff);
+        fChain->SetBranchAddress("m_rljet_smooth16Top_QwTau32Tag50eff", &rljet_smooth16Top_QwTau32Tag50eff, &b_m_rljet_smooth16Top_QwTau32Tag50eff);
+        fChain->SetBranchAddress("m_rljet_smooth16Top_QwTau32Tag80eff", &rljet_smooth16Top_QwTau32Tag80eff, &b_m_rljet_smooth16Top_QwTau32Tag80eff);
+        fChain->SetBranchAddress("rljet_smooth16WTag_50eff", &rljet_smooth16WTag_50eff, &b_rljet_smooth16WTag_50eff);
+        fChain->SetBranchAddress("rljet_smooth16WTag_80eff", &rljet_smooth16WTag_80eff, &b_rljet_smooth16WTag_80eff);
+        fChain->SetBranchAddress("rljet_smooth16ZTag_50eff", &rljet_smooth16ZTag_50eff, &b_rljet_smooth16ZTag_50eff);
+        fChain->SetBranchAddress("rljet_smooth16ZTag_80eff", &rljet_smooth16ZTag_80eff, &b_rljet_smooth16ZTag_80eff);
+        // fChain->SetBranchAddress("m_rljet_smooth16Top_MassTau32Tag50eff_nocontain", &rljet_smooth16Top_MassTau32Tag50eff_nocontain, &b_rljet_smooth16Top_MassTau32Tag50eff_nocontain);
+        // fChain->SetBranchAddress("m_rljet_smooth16Top_MassTau32Tag80eff_nocontain", &rljet_smooth16Top_MassTau32Tag80eff_nocontain, &b_rljet_smooth16Top_MassTau32Tag80eff_nocontain);
+        // fChain->SetBranchAddress("rljet_smooth16WTag_50eff_nocontain", &rljet_smooth16WTag_50eff_nocontain, &b_rljet_smooth16WTag_50eff_nocontain);
+        // fChain->SetBranchAddress("rljet_smooth16WTag_80eff_nocontain", &rljet_smooth16WTag_80eff_nocontain, &b_rljet_smooth16WTag_80eff_nocontain);
+        // fChain->SetBranchAddress("rljet_smooth16ZTag_50eff_nocontain", &rljet_smooth16ZTag_50eff_nocontain, &b_rljet_smooth16ZTag_50eff_nocontain);
+        // fChain->SetBranchAddress("rljet_smooth16ZTag_80eff_nocontain", &rljet_smooth16ZTag_80eff_nocontain, &b_rljet_smooth16ZTag_80eff_nocontain);
+        fChain->SetBranchAddress("rljet_topTag_BDT_qqb", &rljet_topTag_BDT_qqb, &b_rljet_topTag_BDT_qqb);
+        fChain->SetBranchAddress("rljet_topTag_BDT_qqb_score", &rljet_topTag_BDT_qqb_score, &b_rljet_topTag_BDT_qqb_score);
+        fChain->SetBranchAddress("rljet_wTag_BDT_qq", &rljet_wTag_BDT_qq, &b_rljet_wTag_BDT_qq);
+        fChain->SetBranchAddress("rljet_wTag_BDT_qq_score", &rljet_wTag_BDT_qq_score, &b_rljet_wTag_BDT_qq_score);
+        fChain->SetBranchAddress("rljet_topTag_DNN_qqb_score", &rljet_topTag_DNN_qqb_score, &b_rljet_topTag_DNN_qqb_score);
+        fChain->SetBranchAddress("rljet_topTag_DNN_qqb", &rljet_topTag_DNN_qqb, &b_rljet_topTag_DNN_qqb);
+        fChain->SetBranchAddress("rljet_wTag_DNN_qq_score", &rljet_wTag_DNN_qq_score, &b_rljet_wTag_DNN_qq_score);
+        fChain->SetBranchAddress("rljet_wTag_DNN_qq", &rljet_wTag_DNN_qq, &b_rljet_wTag_DNN_qq);
+        fChain->SetBranchAddress("rljet_topTag_TopoTagger_20wp", &rljet_topTag_TopoTagger_20wp, &b_rljet_topTag_TopoTagger_20wp);
+        fChain->SetBranchAddress("rljet_topTag_TopoTagger_50wp", &rljet_topTag_TopoTagger_50wp, &b_rljet_topTag_TopoTagger_50wp);
+        fChain->SetBranchAddress("rljet_topTag_TopoTagger_80wp", &rljet_topTag_TopoTagger_80wp, &b_rljet_topTag_TopoTagger_80wp);
+        fChain->SetBranchAddress("rljet_topTag_TopoTagger_score", &rljet_topTag_TopoTagger_score, &b_rljet_topTag_TopoTagger_score);
+    }
 
 
 
@@ -857,6 +901,17 @@ void DataMCbackgroundSelector::Init(TTree *tree)
           // fChain->SetBranchAddress("photon0_topoetcone20", &photon_topoetcone20, &b_photon_topoetcone20);
           // fChain->SetBranchAddress("photon0_topoetcone40", &photon_topoetcone40, &b_photon_topoetcone40);
         }
+
+        fChain->SetBranchAddress("rljet_fractional_pt_0", &rljet_fractional_pt_0, &b_rljet_fractional_pt_0);
+        fChain->SetBranchAddress("rljet_fractional_pt_1", &rljet_fractional_pt_1, &b_rljet_fractional_pt_1);
+        fChain->SetBranchAddress("rljet_fractional_pt_2", &rljet_fractional_pt_2, &b_rljet_fractional_pt_2);
+        fChain->SetBranchAddress("rljet_fractional_pt_3", &rljet_fractional_pt_3, &b_rljet_fractional_pt_3);
+        fChain->SetBranchAddress("rljet_fractional_pt_4", &rljet_fractional_pt_4, &b_rljet_fractional_pt_4);
+        fChain->SetBranchAddress("rljet_fractional_pt_5", &rljet_fractional_pt_5, &b_rljet_fractional_pt_5);
+        fChain->SetBranchAddress("rljet_fractional_pt_6", &rljet_fractional_pt_6, &b_rljet_fractional_pt_6);
+        fChain->SetBranchAddress("rljet_fractional_pt_7", &rljet_fractional_pt_7, &b_rljet_fractional_pt_7);
+        fChain->SetBranchAddress("rljet_fractional_pt_8", &rljet_fractional_pt_8, &b_rljet_fractional_pt_8);
+        fChain->SetBranchAddress("rljet_fractional_pt_9", &rljet_fractional_pt_9, &b_rljet_fractional_pt_9);
 
         fChain->SetBranchAddress("rljet_count", &rljet_count, &b_rljet_count);
         fChain->SetBranchAddress("rljet_mjj", &rljet_mjj, &b_rljet_mjj);
@@ -898,27 +953,29 @@ void DataMCbackgroundSelector::Init(TTree *tree)
         fChain->SetBranchAddress("rljet_NTrimSubjets", &rljet_NTrimSubjets, &b_rljet_NTrimSubjets);
         fChain->SetBranchAddress("rljet_ungroomed_ntrk500", &rljet_ungroomed_ntrk500, &b_rljet_ungroomed_ntrk500);
         fChain->SetBranchAddress("rljet_n_constituents", &rljet_n_constituents, &b_rljet_n_constituents);
-        fChain->SetBranchAddress("htt_pt_def", &htt_pt_def, &b_htt_pt_def);
-        fChain->SetBranchAddress("htt_eta_def", &htt_eta_def, &b_htt_eta_def);
-        fChain->SetBranchAddress("htt_phi_def", &htt_phi_def, &b_htt_phi_def);
-        fChain->SetBranchAddress("htt_m_def", &htt_m_def, &b_htt_m_def);
-        fChain->SetBranchAddress("htt_m123_def", &htt_m123_def, &b_htt_m123_def);
-        fChain->SetBranchAddress("htt_m23m123_def", &htt_m23m123_def, &b_htt_m23m123_def);
-        fChain->SetBranchAddress("htt_atan1312_def", &htt_atan1312_def, &b_htt_atan1312_def);
-        fChain->SetBranchAddress("htt_nTagCands_def", &htt_nTagCands_def, &b_htt_nTagCands_def);
-        fChain->SetBranchAddress("htt_tag_def", &htt_tag_def, &b_htt_tag_def);
-        fChain->SetBranchAddress("htt_pts1_def", &htt_pts1_def, &b_htt_pts1_def);
-        fChain->SetBranchAddress("htt_pts2_def", &htt_pts2_def, &b_htt_pts2_def);
-        fChain->SetBranchAddress("htt_pts3_def", &htt_pts3_def, &b_htt_pts3_def);
-        fChain->SetBranchAddress("htt_caJet_pt", &htt_caJet_pt, &b_htt_caJet_pt);
-        fChain->SetBranchAddress("htt_caJet_eta", &htt_caJet_eta, &b_htt_caJet_eta);
-        fChain->SetBranchAddress("htt_caJet_phi", &htt_caJet_phi, &b_htt_caJet_phi);
-        fChain->SetBranchAddress("htt_caJet_m", &htt_caJet_m, &b_htt_caJet_m);
-        fChain->SetBranchAddress("caJet_count", &caJet_count, &b_caJet_count);
-        fChain->SetBranchAddress("htt_caGroomJet_pt_def", &htt_caGroomJet_pt_def, &b_htt_caGroomJet_pt_def);
-        fChain->SetBranchAddress("htt_caGroomJet_eta_def", &htt_caGroomJet_eta_def, &b_htt_caGroomJet_eta_def);
-        fChain->SetBranchAddress("htt_caGroomJet_phi_def", &htt_caGroomJet_phi_def, &b_htt_caGroomJet_phi_def);
-        fChain->SetBranchAddress("htt_caGroomJet_m_def", &htt_caGroomJet_m_def, &b_htt_caGroomJet_m_def);
+        if (ranHTT){
+            fChain->SetBranchAddress("htt_pt_def", &htt_pt_def, &b_htt_pt_def);
+            fChain->SetBranchAddress("htt_eta_def", &htt_eta_def, &b_htt_eta_def);
+            fChain->SetBranchAddress("htt_phi_def", &htt_phi_def, &b_htt_phi_def);
+            fChain->SetBranchAddress("htt_m_def", &htt_m_def, &b_htt_m_def);
+            fChain->SetBranchAddress("htt_m123_def", &htt_m123_def, &b_htt_m123_def);
+            fChain->SetBranchAddress("htt_m23m123_def", &htt_m23m123_def, &b_htt_m23m123_def);
+            fChain->SetBranchAddress("htt_atan1312_def", &htt_atan1312_def, &b_htt_atan1312_def);
+            fChain->SetBranchAddress("htt_nTagCands_def", &htt_nTagCands_def, &b_htt_nTagCands_def);
+            fChain->SetBranchAddress("htt_tag_def", &htt_tag_def, &b_htt_tag_def);
+            fChain->SetBranchAddress("htt_pts1_def", &htt_pts1_def, &b_htt_pts1_def);
+            fChain->SetBranchAddress("htt_pts2_def", &htt_pts2_def, &b_htt_pts2_def);
+            fChain->SetBranchAddress("htt_pts3_def", &htt_pts3_def, &b_htt_pts3_def);
+            fChain->SetBranchAddress("htt_caJet_pt", &htt_caJet_pt, &b_htt_caJet_pt);
+            fChain->SetBranchAddress("htt_caJet_eta", &htt_caJet_eta, &b_htt_caJet_eta);
+            fChain->SetBranchAddress("htt_caJet_phi", &htt_caJet_phi, &b_htt_caJet_phi);
+            fChain->SetBranchAddress("htt_caJet_m", &htt_caJet_m, &b_htt_caJet_m);
+            fChain->SetBranchAddress("caJet_count", &caJet_count, &b_caJet_count);
+            fChain->SetBranchAddress("htt_caGroomJet_pt_def", &htt_caGroomJet_pt_def, &b_htt_caGroomJet_pt_def);
+            fChain->SetBranchAddress("htt_caGroomJet_eta_def", &htt_caGroomJet_eta_def, &b_htt_caGroomJet_eta_def);
+            fChain->SetBranchAddress("htt_caGroomJet_phi_def", &htt_caGroomJet_phi_def, &b_htt_caGroomJet_phi_def);
+            fChain->SetBranchAddress("htt_caGroomJet_m_def", &htt_caGroomJet_m_def, &b_htt_caGroomJet_m_def);
+        }
 
         if (ranSD) {
           fChain->SetBranchAddress("rljet_SDw_calib"         , &rljet_SDw_calib         , &b_rljet_SDw_calib);
@@ -933,39 +990,41 @@ void DataMCbackgroundSelector::Init(TTree *tree)
 
 
         if (this->operating_on_mc) {
-            fChain->SetBranchAddress("htt_pt_sjcalib1030", &htt_pt_sjcalib1030, &b_htt_pt_sjcalib1030);
-            fChain->SetBranchAddress("htt_eta_sjcalib1030", &htt_eta_sjcalib1030, &b_htt_eta_sjcalib1030);
-            fChain->SetBranchAddress("htt_phi_sjcalib1030", &htt_phi_sjcalib1030, &b_htt_phi_sjcalib1030);
-            fChain->SetBranchAddress("htt_m_sjcalib1030", &htt_m_sjcalib1030, &b_htt_m_sjcalib1030);
-            fChain->SetBranchAddress("htt_m123_sjcalib1030", &htt_m123_sjcalib1030, &b_htt_m123_sjcalib1030);
-            fChain->SetBranchAddress("htt_m23m123_sjcalib1030", &htt_m23m123_sjcalib1030, &b_htt_m23m123_sjcalib1030);
-            fChain->SetBranchAddress("htt_atan1312_sjcalib1030", &htt_atan1312_sjcalib1030, &b_htt_atan1312_sjcalib1030);
-            fChain->SetBranchAddress("htt_nTagCands_sjcalib1030", &htt_nTagCands_sjcalib1030, &b_htt_nTagCands_sjcalib1030);
-            fChain->SetBranchAddress("htt_tag_sjcalib1030", &htt_tag_sjcalib1030, &b_htt_tag_sjcalib1030);
-            fChain->SetBranchAddress("htt_pts1_sjcalib1030", &htt_pts1_sjcalib1030, &b_htt_pts1_sjcalib1030);
-            fChain->SetBranchAddress("htt_pts2_sjcalib1030", &htt_pts2_sjcalib1030, &b_htt_pts2_sjcalib1030);
-            fChain->SetBranchAddress("htt_pts3_sjcalib1030", &htt_pts3_sjcalib1030, &b_htt_pts3_sjcalib1030);
-            fChain->SetBranchAddress("htt_pt_sjcalib0970", &htt_pt_sjcalib0970, &b_htt_pt_sjcalib0970);
-            fChain->SetBranchAddress("htt_eta_sjcalib0970", &htt_eta_sjcalib0970, &b_htt_eta_sjcalib0970);
-            fChain->SetBranchAddress("htt_phi_sjcalib0970", &htt_phi_sjcalib0970, &b_htt_phi_sjcalib0970);
-            fChain->SetBranchAddress("htt_m_sjcalib0970", &htt_m_sjcalib0970, &b_htt_m_sjcalib0970);
-            fChain->SetBranchAddress("htt_m123_sjcalib0970", &htt_m123_sjcalib0970, &b_htt_m123_sjcalib0970);
-            fChain->SetBranchAddress("htt_m23m123_sjcalib0970", &htt_m23m123_sjcalib0970, &b_htt_m23m123_sjcalib0970);
-            fChain->SetBranchAddress("htt_atan1312_sjcalib0970", &htt_atan1312_sjcalib0970, &b_htt_atan1312_sjcalib0970);
-            fChain->SetBranchAddress("htt_nTagCands_sjcalib0970", &htt_nTagCands_sjcalib0970, &b_htt_nTagCands_sjcalib0970);
-            fChain->SetBranchAddress("htt_tag_sjcalib0970", &htt_tag_sjcalib0970, &b_htt_tag_sjcalib0970);
-            fChain->SetBranchAddress("htt_pts1_sjcalib0970", &htt_pts1_sjcalib0970, &b_htt_pts1_sjcalib0970);
-            fChain->SetBranchAddress("htt_pts2_sjcalib0970", &htt_pts2_sjcalib0970, &b_htt_pts2_sjcalib0970);
-            fChain->SetBranchAddress("htt_pts3_sjcalib0970", &htt_pts3_sjcalib0970, &b_htt_pts3_sjcalib0970);
-            fChain->SetBranchAddress("htt_caGroomJet_pt_sjcalib1030", &htt_caGroomJet_pt_sjcalib1030, &b_htt_caGroomJet_pt_sjcalib1030);
-            fChain->SetBranchAddress("htt_caGroomJet_eta_sjcalib1030", &htt_caGroomJet_eta_sjcalib1030, &b_htt_caGroomJet_eta_sjcalib1030);
-            fChain->SetBranchAddress("htt_caGroomJet_phi_sjcalib1030", &htt_caGroomJet_phi_sjcalib1030, &b_htt_caGroomJet_phi_sjcalib1030);
-            fChain->SetBranchAddress("htt_caGroomJet_m_sjcalib1030", &htt_caGroomJet_m_sjcalib1030, &b_htt_caGroomJet_m_sjcalib1030);
-            fChain->SetBranchAddress("htt_caGroomJet_pt_sjcalib0970", &htt_caGroomJet_pt_sjcalib0970, &b_htt_caGroomJet_pt_sjcalib0970);
-            fChain->SetBranchAddress("htt_caGroomJet_eta_sjcalib0970", &htt_caGroomJet_eta_sjcalib0970, &b_htt_caGroomJet_eta_sjcalib0970);
-            fChain->SetBranchAddress("htt_caGroomJet_phi_sjcalib0970", &htt_caGroomJet_phi_sjcalib0970, &b_htt_caGroomJet_phi_sjcalib0970);
-            fChain->SetBranchAddress("htt_caGroomJet_m_sjcalib0970", &htt_caGroomJet_m_sjcalib0970, &b_htt_caGroomJet_m_sjcalib0970);
-
+            if (ranHTT){
+                fChain->SetBranchAddress("htt_pt_sjcalib1030", &htt_pt_sjcalib1030, &b_htt_pt_sjcalib1030);
+                fChain->SetBranchAddress("htt_eta_sjcalib1030", &htt_eta_sjcalib1030, &b_htt_eta_sjcalib1030);
+                fChain->SetBranchAddress("htt_phi_sjcalib1030", &htt_phi_sjcalib1030, &b_htt_phi_sjcalib1030);
+                fChain->SetBranchAddress("htt_m_sjcalib1030", &htt_m_sjcalib1030, &b_htt_m_sjcalib1030);
+                fChain->SetBranchAddress("htt_m123_sjcalib1030", &htt_m123_sjcalib1030, &b_htt_m123_sjcalib1030);
+                fChain->SetBranchAddress("htt_m23m123_sjcalib1030", &htt_m23m123_sjcalib1030, &b_htt_m23m123_sjcalib1030);
+                fChain->SetBranchAddress("htt_atan1312_sjcalib1030", &htt_atan1312_sjcalib1030, &b_htt_atan1312_sjcalib1030);
+                fChain->SetBranchAddress("htt_nTagCands_sjcalib1030", &htt_nTagCands_sjcalib1030, &b_htt_nTagCands_sjcalib1030);
+                fChain->SetBranchAddress("htt_tag_sjcalib1030", &htt_tag_sjcalib1030, &b_htt_tag_sjcalib1030);
+                fChain->SetBranchAddress("htt_pts1_sjcalib1030", &htt_pts1_sjcalib1030, &b_htt_pts1_sjcalib1030);
+                fChain->SetBranchAddress("htt_pts2_sjcalib1030", &htt_pts2_sjcalib1030, &b_htt_pts2_sjcalib1030);
+                fChain->SetBranchAddress("htt_pts3_sjcalib1030", &htt_pts3_sjcalib1030, &b_htt_pts3_sjcalib1030);
+                fChain->SetBranchAddress("htt_pt_sjcalib0970", &htt_pt_sjcalib0970, &b_htt_pt_sjcalib0970);
+                fChain->SetBranchAddress("htt_eta_sjcalib0970", &htt_eta_sjcalib0970, &b_htt_eta_sjcalib0970);
+                fChain->SetBranchAddress("htt_phi_sjcalib0970", &htt_phi_sjcalib0970, &b_htt_phi_sjcalib0970);
+                fChain->SetBranchAddress("htt_m_sjcalib0970", &htt_m_sjcalib0970, &b_htt_m_sjcalib0970);
+                fChain->SetBranchAddress("htt_m123_sjcalib0970", &htt_m123_sjcalib0970, &b_htt_m123_sjcalib0970);
+                fChain->SetBranchAddress("htt_m23m123_sjcalib0970", &htt_m23m123_sjcalib0970, &b_htt_m23m123_sjcalib0970);
+                fChain->SetBranchAddress("htt_atan1312_sjcalib0970", &htt_atan1312_sjcalib0970, &b_htt_atan1312_sjcalib0970);
+                fChain->SetBranchAddress("htt_nTagCands_sjcalib0970", &htt_nTagCands_sjcalib0970, &b_htt_nTagCands_sjcalib0970);
+                fChain->SetBranchAddress("htt_tag_sjcalib0970", &htt_tag_sjcalib0970, &b_htt_tag_sjcalib0970);
+                fChain->SetBranchAddress("htt_pts1_sjcalib0970", &htt_pts1_sjcalib0970, &b_htt_pts1_sjcalib0970);
+                fChain->SetBranchAddress("htt_pts2_sjcalib0970", &htt_pts2_sjcalib0970, &b_htt_pts2_sjcalib0970);
+                fChain->SetBranchAddress("htt_pts3_sjcalib0970", &htt_pts3_sjcalib0970, &b_htt_pts3_sjcalib0970);
+                fChain->SetBranchAddress("htt_caGroomJet_pt_sjcalib1030", &htt_caGroomJet_pt_sjcalib1030, &b_htt_caGroomJet_pt_sjcalib1030);
+                fChain->SetBranchAddress("htt_caGroomJet_eta_sjcalib1030", &htt_caGroomJet_eta_sjcalib1030, &b_htt_caGroomJet_eta_sjcalib1030);
+                fChain->SetBranchAddress("htt_caGroomJet_phi_sjcalib1030", &htt_caGroomJet_phi_sjcalib1030, &b_htt_caGroomJet_phi_sjcalib1030);
+                fChain->SetBranchAddress("htt_caGroomJet_m_sjcalib1030", &htt_caGroomJet_m_sjcalib1030, &b_htt_caGroomJet_m_sjcalib1030);
+                fChain->SetBranchAddress("htt_caGroomJet_pt_sjcalib0970", &htt_caGroomJet_pt_sjcalib0970, &b_htt_caGroomJet_pt_sjcalib0970);
+                fChain->SetBranchAddress("htt_caGroomJet_eta_sjcalib0970", &htt_caGroomJet_eta_sjcalib0970, &b_htt_caGroomJet_eta_sjcalib0970);
+                fChain->SetBranchAddress("htt_caGroomJet_phi_sjcalib0970", &htt_caGroomJet_phi_sjcalib0970, &b_htt_caGroomJet_phi_sjcalib0970);
+                fChain->SetBranchAddress("htt_caGroomJet_m_sjcalib0970", &htt_caGroomJet_m_sjcalib0970, &b_htt_caGroomJet_m_sjcalib0970);
+            }
+            
             if (ranSD) {
               fChain->SetBranchAddress("rljet_SDw_calib_DOWN"    , &rljet_SDw_calib_DOWN    , &b_rljet_SDw_calib_DOWN);
               fChain->SetBranchAddress("rljet_SDw_uncalib_DOWN"  , &rljet_SDw_uncalib_DOWN  , &b_rljet_SDw_uncalib_DOWN);

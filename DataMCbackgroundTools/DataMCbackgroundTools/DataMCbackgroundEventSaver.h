@@ -166,9 +166,25 @@ namespace top {
 
         int m_NPV;
 
+
         /*************************/
         /* LARGE-R JET VARIABLES */
         /*************************/
+
+        // nClusters study
+        TH1 * l_jet_nClusters_hist;
+        // TH1 * s_jet_nClusters_hist;
+        // TH1 * l_jet_fractional_pt
+        std::vector<float> m_rljet_fractional_pt_0;
+        std::vector<float> m_rljet_fractional_pt_1;
+        std::vector<float> m_rljet_fractional_pt_2;
+        std::vector<float> m_rljet_fractional_pt_3;
+        std::vector<float> m_rljet_fractional_pt_4;
+        std::vector<float> m_rljet_fractional_pt_5;
+        std::vector<float> m_rljet_fractional_pt_6;
+        std::vector<float> m_rljet_fractional_pt_7;
+        std::vector<float> m_rljet_fractional_pt_8;
+        std::vector<float> m_rljet_fractional_pt_9;
 
         // reco large leading jets
         int m_rljet_count;

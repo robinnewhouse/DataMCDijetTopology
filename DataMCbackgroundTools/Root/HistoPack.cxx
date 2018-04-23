@@ -12,6 +12,27 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
     /* LARGE-R ANTIKT10 JETS */
     for (i = 0; i < num_fatjets_keep; i++) {
 
+        this->h_rljet_fractional_pt_0.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_0" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_1.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_1" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_2.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_2" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_3.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_3" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_4.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_4" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_5.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_5" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_6.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_6" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_7.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_7" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_8.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_8" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_9.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_9" ,0.,  1,  0.01));
+
         this->h_rljet_pt_comb.push_back  ( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string (i) + "_pt_comb", 0., 4000., 10.));
         this->h_rljet_m_comb.push_back   ( make_unique<TH1Tagged>(
@@ -199,13 +220,13 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
                     "h_rljet" + std::to_string(i) + "_topTag_BDT_qqb", 0., 4.0, 1.0));
         
         this->h_rljet_topTag_BDT_qqb_score . push_back( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string(i) + "_topTag_BDT_qqb_score", 0., 1.0, 0.005));
+                    "h_rljet" + std::to_string(i) + "_topTag_BDT_qqb_score", -1.0, 1.0, 0.01));
         
         this->h_rljet_wTag_BDT_qq . push_back( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string(i) + "_wTag_BDT_qq", 0., 4.0, 1.0));
         
         this->h_rljet_wTag_BDT_qq_score . push_back( make_unique<TH1Tagged>(
-                    "h_rljet" + std::to_string(i) + "_wTag_BDT_qq_score", 0., 1.0, 0.005));
+                    "h_rljet" + std::to_string(i) + "_wTag_BDT_qq_score", -1.0, 1.0, 0.01));
         
         this->h_rljet_topTag_DNN_qqb_score . push_back( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string(i) + "_topTag_DNN_qqb_score", 0., 1.0, 0.005));
@@ -277,6 +298,18 @@ void HistoPack::WriteCommonHistograms() const
 
 void HistoPack::WriteNominalOnlyHistograms() const
 {
+
+    for (auto const &h : h_rljet_fractional_pt_0) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_1) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_2) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_3) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_4) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_5) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_6) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_7) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_8) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_9) h->write_all();
+
     for (auto const &h : h_rljet_pt_calo) h->write_all();
     for (auto const &h : h_rljet_m_calo) h->write_all();
     for (auto const &h : h_rljet_pt_ta) h->write_all();

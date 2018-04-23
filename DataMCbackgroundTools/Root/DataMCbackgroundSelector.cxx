@@ -196,29 +196,33 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     b_rljet_Tau32_wta->GetEntry(entry);
     b_rljet_Qw->GetEntry(entry);
     b_rljet_Split23->GetEntry(entry);
-    b_m_rljet_smooth16Top_Tau32Split23Tag50eff->GetEntry(entry);
-    b_m_rljet_smooth16Top_Tau32Split23Tag80eff->GetEntry(entry);
-    b_m_rljet_smooth16Top_MassTau32Tag50eff->GetEntry(entry);
-    b_m_rljet_smooth16Top_MassTau32Tag80eff->GetEntry(entry);
-    b_m_rljet_smooth16Top_QwTau32Tag50eff->GetEntry(entry);
-    b_m_rljet_smooth16Top_QwTau32Tag80eff->GetEntry(entry);
-    b_rljet_smooth16WTag_50eff->GetEntry(entry);
-    b_rljet_smooth16WTag_80eff->GetEntry(entry);
-    b_rljet_smooth16ZTag_50eff->GetEntry(entry);
-    b_rljet_smooth16ZTag_80eff->GetEntry(entry);
 
-    b_rljet_topTag_BDT_qqb->GetEntry(entry);
-    b_rljet_topTag_BDT_qqb_score->GetEntry(entry);
-    b_rljet_wTag_BDT_qq->GetEntry(entry);
-    b_rljet_wTag_BDT_qq_score->GetEntry(entry);
-    b_rljet_topTag_DNN_qqb_score->GetEntry(entry);
-    b_rljet_topTag_DNN_qqb->GetEntry(entry);
-    b_rljet_wTag_DNN_qq_score->GetEntry(entry);
-    b_rljet_wTag_DNN_qq->GetEntry(entry);
-    b_rljet_topTag_TopoTagger_20wp->GetEntry(entry);
-    b_rljet_topTag_TopoTagger_50wp->GetEntry(entry);
-    b_rljet_topTag_TopoTagger_80wp->GetEntry(entry);
-    b_rljet_topTag_TopoTagger_score->GetEntry(entry);
+    if (ranMVA)
+    { 
+        b_m_rljet_smooth16Top_Tau32Split23Tag50eff->GetEntry(entry);
+        b_m_rljet_smooth16Top_Tau32Split23Tag80eff->GetEntry(entry);
+        b_m_rljet_smooth16Top_MassTau32Tag50eff->GetEntry(entry);
+        b_m_rljet_smooth16Top_MassTau32Tag80eff->GetEntry(entry);
+        b_m_rljet_smooth16Top_QwTau32Tag50eff->GetEntry(entry);
+        b_m_rljet_smooth16Top_QwTau32Tag80eff->GetEntry(entry);
+        b_rljet_smooth16WTag_50eff->GetEntry(entry);
+        b_rljet_smooth16WTag_80eff->GetEntry(entry);
+        b_rljet_smooth16ZTag_50eff->GetEntry(entry);
+        b_rljet_smooth16ZTag_80eff->GetEntry(entry);
+
+        b_rljet_topTag_BDT_qqb->GetEntry(entry);
+        b_rljet_topTag_BDT_qqb_score->GetEntry(entry);
+        b_rljet_wTag_BDT_qq->GetEntry(entry);
+        b_rljet_wTag_BDT_qq_score->GetEntry(entry);
+        b_rljet_topTag_DNN_qqb_score->GetEntry(entry);
+        b_rljet_topTag_DNN_qqb->GetEntry(entry);
+        b_rljet_wTag_DNN_qq_score->GetEntry(entry);
+        b_rljet_wTag_DNN_qq->GetEntry(entry);
+        b_rljet_topTag_TopoTagger_20wp->GetEntry(entry);
+        b_rljet_topTag_TopoTagger_50wp->GetEntry(entry);
+        b_rljet_topTag_TopoTagger_80wp->GetEntry(entry);
+        b_rljet_topTag_TopoTagger_score->GetEntry(entry);
+    }
 
     // b_rljet_smooth16Top_MassTau32Tag50eff_nocontain->GetEntry(entry);
     // b_rljet_smooth16Top_MassTau32Tag80eff_nocontain->GetEntry(entry);
@@ -255,6 +259,18 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             b_photon0_phi->GetEntry(entry);
           }
         }
+
+        b_rljet_fractional_pt_0->GetEntry(entry);
+        b_rljet_fractional_pt_1->GetEntry(entry);
+        b_rljet_fractional_pt_2->GetEntry(entry);
+        b_rljet_fractional_pt_3->GetEntry(entry);
+        b_rljet_fractional_pt_4->GetEntry(entry);
+        b_rljet_fractional_pt_5->GetEntry(entry);
+        b_rljet_fractional_pt_6->GetEntry(entry);
+        b_rljet_fractional_pt_7->GetEntry(entry);
+        b_rljet_fractional_pt_8->GetEntry(entry);
+        b_rljet_fractional_pt_9->GetEntry(entry);
+
         b_rljet_count->GetEntry(entry);
         b_rljet_mjj->GetEntry(entry);
         b_rljet_ptasym->GetEntry(entry);
@@ -295,27 +311,31 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         b_rljet_NTrimSubjets->GetEntry(entry);
         b_rljet_ungroomed_ntrk500->GetEntry(entry);
         b_rljet_n_constituents->GetEntry(entry);
-        b_htt_pt_def->GetEntry(entry);
-        b_htt_eta_def->GetEntry(entry);
-        b_htt_phi_def->GetEntry(entry);
-        b_htt_m_def->GetEntry(entry);
-        b_htt_m123_def->GetEntry(entry);
-        b_htt_m23m123_def->GetEntry(entry);
-        b_htt_atan1312_def->GetEntry(entry);
-        b_htt_nTagCands_def->GetEntry(entry);
-        b_htt_tag_def->GetEntry(entry);
-        b_htt_pts1_def->GetEntry(entry);
-        b_htt_pts2_def->GetEntry(entry);
-        b_htt_pts3_def->GetEntry(entry);
-        b_htt_caJet_pt->GetEntry(entry);
-        b_htt_caJet_eta->GetEntry(entry);
-        b_htt_caJet_phi->GetEntry(entry);
-        b_htt_caJet_m->GetEntry(entry);
-        b_caJet_count->GetEntry(entry);
-        b_htt_caGroomJet_pt_def->GetEntry(entry);
-        b_htt_caGroomJet_eta_def->GetEntry(entry);
-        b_htt_caGroomJet_phi_def->GetEntry(entry);
-        b_htt_caGroomJet_m_def->GetEntry(entry);
+
+
+        if (ranHTT) {
+            b_htt_pt_def->GetEntry(entry);
+            b_htt_eta_def->GetEntry(entry);
+            b_htt_phi_def->GetEntry(entry);
+            b_htt_m_def->GetEntry(entry);
+            b_htt_m123_def->GetEntry(entry);
+            b_htt_m23m123_def->GetEntry(entry);
+            b_htt_atan1312_def->GetEntry(entry);
+            b_htt_nTagCands_def->GetEntry(entry);
+            b_htt_tag_def->GetEntry(entry);
+            b_htt_pts1_def->GetEntry(entry);
+            b_htt_pts2_def->GetEntry(entry);
+            b_htt_pts3_def->GetEntry(entry);
+            b_htt_caJet_pt->GetEntry(entry);
+            b_htt_caJet_eta->GetEntry(entry);
+            b_htt_caJet_phi->GetEntry(entry);
+            b_htt_caJet_m->GetEntry(entry);
+            b_caJet_count->GetEntry(entry);
+            b_htt_caGroomJet_pt_def->GetEntry(entry);
+            b_htt_caGroomJet_eta_def->GetEntry(entry);
+            b_htt_caGroomJet_phi_def->GetEntry(entry);
+            b_htt_caGroomJet_m_def->GetEntry(entry);
+        }
 
         if (ranSD) {
           b_rljet_SDw_calib->GetEntry(entry);
@@ -349,38 +369,40 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             b_rljet_SDt_dcut_UP->GetEntry(entry);
           }
 
-          b_htt_caGroomJet_pt_sjcalib1030->GetEntry(entry);
-          b_htt_caGroomJet_eta_sjcalib1030->GetEntry(entry);
-          b_htt_caGroomJet_phi_sjcalib1030->GetEntry(entry);
-          b_htt_caGroomJet_m_sjcalib1030->GetEntry(entry);
-          b_htt_caGroomJet_pt_sjcalib0970->GetEntry(entry);
-          b_htt_caGroomJet_eta_sjcalib0970->GetEntry(entry);
-          b_htt_caGroomJet_phi_sjcalib0970->GetEntry(entry);
-          b_htt_caGroomJet_m_sjcalib0970->GetEntry(entry);
-          b_htt_pt_sjcalib1030->GetEntry(entry);
-          b_htt_eta_sjcalib1030->GetEntry(entry);
-          b_htt_phi_sjcalib1030->GetEntry(entry);
-          b_htt_m_sjcalib1030->GetEntry(entry);
-          b_htt_m123_sjcalib1030->GetEntry(entry);
-          b_htt_m23m123_sjcalib1030->GetEntry(entry);
-          b_htt_atan1312_sjcalib1030->GetEntry(entry);
-          b_htt_nTagCands_sjcalib1030->GetEntry(entry);
-          b_htt_tag_sjcalib1030->GetEntry(entry);
-          b_htt_pts1_sjcalib1030->GetEntry(entry);
-          b_htt_pts2_sjcalib1030->GetEntry(entry);
-          b_htt_pts3_sjcalib1030->GetEntry(entry);
-          b_htt_pt_sjcalib0970->GetEntry(entry);
-          b_htt_eta_sjcalib0970->GetEntry(entry);
-          b_htt_phi_sjcalib0970->GetEntry(entry);
-          b_htt_m_sjcalib0970->GetEntry(entry);
-          b_htt_m123_sjcalib0970->GetEntry(entry);
-          b_htt_m23m123_sjcalib0970->GetEntry(entry);
-          b_htt_atan1312_sjcalib0970->GetEntry(entry);
-          b_htt_nTagCands_sjcalib0970->GetEntry(entry);
-          b_htt_tag_sjcalib0970->GetEntry(entry);
-          b_htt_pts1_sjcalib0970->GetEntry(entry);
-          b_htt_pts2_sjcalib0970->GetEntry(entry);
-          b_htt_pts3_sjcalib0970->GetEntry(entry);
+          if (ranHTT){
+              b_htt_caGroomJet_pt_sjcalib1030->GetEntry(entry);
+              b_htt_caGroomJet_eta_sjcalib1030->GetEntry(entry);
+              b_htt_caGroomJet_phi_sjcalib1030->GetEntry(entry);
+              b_htt_caGroomJet_m_sjcalib1030->GetEntry(entry);
+              b_htt_caGroomJet_pt_sjcalib0970->GetEntry(entry);
+              b_htt_caGroomJet_eta_sjcalib0970->GetEntry(entry);
+              b_htt_caGroomJet_phi_sjcalib0970->GetEntry(entry);
+              b_htt_caGroomJet_m_sjcalib0970->GetEntry(entry);
+              b_htt_pt_sjcalib1030->GetEntry(entry);
+              b_htt_eta_sjcalib1030->GetEntry(entry);
+              b_htt_phi_sjcalib1030->GetEntry(entry);
+              b_htt_m_sjcalib1030->GetEntry(entry);
+              b_htt_m123_sjcalib1030->GetEntry(entry);
+              b_htt_m23m123_sjcalib1030->GetEntry(entry);
+              b_htt_atan1312_sjcalib1030->GetEntry(entry);
+              b_htt_nTagCands_sjcalib1030->GetEntry(entry);
+              b_htt_tag_sjcalib1030->GetEntry(entry);
+              b_htt_pts1_sjcalib1030->GetEntry(entry);
+              b_htt_pts2_sjcalib1030->GetEntry(entry);
+              b_htt_pts3_sjcalib1030->GetEntry(entry);
+              b_htt_pt_sjcalib0970->GetEntry(entry);
+              b_htt_eta_sjcalib0970->GetEntry(entry);
+              b_htt_phi_sjcalib0970->GetEntry(entry);
+              b_htt_m_sjcalib0970->GetEntry(entry);
+              b_htt_m123_sjcalib0970->GetEntry(entry);
+              b_htt_m23m123_sjcalib0970->GetEntry(entry);
+              b_htt_atan1312_sjcalib0970->GetEntry(entry);
+              b_htt_nTagCands_sjcalib0970->GetEntry(entry);
+              b_htt_tag_sjcalib0970->GetEntry(entry);
+              b_htt_pts1_sjcalib0970->GetEntry(entry);
+              b_htt_pts2_sjcalib0970->GetEntry(entry);
+              b_htt_pts3_sjcalib0970->GetEntry(entry);
+          }
         }
     }
 
@@ -517,32 +539,35 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_Split23.at(i)->fill(rljet_Split23->at(i)/1000., weight);
         hp->h_rljet_Split23.at(i)->fill_tagged("combMgt100GeV", rljet_Split23->at(i)/1000., weight, rljet_m_comb->at(i) / 1000. > 100.);
 
-        // MVA Taggers
-        hp->h_rljet_topTag_BDT_qqb.at(i)->fill_tagged("mva",rljet_topTag_BDT_qqb->at(i), weight, true);
-        hp->h_rljet_topTag_BDT_qqb_score.at(i)->fill_tagged("mva",rljet_topTag_BDT_qqb_score->at(i), weight, true);
-        hp->h_rljet_wTag_BDT_qq.at(i)->fill_tagged("mva",rljet_wTag_BDT_qq->at(i), weight, true);
-        hp->h_rljet_wTag_BDT_qq_score.at(i)->fill_tagged("mva",rljet_wTag_BDT_qq_score->at(i), weight, true);
-        
-        hp->h_rljet_topTag_DNN_qqb_score.at(i)->fill_tagged("mva",rljet_topTag_DNN_qqb_score->at(i), weight, true);
-        hp->h_rljet_topTag_DNN_qqb.at(i)->fill_tagged("mva",rljet_topTag_DNN_qqb->at(i), weight, true);
-        hp->h_rljet_wTag_DNN_qq_score.at(i)->fill_tagged("mva",rljet_wTag_DNN_qq_score->at(i), weight, true);
-        hp->h_rljet_wTag_DNN_qq.at(i)->fill_tagged("mva",rljet_wTag_DNN_qq->at(i), weight, true);
+        if (ranMVA)
+        {
+            // MVA Taggers
+            hp->h_rljet_topTag_BDT_qqb.at(i)->fill_tagged("mva",rljet_topTag_BDT_qqb->at(i), weight, true);
+            hp->h_rljet_topTag_BDT_qqb_score.at(i)->fill_tagged("mva",rljet_topTag_BDT_qqb_score->at(i), weight, true);
+            hp->h_rljet_wTag_BDT_qq.at(i)->fill_tagged("mva",rljet_wTag_BDT_qq->at(i), weight, true);
+            hp->h_rljet_wTag_BDT_qq_score.at(i)->fill_tagged("mva",rljet_wTag_BDT_qq_score->at(i), weight, true);
+            
+            hp->h_rljet_topTag_DNN_qqb_score.at(i)->fill_tagged("mva",rljet_topTag_DNN_qqb_score->at(i), weight, true);
+            hp->h_rljet_topTag_DNN_qqb.at(i)->fill_tagged("mva",rljet_topTag_DNN_qqb->at(i), weight, true);
+            hp->h_rljet_wTag_DNN_qq_score.at(i)->fill_tagged("mva",rljet_wTag_DNN_qq_score->at(i), weight, true);
+            hp->h_rljet_wTag_DNN_qq.at(i)->fill_tagged("mva",rljet_wTag_DNN_qq->at(i), weight, true);
 
-        hp->h_rljet_topTag_TopoTagger_20wp.at(i)->fill_tagged("mva",rljet_topTag_TopoTagger_20wp->at(i), weight, true);
-        hp->h_rljet_topTag_TopoTagger_50wp.at(i)->fill_tagged("mva",rljet_topTag_TopoTagger_50wp->at(i), weight, true);
-        hp->h_rljet_topTag_TopoTagger_80wp.at(i)->fill_tagged("mva",rljet_topTag_TopoTagger_80wp->at(i), weight, true);
-        hp->h_rljet_topTag_TopoTagger_score.at(i)->fill_tagged("mva",rljet_topTag_TopoTagger_score->at(i), weight, true);
+            hp->h_rljet_topTag_TopoTagger_20wp.at(i)->fill_tagged("mva",rljet_topTag_TopoTagger_20wp->at(i), weight, true);
+            hp->h_rljet_topTag_TopoTagger_50wp.at(i)->fill_tagged("mva",rljet_topTag_TopoTagger_50wp->at(i), weight, true);
+            hp->h_rljet_topTag_TopoTagger_80wp.at(i)->fill_tagged("mva",rljet_topTag_TopoTagger_80wp->at(i), weight, true);
+            hp->h_rljet_topTag_TopoTagger_score.at(i)->fill_tagged("mva",rljet_topTag_TopoTagger_score->at(i), weight, true);
 
 
 
-        // Check if tagged
-        mva_tag_map["BDT_Top"] = rljet_topTag_BDT_qqb->at(i) == static_cast<int>(simpleTaggerPass::both);
-        mva_tag_map["BDT_W"]   = rljet_wTag_BDT_qq->at(i) == static_cast<int>(simpleTaggerPass::both);
-        mva_tag_map["DNN_Top"] = rljet_topTag_DNN_qqb->at(i) == static_cast<int>(simpleTaggerPass::both);
-        mva_tag_map["DNN_W"]   = rljet_wTag_DNN_qq->at(i) == static_cast<int>(simpleTaggerPass::both);
-        mva_tag_map["TopoTag_Top_20"]   = rljet_topTag_TopoTagger_20wp->at(i) == static_cast<int>(simpleTaggerPass::both);
-        mva_tag_map["TopoTag_Top_50"]   = rljet_topTag_TopoTagger_50wp->at(i) == static_cast<int>(simpleTaggerPass::both);
-        mva_tag_map["TopoTag_Top_80"]   = rljet_topTag_TopoTagger_80wp->at(i) == static_cast<int>(simpleTaggerPass::both);
+            // Check if tagged
+            mva_tag_map["BDT_Top"] = rljet_topTag_BDT_qqb->at(i) == static_cast<int>(simpleTaggerPass::both);
+            mva_tag_map["BDT_W"]   = rljet_wTag_BDT_qq->at(i) == static_cast<int>(simpleTaggerPass::both);
+            mva_tag_map["DNN_Top"] = rljet_topTag_DNN_qqb->at(i) == static_cast<int>(simpleTaggerPass::both);
+            mva_tag_map["DNN_W"]   = rljet_wTag_DNN_qq->at(i) == static_cast<int>(simpleTaggerPass::both);
+            mva_tag_map["TopoTag_Top_20"]   = rljet_topTag_TopoTagger_20wp->at(i) == static_cast<int>(simpleTaggerPass::both);
+            mva_tag_map["TopoTag_Top_50"]   = rljet_topTag_TopoTagger_50wp->at(i) == static_cast<int>(simpleTaggerPass::both);
+            mva_tag_map["TopoTag_Top_80"]   = rljet_topTag_TopoTagger_80wp->at(i) == static_cast<int>(simpleTaggerPass::both);
+        }
 
           if (rljet_topTag_TopoTagger_20wp->at(i) == 3 ||
           rljet_topTag_TopoTagger_50wp->at(i) == 3 ||
@@ -570,26 +595,26 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
 
 
+        if (ranMVA) {
+            // SMOOTHED SUBSTRUCTURE TAGGERS
+            smooth_tag_map["smooth16Top_Tau32Split23Tag50eff"] = rljet_smooth16Top_Tau32Split23Tag50eff->at(i) == 3;
+            smooth_tag_map["smooth16Top_Tau32Split23Tag80eff"] = rljet_smooth16Top_Tau32Split23Tag80eff->at(i) == 3;
+            smooth_tag_map["smooth16Top_QwTau32Tag50eff"] = rljet_smooth16Top_QwTau32Tag50eff->at(i) == 3;
+            smooth_tag_map["smooth16Top_QwTau32Tag80eff"] = rljet_smooth16Top_QwTau32Tag80eff->at(i) == 3;
+            smooth_tag_map["smooth16Top_MassTau32Tag50eff_JSSCut"] = rljet_smooth16Top_MassTau32Tag50eff->at(i) == 3 || rljet_smooth16Top_MassTau32Tag50eff->at(i) == 2;
+            smooth_tag_map["smooth16Top_MassTau32Tag50eff_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag50eff->at(i) == 3;
+            smooth_tag_map["smooth16Top_MassTau32Tag80eff_JSSCut"] = rljet_smooth16Top_MassTau32Tag80eff->at(i) == 3 || rljet_smooth16Top_MassTau32Tag80eff->at(i) == 2;
+            smooth_tag_map["smooth16Top_MassTau32Tag80eff_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag80eff->at(i) == 3;
 
-        // SMOOTHED SUBSTRUCTURE TAGGERS
-        smooth_tag_map["smooth16Top_Tau32Split23Tag50eff"] = rljet_smooth16Top_Tau32Split23Tag50eff->at(i) == 3;
-        smooth_tag_map["smooth16Top_Tau32Split23Tag80eff"] = rljet_smooth16Top_Tau32Split23Tag80eff->at(i) == 3;
-        smooth_tag_map["smooth16Top_QwTau32Tag50eff"] = rljet_smooth16Top_QwTau32Tag50eff->at(i) == 3;
-        smooth_tag_map["smooth16Top_QwTau32Tag80eff"] = rljet_smooth16Top_QwTau32Tag80eff->at(i) == 3;
-        smooth_tag_map["smooth16Top_MassTau32Tag50eff_JSSCut"] = rljet_smooth16Top_MassTau32Tag50eff->at(i) == 3 || rljet_smooth16Top_MassTau32Tag50eff->at(i) == 2;
-        smooth_tag_map["smooth16Top_MassTau32Tag50eff_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag50eff->at(i) == 3;
-        smooth_tag_map["smooth16Top_MassTau32Tag80eff_JSSCut"] = rljet_smooth16Top_MassTau32Tag80eff->at(i) == 3 || rljet_smooth16Top_MassTau32Tag80eff->at(i) == 2;
-        smooth_tag_map["smooth16Top_MassTau32Tag80eff_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag80eff->at(i) == 3;
-
-        smooth_tag_map["smooth16WTag_50eff_JSSCut"] = rljet_smooth16WTag_50eff->at(i) == 1 || rljet_smooth16WTag_50eff->at(i) == 16 || rljet_smooth16WTag_50eff->at(i) == 4;
-        smooth_tag_map["smooth16WTag_50eff_MassJSSCut"] = rljet_smooth16WTag_50eff->at(i) == 1;
-        smooth_tag_map["smooth16WTag_80eff_JSSCut"] = rljet_smooth16WTag_80eff->at(i) == 1 || rljet_smooth16WTag_80eff->at(i) == 16 || rljet_smooth16WTag_80eff->at(i) == 4;
-        smooth_tag_map["smooth16WTag_80eff_MassJSSCut"] = rljet_smooth16WTag_80eff->at(i) == 1;
-        smooth_tag_map["smooth16ZTag_50eff_JSSCut"] = rljet_smooth16ZTag_50eff->at(i) == 1 || rljet_smooth16ZTag_50eff->at(i) == 16 || rljet_smooth16ZTag_50eff->at(i) == 4;
-        smooth_tag_map["smooth16ZTag_50eff_MassJSSCut"] = rljet_smooth16ZTag_50eff->at(i) == 1;
-        smooth_tag_map["smooth16ZTag_80eff_JSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 1 || rljet_smooth16ZTag_80eff->at(i) == 16 || rljet_smooth16ZTag_80eff->at(i) == 4;
-        smooth_tag_map["smooth16ZTag_80eff_MassJSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 1;
-
+            smooth_tag_map["smooth16WTag_50eff_JSSCut"] = rljet_smooth16WTag_50eff->at(i) == 1 || rljet_smooth16WTag_50eff->at(i) == 16 || rljet_smooth16WTag_50eff->at(i) == 4;
+            smooth_tag_map["smooth16WTag_50eff_MassJSSCut"] = rljet_smooth16WTag_50eff->at(i) == 1;
+            smooth_tag_map["smooth16WTag_80eff_JSSCut"] = rljet_smooth16WTag_80eff->at(i) == 1 || rljet_smooth16WTag_80eff->at(i) == 16 || rljet_smooth16WTag_80eff->at(i) == 4;
+            smooth_tag_map["smooth16WTag_80eff_MassJSSCut"] = rljet_smooth16WTag_80eff->at(i) == 1;
+            smooth_tag_map["smooth16ZTag_50eff_JSSCut"] = rljet_smooth16ZTag_50eff->at(i) == 1 || rljet_smooth16ZTag_50eff->at(i) == 16 || rljet_smooth16ZTag_50eff->at(i) == 4;
+            smooth_tag_map["smooth16ZTag_50eff_MassJSSCut"] = rljet_smooth16ZTag_50eff->at(i) == 1;
+            smooth_tag_map["smooth16ZTag_80eff_JSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 1 || rljet_smooth16ZTag_80eff->at(i) == 16 || rljet_smooth16ZTag_80eff->at(i) == 4;
+            smooth_tag_map["smooth16ZTag_80eff_MassJSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 1;
+        }
         // smooth_tag_map["smooth16WTag_50eff_nocontain_JSSCut"] = rljet_smooth16WTag_50eff_nocontain->at(i) == 1 || rljet_smooth16WTag_50eff_nocontain->at(i) == 16 || rljet_smooth16WTag_50eff_nocontain->at(i) == 4;
         // smooth_tag_map["smooth16WTag_50eff_nocontain_MassJSSCut"] = rljet_smooth16WTag_50eff_nocontain->at(i) == 1;
         // smooth_tag_map["smooth16WTag_80eff_nocontain_JSSCut"] = rljet_smooth16WTag_80eff_nocontain->at(i) == 1 || rljet_smooth16WTag_80eff_nocontain->at(i) == 16 || rljet_smooth16WTag_80eff_nocontain->at(i) == 4;
@@ -640,6 +665,20 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     /*******************/
 
     for (UInt_t i = 0; i < n_rljets_recorded; i++) {
+        /*******************/
+        /* NCLUSTERS STUDY */
+        /*******************/
+        hp->h_rljet_fractional_pt_0.at(i)->fill(rljet_fractional_pt_0->at(i), weight);
+        hp->h_rljet_fractional_pt_1.at(i)->fill(rljet_fractional_pt_1->at(i), weight);
+        hp->h_rljet_fractional_pt_2.at(i)->fill(rljet_fractional_pt_2->at(i), weight);
+        hp->h_rljet_fractional_pt_3.at(i)->fill(rljet_fractional_pt_3->at(i), weight);
+        hp->h_rljet_fractional_pt_4.at(i)->fill(rljet_fractional_pt_4->at(i), weight);
+        hp->h_rljet_fractional_pt_5.at(i)->fill(rljet_fractional_pt_5->at(i), weight);
+        hp->h_rljet_fractional_pt_6.at(i)->fill(rljet_fractional_pt_6->at(i), weight);
+        hp->h_rljet_fractional_pt_7.at(i)->fill(rljet_fractional_pt_7->at(i), weight);
+        hp->h_rljet_fractional_pt_8.at(i)->fill(rljet_fractional_pt_8->at(i), weight);
+        hp->h_rljet_fractional_pt_9.at(i)->fill(rljet_fractional_pt_9->at(i), weight);
+
         hp->h_rljet_pt_calo.at(i)->fill(rljet_pt_calo->at(i)/1000., weight);
         hp->h_rljet_m_calo.at(i)->fill(rljet_m_calo->at(i)/1000., weight);
         hp->h_rljet_pt_ta.at(i)->fill(rljet_pt_ta->at(i)/1000., weight);
@@ -878,19 +917,21 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     /**************************/
     /* C/A 15 JETS (FROM HTT) */
     /**************************/
-
-    UInt_t n_cajets_recorded = htt_caJet_pt->size();
+    UInt_t n_cajets_recorded = 0;
     std::vector<UInt_t> ca_jet_indicies;
+    if (ranHTT){
+        n_cajets_recorded = htt_caJet_pt->size();
 
-    if (keptPhotons) {
-      Float_t tmp_phi = default_photon_vars ? ph_phi->at(0) : photon0_phi;
-      for (UInt_t ijet = 0; ijet < n_cajets_recorded; ijet++) {
-        if ( fabs(htt_caJet_phi->at(ijet) - tmp_phi) > M_PI / 2 )
-          ca_jet_indicies.push_back(ijet);
-      }
-    } else {
-      for (UInt_t i = 0; i < n_cajets_recorded; i++)
-        ca_jet_indicies.push_back(i);
+        if (keptPhotons) {
+          Float_t tmp_phi = default_photon_vars ? ph_phi->at(0) : photon0_phi;
+          for (UInt_t ijet = 0; ijet < n_cajets_recorded; ijet++) {
+            if ( fabs(htt_caJet_phi->at(ijet) - tmp_phi) > M_PI / 2 )
+              ca_jet_indicies.push_back(ijet);
+          }
+        } else {
+          for (UInt_t i = 0; i < n_cajets_recorded; i++)
+            ca_jet_indicies.push_back(i);
+        }
     }
 
     if (n_cajets_recorded > 0) {
@@ -969,6 +1010,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
                 hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("HTT_CAND_sjcalib1030", htt_caGroomJet_pt_sjcalib1030->at(ijet) / 1000. , weight, is_htt_tagged_sjcalib1030);
                 hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND_sjcalib1030", htt_caGroomJet_m_sjcalib1030->at(ijet) / 1000.  , weight, is_htt_tagged_sjcalib1030);
             }
+        
         }
     }
 

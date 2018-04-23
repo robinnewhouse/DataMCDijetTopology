@@ -25,7 +25,7 @@ LOADER_SMOOTH = LOADER
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"
 DO_SYSTEMATICS_DEFAULT = False
 
-OUTPUT_DIR = ROOT_OUTPUT_DIR + "/BOOST2017"
+OUTPUT_DIR = ROOT_OUTPUT_DIR + "/BOOST2018"
 make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
 
@@ -535,6 +535,42 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "DNN_W",
         rebin = MASS_PLOT_REBIN,
         ))
 
+data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "TopoTag_Top_20",
+        empty_scale = 2.0,
+        flip_legend = True,
+        extra_legend_lines = DEF_LINES + ["Topocluster Top-tagged 50wp"],
+        x_min = 0,
+        x_max = 350,
+        ttbar_sf = 25,
+        wzjets_sf = 5,
+        do_systematics = False,
+        rebin = MASS_PLOT_REBIN,
+        ))
+
+data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "TopoTag_Top_50",
+        empty_scale = 2.0,
+        flip_legend = True,
+        extra_legend_lines = DEF_LINES + ["Topocluster Top-tagged 50wp"],
+        x_min = 0,
+        x_max = 350,
+        ttbar_sf = 25,
+        wzjets_sf = 5,
+        do_systematics = False,
+        rebin = MASS_PLOT_REBIN,
+        ))
+
+data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "TopoTag_Top_80",
+        empty_scale = 2.0,
+        flip_legend = True,
+        extra_legend_lines = DEF_LINES + ["Topocluster Top-tagged 80wp"],
+        x_min = 0,
+        x_max = 350,
+        ttbar_sf = 25,
+        wzjets_sf = 5,
+        do_systematics = False,
+        rebin = MASS_PLOT_REBIN,
+        ))
+
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "SDt_dcut",
         empty_scale = 2.0,
         extra_legend_lines = DEF_LINES + ["ShD Top-tagged"],
@@ -570,47 +606,49 @@ data_mc_plots.append(PlotDataPythiaHerwig("h_rljet0_m_comb",
             rebin = MASS_PLOT_REBIN,
             ))
 
-data_mc_plots.append(PlotDataPythiaHerwig("h_rljet0_Split23__combMgt100GeV",
-            empty_scale = 4,
-            extra_legend_lines = DEF_LINES + ["m^{comb} > 100 GeV"],
-            log_scale = True,
-            x_max = 200,
-	          y_min = 1e1 + 0.1,
-	          ttbar_sf = 25,
-            rebin = 4,
-            ))
+# data_mc_plots.append(PlotDataPythiaHerwig("h_rljet0_Split23__combMgt100GeV",
+#             empty_scale = 4,
+#             extra_legend_lines = DEF_LINES + ["m^{comb} > 100 GeV"],
+#             log_scale = True,
+#             x_max = 200,
+# 	          y_min = 1e1 + 0.1,
+# 	          ttbar_sf = 25,
+#             rebin = 4,
+#             ))
 
-data_mc_plots.append(PlotDataPythiaHerwig("h_rljet0_D2__combMgt50GeV",
-            empty_scale = 2.0,
-            extra_legend_lines = DEF_LINES + ["m^{comb} > 50 GeV"],
-            x_units = "",
-            rebin = 4,
-            x_max = 4.0,
-            y_min = 0.01,
-            ))
+# data_mc_plots.append(PlotDataPythiaHerwig("h_rljet0_D2__combMgt50GeV",
+#             empty_scale = 2.0,
+#             extra_legend_lines = DEF_LINES + ["m^{comb} > 50 GeV"],
+#             x_units = "",
+#             rebin = 4,
+#             x_max = 4.0,
+#             y_min = 0.01,
+#             ))
 
-for masstag in ["", "combMgt100GeV", "combMlt100GeV", "combMgt180GeV", "combMgt100lt150GeV", "combMgt150lt180GeV"]:
-  data_mc_plots.append(PlotDataPythiaHerwig(
-              "h_rljet0_Tau32_wta" if not masstag else "h_rljet0_Tau32_wta__" + masstag,
-              empty_scale = 2.0,
-              flip_legend = True,
-              extra_legend_lines = DEF_LINES,
-              x_units = "",
-              x_min = 0.01,
-              x_max = 0.9,
-              y_min = 0.01,
-              rebin = 4
-              ))
+if DO_SYSTEMATICS_DEFAULT:
+    # for masstag in ["", "combMgt100GeV", "combMlt100GeV", "combMgt180GeV", "combMgt100lt150GeV", "combMgt150lt180GeV"]:
+    for masstag in [""]:
+      data_mc_plots.append(PlotDataPythiaHerwig(
+                  "h_rljet0_Tau32_wta" if not masstag else "h_rljet0_Tau32_wta__" + masstag,
+                  empty_scale = 2.0,
+                  flip_legend = True,
+                  extra_legend_lines = DEF_LINES,
+                  x_units = "",
+                  x_min = 0.01,
+                  x_max = 0.9,
+                  y_min = 0.01,
+                  rebin = 4
+                  ))
 
-data_mc_plots.append(PlotDataPythiaHerwig("h_rljet0_Qw__combMgt100GeV",
-            extra_legend_lines = DEF_LINES + ["m^{comb} > 100 GeV"],
-            log_scale = True,
-            x_max = 200,
-	          y_min = 1e1 + 0.1,
-            rebin = 2,
-            empty_scale = 4,
-	          ttbar_sf = 25
-            ))
+    data_mc_plots.append(PlotDataPythiaHerwig("h_rljet0_Qw__combMgt100GeV",
+                extra_legend_lines = DEF_LINES + ["m^{comb} > 100 GeV"],
+                log_scale = True,
+                x_max = 200,
+    	          y_min = 1e1 + 0.1,
+                rebin = 2,
+                empty_scale = 4,
+    	          ttbar_sf = 25
+                ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_htt0_atan1312",
         empty_scale = 1.9,
@@ -693,7 +731,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_pt_comb",
         rebin = 10,
         ))
 
-data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_BDT_score_top",
+data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_topTag_BDT_qqb_score_mva",
         empty_scale = 3,
         x_units = "",
         extra_legend_lines = DEF_LINES + ["m^{comb} > 40 GeV"],
@@ -705,7 +743,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_BDT_score_top",
         do_systematics = False
         ))
 
-data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_DNN_score_top",
+data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_topTag_DNN_qqb_score_mva",
         empty_scale = 3,
         extra_legend_lines = DEF_LINES + ["m^{comb} > 40 GeV"],
         x_units = "",
@@ -717,7 +755,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_DNN_score_top",
         do_systematics = False
         ))
 
-data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_BDT_score_w",
+data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_wTag_BDT_qq_score_mva",
         empty_scale = 3,
         extra_legend_lines = DEF_LINES + ["m^{comb} > 40 GeV"],
         x_units = "",
@@ -729,7 +767,19 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_BDT_score_w",
         do_systematics = False
         ))
 
-data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_DNN_score_w",
+data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_wTag_DNN_qq_score_mva",
+        empty_scale = 3,
+        extra_legend_lines = DEF_LINES + ["m^{comb} > 40 GeV"],
+        x_units = "",
+        y_min = 1e2,
+        ttbar_sf = 20,
+        wzjets_sf = 10,
+        log_scale = True,
+        rebin = 4,
+        do_systematics = False
+        ))
+
+data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_topTag_TopoTagger_score_mva",
         empty_scale = 3,
         extra_legend_lines = DEF_LINES + ["m^{comb} > 40 GeV"],
         x_units = "",

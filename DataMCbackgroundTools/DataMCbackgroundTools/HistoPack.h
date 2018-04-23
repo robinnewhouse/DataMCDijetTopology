@@ -18,6 +18,16 @@ public:
     HistoPack(unsigned num_fatjets_keep);
 
     virtual ~HistoPack(void) { };
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_0;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_1;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_2;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_3;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_4;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_5;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_6;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_7;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_8;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_9;
 
     vector<unique_ptr<TH1Tagged>> h_rljet_pt_comb;
     vector<unique_ptr<TH1Tagged>> h_rljet_m_comb;

@@ -1,0 +1,5 @@
+# Added manually from AMI
+# sherpa_gammajet
+361060 1000 2.5192E-6 0.41818 Sherpa 
+361061 800 2.5048E-6 0.41796 Sherpa 
+361062 1000 2.5733E-6 0.14831 Sherpa 
