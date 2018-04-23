@@ -294,7 +294,9 @@ void HistoPack::WriteCommonHistograms() const
     for (auto const &h : h_rljet_topTag_TopoTagger_20wp) h->write_all();
     for (auto const &h : h_rljet_topTag_TopoTagger_50wp) h->write_all();
     for (auto const &h : h_rljet_topTag_TopoTagger_80wp) h->write_all();
-    for (auto const &h : h_rljet_topTag_TopoTagger_score) h->write_all();}
+    for (auto const &h : h_rljet_topTag_TopoTagger_score) h->write_all();
+    h_mu->write_all();
+}
 
 void HistoPack::WriteNominalOnlyHistograms() const
 {
@@ -327,7 +329,6 @@ void HistoPack::WriteNominalOnlyHistograms() const
     h_ptcone40_over_pt->write_all();
     h_ptcone20_over_pt->write_all();
 
-    h_mu->write_all();
     h_NPV->write_all();
 
     for (auto const &h : h_rljet_RES_m) h->write_all();

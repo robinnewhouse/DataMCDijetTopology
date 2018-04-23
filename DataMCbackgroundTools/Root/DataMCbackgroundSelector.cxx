@@ -636,6 +636,13 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_rljet_pt_comb.at(i)->fill_tagged(itag.first, rljet_pt_comb->at(i)/1000., weight, itag.second);
         }
     }
+    for (const auto& itag : smooth_tag_map) {
+        if(this->operating_on_mc) {
+            hp->h_mu->fill_tagged(itag.first, mu, weight, itag.second);
+        } else {
+            hp->h_mu->fill_tagged(itag.first, mu * 1./1.09, weight, itag.second);
+        }
+    }
 
     /*********************************************************/
     /* BELOW HERE, ONLY SAVING VARIABLES FROM NOMINAL BRANCH */
