@@ -48,7 +48,7 @@ with open('job.sh', 'w') as fout:
       write_cmd(job_cmd)
       #write_cmd("xrdcp -r *.cp.root* root://eosatlas.cern.ch/" + os.path.dirname(args.output_file) + "/")
       write_cmd("cp *.cp.root* " + os.path.dirname(args.output_file) + "/")
-      write_cmd("rm -rf *.root")
+      write_cmd("rm -rf *.root*")
       # write_cmd("cd " + WORKAREA)
       # write_cmd("rm *.root.log")
       fout.close()
