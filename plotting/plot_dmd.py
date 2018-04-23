@@ -84,7 +84,7 @@ class DijetLoader(PlotLoader):
 
         return systematics
 
-    def get_normalized_dijet(self, generator, hist_name, branch = "nominal", sig_sf = 1.0, normalize_to_pretagged = False):
+    def get_normalized_dijet(self, generator, hist_name, branch = "nominal", sig_sf = 1.0, normalize_to_pretagged = False, normalize_to_unity = False):
 
         if ("pythia" in generator):
             generator = "pythia_dijet"
@@ -98,7 +98,9 @@ class DijetLoader(PlotLoader):
         h_dijet = self.get_hist([generator, branch], hist_name)
         h_dijet_nominal = self.get_hist([generator, "nominal"], hist_name)
 
-        if (normalize_to_pretagged and is_tagged(hist_name, "h_rljet0_m_comb")):
+        if (normalize_to_unity):
+          dijet_sf = h_dijet_nominal.Integral();
+        elif (normalize_to_pretagged and is_tagged(hist_name, "h_rljet0_m_comb")):
           h_sigsub_data = self.get_sigsub_data("h_rljet0_m_comb", sig_sf)
           h_dijet_untagged = self.get_hist([generator, "nominal"], "h_rljet0_m_comb")
           dijet_sf = h_sigsub_data.Integral() / h_dijet_untagged.Integral()
