@@ -99,7 +99,8 @@ class DijetLoader(PlotLoader):
         h_dijet_nominal = self.get_hist([generator, "nominal"], hist_name)
 
         if (normalize_to_unity):
-          dijet_sf = h_dijet_nominal.Integral();
+          dijet_sf = 1/h_dijet_nominal.Integral();
+          # print(h_dijet_nominal.Integral())
         elif (normalize_to_pretagged and is_tagged(hist_name, "h_rljet0_m_comb")):
           h_sigsub_data = self.get_sigsub_data("h_rljet0_m_comb", sig_sf)
           h_dijet_untagged = self.get_hist([generator, "nominal"], "h_rljet0_m_comb")
@@ -121,7 +122,6 @@ class DijetLoader(PlotLoader):
           dijet_sf = h_sigsub_data.Integral() / h_dijet_nominal.Integral()
 
         h_dijet.Scale(dijet_sf)
-
         if ("pythia" in generator):
           set_mc_style_line(h_dijet, self.PYTHIA_COLOR, line_width = 3)
         elif ("herwig" in generator):

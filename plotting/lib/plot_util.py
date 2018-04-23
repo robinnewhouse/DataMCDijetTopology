@@ -1,4 +1,4 @@
-from ROOT import kGreen, kBlack, kRed, kBlue, gStyle, gROOT, TGaxis
+from ROOT import kGreen, kBlack, kRed, kBlue, kWhite, kMagenta, kViolet, gStyle, gROOT, TGaxis
 # from math import *
 import array as arr
 import os
