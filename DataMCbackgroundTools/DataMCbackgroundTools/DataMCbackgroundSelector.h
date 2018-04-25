@@ -85,6 +85,7 @@ class DataMCbackgroundSelector : public TSelector {
         bool ranSD;
         bool ranMVA;
         bool ranHTT;
+        bool topoPlot;
   
         // // BDT's for top and W tagging -- contained top/W def
         // unique_ptr<BDTWTopTagger> BDT_topTag;
@@ -778,6 +779,7 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     ranMVA = false;
     ranHTT = false;
     keptPhotons = false;
+    topoPlot = false;
     auto array = fChain->GetListOfBranches();
     for(int i = 0; i < array->GetEntries(); ++i) {
       if (std::string(array->At(i)->GetName()).find("photon") != std::string::npos) {
@@ -791,6 +793,9 @@ void DataMCbackgroundSelector::Init(TTree *tree)
       }
       if (std::string(array->At(i)->GetName()).find("HTT") != std::string::npos) {
         ranHTT = true;
+      }
+      if (std::string(array->At(i)->GetName()).find("fractional_pt") != std::string::npos) {
+        topoPlot = true;
       }
     }
 
@@ -902,16 +907,18 @@ void DataMCbackgroundSelector::Init(TTree *tree)
           // fChain->SetBranchAddress("photon0_topoetcone40", &photon_topoetcone40, &b_photon_topoetcone40);
         }
 
-        fChain->SetBranchAddress("rljet_fractional_pt_0", &rljet_fractional_pt_0, &b_rljet_fractional_pt_0);
-        fChain->SetBranchAddress("rljet_fractional_pt_1", &rljet_fractional_pt_1, &b_rljet_fractional_pt_1);
-        fChain->SetBranchAddress("rljet_fractional_pt_2", &rljet_fractional_pt_2, &b_rljet_fractional_pt_2);
-        fChain->SetBranchAddress("rljet_fractional_pt_3", &rljet_fractional_pt_3, &b_rljet_fractional_pt_3);
-        fChain->SetBranchAddress("rljet_fractional_pt_4", &rljet_fractional_pt_4, &b_rljet_fractional_pt_4);
-        fChain->SetBranchAddress("rljet_fractional_pt_5", &rljet_fractional_pt_5, &b_rljet_fractional_pt_5);
-        fChain->SetBranchAddress("rljet_fractional_pt_6", &rljet_fractional_pt_6, &b_rljet_fractional_pt_6);
-        fChain->SetBranchAddress("rljet_fractional_pt_7", &rljet_fractional_pt_7, &b_rljet_fractional_pt_7);
-        fChain->SetBranchAddress("rljet_fractional_pt_8", &rljet_fractional_pt_8, &b_rljet_fractional_pt_8);
-        fChain->SetBranchAddress("rljet_fractional_pt_9", &rljet_fractional_pt_9, &b_rljet_fractional_pt_9);
+        if (topoPlot){
+            fChain->SetBranchAddress("rljet_fractional_pt_0", &rljet_fractional_pt_0, &b_rljet_fractional_pt_0);
+            fChain->SetBranchAddress("rljet_fractional_pt_1", &rljet_fractional_pt_1, &b_rljet_fractional_pt_1);
+            fChain->SetBranchAddress("rljet_fractional_pt_2", &rljet_fractional_pt_2, &b_rljet_fractional_pt_2);
+            fChain->SetBranchAddress("rljet_fractional_pt_3", &rljet_fractional_pt_3, &b_rljet_fractional_pt_3);
+            fChain->SetBranchAddress("rljet_fractional_pt_4", &rljet_fractional_pt_4, &b_rljet_fractional_pt_4);
+            fChain->SetBranchAddress("rljet_fractional_pt_5", &rljet_fractional_pt_5, &b_rljet_fractional_pt_5);
+            fChain->SetBranchAddress("rljet_fractional_pt_6", &rljet_fractional_pt_6, &b_rljet_fractional_pt_6);
+            fChain->SetBranchAddress("rljet_fractional_pt_7", &rljet_fractional_pt_7, &b_rljet_fractional_pt_7);
+            fChain->SetBranchAddress("rljet_fractional_pt_8", &rljet_fractional_pt_8, &b_rljet_fractional_pt_8);
+            fChain->SetBranchAddress("rljet_fractional_pt_9", &rljet_fractional_pt_9, &b_rljet_fractional_pt_9);
+        }  
 
         fChain->SetBranchAddress("rljet_count", &rljet_count, &b_rljet_count);
         fChain->SetBranchAddress("rljet_mjj", &rljet_mjj, &b_rljet_mjj);

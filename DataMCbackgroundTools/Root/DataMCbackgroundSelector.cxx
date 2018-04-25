@@ -260,16 +260,18 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
           }
         }
 
-        b_rljet_fractional_pt_0->GetEntry(entry);
-        b_rljet_fractional_pt_1->GetEntry(entry);
-        b_rljet_fractional_pt_2->GetEntry(entry);
-        b_rljet_fractional_pt_3->GetEntry(entry);
-        b_rljet_fractional_pt_4->GetEntry(entry);
-        b_rljet_fractional_pt_5->GetEntry(entry);
-        b_rljet_fractional_pt_6->GetEntry(entry);
-        b_rljet_fractional_pt_7->GetEntry(entry);
-        b_rljet_fractional_pt_8->GetEntry(entry);
-        b_rljet_fractional_pt_9->GetEntry(entry);
+        if(topoPlot){
+            b_rljet_fractional_pt_0->GetEntry(entry);
+            b_rljet_fractional_pt_1->GetEntry(entry);
+            b_rljet_fractional_pt_2->GetEntry(entry);
+            b_rljet_fractional_pt_3->GetEntry(entry);
+            b_rljet_fractional_pt_4->GetEntry(entry);
+            b_rljet_fractional_pt_5->GetEntry(entry);
+            b_rljet_fractional_pt_6->GetEntry(entry);
+            b_rljet_fractional_pt_7->GetEntry(entry);
+            b_rljet_fractional_pt_8->GetEntry(entry);
+            b_rljet_fractional_pt_9->GetEntry(entry);
+        }
 
         b_rljet_count->GetEntry(entry);
         b_rljet_mjj->GetEntry(entry);
@@ -675,17 +677,19 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         /*******************/
         /* NCLUSTERS STUDY */
         /*******************/
-        hp->h_rljet_fractional_pt_0.at(i)->fill(rljet_fractional_pt_0->at(i), weight);
-        hp->h_rljet_fractional_pt_1.at(i)->fill(rljet_fractional_pt_1->at(i), weight);
-        hp->h_rljet_fractional_pt_2.at(i)->fill(rljet_fractional_pt_2->at(i), weight);
-        hp->h_rljet_fractional_pt_3.at(i)->fill(rljet_fractional_pt_3->at(i), weight);
-        hp->h_rljet_fractional_pt_4.at(i)->fill(rljet_fractional_pt_4->at(i), weight);
-        hp->h_rljet_fractional_pt_5.at(i)->fill(rljet_fractional_pt_5->at(i), weight);
-        hp->h_rljet_fractional_pt_6.at(i)->fill(rljet_fractional_pt_6->at(i), weight);
-        hp->h_rljet_fractional_pt_7.at(i)->fill(rljet_fractional_pt_7->at(i), weight);
-        hp->h_rljet_fractional_pt_8.at(i)->fill(rljet_fractional_pt_8->at(i), weight);
-        hp->h_rljet_fractional_pt_9.at(i)->fill(rljet_fractional_pt_9->at(i), weight);
-
+        if(topoPlot){
+            hp->h_rljet_fractional_pt_0.at(i)->fill(rljet_fractional_pt_0->at(i), weight);
+            hp->h_rljet_fractional_pt_1.at(i)->fill(rljet_fractional_pt_1->at(i), weight);
+            hp->h_rljet_fractional_pt_2.at(i)->fill(rljet_fractional_pt_2->at(i), weight);
+            hp->h_rljet_fractional_pt_3.at(i)->fill(rljet_fractional_pt_3->at(i), weight);
+            hp->h_rljet_fractional_pt_4.at(i)->fill(rljet_fractional_pt_4->at(i), weight);
+            hp->h_rljet_fractional_pt_5.at(i)->fill(rljet_fractional_pt_5->at(i), weight);
+            hp->h_rljet_fractional_pt_6.at(i)->fill(rljet_fractional_pt_6->at(i), weight);
+            hp->h_rljet_fractional_pt_7.at(i)->fill(rljet_fractional_pt_7->at(i), weight);
+            hp->h_rljet_fractional_pt_8.at(i)->fill(rljet_fractional_pt_8->at(i), weight);
+            hp->h_rljet_fractional_pt_9.at(i)->fill(rljet_fractional_pt_9->at(i), weight);
+        }
+        
         hp->h_rljet_pt_calo.at(i)->fill(rljet_pt_calo->at(i)/1000., weight);
         hp->h_rljet_m_calo.at(i)->fill(rljet_m_calo->at(i)/1000., weight);
         hp->h_rljet_pt_ta.at(i)->fill(rljet_pt_ta->at(i)/1000., weight);
@@ -726,7 +730,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         const float Tau21_wta = fabs(Tau1_wta) > 1.e-6 ? Tau2_wta / Tau1_wta : -1000.;
         hp->h_rljet_Tau21_wta.at(i)->fill(Tau21_wta, weight);
 
-        const float Tau32_wta = fabs(Tau2_wta) > 1.e-6 ? Tau3_wta / Tau2_wta : -1000.;
+        // const float Tau32_wta = fabs(Tau2_wta) > 1.e-6 ? Tau3_wta / Tau2_wta : -1000.;
 
         const float C2 = fabs(ECF2) > 1.e-6 ? ECF3 * ECF1 / TMath::Power(ECF2, 2) : -1000.;
         hp->h_rljet_C2.at(i)->fill(C2, weight);
