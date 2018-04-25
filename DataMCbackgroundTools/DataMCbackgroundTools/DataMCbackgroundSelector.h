@@ -786,7 +786,7 @@ void DataMCbackgroundSelector::Init(TTree *tree)
       if (std::string(array->At(i)->GetName()).find("SD") != std::string::npos) {
         ranSD = true;
       }
-      if (std::string(array->At(i)->GetName()).find("MVA") != std::string::npos) {
+      if (std::string(array->At(i)->GetName()).find("DNN") != std::string::npos) {
         ranMVA = true;
       }
       if (std::string(array->At(i)->GetName()).find("HTT") != std::string::npos) {
