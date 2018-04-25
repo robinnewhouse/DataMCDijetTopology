@@ -219,85 +219,101 @@ class PlotTopoclusters(PlotBase):
         # self.h_data.Draw("PE,same")
 
         # self.pad1.RedrawAxis()
+        cluster_plot = True
+        if (cluster_plot):
+            self.canvas.cd()
+            colors = [kGreen - 2, kBlue, kBlue - 5, 1,1,1,1,1,1, kRed +1 ]
+            print(kWhite)
+            for i in [0,1,2,9]:
+                h = self.h_topo_pt[i]
+                h.GetYaxis().SetTitle("Normalized Units")
+                h.GetXaxis().SetTitle("pT Fraction of Cluster")
 
-        # self.canvas.cd()
-        # colors = [kGreen - 2, kBlue, kBlue - 5, 1,1,1,1,1,1, kRed +1 ]
-        # print(kWhite)
-        # for i in [0,1,2,9]:
-        #     h = self.h_topo_pt[i]
-        #     h.GetYaxis().SetTitle("Normalized Units")
-        #     h.GetXaxis().SetTitle("pT Fraction of Cluster")
+                self.leg.AddEntry(self.h_topo_pt[i], "Cluster " +str(i))
+                h.SetMaximum(0.16)
+                set_mc_style_line(h, colors[i], line_width = 4)
+                h.Draw("hist,same")
+            # self.leg.AddEntry(self.h_pythia_dijet, "Pythia8 dijet (#times " + '{0:.2f}'.format(self.pythia_dijet_SF) + ")", "f")
+            # self.leg.AddEntry(self.h_herwig_dijet, "Herwig++ dijet (#times " + '{0:.2f}'.format(self.herwig_dijet_SF) + ")", "f")
+            # self.leg.AddEntry(h_wjets_mag, "W+jets", "f")
+            # self.leg.AddEntry(h_zjets_mag, "Z+jets", "f")
+            # self.leg.AddEntry(h_ttbar_mag, "all-had t#bar{t}", "f")
+            # self.leg.AddEntry(self.h_pythia_stat_ratio, "Stat. uncert.", "f")
+            # if (self.hsys_pythia.num_systematics != 0):
+            #     self.leg.AddEntry(self.h_pythia_sys_ratio, "Stat. #oplus syst. uncert.", "f")
+            # self.leg.Draw()
 
-        #     self.leg.AddEntry(self.h_topo_pt[i], "Cluster " +str(i))
-        #     h.SetMaximum(0.16)
-        #     set_mc_style_line(h, colors[i], line_width = 4)
-        #     h.Draw("hist,same")
-        # # self.leg.AddEntry(self.h_pythia_dijet, "Pythia8 dijet (#times " + '{0:.2f}'.format(self.pythia_dijet_SF) + ")", "f")
-        # # self.leg.AddEntry(self.h_herwig_dijet, "Herwig++ dijet (#times " + '{0:.2f}'.format(self.herwig_dijet_SF) + ")", "f")
-        # # self.leg.AddEntry(h_wjets_mag, "W+jets", "f")
-        # # self.leg.AddEntry(h_zjets_mag, "Z+jets", "f")
-        # # self.leg.AddEntry(h_ttbar_mag, "all-had t#bar{t}", "f")
-        # # self.leg.AddEntry(self.h_pythia_stat_ratio, "Stat. uncert.", "f")
-        # # if (self.hsys_pythia.num_systematics != 0):
-        # #     self.leg.AddEntry(self.h_pythia_sys_ratio, "Stat. #oplus syst. uncert.", "f")
-        # # self.leg.Draw()
+            # self.pad2.cd()
 
-        # # self.pad2.cd()
+            # if (self.hsys_pythia.num_systematics != 0):
+            #     self.h_pythia_sys_ratio.Draw("E2,same")
+            # self.h_pythia_stat_ratio.Draw("E2,same")
+            # self.h_herwig_dijet_ratio.Draw("hist,same")
+            # self.pad2.RedrawAxis("g")
 
-        # # if (self.hsys_pythia.num_systematics != 0):
-        # #     self.h_pythia_sys_ratio.Draw("E2,same")
-        # # self.h_pythia_stat_ratio.Draw("E2,same")
-        # # self.h_herwig_dijet_ratio.Draw("hist,same")
-        # # self.pad2.RedrawAxis("g")
+            # self.pad1.RedrawAxis()
+            self.name = "topocluster_plots"
+            self.canvas.Update()
+            self.canvas.Modified()
+            self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
+            self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
 
-        # # self.pad1.RedrawAxis()
-        # self.name = "topocluster_plots"
-        # self.canvas.Update()
-        # self.canvas.Modified()
-        # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
-        # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
+            self.name = "topocluster_plots_log"
+            self.canvas.SetLogy()
 
-        # self.name = "topocluster_plots_log"
-        # self.canvas.SetLogy()
+            self.canvas.Update()
+            self.canvas.Modified()
+            self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
+            self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
 
-        # self.canvas.Update()
-        # self.canvas.Modified()
-        # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
-        # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
+            self.canvas.Clear()
 
-        # self.canvas.Clear()
+        # TODO igure out how to get both of these to plot
+        mean_plot = False
+        if (mean_plot):
+            h_mean = TH1F("topocluster_mean_pt","Topocluster Mean pT", 10,0,10)
+            self.x_min = 0
+            self.x_max = 10
+            self.set_x_axis_bounds(h_mean)   
+            h_mean.SetMaximum(1)
+            h_mean.SetMinimum(0)
+            # h_mean.GetXaxis().SetRange(1,30)
 
-
-        h_mean = TH1F("topocluster_mean_pt","Topocluster Mean pT", 10,0,10)
-        self.x_min = 0
-        self.x_max = 10
-        self.set_x_axis_bounds(h_mean)   
-        h_mean.SetMaximum(1)
-        h_mean.SetMinimum(0)
-        # h_mean.GetXaxis().SetRange(1,30)
-
-        for i in range(len(self.h_topo_pt)):
-            h = self.h_topo_pt[i]
-            # print(h.GetMean())
-            h_mean.Fill(i, h.GetMean())
-
-
-        self.canvas.cd()
-        self.title = "Mean Fractional pT of First 10 Topoclusters"
-        self.leg.AddEntry(h_mean, "Mean pT ")
-        set_mc_style_line(h_mean, kGreen-2, line_width = 4)
-        h_mean.GetYaxis().SetTitle("Mean pT Fraction of Cluster")
-        h_mean.GetXaxis().SetTitle("Cluster Number")
+            for i in range(len(self.h_topo_pt)):
+                h = self.h_topo_pt[i]
+                # print(h.GetMean())
+                h_mean.Fill(i, h.GetMean())
 
 
+            self.canvas.cd()
+            self.title = "Mean Fractional pT of First 10 Topoclusters"
+            self.leg.AddEntry(h_mean, "Mean pT ")
+            set_mc_style_line(h_mean, kGreen-2, line_width = 4)
+            h_mean.GetYaxis().SetTitle("Mean pT Fraction of Cluster")
+            h_mean.GetXaxis().SetTitle("Cluster Index (pT Sorted)")
+            self.canvas.Clear()
 
-        h_mean.Draw("hist,same")
-        self.name = "topocluster_mean_pt"
-        self.canvas.Update()
-        self.canvas.Modified()
-        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
-        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
 
+
+            h_mean.Draw("hist,same")
+            self.name = "topocluster_mean_pt"
+            self.canvas.Update()
+            self.canvas.Modified()
+            self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
+            self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
+
+
+            self.name = "topocluster_mean_log_pt"
+            h_mean.SetMaximum(5)
+            h_mean.SetMinimum(0.001)
+            self.canvas.SetLogy()
+
+            self.canvas.Update()
+            self.canvas.Modified()
+            self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
+            self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
+
+            self.canvas.Clear()
 
 
 topocluster_plots = []
