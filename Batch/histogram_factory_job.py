@@ -43,12 +43,13 @@ with open('job.sh', 'w') as fout:
         "-L", args.luminosity,
         "-E", args.selection,
         "-p", args.sample_type,
-        "-S"
+        # "-S" # This toggles systematics 
         ])
       write_cmd(job_cmd)
       #write_cmd("xrdcp -r *.cp.root* root://eosatlas.cern.ch/" + os.path.dirname(args.output_file) + "/")
-      write_cmd("cp *.cp.root* " + os.path.dirname(args.output_file) + "/")
-      write_cmd("rm -rf *.root*")
+      write_cmd("cp "+ TMP_OUTPUT_FILE + " " + os.path.dirname(args.output_file) + "/")
+      write_cmd("cp "+ TMP_OUTPUT_FILE+".log"+ " " + os.path.dirname(args.output_file) + "/")
+      write_cmd("rm -rf "+ TMP_OUTPUT_FILE + " " + TMP_OUTPUT_FILE+".log")
       # write_cmd("cd " + WORKAREA)
       # write_cmd("rm *.root.log")
       fout.close()
