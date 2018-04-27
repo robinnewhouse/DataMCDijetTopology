@@ -14,6 +14,7 @@
 #include <TChain.h>
 #include <TFile.h>
 #include <TH1F.h>
+#include <TH2D.h>
 #include <TLorentzVector.h>
 #include <TMath.h>
 #include <TNamed.h>
@@ -46,6 +47,7 @@ class DataMCbackgroundSelector : public TSelector {
         TH2F* h_bdt_w_vs_mu;
         TH2F* h_dnn_top_vs_mu;
         TH2F* h_dnn_w_vs_mu;
+        TH2F* h_topo_top_vs_mu;
 
         static const std::unordered_map<std::string, EventSelector> available_event_selectors;
         EventSelector chosen_event_selector;

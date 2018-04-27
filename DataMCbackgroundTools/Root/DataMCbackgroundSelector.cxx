@@ -110,17 +110,20 @@ void DataMCbackgroundSelector::Begin(TTree * /*tree*/)
     //         DNNpathPrefix + std::string("FitFunctions_DNN_W50.root"),
     //         "W_contained_DNN_june6_smooth_cut_W_contained_DNN_june6+W_contained_DNN_june6_50wp");
 
-    // if (this->on_nominal_branch) {
-    //   this->h_bdt_top_vs_mu = new TH2F("h_bdt_top_vs_mu" , "h_bdt_top_vs_mu" , 60 , 0 , 60 , 200 , -1.0 , 1.0);
-    //   this->h_bdt_w_vs_mu   = new TH2F("h_bdt_w_vs_mu"   , "h_bdt_w_vs_mu"   , 60 , 0 , 60 , 200 , -1.0 , 1.0);
-    //   this->h_dnn_top_vs_mu = new TH2F("h_dnn_top_vs_mu" , "h_dnn_top_vs_mu" , 60 , 0 , 60 , 200 , 0.0  , 1.0);
-    //   this->h_dnn_w_vs_mu   = new TH2F("h_dnn_w_vs_mu"   , "h_dnn_w_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
+    if (this->on_nominal_branch) {
 
-    //   h_bdt_top_vs_mu->Sumw2();
-    //   h_bdt_w_vs_mu->Sumw2();
-    //   h_dnn_top_vs_mu->Sumw2();
-    //   h_dnn_w_vs_mu->Sumw2();
-    // }
+        this->h_bdt_top_vs_mu = new TH2F("h_bdt_top_vs_mu" , "h_bdt_top_vs_mu" , 60 , 0 , 60 , 200 , -1.0 , 1.0);
+        this->h_bdt_w_vs_mu   = new TH2F("h_bdt_w_vs_mu"   , "h_bdt_w_vs_mu"   , 60 , 0 , 60 , 200 , -1.0 , 1.0);
+        this->h_dnn_top_vs_mu = new TH2F("h_dnn_top_vs_mu" , "h_dnn_top_vs_mu" , 60 , 0 , 60 , 200 , 0.0  , 1.0);
+        this->h_dnn_w_vs_mu   = new TH2F("h_dnn_w_vs_mu"   , "h_dnn_w_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
+        this->h_topo_top_vs_mu  = new TH2F("h_topo_top_vs_mu"   , "h_topo_top_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
+
+        h_bdt_top_vs_mu->Sumw2();
+        h_bdt_w_vs_mu->Sumw2();
+        h_dnn_top_vs_mu->Sumw2();
+        h_dnn_w_vs_mu->Sumw2();
+        h_topo_top_vs_mu->Sumw2();
+    }
 
     const std::string rc = std::string(getenv("ROOTCOREBIN"));
     std::string f_sdw_filepath = rc + "/data/DataMCbackgroundTools/SDW.root";
@@ -443,7 +446,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             }
 
             if (processing_dijet_slice) {
-                this->SF_lumi_Fb = xsection * filtereff / nevents;
+                this->SF_lumi_Fb = xsection * filtereff / nevents_skimmed;
             } else {
                 this->SF_lumi_Fb = xsection * filtereff / sum_weights;
             }
@@ -569,6 +572,21 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             mva_tag_map["TopoTag_Top_20"]   = rljet_topTag_TopoTagger_20wp->at(i) == static_cast<int>(simpleTaggerPass::both);
             mva_tag_map["TopoTag_Top_50"]   = rljet_topTag_TopoTagger_50wp->at(i) == static_cast<int>(simpleTaggerPass::both);
             mva_tag_map["TopoTag_Top_80"]   = rljet_topTag_TopoTagger_80wp->at(i) == static_cast<int>(simpleTaggerPass::both);
+        
+
+            if (!this->operating_on_mc) {
+              h_bdt_top_vs_mu->Fill(mu/1.09 , rljet_topTag_BDT_qqb_score->at(i));
+              h_bdt_w_vs_mu->Fill(mu/1.09   , rljet_wTag_BDT_qq_score->at(i));
+              h_dnn_top_vs_mu->Fill(mu/1.09 , rljet_topTag_DNN_qqb_score->at(i));
+              h_dnn_w_vs_mu->Fill(mu/1.09   , rljet_wTag_DNN_qq_score->at(i));
+              h_topo_top_vs_mu->Fill(mu/1.09   , rljet_topTag_TopoTagger_score->at(i));
+            } else {
+              h_bdt_top_vs_mu->Fill(mu , rljet_topTag_BDT_qqb_score->at(i));
+              h_bdt_w_vs_mu->Fill(mu   , rljet_wTag_BDT_qq_score->at(i));
+              h_dnn_top_vs_mu->Fill(mu , rljet_topTag_DNN_qqb_score->at(i));
+              h_dnn_w_vs_mu->Fill(mu   , rljet_wTag_DNN_qq_score->at(i));
+              h_topo_top_vs_mu->Fill(mu   , rljet_topTag_TopoTagger_score->at(i));
+            }
         }
 
           // if (rljet_topTag_TopoTagger_20wp->at(i) == 3 ||
@@ -1071,10 +1089,11 @@ void DataMCbackgroundSelector::Terminate()
     hp->WriteCommonHistograms();
     if (sub_dir_str == "nominal") {
         hp->WriteNominalOnlyHistograms();
-        // h_bdt_top_vs_mu->Write();
-        // h_bdt_w_vs_mu->Write();
-        // h_dnn_top_vs_mu->Write();
-        // h_dnn_w_vs_mu->Write();
+        h_bdt_top_vs_mu->Write();
+        h_bdt_w_vs_mu->Write();
+        h_dnn_top_vs_mu->Write();
+        h_dnn_w_vs_mu->Write();
+        h_topo_top_vs_mu->Write();
     }
 
     output_file->Close();
