@@ -117,12 +117,16 @@ void DataMCbackgroundSelector::Begin(TTree * /*tree*/)
         this->h_dnn_top_vs_mu = new TH2F("h_dnn_top_vs_mu" , "h_dnn_top_vs_mu" , 60 , 0 , 60 , 200 , 0.0  , 1.0);
         this->h_dnn_w_vs_mu   = new TH2F("h_dnn_w_vs_mu"   , "h_dnn_w_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
         this->h_topo_top_vs_mu  = new TH2F("h_topo_top_vs_mu"   , "h_topo_top_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
+        this->h_tau32_vs_mu  = new TH2F("h_tau32_vs_mu"   , "h_tau32_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
+        this->h_D2_vs_mu  = new TH2F("h_D2_vs_mu"   , "h_D2_vs_mu"   , 60 , 0 , 60 , 800 , 0.0  , 20.0);
 
         h_bdt_top_vs_mu->Sumw2();
         h_bdt_w_vs_mu->Sumw2();
         h_dnn_top_vs_mu->Sumw2();
         h_dnn_w_vs_mu->Sumw2();
         h_topo_top_vs_mu->Sumw2();
+        h_tau32_vs_mu->Sumw2();
+        h_D2_vs_mu->Sumw2();
     }
 
     const std::string rc = std::string(getenv("ROOTCOREBIN"));
@@ -544,6 +548,13 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_Split23.at(i)->fill(rljet_Split23->at(i)/1000., weight);
         hp->h_rljet_Split23.at(i)->fill_tagged("combMgt100GeV", rljet_Split23->at(i)/1000., weight, rljet_m_comb->at(i) / 1000. > 100.);
 
+
+        if (!this->operating_on_mc) {
+          h_tau32_vs_mu->Fill(mu/1.09 , rljet_Tau32_wta->at(i));
+        } else {
+          h_tau32_vs_mu->Fill(mu , rljet_Tau32_wta->at(i));
+        }
+
         if (ranMVA)
         {
             // MVA Taggers
@@ -718,6 +729,12 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_D2.at(i)->fill_tagged("NTrimSubjetsGT2", rljet_D2->at(i), weight, rljet_NTrimSubjets->at(i) > 4);
         hp->h_rljet_D2.at(i)->fill_tagged("NTrimSubjetsGT3", rljet_D2->at(i), weight, rljet_NTrimSubjets->at(i) > 4);
         hp->h_rljet_D2.at(i)->fill_tagged("NTrimSubjetsGT4", rljet_D2->at(i), weight, rljet_NTrimSubjets->at(i) > 4);
+
+        if (!this->operating_on_mc) {
+          h_D2_vs_mu->Fill(mu/1.09 , rljet_D2->at(i));
+        } else {
+          h_D2_vs_mu->Fill(mu , rljet_D2->at(i));
+        }
 
         // JZX(W) SLICE TAGS
         if (this->operating_on_mc && processing_dijet_slice) {
@@ -1094,6 +1111,8 @@ void DataMCbackgroundSelector::Terminate()
         h_dnn_top_vs_mu->Write();
         h_dnn_w_vs_mu->Write();
         h_topo_top_vs_mu->Write();
+        h_tau32_vs_mu->Write();
+        h_D2_vs_mu->Write();
     }
 
     output_file->Close();
