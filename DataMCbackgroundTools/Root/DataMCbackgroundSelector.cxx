@@ -132,11 +132,14 @@ void DataMCbackgroundSelector::Begin(TTree * /*tree*/)
     const std::string rc = std::string(getenv("ROOTCOREBIN"));
     std::string f_sdw_filepath = rc + "/data/DataMCbackgroundTools/SDW.root";
     std::string f_sdtop_filepath = rc + "/data/DataMCbackgroundTools/SDTop.root";
+    std::string f_tcdnn_filepath = rc + "/data/DataMCbackgroundTools/TopoTaggerFitFunctionsContained.root";
     TFile* f_sdw_file = TFile::Open(f_sdw_filepath.c_str(), "READ");
     TFile* f_sdtop_file = TFile::Open(f_sdtop_filepath.c_str(), "READ");
+    TFile* f_tcdnn_file = TFile::Open(f_tcdnn_filepath.c_str(), "READ");
 
     this->f_sdw = (TF1*) f_sdw_file->Get("fjet_SDw_win20_btag1_smooth_cut_fjet_SDw_win20_btag1+fjet_SDw_win20_btag1_50wp");
     this->f_sdtop =(TF1*) f_sdtop_file->Get("fjet_SDt_Dcut1_smooth_cut_fjet_SDt_Dcut1+fjet_SDt_Dcut1_80wp");
+    this->f_tcdnn = (TF1*) f_tcdnn_file->Get("fjet_TopotaggerTopQuark_Score_smooth_cut_fjet_TopotaggerTopQuark_Score+fjet_TopotaggerTopQuark_Score_80wp");
 }
 
 void DataMCbackgroundSelector::SlaveBegin(TTree * /*tree*/)
@@ -583,6 +586,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             mva_tag_map["TopoTag_Top_20"]   = rljet_topTag_TopoTagger_20wp->at(i) == static_cast<int>(simpleTaggerPass::both);
             mva_tag_map["TopoTag_Top_50"]   = rljet_topTag_TopoTagger_50wp->at(i) == static_cast<int>(simpleTaggerPass::both);
             mva_tag_map["TopoTag_Top_80"]   = rljet_topTag_TopoTagger_80wp->at(i) == static_cast<int>(simpleTaggerPass::both);
+            mva_tag_map["TopoTag_Top_80_qqb"]   = (rljet_topTag_TopoTagger_score->at(i) > f_tcdnn->Eval(rljet_pt_comb->at(i)/1000.));
         
 
             if (!this->operating_on_mc) {

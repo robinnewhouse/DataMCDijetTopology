@@ -102,6 +102,7 @@ class DataMCbackgroundSelector : public TSelector {
 
         TF1* f_sdw;
         TF1* f_sdtop;
+        TF1* f_tcdnn;
 
         /******************/
         /***** TOOLS ******/
