@@ -19,7 +19,7 @@
 int
 main(int argc, char** argv)
 {
-    if (argc < 1) {
+    if (argc < 2) {
         std::cout << "USAGE: histogram-factory [FLAG]..." << std::endl;
         std::cout << "where FLAG is one of:" << std::endl;
         std::cout << "-i <input_file>: path to ntuple produced by AnalysisTop." << std::endl;
