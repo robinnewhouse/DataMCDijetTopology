@@ -110,24 +110,21 @@ void DataMCbackgroundSelector::Begin(TTree * /*tree*/)
     //         DNNpathPrefix + std::string("FitFunctions_DNN_W50.root"),
     //         "W_contained_DNN_june6_smooth_cut_W_contained_DNN_june6+W_contained_DNN_june6_50wp");
 
-    if (this->on_nominal_branch) {
+    this->h_bdt_top_vs_mu = new TH2F("h_bdt_top_vs_mu" , "h_bdt_top_vs_mu" , 60 , 0 , 60 , 200 , -1.0 , 1.0);
+    this->h_bdt_w_vs_mu   = new TH2F("h_bdt_w_vs_mu"   , "h_bdt_w_vs_mu"   , 60 , 0 , 60 , 200 , -1.0 , 1.0);
+    this->h_dnn_top_vs_mu = new TH2F("h_dnn_top_vs_mu" , "h_dnn_top_vs_mu" , 60 , 0 , 60 , 200 , 0.0  , 1.0);
+    this->h_dnn_w_vs_mu   = new TH2F("h_dnn_w_vs_mu"   , "h_dnn_w_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
+    this->h_topo_top_vs_mu  = new TH2F("h_topo_top_vs_mu"   , "h_topo_top_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
+    this->h_tau32_vs_mu  = new TH2F("h_tau32_vs_mu"   , "h_tau32_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
+    this->h_D2_vs_mu  = new TH2F("h_D2_vs_mu"   , "h_D2_vs_mu"   , 60 , 0 , 60 , 800 , 0.0  , 20.0);
 
-        this->h_bdt_top_vs_mu = new TH2F("h_bdt_top_vs_mu" , "h_bdt_top_vs_mu" , 60 , 0 , 60 , 200 , -1.0 , 1.0);
-        this->h_bdt_w_vs_mu   = new TH2F("h_bdt_w_vs_mu"   , "h_bdt_w_vs_mu"   , 60 , 0 , 60 , 200 , -1.0 , 1.0);
-        this->h_dnn_top_vs_mu = new TH2F("h_dnn_top_vs_mu" , "h_dnn_top_vs_mu" , 60 , 0 , 60 , 200 , 0.0  , 1.0);
-        this->h_dnn_w_vs_mu   = new TH2F("h_dnn_w_vs_mu"   , "h_dnn_w_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
-        this->h_topo_top_vs_mu  = new TH2F("h_topo_top_vs_mu"   , "h_topo_top_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
-        this->h_tau32_vs_mu  = new TH2F("h_tau32_vs_mu"   , "h_tau32_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
-        this->h_D2_vs_mu  = new TH2F("h_D2_vs_mu"   , "h_D2_vs_mu"   , 60 , 0 , 60 , 800 , 0.0  , 20.0);
-
-        h_bdt_top_vs_mu->Sumw2();
-        h_bdt_w_vs_mu->Sumw2();
-        h_dnn_top_vs_mu->Sumw2();
-        h_dnn_w_vs_mu->Sumw2();
-        h_topo_top_vs_mu->Sumw2();
-        h_tau32_vs_mu->Sumw2();
-        h_D2_vs_mu->Sumw2();
-    }
+    h_bdt_top_vs_mu->Sumw2();
+    h_bdt_w_vs_mu->Sumw2();
+    h_dnn_top_vs_mu->Sumw2();
+    h_dnn_w_vs_mu->Sumw2();
+    h_topo_top_vs_mu->Sumw2();
+    h_tau32_vs_mu->Sumw2();
+    h_D2_vs_mu->Sumw2();
 
     const std::string rc = std::string(getenv("ROOTCOREBIN"));
     std::string f_sdw_filepath = rc + "/data/DataMCbackgroundTools/SDW.root";
@@ -1125,14 +1122,14 @@ void DataMCbackgroundSelector::Terminate()
     hp->WriteCommonHistograms();
     if (sub_dir_str == "nominal") {
         hp->WriteNominalOnlyHistograms();
-        h_bdt_top_vs_mu->Write();
-        h_bdt_w_vs_mu->Write();
-        h_dnn_top_vs_mu->Write();
-        h_dnn_w_vs_mu->Write();
-        h_topo_top_vs_mu->Write();
-        h_tau32_vs_mu->Write();
-        h_D2_vs_mu->Write();
     }
+    h_bdt_top_vs_mu->Write();
+    h_bdt_w_vs_mu->Write();
+    h_dnn_top_vs_mu->Write();
+    h_dnn_w_vs_mu->Write();
+    h_topo_top_vs_mu->Write();
+    h_tau32_vs_mu->Write();
+    h_D2_vs_mu->Write();
 
     output_file->Close();
     delete output_file;
@@ -1141,6 +1138,14 @@ void DataMCbackgroundSelector::Terminate()
     ss << "FINISHED: " << root_dir_str << "/" << sub_dir_str;
 
     this->log(ss.str());
+
+    delete h_bdt_top_vs_mu;
+    delete h_bdt_w_vs_mu;
+    delete h_dnn_top_vs_mu;
+    delete h_dnn_w_vs_mu;
+    delete h_topo_top_vs_mu;
+    delete h_tau32_vs_mu;
+    delete h_D2_vs_mu;
 
     delete hp;
 }
