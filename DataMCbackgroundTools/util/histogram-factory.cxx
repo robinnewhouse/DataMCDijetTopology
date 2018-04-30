@@ -19,7 +19,7 @@
 int
 main(int argc, char** argv)
 {
-    if (argc < 1) {
+    if (argc < 2) {
         std::cout << "USAGE: histogram-factory [FLAG]..." << std::endl;
         std::cout << "where FLAG is one of:" << std::endl;
         std::cout << "-i <input_file>: path to ntuple produced by AnalysisTop." << std::endl;
@@ -152,23 +152,54 @@ main(int argc, char** argv)
             t->Process(dmd_selector);
             delete dmd_selector;
 
-            if (process_systematics && tchain_name == "nominal" && event_selector.find("GAMMA") != std::string::npos && sample_type.find("data") == std::string::npos) {
-              dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
+            if (process_systematics && tchain_name == "nominal" && sample_type.find("data") == std::string::npos) {
+                // run pileup uncertainty -- up shift
+                dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
+                              "pileup_UP", data_trigger, event_selector, luminosity);
+                t->Process(dmd_selector);
+                delete dmd_selector;
+
+                // run pileup uncertainty -- down shift
+                dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
+                              "pileup_DOWN", data_trigger, event_selector, luminosity);
+                t->Process(dmd_selector);
+                delete dmd_selector;
+
+                // run luminosity uncertainty -- up shift
+                dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
+                              "lumi_UP", data_trigger, event_selector, luminosity);
+                t->Process(dmd_selector);
+                delete dmd_selector;
+
+                // run luminosity uncertainty -- down shift
+                dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
+                              "lumi_DOWN", data_trigger, event_selector, luminosity);
+                t->Process(dmd_selector);
+                delete dmd_selector;
+
+
+                // photon SF systematics
+                if(event_selector.find("GAMMA") != std::string::npos) {
+                    dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
                               "photonSF_ID_UP", data_trigger, event_selector, luminosity);
-              t->Process(dmd_selector);
-              delete dmd_selector;
-              dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
-                              "photonSF_ID_DOWN", data_trigger, event_selector, luminosity);
-              t->Process(dmd_selector);
-              delete dmd_selector;
-              dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
-                              "photonSF_effTrkIso_UP", data_trigger, event_selector, luminosity);
-              t->Process(dmd_selector);
-              delete dmd_selector;
-              dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
-                              "photonSF_effTrkIso_DOWN", data_trigger, event_selector, luminosity);
-              t->Process(dmd_selector);
-              delete dmd_selector;
+                    t->Process(dmd_selector);
+                    delete dmd_selector;
+
+                    dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
+                                    "photonSF_ID_DOWN", data_trigger, event_selector, luminosity);
+                    t->Process(dmd_selector);
+                    delete dmd_selector;
+
+                    dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
+                                    "photonSF_effTrkIso_UP", data_trigger, event_selector, luminosity);
+                    t->Process(dmd_selector);
+                    delete dmd_selector;
+
+                    dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
+                                    "photonSF_effTrkIso_DOWN", data_trigger, event_selector, luminosity);
+                    t->Process(dmd_selector);
+                    delete dmd_selector;
+                }
             }
 
         }
