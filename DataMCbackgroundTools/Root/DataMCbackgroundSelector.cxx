@@ -179,6 +179,10 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
   if (this->operating_on_mc) {
     b_weight_mc->GetEntry(entry);
     b_weight_pileup->GetEntry(entry);
+    if (sub_dir_str.find("pileup_UP") != std::string::npos)
+      b_weight_pileup_UP->GetEntry(entry);
+    if (sub_dir_str.find("pileup_DOWN") != std::string::npos)
+      b_weight_pileup_DOWN->GetEntry(entry);
 
     if (keptPhotons) {
       b_weight_photonSF->GetEntry(entry);
@@ -473,9 +477,20 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     float weight;
     if (this->operating_on_mc) {
         weight = weight_mc
-          * weight_pileup
           * this->SF_lumi_Fb
           * this->luminosity;
+        if(this->on_nominal_branch) {
+            weight *= weight_pileup;
+        } else {
+            if (sub_dir_str.find("pileup_UP") != std::string::npos)
+                weight *= weight_pileup_UP;
+            if (sub_dir_str.find("pileup_DOWN") != std::string::npos)
+                weight *= weight_pileup_DOWN;
+            if (sub_dir_str.find("lumi_UP") != std::string::npos)
+                weight *= 1.021; // 2.1% luminosity uncertainty -- up shift
+            if (sub_dir_str.find("lumi_DOWN") != std::string::npos)
+                weight *= 0.979; // 2.1% luminosity uncertainty -- down shift
+        }
 
         if (keptPhotons) {
           if (this->on_nominal_branch) {
