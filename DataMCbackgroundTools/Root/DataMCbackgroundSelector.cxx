@@ -110,33 +110,33 @@ void DataMCbackgroundSelector::Begin(TTree * /*tree*/)
     //         DNNpathPrefix + std::string("FitFunctions_DNN_W50.root"),
     //         "W_contained_DNN_june6_smooth_cut_W_contained_DNN_june6+W_contained_DNN_june6_50wp");
 
-    if (this->on_nominal_branch) {
+    this->h_bdt_top_vs_mu = new TH2F("h_bdt_top_vs_mu" , "h_bdt_top_vs_mu" , 60 , 0 , 60 , 200 , -1.0 , 1.0);
+    this->h_bdt_w_vs_mu   = new TH2F("h_bdt_w_vs_mu"   , "h_bdt_w_vs_mu"   , 60 , 0 , 60 , 200 , -1.0 , 1.0);
+    this->h_dnn_top_vs_mu = new TH2F("h_dnn_top_vs_mu" , "h_dnn_top_vs_mu" , 60 , 0 , 60 , 200 , 0.0  , 1.0);
+    this->h_dnn_w_vs_mu   = new TH2F("h_dnn_w_vs_mu"   , "h_dnn_w_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
+    this->h_topo_top_vs_mu  = new TH2F("h_topo_top_vs_mu"   , "h_topo_top_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
+    this->h_tau32_vs_mu  = new TH2F("h_tau32_vs_mu"   , "h_tau32_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
+    this->h_D2_vs_mu  = new TH2F("h_D2_vs_mu"   , "h_D2_vs_mu"   , 60 , 0 , 60 , 800 , 0.0  , 20.0);
 
-        this->h_bdt_top_vs_mu = new TH2F("h_bdt_top_vs_mu" , "h_bdt_top_vs_mu" , 60 , 0 , 60 , 200 , -1.0 , 1.0);
-        this->h_bdt_w_vs_mu   = new TH2F("h_bdt_w_vs_mu"   , "h_bdt_w_vs_mu"   , 60 , 0 , 60 , 200 , -1.0 , 1.0);
-        this->h_dnn_top_vs_mu = new TH2F("h_dnn_top_vs_mu" , "h_dnn_top_vs_mu" , 60 , 0 , 60 , 200 , 0.0  , 1.0);
-        this->h_dnn_w_vs_mu   = new TH2F("h_dnn_w_vs_mu"   , "h_dnn_w_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
-        this->h_topo_top_vs_mu  = new TH2F("h_topo_top_vs_mu"   , "h_topo_top_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
-        this->h_tau32_vs_mu  = new TH2F("h_tau32_vs_mu"   , "h_tau32_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
-        this->h_D2_vs_mu  = new TH2F("h_D2_vs_mu"   , "h_D2_vs_mu"   , 60 , 0 , 60 , 800 , 0.0  , 20.0);
-
-        h_bdt_top_vs_mu->Sumw2();
-        h_bdt_w_vs_mu->Sumw2();
-        h_dnn_top_vs_mu->Sumw2();
-        h_dnn_w_vs_mu->Sumw2();
-        h_topo_top_vs_mu->Sumw2();
-        h_tau32_vs_mu->Sumw2();
-        h_D2_vs_mu->Sumw2();
-    }
+    h_bdt_top_vs_mu->Sumw2();
+    h_bdt_w_vs_mu->Sumw2();
+    h_dnn_top_vs_mu->Sumw2();
+    h_dnn_w_vs_mu->Sumw2();
+    h_topo_top_vs_mu->Sumw2();
+    h_tau32_vs_mu->Sumw2();
+    h_D2_vs_mu->Sumw2();
 
     const std::string rc = std::string(getenv("ROOTCOREBIN"));
     std::string f_sdw_filepath = rc + "/data/DataMCbackgroundTools/SDW.root";
     std::string f_sdtop_filepath = rc + "/data/DataMCbackgroundTools/SDTop.root";
+    std::string f_tcdnn_filepath = rc + "/data/DataMCbackgroundTools/TopoTaggerFitFunctionsContained.root";
     TFile* f_sdw_file = TFile::Open(f_sdw_filepath.c_str(), "READ");
     TFile* f_sdtop_file = TFile::Open(f_sdtop_filepath.c_str(), "READ");
+    TFile* f_tcdnn_file = TFile::Open(f_tcdnn_filepath.c_str(), "READ");
 
     this->f_sdw = (TF1*) f_sdw_file->Get("fjet_SDw_win20_btag1_smooth_cut_fjet_SDw_win20_btag1+fjet_SDw_win20_btag1_50wp");
     this->f_sdtop =(TF1*) f_sdtop_file->Get("fjet_SDt_Dcut1_smooth_cut_fjet_SDt_Dcut1+fjet_SDt_Dcut1_80wp");
+    this->f_tcdnn = (TF1*) f_tcdnn_file->Get("fjet_TopotaggerTopQuark_Score_smooth_cut_fjet_TopotaggerTopQuark_Score+fjet_TopotaggerTopQuark_Score_80wp");
 }
 
 void DataMCbackgroundSelector::SlaveBegin(TTree * /*tree*/)
@@ -176,6 +176,10 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
   if (this->operating_on_mc) {
     b_weight_mc->GetEntry(entry);
     b_weight_pileup->GetEntry(entry);
+    if (sub_dir_str.find("pileup_UP") != std::string::npos)
+      b_weight_pileup_UP->GetEntry(entry);
+    if (sub_dir_str.find("pileup_DOWN") != std::string::npos)
+      b_weight_pileup_DOWN->GetEntry(entry);
 
     if (keptPhotons) {
       b_weight_photonSF->GetEntry(entry);
@@ -470,9 +474,20 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     float weight;
     if (this->operating_on_mc) {
         weight = weight_mc
-          * weight_pileup
           * this->SF_lumi_Fb
           * this->luminosity;
+        if(this->on_nominal_branch) {
+            weight *= weight_pileup;
+        } else {
+            if (sub_dir_str.find("pileup_UP") != std::string::npos)
+                weight *= weight_pileup_UP;
+            if (sub_dir_str.find("pileup_DOWN") != std::string::npos)
+                weight *= weight_pileup_DOWN;
+            if (sub_dir_str.find("lumi_UP") != std::string::npos)
+                weight *= 1.021; // 2.1% luminosity uncertainty -- up shift
+            if (sub_dir_str.find("lumi_DOWN") != std::string::npos)
+                weight *= 0.979; // 2.1% luminosity uncertainty -- down shift
+        }
 
         if (keptPhotons) {
           if (this->on_nominal_branch) {
@@ -583,6 +598,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             mva_tag_map["TopoTag_Top_20"]   = rljet_topTag_TopoTagger_20wp->at(i) == static_cast<int>(simpleTaggerPass::both);
             mva_tag_map["TopoTag_Top_50"]   = rljet_topTag_TopoTagger_50wp->at(i) == static_cast<int>(simpleTaggerPass::both);
             mva_tag_map["TopoTag_Top_80"]   = rljet_topTag_TopoTagger_80wp->at(i) == static_cast<int>(simpleTaggerPass::both);
+            mva_tag_map["TopoTag_Top_80_qqb"]   = (rljet_topTag_TopoTagger_score->at(i) > f_tcdnn->Eval(rljet_pt_comb->at(i)/1000.));
         
 
             if (!this->operating_on_mc) {
@@ -668,6 +684,27 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         }
     }
     for (const auto& itag : smooth_tag_map) {
+        if(this->operating_on_mc) {
+            hp->h_mu->fill_tagged(itag.first, mu, weight, itag.second);
+        } else {
+            hp->h_mu->fill_tagged(itag.first, mu * 1./1.09, weight, itag.second);
+        }
+    }
+    for (const auto& itag : SD_nominal_tag_map) {
+        if(this->operating_on_mc) {
+            hp->h_mu->fill_tagged(itag.first, mu, weight, itag.second);
+        } else {
+            hp->h_mu->fill_tagged(itag.first, mu * 1./1.09, weight, itag.second);
+        }
+    }
+    for (const auto& itag : SD_systematic_tag_map) {
+        if(this->operating_on_mc) {
+            hp->h_mu->fill_tagged(itag.first, mu, weight, itag.second);
+        } else {
+            hp->h_mu->fill_tagged(itag.first, mu * 1./1.09, weight, itag.second);
+        }
+    }
+    for (const auto& itag : mva_tag_map) {
         if(this->operating_on_mc) {
             hp->h_mu->fill_tagged(itag.first, mu, weight, itag.second);
         } else {
@@ -905,7 +942,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut", rljet_SDt_dcut->at(i), weight, true);
 
             SD_nominal_tag_map["SDw_dcut"]     = rljet_SDw_dcut->at(i) > f_sdw->Eval(rljet_pt_comb->at(i)/1000.);
-            SD_nominal_tag_map["SDt_dcut"]     = rljet_SDt_dcut->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.);
+            SD_nominal_tag_map["SDt_dcut"]     = (rljet_SDt_dcut->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.)) && (rljet_m_comb->at(i) > 60e3);
 
             for (const auto& itag : SD_nominal_tag_map) {
                 hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
@@ -914,9 +951,9 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
             if (this->operating_on_mc) {
                 SD_systematic_tag_map["SDw_dcut_UP"]     = rljet_SDw_dcut_UP->at(i) > f_sdw->Eval(rljet_pt_comb->at(i)/1000.);
-                SD_systematic_tag_map["SDt_dcut_UP"]     = rljet_SDt_dcut_UP->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.);
+                SD_systematic_tag_map["SDt_dcut_UP"]     = (rljet_SDt_dcut_UP->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.)) && (rljet_m_comb->at(i) > 60e3);
                 SD_systematic_tag_map["SDw_dcut_DOWN"]     = rljet_SDw_dcut_DOWN->at(i) > f_sdw->Eval(rljet_pt_comb->at(i)/1000.);
-                SD_systematic_tag_map["SDt_dcut_DOWN"]     = rljet_SDt_dcut_DOWN->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.);
+                SD_systematic_tag_map["SDt_dcut_DOWN"]     = (rljet_SDt_dcut_DOWN->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.)) && (rljet_m_comb->at(i) > 60e3);
 
                 hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_calib_DOWN", rljet_SDw_calib_DOWN->at(i), weight, true);
                 hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_uncalib_DOWN", rljet_SDw_uncalib_DOWN->at(i), weight, true);
@@ -1106,14 +1143,14 @@ void DataMCbackgroundSelector::Terminate()
     hp->WriteCommonHistograms();
     if (sub_dir_str == "nominal") {
         hp->WriteNominalOnlyHistograms();
-        h_bdt_top_vs_mu->Write();
-        h_bdt_w_vs_mu->Write();
-        h_dnn_top_vs_mu->Write();
-        h_dnn_w_vs_mu->Write();
-        h_topo_top_vs_mu->Write();
-        h_tau32_vs_mu->Write();
-        h_D2_vs_mu->Write();
     }
+    h_bdt_top_vs_mu->Write();
+    h_bdt_w_vs_mu->Write();
+    h_dnn_top_vs_mu->Write();
+    h_dnn_w_vs_mu->Write();
+    h_topo_top_vs_mu->Write();
+    h_tau32_vs_mu->Write();
+    h_D2_vs_mu->Write();
 
     output_file->Close();
     delete output_file;
@@ -1122,6 +1159,14 @@ void DataMCbackgroundSelector::Terminate()
     ss << "FINISHED: " << root_dir_str << "/" << sub_dir_str;
 
     this->log(ss.str());
+
+    delete h_bdt_top_vs_mu;
+    delete h_bdt_w_vs_mu;
+    delete h_dnn_top_vs_mu;
+    delete h_dnn_w_vs_mu;
+    delete h_topo_top_vs_mu;
+    delete h_tau32_vs_mu;
+    delete h_D2_vs_mu;
 
     delete hp;
 }

@@ -102,6 +102,7 @@ class DataMCbackgroundSelector : public TSelector {
 
         TF1* f_sdw;
         TF1* f_sdtop;
+        TF1* f_tcdnn;
 
         /******************/
         /***** TOOLS ******/
@@ -132,6 +133,8 @@ class DataMCbackgroundSelector : public TSelector {
         Char_t          HLT_trigger;
         Float_t         weight_mc;
         Float_t         weight_pileup;
+        Float_t         weight_pileup_UP;
+        Float_t         weight_pileup_DOWN;
 
         Float_t         weight_photonSF;
         Float_t         weight_photonSF_effIso;
@@ -345,6 +348,8 @@ class DataMCbackgroundSelector : public TSelector {
         TBranch        *b_HLT_trigger;  //!
         TBranch        *b_weight_mc;   //!
         TBranch        *b_weight_pileup;   //!
+        TBranch        *b_weight_pileup_UP;   //!
+        TBranch        *b_weight_pileup_DOWN;   //!
 
         TBranch        *b_weight_photonSF; //!
         TBranch        *b_weight_photonSF_effIso; //!
@@ -815,6 +820,10 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     if (this->operating_on_mc) {
         fChain->SetBranchAddress("weight_mc", &weight_mc, &b_weight_mc);
         fChain->SetBranchAddress("weight_pileup", &weight_pileup, &b_weight_pileup);
+        if (sub_dir_str.find("pileup_") != std::string::npos) {
+            fChain->SetBranchAddress("weight_pileup_UP", &weight_pileup_UP, &b_weight_pileup_UP);
+            fChain->SetBranchAddress("weight_pileup_DOWN", &weight_pileup_DOWN, &b_weight_pileup_DOWN);
+        }
 
         if (keptPhotons) {
           fChain->SetBranchAddress("weight_photonSF", &weight_photonSF, &b_weight_photonSF);
