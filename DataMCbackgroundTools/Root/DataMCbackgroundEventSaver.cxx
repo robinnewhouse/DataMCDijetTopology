@@ -1025,24 +1025,6 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
           m_rljet_topTag_TopoTagger_80wp[i] = static_cast<int>(convertMVATaggerResult(topoTaggerResult, "PassScore80"));
           m_rljet_topTag_TopoTagger_score[i] = rljets[i]->auxdata<float>("TopotaggerTopQuark_Score");
 
-
-          if (m_rljet_topTag_TopoTagger_20wp[i] == 3 ||
-          m_rljet_topTag_TopoTagger_50wp[i] == 3 ||
-          m_rljet_topTag_TopoTagger_80wp[i] == 3 )
-          {
-            printf("A tag passed both, this is also good:\n");
-          printf("\tTopoTagger_20wp %d \t", m_rljet_topTag_TopoTagger_20wp[i]);
-          printf("TopoTagger_50wp %d \t", m_rljet_topTag_TopoTagger_50wp[i]);
-          printf("TopoTagger_80wp %d \n", m_rljet_topTag_TopoTagger_80wp[i]);
-          }
-          if ((m_rljet_topTag_TopoTagger_20wp[i] != m_rljet_topTag_TopoTagger_50wp[i]) || 
-            (m_rljet_topTag_TopoTagger_20wp[i] != m_rljet_topTag_TopoTagger_80wp[i]) || 
-            (m_rljet_topTag_TopoTagger_50wp[i] != m_rljet_topTag_TopoTagger_80wp[i]) ){
-            printf("Tagger cut mismatch (this is good):\n");
-          printf("\tTopoTagger_20wp %d \t", m_rljet_topTag_TopoTagger_20wp[i]);
-          printf("TopoTagger_50wp %d \t", m_rljet_topTag_TopoTagger_50wp[i]);
-          printf("TopoTagger_80wp %d \n", m_rljet_topTag_TopoTagger_80wp[i]);
-          }
         }
 
         if (m_runSmoothToptag && m_runSmoothUncontained) {
