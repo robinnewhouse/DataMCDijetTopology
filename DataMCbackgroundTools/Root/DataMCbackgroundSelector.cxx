@@ -690,6 +690,27 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_mu->fill_tagged(itag.first, mu * 1./1.09, weight, itag.second);
         }
     }
+    for (const auto& itag : SD_nominal_tag_map) {
+        if(this->operating_on_mc) {
+            hp->h_mu->fill_tagged(itag.first, mu, weight, itag.second);
+        } else {
+            hp->h_mu->fill_tagged(itag.first, mu * 1./1.09, weight, itag.second);
+        }
+    }
+    for (const auto& itag : SD_systematic_tag_map) {
+        if(this->operating_on_mc) {
+            hp->h_mu->fill_tagged(itag.first, mu, weight, itag.second);
+        } else {
+            hp->h_mu->fill_tagged(itag.first, mu * 1./1.09, weight, itag.second);
+        }
+    }
+    for (const auto& itag : mva_tag_map) {
+        if(this->operating_on_mc) {
+            hp->h_mu->fill_tagged(itag.first, mu, weight, itag.second);
+        } else {
+            hp->h_mu->fill_tagged(itag.first, mu * 1./1.09, weight, itag.second);
+        }
+    }
 
     /*********************************************************/
     /* BELOW HERE, ONLY SAVING VARIABLES FROM NOMINAL BRANCH */
