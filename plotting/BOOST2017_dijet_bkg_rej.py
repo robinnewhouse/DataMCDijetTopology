@@ -17,95 +17,116 @@ sane_defaults()
 TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
-CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/dijet_20180227/merged.cp.root"
+CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/dijet_20180405_syst/dijet.merged.cp.root"
 LOADER = DijetLoader(CP_ROOT_FILEPATH)
 LOADER_SMOOTH = LOADER
-ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"
+ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/DataMC_Dijet"
 
 DO_SYSTEMATICS_DEFAULT = False
 
-OUTPUT_DIR = ROOT_OUTPUT_DIR + "/BOOST2017_REJ"
+OUTPUT_DIR = ROOT_OUTPUT_DIR + "/bkg_rej"
 make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
 
-def rej_rebin(h):
-  BIN_BOUNDS = array.array('d', [
-    450,
-    500,
-    550,
-    600,
-    650,
-    700,
-    750,
-    800,
-    850,
-    900,
-    950,
-    1000,
-    1100,
-    1200,
-    1300,
-    1400,
-    1500,
-    1700,
-    2500,
+PT_BIN_BOUNDS = array.array('d', [
+        450,
+        500,
+        550,
+        600,
+        650,
+        700,
+        750,
+        800,
+        850,
+        900,
+        950,
+        1000,
+        1100,
+        1200,
+        1300,
+        1400,
+        1500,
+        1700,
+        2500,
     ])
-  return h.Rebin(len(BIN_BOUNDS)-1, h.GetName()+"_rebinned", BIN_BOUNDS)
+
+MU_BIN_BOUNDS = array.array('d', [
+        5,
+        10,
+        15,
+        20,
+        25,
+        30,
+        35,
+        40,
+    ])
+
+def rej_rebin(h, bin_bounds):
+  return h.Rebin(len(bin_bounds)-1, h.GetName()+"_rebinned", bin_bounds)
 
 def get_sys_dict_eff(gen_name, var_name):
     tmp_loader = LOADER_SMOOTH if "smooth" in var_name else LOADER
     # get the Rtrk systematics and rebin them
     dict = tmp_loader.get_systematics_dictionary(gen_name, var_name, SYSTEMATICS_MC15C_MEDIUM, norm_to_pretagged = True)
     for sys_name, var_dict in dict.iteritems():
-        var_dict["up"] = rej_rebin(var_dict["up"])
-        var_dict["down"] = rej_rebin(var_dict["down"])
+        var_dict["up"] = rej_rebin(var_dict["up"], bin_bounds)
+        var_dict["down"] = rej_rebin(var_dict["down"], bin_bounds)
     # create the sig. norm. systematics
     dict["sig_norm_sf"] = {}
-    h_tmp_up = rej_rebin(tmp_loader.get_normalized_dijet(gen_name, var_name, sig_sf = 1.25, normalize_to_pretagged = True))
-    h_tmp_down = rej_rebin(tmp_loader.get_normalized_dijet(gen_name, var_name, sig_sf = 0.75, normalize_to_pretagged = True))
+    h_tmp_up = rej_rebin(tmp_loader.get_normalized_dijet(gen_name, var_name, sig_sf = 1.25, normalize_to_pretagged = True), bin_bounds)
+    h_tmp_down = rej_rebin(tmp_loader.get_normalized_dijet(gen_name, var_name, sig_sf = 0.75, normalize_to_pretagged = True), bin_bounds)
     h_tmp_up.SetName(h_tmp_up.GetName() + "_sig_norm_sf_up")
     h_tmp_down.SetName(h_tmp_down.GetName() + "_sig_norm_sf_own")
     dict["sig_norm_sf"]["up"] = h_tmp_up
     dict["sig_norm_sf"]["down"] = h_tmp_down
     return dict
 
-def make_rej_TH1SysEff(gen_name, tag_name):
+def make_rej_TH1SysEff(gen_name, tag_name, x_axis = "pt"):
     tmp_loader = LOADER_SMOOTH if "smooth" in tag_name else LOADER
     is_data = "data" in gen_name
-    if ("HTT" in tag_name):
-      total_var_name = "h_htt_caGroomJet0_pt"
+    
+    if x_axis == "mu":
+        bin_bounds = MU_BIN_BOUNDS
+        total_var_name = "h_mu"
     else:
-      total_var_name = "h_rljet0_pt_comb"
+        bin_bounds = PT_BIN_BOUNDS
+        if ("HTT" in tag_name):
+          total_var_name = "h_htt_caGroomJet0_pt"
+        else:
+          total_var_name = "h_rljet0_pt_comb"
 
     passed_var_name = total_var_name + "_" + tag_name
 
     h_total = rej_rebin(
             tmp_loader.get_sigsub_data(total_var_name)
             if is_data
-            else tmp_loader.get_normalized_dijet(gen_name, total_var_name, normalize_to_pretagged = True)
-            )
+            else tmp_loader.get_normalized_dijet(gen_name, total_var_name, normalize_to_pretagged = True),
+            bin_bounds)
 
     h_passed = rej_rebin(
             tmp_loader.get_sigsub_data(passed_var_name)
             if is_data
-            else tmp_loader.get_normalized_dijet(gen_name, passed_var_name, normalize_to_pretagged = True)
-            )
+            else tmp_loader.get_normalized_dijet(gen_name, passed_var_name, normalize_to_pretagged = True),
+            bin_bounds)
 
     print tag_name
 
     if (is_data):
         h_total.Divide(h_passed)
         return h_total.Clone()
-    else:
-        if ("BDT" in tag_name or "DNN" in tag_name):
-          total_sys_dict = {}
-          passed_sys_dict = {}
-        elif ("SD" in tag_name):
-          total_sys_dict = {}
-          passed_sys_dict = {}
-        else:
-          total_sys_dict = get_sys_dict_eff(gen_name, total_var_name)
-          passed_sys_dict = get_sys_dict_eff(gen_name, passed_var_name)
+    else:    
+        total_sys_dict = {}
+        passed_sys_dict = {}
+        if DO_SYSTEMATICS_DEFAULT:
+            if ("BDT" in tag_name or "DNN" in tag_name):
+              total_sys_dict = {}
+              passed_sys_dict = {}
+            elif ("SD" in tag_name):
+              total_sys_dict = {}
+              passed_sys_dict = {}
+            else:
+              total_sys_dict = get_sys_dict_eff(gen_name, total_var_name)
+              passed_sys_dict = get_sys_dict_eff(gen_name, passed_var_name)
         return TH1SysEff(h_total, total_sys_dict, h_passed, passed_sys_dict)
 
 class PlotDataPythiaHerwigEfficiency(PlotBase):
@@ -249,14 +270,38 @@ def make_pt_efficiency_plot( tag_name, ref_tag_name = None, **kwargs):
             lumi_val = "36.7",
             atlas_mod = "Internal",
             legend_loc = [0.60,0.93,0.91,0.75],
-            x_title = "Leading Groomed C/A 1.5 Jet p_{T}" if "HTT" in tag_name else "Leading large-#it{R} Jet #it{p_{T}}",
+            x_title = "Leading Groomed C/A 1.5 Jet #it{p_{T}}" if "HTT" in tag_name else "Leading large-#it{R} Jet #it{p_{T}}",
             x_min = 450,
             x_max = 2500,
             y_min = 0.001,
             width = 600,
             **kwargs)
 
-bkg_rej_plots = [
+def make_mu_efficiency_plot( tag_name, ref_tag_name = None, **kwargs):
+
+    histos = {}
+    for gen in ["data","pythia","herwig"]:
+        histos[gen] = make_rej_TH1SysEff(gen, tag_name, x_axis = "mu")
+
+    if (ref_tag_name != None):
+        histos["data_ref"] = make_rej_TH1SysEff("data_ref", ref_tag_name,  x_axis = "mu")
+
+    return PlotDataPythiaHerwigEfficiency(
+            histos,
+            name = tag_name + "_rej_mu",
+            tex_size_mod = 0.9,
+            tex_spacing_mod = 0.75,
+            lumi_val = "36.7",
+            atlas_mod = "Internal",
+            legend_loc = [0.60,0.93,0.91,0.75],
+            x_title = "Leading Groomed C/A 1.5 Jet #it{mu}" if "HTT" in tag_name else "Leading large-#it{R} Jet #it{mu}",
+            x_min = 0,
+            x_max = 40,
+            y_min = 0.001,
+            width = 600,
+            **kwargs)
+
+pt_bkg_rej_plots = [
         #make_pt_efficiency_plot(
         #    "smooth16Top_MassTau32Tag50eff_MassJSSCut",
         #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 50%" ],
@@ -354,6 +399,112 @@ bkg_rej_plots = [
             ),
 
         make_pt_efficiency_plot(
+            "SDw_dcut",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "ShD #font[52]{W}, #epsilon_{sig} = 50%" ],
+            y_max = 60,
+            ),
+
+        ]
+
+
+mu_bkg_rej_plots = [
+        #make_mu_efficiency_plot(
+        #    "smooth16Top_MassTau32Tag50eff_MassJSSCut",
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 50%" ],
+        #    y_max = 100,
+        #    ),
+
+        #make_mu_efficiency_plot(
+        #    "smooth16Top_MassTau32Tag80eff_MassJSSCut",
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 80%" ],
+        #    y_max = 40,
+        #    ),
+
+        #make_mu_efficiency_plot(
+        #    "smooth16Top_QwTau32Tag50eff",
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{sig} = 50%" ],
+        #    y_max = 100
+        #    ),
+
+        #make_mu_efficiency_plot(
+        #    "smooth16Top_QwTau32Tag80eff",
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{sig} = 80%" ],
+        #    y_max = 40,
+        #    ),
+
+        #make_mu_efficiency_plot(
+        #    "smooth16Top_Tau32Split23Tag50eff",
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + #sqrt{d_{23}}", "#epsilon_{sig} = 50%" ],
+        #    y_max = 100,
+        #    ),
+
+        make_mu_efficiency_plot(
+            "smooth16Top_Tau32Split23Tag80eff",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): #tau_{32} + #sqrt{d_{23}}"],
+            y_max = 45,
+            ),
+
+        make_mu_efficiency_plot(
+            "smooth16WTag_50eff_MassJSSCut",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%):", "D_{2} + m^{comb}"],
+            y_max = 175
+            ),
+
+        #make_mu_efficiency_plot(
+        #    "smooth16WTag_80eff_MassJSSCut",
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
+        #    y_max = 35
+        #    ),
+
+        #make_mu_efficiency_plot(
+        #    "smooth16ZTag_50eff_MassJSSCut",
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 50%" ],
+        #    y_max = 175
+        #    ),
+
+        #make_mu_efficiency_plot(
+        #    "smooth16ZTag_80eff_MassJSSCut",
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
+        #    y_max = 35
+        #    ),
+
+        # make_mu_efficiency_plot(
+        #     "HTT_CAND",
+        #     extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
+        #     y_max = 80,
+        #     ),
+
+        make_mu_efficiency_plot(
+            "BDT_Top",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): BDT" ],
+            y_max = 80,
+            ),
+
+        make_mu_efficiency_plot(
+            "BDT_W",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): BDT" ],
+            y_max = 200,
+            ),
+
+        make_mu_efficiency_plot(
+            "DNN_Top",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): DNN" ],
+            y_max = 75,
+            ),
+
+        make_mu_efficiency_plot(
+            "DNN_W",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): DNN" ],
+            y_max = 200,
+            ),
+
+        make_mu_efficiency_plot(
+            "SDt_dcut",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): SD" ],
+            y_max = 40,
+            ),
+
+        make_mu_efficiency_plot(
             "SDw_dcut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "ShD #font[52]{W}, #epsilon_{sig} = 50%" ],
             y_max = 60,

@@ -19,13 +19,13 @@ TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
 CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2017/cp.merged.root"
-CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/dijet_20180227/merged.cp.root"
+CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/dijet_20180405_syst/dijet.merged.cp.root"
 LOADER = DijetLoader(CP_ROOT_FILEPATH)
 LOADER_SMOOTH = LOADER
-ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"
-DO_SYSTEMATICS_DEFAULT = False
+ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/DataMC_Dijet"
+DO_SYSTEMATICS_DEFAULT = True
 
-OUTPUT_DIR = ROOT_OUTPUT_DIR + "/BOOST2018"
+OUTPUT_DIR = ROOT_OUTPUT_DIR + "/control"
 make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
 
@@ -640,15 +640,15 @@ if DO_SYSTEMATICS_DEFAULT:
                   rebin = 4
                   ))
 
-    data_mc_plots.append(PlotDataPythiaHerwig("h_rljet0_Qw__combMgt100GeV",
-                extra_legend_lines = DEF_LINES + ["m^{comb} > 100 GeV"],
-                log_scale = True,
-                x_max = 200,
-    	          y_min = 1e1 + 0.1,
-                rebin = 2,
-                empty_scale = 4,
-    	          ttbar_sf = 25
-                ))
+    # data_mc_plots.append(PlotDataPythiaHerwig("h_rljet0_Qw__combMgt100GeV",
+    #             extra_legend_lines = DEF_LINES + ["m^{comb} > 100 GeV"],
+    #             log_scale = True,
+    #             x_max = 200,
+    # 	          y_min = 1e1 + 0.1,
+    #             rebin = 2,
+    #             empty_scale = 4,
+    # 	          ttbar_sf = 25
+    #             ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_htt0_atan1312",
         empty_scale = 1.9,

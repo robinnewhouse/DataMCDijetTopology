@@ -117,7 +117,7 @@ void DataMCbackgroundSelector::Begin(TTree * /*tree*/)
     this->h_topo_top_vs_mu  = new TH2F("h_topo_top_vs_mu"   , "h_topo_top_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
     this->h_tau32_vs_mu  = new TH2F("h_tau32_vs_mu"   , "h_tau32_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
     this->h_D2_vs_mu  = new TH2F("h_D2_vs_mu"   , "h_D2_vs_mu"   , 60 , 0 , 60 , 800 , 0.0  , 20.0);
-    this->h_mass_vs_mu  = new TH2F("h_mass_vs_mu"   , "h_mass_vs_mu"   , 60 , 0 , 60 , 1000 , 0.0  , .03);
+    this->h_mass_vs_mu  = new TH2F("h_mass_vs_mu"   , "h_mass_vs_mu"   , 60 , 0 , 60 , 1000 , 0.0  , 0.3);
 
     h_bdt_top_vs_mu->Sumw2();
     h_bdt_w_vs_mu->Sumw2();

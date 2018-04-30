@@ -43,7 +43,7 @@ with open('job.sh', 'w') as fout:
         "-L", args.luminosity,
         "-E", args.selection,
         "-p", args.sample_type,
-        # "-S" # This toggles systematics 
+        "-S" # This toggles systematics 
         ])
       write_cmd(job_cmd)
       #write_cmd("xrdcp -r *.cp.root* root://eosatlas.cern.ch/" + os.path.dirname(args.output_file) + "/")
