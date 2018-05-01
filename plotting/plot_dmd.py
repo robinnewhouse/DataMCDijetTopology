@@ -93,7 +93,7 @@ class DijetLoader(PlotLoader):
         elif ("sherpa" in generator):
             generator = "sherpa_dijet"
         else: raise
-        
+
 
         h_dijet = self.get_hist([generator, branch], hist_name)
         h_dijet_nominal = self.get_hist([generator, "nominal"], hist_name)
@@ -285,6 +285,7 @@ class GammaJetLoader(PlotLoader):
 #############
 
 SYSTEMATICS_MC15C_WEAK = [
+    # scale uncertainties
 	"LARGERJET_Weak_JET_Comb_Baseline_mass",
 	"LARGERJET_Weak_JET_Comb_Modelling_mass",
 	"LARGERJET_Weak_JET_Comb_TotalStat_mass",
@@ -317,7 +318,43 @@ SYSTEMATICS_MC15C_WEAK = [
 	"LARGERJET_Weak_JET_Rtrk_Tracking_Tau21WTA",
 	"LARGERJET_Weak_JET_Rtrk_Tracking_Tau32WTA",
 	"LARGERJET_Weak_JET_Rtrk_Tracking_pT",
+    # resolution uncertainties
+    "LARGERJET_Weak_JET_CombPtRes",
+    "LARGERJET_Weak_JET_CombMassRes_QCD",
+    # resolution in inputs is assumed to be the same as scales
+    "LARGERJET_Weak_JET_Rtrk_Baseline_D2Beta1",
+	"LARGERJET_Weak_JET_Rtrk_Baseline_Qw",
+	"LARGERJET_Weak_JET_Rtrk_Baseline_Split12",
+	"LARGERJET_Weak_JET_Rtrk_Baseline_Split23",
+	"LARGERJET_Weak_JET_Rtrk_Baseline_Tau21WTA",
+	"LARGERJET_Weak_JET_Rtrk_Baseline_Tau32WTA",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_D2Beta1",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_Qw",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_Split12",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_Split23",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_Tau21WTA",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_Tau32WTA",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_D2Beta1",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_Qw",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_Split12",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_Split23",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_Tau21WTA",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_Tau32WTA",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_D2Beta1",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_Qw",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_Split12",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_Split23",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_Tau21WTA",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_Tau32WTA",
 	]
+
+SYSTEMATICS_MC15C_WEAK_NOINPUTS = [
+	"LARGERJET_Weak_JET_Rtrk_Baseline_pT",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_pT",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_pT",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_pT",
+    "LARGERJET_Weak_JET_CombPtRes",
+]
 
 SYSTEMATICS_MC15C_MEDIUM = [
         "LARGERJET_Medium_JET_Comb_Baseline_Kin",
