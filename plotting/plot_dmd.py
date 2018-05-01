@@ -72,15 +72,23 @@ class DijetLoader(PlotLoader):
           h_sys_up = self.get_normalized_dijet(generator, hist_name + "_sjcalib1030", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
           h_sys_down = self.get_normalized_dijet(generator, hist_name + "_sjcalib0970", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
           systematics["sjcalib"] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
-        elif ("SD" in hist_name):
-          h_sys_up = self.get_normalized_dijet(generator, hist_name + "_UP", "nominal", normalize_to_pretagged = norm_to_pretagged)
-          h_sys_down = self.get_normalized_dijet(generator, hist_name + "_DOWN", "nominal", normalize_to_pretagged = norm_to_pretagged)
-          systematics["sjcalib"] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
+        # elif ("SD" in hist_name): # NOTE don't want to propagate SD
+        # uncertainty (which is an uncertainty on input)
+        #   h_sys_up = self.get_normalized_dijet(generator, hist_name + "_UP", "nominal", normalize_to_pretagged = norm_to_pretagged)
+        #   h_sys_down = self.get_normalized_dijet(generator, hist_name + "_DOWN", "nominal", normalize_to_pretagged = norm_to_pretagged)
+        #   systematics["sjcalib"] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
         else:
           for systematic_name in branch_list:
-            h_sys_up = self.get_normalized_dijet(generator, hist_name, branch = systematic_name + "__1up", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
-            h_sys_down = self.get_normalized_dijet(generator, hist_name, branch = systematic_name + "__1down", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
-            systematics[systematic_name] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
+            if ("pileup" in systematic_name or
+                "lumi" in systematic_name):
+              up_branch_name = systematic_name + "_UP"
+              down_branch_name = systematic_name + "_DOWN"
+            else:
+              up_branch_name = systematic_name + "__1up"
+              down_branch_name = systematic_name + "__1down"
+                h_sys_up = self.get_normalized_dijet(generator, hist_name, branch = up_branch_name, sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
+                h_sys_down = self.get_normalized_dijet(generator, hist_name, branch = down_branch_name, sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
+                systematics[systematic_name] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
 
         return systematics
 
@@ -220,7 +228,9 @@ class GammaJetLoader(PlotLoader):
           systematics["sjcalib"] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
         else:
           for systematic_name in branch_list:
-            if ("photon" in systematic_name):
+            if ("photon" in systematic_name or
+                "pileup" in systematic_name or
+                "lumi" in systematic_name):
               up_branch_name = systematic_name + "_UP"
               down_branch_name = systematic_name + "_DOWN"
             else:
