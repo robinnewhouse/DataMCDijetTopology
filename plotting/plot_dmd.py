@@ -117,6 +117,10 @@ class DijetLoader(PlotLoader):
           h_sigsub_data = self.get_sigsub_data("h_rljet0_pt_comb", sig_sf)
           h_dijet_untagged = self.get_hist([generator, "nominal"], "h_rljet0_pt_comb")
           dijet_sf = h_sigsub_data.Integral() / h_dijet_untagged.Integral()
+        elif (normalize_to_pretagged and is_tagged(hist_name, "h_mu")):
+          h_sigsub_data = self.get_sigsub_data("h_mu", sig_sf)
+          h_dijet_untagged = self.get_hist([generator, "nominal"], "h_mu")
+          dijet_sf = h_sigsub_data.Integral() / h_dijet_untagged.Integral()
         elif (normalize_to_pretagged and is_tagged(hist_name, "h_htt_caGroomJet0_pt")):
           h_sigsub_data = self.get_sigsub_data("h_htt_caGroomJet0_pt", sig_sf)
           h_dijet_untagged = self.get_hist([generator, "nominal"], "h_htt_caGroomJet0_pt")
@@ -200,6 +204,10 @@ class GammaJetLoader(PlotLoader):
       elif (normalize_to_pretagged and is_tagged(hist_name, "h_rljet0_pt_comb")):
         h_sigsub_data = self.get_sigsub_data("h_rljet0_pt_comb", sig_sf)
         h_gamma_untagged = self.get_hist([generator, "nominal"], "h_rljet0_pt_comb")
+        gamma_sf = h_sigsub_data.Integral() / h_gamma_untagged.Integral()
+      elif (normalize_to_pretagged and is_tagged(hist_name, "h_mu")):
+        h_sigsub_data = self.get_sigsub_data("h_mu", sig_sf)
+        h_gamma_untagged = self.get_hist([generator, "nominal"], "h_mu")
         gamma_sf = h_sigsub_data.Integral() / h_gamma_untagged.Integral()
       elif (normalize_to_pretagged and is_tagged(hist_name, "h_htt_caGroomJet0_pt")):
         h_sigsub_data = self.get_sigsub_data("h_htt_caGroomJet0_pt", sig_sf)
