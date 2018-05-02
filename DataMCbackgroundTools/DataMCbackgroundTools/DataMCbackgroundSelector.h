@@ -50,6 +50,8 @@ class DataMCbackgroundSelector : public TSelector {
         TH2F* h_topo_top_vs_mu;
         TH2F* h_tau32_vs_mu;
         TH2F* h_D2_vs_mu;
+        TH2F* h_sd_logchi_vs_mu;
+        TH2F* h_htt_m_vs_mu;
         TH2F* h_mass_vs_mu;
 
         static const std::unordered_map<std::string, EventSelector> available_event_selectors;

@@ -117,7 +117,9 @@ void DataMCbackgroundSelector::Begin(TTree * /*tree*/)
     this->h_topo_top_vs_mu  = new TH2F("h_topo_top_vs_mu"   , "h_topo_top_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
     this->h_tau32_vs_mu  = new TH2F("h_tau32_vs_mu"   , "h_tau32_vs_mu"   , 60 , 0 , 60 , 200 , 0.0  , 1.0);
     this->h_D2_vs_mu  = new TH2F("h_D2_vs_mu"   , "h_D2_vs_mu"   , 60 , 0 , 60 , 800 , 0.0  , 20.0);
-    this->h_mass_vs_mu  = new TH2F("h_mass_vs_mu"   , "h_mass_vs_mu"   , 60 , 0 , 60 , 1000 , 0.0  , 0.3);
+    this->h_sd_logchi_vs_mu  = new TH2F("h_sd_logchi_vs_mu"   , "h_sd_logchi_vs_mu"   , 60 , 0 , 60 , 500 , -25.0  , 25.0);
+    this->h_htt_m_vs_mu  = new TH2F("h_htt_m_vs_mu"   , "h_htt_m_vs_mu"   , 60 , 0 , 60 , 300, 0.0  , 300.0);
+    this->h_mass_vs_mu  = new TH2F("h_mass_vs_mu"   , "h_mass_vs_mu"   , 60 , 0 , 60 , 1000 , 0.0  , 1000.0);
 
     h_bdt_top_vs_mu->Sumw2();
     h_bdt_w_vs_mu->Sumw2();
@@ -126,6 +128,8 @@ void DataMCbackgroundSelector::Begin(TTree * /*tree*/)
     h_topo_top_vs_mu->Sumw2();
     h_tau32_vs_mu->Sumw2();
     h_D2_vs_mu->Sumw2();
+    h_sd_logchi_vs_mu->Sumw2();
+    h_htt_m_vs_mu->Sumw2();
     h_mass_vs_mu->Sumw2();
 
     const std::string rc = std::string(getenv("ROOTCOREBIN"));
@@ -567,11 +571,11 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
 
         if (!this->operating_on_mc) {
-          h_tau32_vs_mu->Fill(mu/1.09 , rljet_Tau32_wta->at(i));
-          h_mass_vs_mu->Fill(mu/1.09 , rljet_m_comb->at(i));
+          h_tau32_vs_mu->Fill(mu/1.09 , rljet_Tau32_wta->at(i), weight);
+          h_mass_vs_mu->Fill(mu/1.09 , rljet_m_comb->at(i)/1000., weight);
         } else {
-          h_tau32_vs_mu->Fill(mu , rljet_Tau32_wta->at(i));
-          h_mass_vs_mu->Fill(mu , rljet_m_comb->at(i));
+          h_tau32_vs_mu->Fill(mu , rljet_Tau32_wta->at(i), weight);
+          h_mass_vs_mu->Fill(mu , rljet_m_comb->at(i)/1000., weight);
         }
 
         if (ranMVA)
@@ -606,17 +610,17 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         
 
             if (!this->operating_on_mc) {
-              h_bdt_top_vs_mu->Fill(mu/1.09 , rljet_topTag_BDT_qqb_score->at(i));
-              h_bdt_w_vs_mu->Fill(mu/1.09   , rljet_wTag_BDT_qq_score->at(i));
-              h_dnn_top_vs_mu->Fill(mu/1.09 , rljet_topTag_DNN_qqb_score->at(i));
-              h_dnn_w_vs_mu->Fill(mu/1.09   , rljet_wTag_DNN_qq_score->at(i));
-              h_topo_top_vs_mu->Fill(mu/1.09   , rljet_topTag_TopoTagger_score->at(i));
+              h_bdt_top_vs_mu->Fill(mu/1.09 , rljet_topTag_BDT_qqb_score->at(i), weight);
+              h_bdt_w_vs_mu->Fill(mu/1.09   , rljet_wTag_BDT_qq_score->at(i), weight);
+              h_dnn_top_vs_mu->Fill(mu/1.09 , rljet_topTag_DNN_qqb_score->at(i), weight);
+              h_dnn_w_vs_mu->Fill(mu/1.09   , rljet_wTag_DNN_qq_score->at(i), weight);
+              h_topo_top_vs_mu->Fill(mu/1.09   , rljet_topTag_TopoTagger_score->at(i), weight);
             } else {
-              h_bdt_top_vs_mu->Fill(mu , rljet_topTag_BDT_qqb_score->at(i));
-              h_bdt_w_vs_mu->Fill(mu   , rljet_wTag_BDT_qq_score->at(i));
-              h_dnn_top_vs_mu->Fill(mu , rljet_topTag_DNN_qqb_score->at(i));
-              h_dnn_w_vs_mu->Fill(mu   , rljet_wTag_DNN_qq_score->at(i));
-              h_topo_top_vs_mu->Fill(mu   , rljet_topTag_TopoTagger_score->at(i));
+              h_bdt_top_vs_mu->Fill(mu , rljet_topTag_BDT_qqb_score->at(i), weight);
+              h_bdt_w_vs_mu->Fill(mu   , rljet_wTag_BDT_qq_score->at(i), weight);
+              h_dnn_top_vs_mu->Fill(mu , rljet_topTag_DNN_qqb_score->at(i), weight);
+              h_dnn_w_vs_mu->Fill(mu   , rljet_wTag_DNN_qq_score->at(i), weight);
+              h_topo_top_vs_mu->Fill(mu   , rljet_topTag_TopoTagger_score->at(i), weight);
             }
         }
 
@@ -753,9 +757,9 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_D2.at(i)->fill_tagged("NTrimSubjetsGT4", rljet_D2->at(i), weight, rljet_NTrimSubjets->at(i) > 4);
 
         if (!this->operating_on_mc) {
-          h_D2_vs_mu->Fill(mu/1.09 , rljet_D2->at(i));
+          h_D2_vs_mu->Fill(mu/1.09 , rljet_D2->at(i), weight);
         } else {
-          h_D2_vs_mu->Fill(mu , rljet_D2->at(i));
+          h_D2_vs_mu->Fill(mu , rljet_D2->at(i), weight);
         }
 
         // JZX(W) SLICE TAGS
@@ -934,6 +938,12 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
                 hp->h_rljet_pt_comb.at(i)->fill_tagged(itag.first, rljet_pt_comb->at(i)/1000., weight, itag.second);
             }
 
+            if (!this->operating_on_mc) {
+                h_sd_logchi_vs_mu->Fill(mu/1.09 , rljet_SDt_dcut->at(i), weight);
+            } else {
+                h_sd_logchi_vs_mu->Fill(mu , rljet_SDt_dcut->at(i), weight);
+            }
+
             if (this->operating_on_mc) {
                 SD_systematic_tag_map["SDw_dcut_UP"]     = rljet_SDw_dcut_UP->at(i) > f_sdw->Eval(rljet_pt_comb->at(i)/1000.);
                 SD_systematic_tag_map["SDt_dcut_UP"]     = (rljet_SDt_dcut_UP->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.)) && (rljet_m_comb->at(i) > 60e3);
@@ -1032,6 +1042,13 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_htt_caGroomJet_eta.at(ijet)->fill_tagged("HTT_CAND", htt_caGroomJet_eta_def->at(ijet)        , weight, is_htt_tagged);
             hp->h_htt_caGroomJet_phi.at(ijet)->fill_tagged("HTT_CAND", htt_caGroomJet_phi_def->at(ijet)        , weight, is_htt_tagged);
             hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND", htt_caGroomJet_m_def->at(ijet) / 1000.  , weight, is_htt_tagged);
+
+
+            if (!this->operating_on_mc) {
+                h_htt_m_vs_mu->Fill(mu/1.09 , htt_m_def->at(ijet) / 1000, weight);
+            } else {
+                h_htt_m_vs_mu->Fill(mu , htt_m_def->at(ijet) / 1000, weight);
+            }
 
             if (this->operating_on_mc) {
                 hp->h_htt_pt.at(ijet)->fill_tagged("sjcalib0970", htt_pt_sjcalib0970->at(ijet) / 1000. , weight, true);
@@ -1136,6 +1153,8 @@ void DataMCbackgroundSelector::Terminate()
     h_topo_top_vs_mu->Write();
     h_tau32_vs_mu->Write();
     h_D2_vs_mu->Write();
+    h_sd_logchi_vs_mu->Write();
+    h_htt_m_vs_mu->Write();
     h_mass_vs_mu->Write();
 
     output_file->Close();
@@ -1153,6 +1172,8 @@ void DataMCbackgroundSelector::Terminate()
     delete h_topo_top_vs_mu;
     delete h_tau32_vs_mu;
     delete h_D2_vs_mu;
+    delete h_sd_logchi_vs_mu;
+    delete h_htt_m_vs_mu;
     delete h_mass_vs_mu;
 
     delete hp;
