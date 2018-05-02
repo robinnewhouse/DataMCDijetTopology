@@ -183,7 +183,7 @@ def get_signal_histograms():
 
     # Open output ntuples and read values
     ntuples_file = TFile.Open( SIGNAL_ROOT_FILEPATH , "READ" )
-    nominal = ntuples_file.Get("nominal;2")
+    nominal = ntuples_file.Get("nominal")
     for j in range(nominal.GetEntries()):
         nominal.GetEntry(j)
 
