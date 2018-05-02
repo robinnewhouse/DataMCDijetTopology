@@ -72,15 +72,23 @@ class DijetLoader(PlotLoader):
           h_sys_up = self.get_normalized_dijet(generator, hist_name + "_sjcalib1030", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
           h_sys_down = self.get_normalized_dijet(generator, hist_name + "_sjcalib0970", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
           systematics["sjcalib"] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
-        elif ("SD" in hist_name):
-          h_sys_up = self.get_normalized_dijet(generator, hist_name + "_UP", "nominal", normalize_to_pretagged = norm_to_pretagged)
-          h_sys_down = self.get_normalized_dijet(generator, hist_name + "_DOWN", "nominal", normalize_to_pretagged = norm_to_pretagged)
-          systematics["sjcalib"] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
+        # elif ("SD" in hist_name): # NOTE don't want to propagate SD
+        # uncertainty (which is an uncertainty on input)
+        #   h_sys_up = self.get_normalized_dijet(generator, hist_name + "_UP", "nominal", normalize_to_pretagged = norm_to_pretagged)
+        #   h_sys_down = self.get_normalized_dijet(generator, hist_name + "_DOWN", "nominal", normalize_to_pretagged = norm_to_pretagged)
+        #   systematics["sjcalib"] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
         else:
           for systematic_name in branch_list:
-            h_sys_up = self.get_normalized_dijet(generator, hist_name, branch = systematic_name + "__1up", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
-            h_sys_down = self.get_normalized_dijet(generator, hist_name, branch = systematic_name + "__1down", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
-            systematics[systematic_name] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
+            if ("pileup" in systematic_name or
+                "lumi" in systematic_name):
+              up_branch_name = systematic_name + "_UP"
+              down_branch_name = systematic_name + "_DOWN"
+            else:
+              up_branch_name = systematic_name + "__1up"
+              down_branch_name = systematic_name + "__1down"
+                h_sys_up = self.get_normalized_dijet(generator, hist_name, branch = up_branch_name, sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
+                h_sys_down = self.get_normalized_dijet(generator, hist_name, branch = down_branch_name, sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
+                systematics[systematic_name] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
 
         return systematics
 
@@ -93,7 +101,7 @@ class DijetLoader(PlotLoader):
         elif ("sherpa" in generator):
             generator = "sherpa_dijet"
         else: raise
-        
+
 
         h_dijet = self.get_hist([generator, branch], hist_name)
         h_dijet_nominal = self.get_hist([generator, "nominal"], hist_name)
@@ -108,6 +116,10 @@ class DijetLoader(PlotLoader):
         elif (normalize_to_pretagged and is_tagged(hist_name, "h_rljet0_pt_comb")):
           h_sigsub_data = self.get_sigsub_data("h_rljet0_pt_comb", sig_sf)
           h_dijet_untagged = self.get_hist([generator, "nominal"], "h_rljet0_pt_comb")
+          dijet_sf = h_sigsub_data.Integral() / h_dijet_untagged.Integral()
+        elif (normalize_to_pretagged and is_tagged(hist_name, "h_mu")):
+          h_sigsub_data = self.get_sigsub_data("h_mu", sig_sf)
+          h_dijet_untagged = self.get_hist([generator, "nominal"], "h_mu")
           dijet_sf = h_sigsub_data.Integral() / h_dijet_untagged.Integral()
         elif (normalize_to_pretagged and is_tagged(hist_name, "h_htt_caGroomJet0_pt")):
           h_sigsub_data = self.get_sigsub_data("h_htt_caGroomJet0_pt", sig_sf)
@@ -193,6 +205,10 @@ class GammaJetLoader(PlotLoader):
         h_sigsub_data = self.get_sigsub_data("h_rljet0_pt_comb", sig_sf)
         h_gamma_untagged = self.get_hist([generator, "nominal"], "h_rljet0_pt_comb")
         gamma_sf = h_sigsub_data.Integral() / h_gamma_untagged.Integral()
+      elif (normalize_to_pretagged and is_tagged(hist_name, "h_mu")):
+        h_sigsub_data = self.get_sigsub_data("h_mu", sig_sf)
+        h_gamma_untagged = self.get_hist([generator, "nominal"], "h_mu")
+        gamma_sf = h_sigsub_data.Integral() / h_gamma_untagged.Integral()
       elif (normalize_to_pretagged and is_tagged(hist_name, "h_htt_caGroomJet0_pt")):
         h_sigsub_data = self.get_sigsub_data("h_htt_caGroomJet0_pt", sig_sf)
         h_gamma_untagged = self.get_hist([generator, "nominal"], "h_htt_caGroomJet0_pt")
@@ -220,7 +236,9 @@ class GammaJetLoader(PlotLoader):
           systematics["sjcalib"] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
         else:
           for systematic_name in branch_list:
-            if ("photon" in systematic_name):
+            if ("photon" in systematic_name or
+                "pileup" in systematic_name or
+                "lumi" in systematic_name):
               up_branch_name = systematic_name + "_UP"
               down_branch_name = systematic_name + "_DOWN"
             else:
@@ -285,6 +303,7 @@ class GammaJetLoader(PlotLoader):
 #############
 
 SYSTEMATICS_MC15C_WEAK = [
+    # scale uncertainties
 	"LARGERJET_Weak_JET_Comb_Baseline_mass",
 	"LARGERJET_Weak_JET_Comb_Modelling_mass",
 	"LARGERJET_Weak_JET_Comb_TotalStat_mass",
@@ -317,7 +336,43 @@ SYSTEMATICS_MC15C_WEAK = [
 	"LARGERJET_Weak_JET_Rtrk_Tracking_Tau21WTA",
 	"LARGERJET_Weak_JET_Rtrk_Tracking_Tau32WTA",
 	"LARGERJET_Weak_JET_Rtrk_Tracking_pT",
+    # resolution uncertainties
+    "LARGERJET_Weak_JET_CombPtRes",
+    "LARGERJET_Weak_JET_CombMassRes_QCD",
+    # resolution in inputs is assumed to be the same as scales
+    "LARGERJET_Weak_JET_Rtrk_Baseline_D2Beta1",
+	"LARGERJET_Weak_JET_Rtrk_Baseline_Qw",
+	"LARGERJET_Weak_JET_Rtrk_Baseline_Split12",
+	"LARGERJET_Weak_JET_Rtrk_Baseline_Split23",
+	"LARGERJET_Weak_JET_Rtrk_Baseline_Tau21WTA",
+	"LARGERJET_Weak_JET_Rtrk_Baseline_Tau32WTA",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_D2Beta1",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_Qw",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_Split12",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_Split23",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_Tau21WTA",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_Tau32WTA",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_D2Beta1",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_Qw",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_Split12",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_Split23",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_Tau21WTA",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_Tau32WTA",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_D2Beta1",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_Qw",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_Split12",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_Split23",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_Tau21WTA",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_Tau32WTA",
 	]
+
+SYSTEMATICS_MC15C_WEAK_NOINPUTS = [
+	"LARGERJET_Weak_JET_Rtrk_Baseline_pT",
+	"LARGERJET_Weak_JET_Rtrk_Modelling_pT",
+	"LARGERJET_Weak_JET_Rtrk_TotalStat_pT",
+	"LARGERJET_Weak_JET_Rtrk_Tracking_pT",
+    "LARGERJET_Weak_JET_CombPtRes",
+]
 
 SYSTEMATICS_MC15C_MEDIUM = [
         "LARGERJET_Medium_JET_Comb_Baseline_Kin",
