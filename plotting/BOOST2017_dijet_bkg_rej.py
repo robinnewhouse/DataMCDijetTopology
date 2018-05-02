@@ -246,8 +246,8 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         self.canvas.Update()
         self.canvas.Modified()
 
-        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
-        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
+        self.print_to_file(OUTPUT_DIR + "/" + self.name + "_dijet.pdf")
+        # self.print_to_file(OUTPUT_DIR + "/" + self.name + "_dijet.eps")
         self.canvas.Clear()
 
 DEF_EXTRA_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", "Dijet Selection" ]

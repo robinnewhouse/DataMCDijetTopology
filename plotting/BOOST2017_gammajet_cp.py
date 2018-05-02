@@ -191,7 +191,7 @@ class PlotDataMcGammaJet(PlotBase):
         self.canvas.Modified()
 
         self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
-        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
+        # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
         self.canvas.Clear()
 
 SEL_LINE = [ "#gamma + jet selection" ]
