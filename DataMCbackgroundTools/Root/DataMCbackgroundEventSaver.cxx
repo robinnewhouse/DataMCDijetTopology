@@ -41,6 +41,9 @@ namespace top {
 
 DataMCbackgroundEventSaver::DataMCbackgroundEventSaver(void)
 {
+    // apply branch filters to remove unneeded branches from NTuples
+    branchFilters().push_back(std::bind(&getBranchStatus, std::placeholders::_1, std::placeholders::_2));
+
     top::ConfigurationSettings* config_settings = top::ConfigurationSettings::get();
 
     /*************************************************/
@@ -1627,6 +1630,35 @@ DataMCbackgroundEventSaver::JetconVecToPseudojet (xAOD::JetConstituentVector inp
   }
 
   return constituents;
+}
+
+int DataMCbackgroundEventSaver::getBranchStatus(top::TreeManager const * treeManager, std::string const & variableName)
+{
+    // do not store any branches in the truth tree, we do not need it at all
+    if(treeManager->name().compare("truth") == 0) {
+        return 0;
+    }
+    /* Remove branches from output n-tuple using pattern matching */
+    // small-R jets -- named "jet_blabla"
+    if (variableName.find("jet_") != std::string::npos
+            && variableName.find("rljet_") == std::string::npos)
+        return 0;
+
+    // b-tagging scale factors
+    // calo b-tagging scale factors
+    if (variableName.find("weight_bTagSF") != std::string::npos)
+        return 0;
+
+    // lepton indiv SF weights (these are not normally used in analysis)
+    if (variableName.find("weight_indiv_SF_EL")!=std::string::npos || variableName.find("weight_indiv_SF_MU")!=std::string::npos)
+        return 0;
+
+    // unused large-R jet variables -- "ljet_blabla"
+    if (variableName.find("ljet_") != std::string::npos
+            && variableName.find("rljet_") == std::string::npos)
+      return 0;
+
+    return -1;
 }
 
 }
