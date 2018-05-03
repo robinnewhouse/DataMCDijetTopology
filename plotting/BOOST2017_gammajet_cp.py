@@ -201,15 +201,15 @@ MASS_PLOT_REBIN = 5
 
 data_mc_plots = []
 
-data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_MassTau32Tag50eff_JSSCut",
-        empty_scale = 2.1,
-        extra_legend_lines = DEF_LINES + ["Top-tagged"],
-        x_min = 0,
-        x_max = 350,
-        y_min = 1,
-        log_scale = True,
-        rebin = MASS_PLOT_REBIN + 4,
-        ))
+# data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_MassTau32Tag50eff_JSSCut",
+#         empty_scale = 2.1,
+#         extra_legend_lines = DEF_LINES + ["Top-tagged"],
+#         x_min = 0,
+#         x_max = 350,
+#         y_min = 1,
+#         log_scale = True,
+#         rebin = MASS_PLOT_REBIN + 4,
+#         ))
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_MassTau32Tag80eff_JSSCut",
         empty_scale = 4,
@@ -221,41 +221,41 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_MassT
         rebin = MASS_PLOT_REBIN + 4,
         ))
 
-data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_QwTau32Tag50eff",
-        empty_scale = 2.4,
-        extra_legend_lines = DEF_LINES + ["Top-tagged"],
-        x_min = 0,
-        x_max = 350,
-        y_min = 0.01,
-        rebin = MASS_PLOT_REBIN+4,
-        ))
+# data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_QwTau32Tag50eff",
+#         empty_scale = 2.4,
+#         extra_legend_lines = DEF_LINES + ["Top-tagged"],
+#         x_min = 0,
+#         x_max = 350,
+#         y_min = 0.01,
+#         rebin = MASS_PLOT_REBIN+4,
+#         ))
+#
+# data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_QwTau32Tag80eff",
+#         empty_scale = 2.0,
+#         extra_legend_lines = DEF_LINES + ["Top-tagged"],
+#         x_min = 0,
+#         x_max = 350,
+#         y_min = 0.01,
+#         rebin = MASS_PLOT_REBIN+4,
+#         ))
 
-data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_QwTau32Tag80eff",
-        empty_scale = 2.0,
-        extra_legend_lines = DEF_LINES + ["Top-tagged"],
-        x_min = 0,
-        x_max = 350,
-        y_min = 0.01,
-        rebin = MASS_PLOT_REBIN+4,
-        ))
-
-data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_Tau32Split23Tag50eff",
-        empty_scale = 2.45,
-        extra_legend_lines = DEF_LINES + ["Top-tagged"],
-        x_min = 0,
-        x_max = 350,
-        y_min = 0.01,
-        rebin = MASS_PLOT_REBIN + 4,
-        ))
-
-data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_Tau32Split23Tag80eff",
-        empty_scale = 1.8,
-        extra_legend_lines = DEF_LINES + ["Top-tagged"],
-        x_min = 0,
-        x_max = 350,
-        y_min = 0.01,
-        rebin = MASS_PLOT_REBIN + 4,
-        ))
+# data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_Tau32Split23Tag50eff",
+#         empty_scale = 2.45,
+#         extra_legend_lines = DEF_LINES + ["Top-tagged"],
+#         x_min = 0,
+#         x_max = 350,
+#         y_min = 0.01,
+#         rebin = MASS_PLOT_REBIN + 4,
+#         ))
+#
+# data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_Tau32Split23Tag80eff",
+#         empty_scale = 1.8,
+#         extra_legend_lines = DEF_LINES + ["Top-tagged"],
+#         x_min = 0,
+#         x_max = 350,
+#         y_min = 0.01,
+#         rebin = MASS_PLOT_REBIN + 4,
+#         ))
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16WTag_50eff_JSSCut",
         empty_scale = 2.0,
@@ -267,36 +267,36 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16WTag_50ef
         rebin = MASS_PLOT_REBIN,
         ))
 
-data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16WTag_80eff_JSSCut",
-        empty_scale = 1.75,
-        extra_legend_lines = DEF_LINES + ["W-tagged"],
-	      y_min = 0.01,
-        x_min = 0,
-        x_max = 350,
-        #log_scale = True,
-        rebin = MASS_PLOT_REBIN,
-        ))
+# data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16WTag_80eff_JSSCut",
+#         empty_scale = 1.75,
+#         extra_legend_lines = DEF_LINES + ["W-tagged"],
+# 	      y_min = 0.01,
+#         x_min = 0,
+#         x_max = 350,
+#         #log_scale = True,
+#         rebin = MASS_PLOT_REBIN,
+#         ))
 
-data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16ZTag_50eff_JSSCut",
-        empty_scale = 2.0,
-        extra_legend_lines = DEF_LINES + ["Z-tagged"],
-	      y_min = 0.01,
-        x_min = 0,
-        x_max = 350,
-        #y_max = 20e3,
-        #log_scale = True,
-        rebin = MASS_PLOT_REBIN,
-        ))
-
-data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16ZTag_80eff_JSSCut",
-        empty_scale = 1.75,
-        extra_legend_lines = DEF_LINES + ["Z-tagged"],
-	      y_min = 0.01,
-        x_min = 0,
-        x_max = 350,
-        #log_scale = True,
-        rebin = MASS_PLOT_REBIN,
-        ))
+# data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16ZTag_50eff_JSSCut",
+#         empty_scale = 2.0,
+#         extra_legend_lines = DEF_LINES + ["Z-tagged"],
+# 	      y_min = 0.01,
+#         x_min = 0,
+#         x_max = 350,
+#         #y_max = 20e3,
+#         #log_scale = True,
+#         rebin = MASS_PLOT_REBIN,
+#         ))
+#
+# data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16ZTag_80eff_JSSCut",
+#         empty_scale = 1.75,
+#         extra_legend_lines = DEF_LINES + ["Z-tagged"],
+# 	      y_min = 0.01,
+#         x_min = 0,
+#         x_max = 350,
+#         #log_scale = True,
+#         rebin = MASS_PLOT_REBIN,
+#         ))
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "BDT_Top",
         empty_scale = 1.75,
@@ -391,15 +391,15 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "TopoTag_Top_80_qq
 #        rebin = 4,
 #        ))
 #
-#data_mc_plots.append(PlotDataMcGammaJet( "h_mu_corrSF",
-#        empty_scale = 2.0,
-#        extra_legend_lines = DEF_LINES,
-#        do_systematics = False,
-#        x_units = "",
-#        x_min = 5,
-#        x_max = 45,
-#        rebin = 4,
-#        ))
+data_mc_plots.append(PlotDataMcGammaJet( "h_mu_corrSF",
+       empty_scale = 2.0,
+       extra_legend_lines = DEF_LINES,
+       do_systematics = False,
+       x_units = "",
+       x_min = 5,
+       x_max = 45,
+       rebin = 4,
+       ))
 
 data_mc_plots += [
         PlotDataMcGammaJet("h_rljet0_m_comb",
@@ -429,21 +429,21 @@ data_mc_plots += [
             log_scale = True,
             ),
 
-        # PlotDataMcGammaJet("h_rljet0_Split23__combMgt100GeV",
+        # PlotDataMcGammaJet("h_rljet0_Split23_combMgt100GeV",
         #     empty_scale = 5,
         #     extra_legend_lines = DEF_LINES + ["m^{comb} > 100 GeV"],
         #     log_scale = True,
         #     x_max = 140,
         #     ),
 
-        # PlotDataMcGammaJet("h_rljet0_D2__combMgt50GeV",
-        #     empty_scale = 1.9,
-        #     extra_legend_lines = DEF_LINES + ["m^{comb} > 50 GeV"],
-        #     x_units = "",
-        #     rebin = 4,
-        #     x_max = 4.0,
-        #     y_min = 0.01,
-        #     ),
+        PlotDataMcGammaJet("h_rljet0_D2_combMgt50GeV",
+            empty_scale = 1.9,
+            extra_legend_lines = DEF_LINES + ["m^{comb} > 50 GeV"],
+            x_units = "",
+            rebin = 4,
+            x_max = 4.0,
+            y_min = 0.01,
+            ),
 
         PlotDataMcGammaJet("h_rljet0_topTag_BDT_qqb_score_mva",
             empty_scale = 4,
@@ -558,7 +558,7 @@ data_mc_plots += [
                 rebin = 4,
                 ),
 
-        # PlotDataMcGammaJet("h_rljet0_Qw__combMgt100GeV",
+        # PlotDataMcGammaJet("h_rljet0_Qw_combMgt100GeV",
         #     extra_legend_lines = DEF_LINES + ["m^{comb} > 100 GeV"],
         #     log_scale = True,
         #     x_max = 200,
@@ -567,8 +567,8 @@ data_mc_plots += [
         #     )
         ]
 
-for masstag in ["", "combMgt100GeV", "combMlt100GeV", "combMgt180GeV", "combMgt100lt150GeV", "combMgt150lt180GeV"]:
-# for masstag in [""]:
+# for masstag in ["", "combMgt100GeV", "combMlt100GeV", "combMgt180GeV", "combMgt100lt150GeV", "combMgt150lt180GeV"]:
+for masstag in ["", "combMgt100GeV"]:
   PlotDataMcGammaJet(
               "h_rljet0_Tau32_wta" if not masstag else "h_rljet0_Tau32_wta_" + masstag,
               empty_scale = 2.0,
