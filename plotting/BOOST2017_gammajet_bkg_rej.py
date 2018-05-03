@@ -15,7 +15,7 @@ from plot_loader import *
 from plot_systematics import *
 from plot_systematics_breakdown import *
 
-DO_SYSTEMATICS_DEFAULT = False
+DO_SYSTEMATICS_DEFAULT = True
 
 PT_BIN_BOUNDS = array.array('d', [
     200,
@@ -64,7 +64,7 @@ make_dir(OUTPUT_DIR)
 def rej_rebin(h, bin_bounds):
   return h.Rebin(len(bin_bounds)-1, h.GetName()+"_rebinned", bin_bounds)
 
-def get_sys_dict_eff(var_name):
+def get_sys_dict_eff(var_name, bin_bounds):
     # get the Rtrk systematics and rebin them
     if ("BDT" in var_name or "DNN" in var_name):
       return {}
@@ -74,7 +74,7 @@ def get_sys_dict_eff(var_name):
         var_dict["down"] = rej_rebin(var_dict["down"], bin_bounds)
     return dict
 
-def make_rej_TH1SysEff(gen_name, tag_name, x_axis = "pt"):
+def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
     is_data = "data" in gen_name
 
     if x_axis == "mu":
@@ -100,12 +100,12 @@ def make_rej_TH1SysEff(gen_name, tag_name, x_axis = "pt"):
         
         total_sys_dict = {}
         passed_sys_dict = {}
-        if DO_SYSTEMATICS_DEFAULT:
+        if do_systematics:
             if ("BDT" in tag_name or "DNN" in tag_name):
                 pass
             else:
-                total_sys_dict = get_sys_dict_eff(total_var_name)
-                passed_sys_dict = get_sys_dict_eff(passed_var_name)
+                total_sys_dict = get_sys_dict_eff(total_var_name, bin_bounds)
+                passed_sys_dict = get_sys_dict_eff(passed_var_name, bin_bounds)
         return TH1SysEff(h_total, total_sys_dict, h_passed, passed_sys_dict)
 
 class PlotGammaJetBkgRej(PlotBase):
@@ -249,11 +249,11 @@ class PlotGammaJetBkgRej(PlotBase):
 DEF_EXTRA_LINES = ["Trimmed anti-#it{k_{t}} #it{R}=1.0", "#gamma + jet selection"]
 HTT_EXTRA_LINES = ["Trimmed C/A #it{R}=1.5", "#gamma + jet selection"]
 
-def make_pt_rej_plot( tag_name, **kwargs):
+def make_pt_rej_plot( tag_name, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwargs):
 
     histos = {}
     for gen in ["data","sherpa_gammajet","pythia_gammajet"]:
-        histos[gen] = make_rej_TH1SysEff(gen, tag_name)
+        histos[gen] = make_rej_TH1SysEff(gen, tag_name, do_systematics)
 
     return PlotGammaJetBkgRej(
             histos,
@@ -269,11 +269,11 @@ def make_pt_rej_plot( tag_name, **kwargs):
             width = 600,
             **kwargs)
 
-def make_mu_rej_plot( tag_name, **kwargs):
+def make_mu_rej_plot( tag_name, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwargs):
 
     histos = {}
     for gen in ["data","sherpa_gammajet","pythia_gammajet"]:
-        histos[gen] = make_rej_TH1SysEff(gen, tag_name, x_axis = "mu")
+        histos[gen] = make_rej_TH1SysEff(gen, tag_name, do_systematics, x_axis = "mu")
 
     return PlotGammaJetBkgRej(
             histos,
@@ -394,15 +394,23 @@ bkg_rej_plots = [
             ),
 
         make_pt_rej_plot(
+            "TopoTag_Top_80_qqb",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): Topo" ],
+            y_max = 40,
+            ),
+
+        make_pt_rej_plot(
             "SDt_dcut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): SD" ],
             y_max = 40,
+            do_systematics = False, # for now
             ),
 
         make_pt_rej_plot(
             "SDw_dcut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): SD" ],
             y_max = 60,
+            do_systematics = False, # for now
             ),
 
         ]
@@ -448,6 +456,7 @@ bkg_rej_mu_plots = [
             extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): #tau_{32} + #sqrt{d_{23}}"],
             x_min = 350,
             y_max = 45,
+            do_systematics = False,
             ),
 
         make_mu_rej_plot(
@@ -455,6 +464,7 @@ bkg_rej_mu_plots = [
             extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): D_2 + m^{comb}"],
             x_min = 200,
             y_max = 175,
+            do_systematics = False,
             ),
 
         #make_pt_rej_plot(
@@ -478,12 +488,13 @@ bkg_rej_mu_plots = [
         #    y_max = 50
         #    ),
 
-        # make_mu_rej_plot(
-        #     "HTT_CAND",
-        #     extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
-        #     y_max = 80,
-        #     x_min = 350,
-        #     ),
+        make_mu_rej_plot(
+            "HTT_CAND",
+            extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
+            y_max = 80,
+            x_min = 350,
+            do_systematics = False,
+            ),
 
         make_mu_rej_plot(
             "BDT_Top",
@@ -501,8 +512,7 @@ bkg_rej_mu_plots = [
         make_mu_rej_plot(
             "DNN_Top",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): DNN" ],
-            y_max = 75,
-            x_min = 350,
+            y_max = 400,
             ),
 
         make_mu_rej_plot(
@@ -512,15 +522,24 @@ bkg_rej_mu_plots = [
             ),
 
         make_mu_rej_plot(
+            "TopoTag_Top_80_qqb",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): Topo" ],
+            y_max = 200,
+            do_systematics = False,
+            ),
+
+        make_mu_rej_plot(
             "SDt_dcut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): SD" ],
             y_max = 40,
+            do_systematics = False,
             ),
 
         make_mu_rej_plot(
             "SDw_dcut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): SD" ],
             y_max = 60,
-            ),
+            do_systematics = False,
+           ),
 
         ]

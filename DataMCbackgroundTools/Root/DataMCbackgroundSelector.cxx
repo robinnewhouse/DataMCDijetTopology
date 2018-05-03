@@ -1044,11 +1044,19 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND", htt_caGroomJet_m_def->at(ijet) / 1000.  , weight, is_htt_tagged);
 
 
+            // fill 1D and 2D mu htt histograms
+            if (!this->operating_on_mc) {
+                hp->h_mu->fill_tagged("HTT_CAND" , mu * 1./1.09 , weight , true);
+            } else {
+                hp->h_mu->fill_tagged("HTT_CAND" , mu           , weight , true);
+            }
+
             if (!this->operating_on_mc) {
                 h_htt_m_vs_mu->Fill(mu/1.09 , htt_m_def->at(ijet) / 1000, weight);
             } else {
                 h_htt_m_vs_mu->Fill(mu , htt_m_def->at(ijet) / 1000, weight);
             }
+
 
             if (this->operating_on_mc) {
                 hp->h_htt_pt.at(ijet)->fill_tagged("sjcalib0970", htt_pt_sjcalib0970->at(ijet) / 1000. , weight, true);

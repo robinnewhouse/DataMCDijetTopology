@@ -81,7 +81,7 @@ def get_sys_dict_eff(gen_name, var_name):
     dict["sig_norm_sf"]["down"] = h_tmp_down
     return dict
 
-def make_rej_TH1SysEff(gen_name, tag_name, x_axis = "pt"):
+def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
     tmp_loader = LOADER_SMOOTH if "smooth" in tag_name else LOADER
     is_data = "data" in gen_name
     
@@ -109,15 +109,13 @@ def make_rej_TH1SysEff(gen_name, tag_name, x_axis = "pt"):
             else tmp_loader.get_normalized_dijet(gen_name, passed_var_name, normalize_to_pretagged = True),
             bin_bounds)
 
-    print tag_name
-
     if (is_data):
         h_total.Divide(h_passed)
         return h_total.Clone()
     else:    
         total_sys_dict = {}
         passed_sys_dict = {}
-        if DO_SYSTEMATICS_DEFAULT:
+        if do_systematics:
             if ("BDT" in tag_name or "DNN" in tag_name):
               total_sys_dict = {}
               passed_sys_dict = {}
@@ -253,14 +251,14 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
 DEF_EXTRA_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", "Dijet Selection" ]
 HTT_EXTRA_LINES = ["Trimmed C/A #it{R}=1.5", "Dijet Selection"]
 
-def make_pt_efficiency_plot( tag_name, ref_tag_name = None, **kwargs):
+def make_pt_efficiency_plot( tag_name, ref_tag_name = None, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwargs):
 
     histos = {}
     for gen in ["data","pythia","herwig"]:
-        histos[gen] = make_rej_TH1SysEff(gen, tag_name)
+        histos[gen] = make_rej_TH1SysEff(gen, tag_name, do_systematics)
 
     if (ref_tag_name != None):
-        histos["data_ref"] = make_rej_TH1SysEff("data_ref", ref_tag_name)
+        histos["data_ref"] = make_rej_TH1SysEff("data_ref", ref_tag_name, do_systematics)
 
     return PlotDataPythiaHerwigEfficiency(
             histos,
@@ -277,14 +275,14 @@ def make_pt_efficiency_plot( tag_name, ref_tag_name = None, **kwargs):
             width = 600,
             **kwargs)
 
-def make_mu_efficiency_plot( tag_name, ref_tag_name = None, **kwargs):
+def make_mu_efficiency_plot( tag_name, ref_tag_name = None, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwargs):
 
     histos = {}
     for gen in ["data","pythia","herwig"]:
-        histos[gen] = make_rej_TH1SysEff(gen, tag_name, x_axis = "mu")
+        histos[gen] = make_rej_TH1SysEff(gen, tag_name, do_systematics, x_axis = "mu")
 
     if (ref_tag_name != None):
-        histos["data_ref"] = make_rej_TH1SysEff("data_ref", ref_tag_name,  x_axis = "mu")
+        histos["data_ref"] = make_rej_TH1SysEff("data_ref", ref_tag_name, do_systematics, x_axis = "mu")
 
     return PlotDataPythiaHerwigEfficiency(
             histos,
@@ -393,6 +391,12 @@ pt_bkg_rej_plots = [
             ),
 
         make_pt_efficiency_plot(
+            "TopoTag_Top_80_qqb",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): Topo" ],
+            y_max = 40,
+            ),
+
+        make_pt_efficiency_plot(
             "SDt_dcut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): SD" ],
             y_max = 40,
@@ -467,6 +471,8 @@ mu_bkg_rej_plots = [
         #    y_max = 35
         #    ),
 
+
+        ## !!!
         # make_mu_efficiency_plot(
         #     "HTT_CAND",
         #     extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
@@ -495,6 +501,13 @@ mu_bkg_rej_plots = [
             "DNN_W",
             extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): DNN" ],
             y_max = 200,
+            ),
+
+        make_mu_efficiency_plot(
+            "TopoTag_Top_80_qqb",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): Topo" ],
+            y_max = 200,
+            # do_systematics = False,
             ),
 
         make_mu_efficiency_plot(
