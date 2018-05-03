@@ -472,12 +472,12 @@ mu_bkg_rej_plots = [
         #    ),
 
 
-        ## !!!
-        # make_mu_efficiency_plot(
-        #     "HTT_CAND",
-        #     extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
-        #     y_max = 80,
-        #     ),
+        # !!!
+        make_mu_efficiency_plot(
+            "HTT_CAND",
+            extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
+            y_max = 80,
+            ),
 
         make_mu_efficiency_plot(
             "BDT_Top",

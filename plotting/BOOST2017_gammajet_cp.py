@@ -567,10 +567,10 @@ data_mc_plots += [
         #     )
         ]
 
-# for masstag in ["", "combMgt100GeV", "combMlt100GeV", "combMgt180GeV", "combMgt100lt150GeV", "combMgt150lt180GeV"]:
-for masstag in [""]:
+for masstag in ["", "combMgt100GeV", "combMlt100GeV", "combMgt180GeV", "combMgt100lt150GeV", "combMgt150lt180GeV"]:
+# for masstag in [""]:
   PlotDataMcGammaJet(
-              "h_rljet0_Tau32_wta" if not masstag else "h_rljet0_Tau32_wta__" + masstag,
+              "h_rljet0_Tau32_wta" if not masstag else "h_rljet0_Tau32_wta_" + masstag,
               empty_scale = 2.0,
               flip_legend = True,
               extra_legend_lines = DEF_LINES,
