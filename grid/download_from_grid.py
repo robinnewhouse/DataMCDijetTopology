@@ -2,7 +2,7 @@
 import TopExamples.grid
 
 # ## Dijet
-suffix = 'dijet_20180405_syst'
+suffix = 'dijet_20180405_syst_v7'
 
 scope     = 'user.rnewhous'
 dir_data  = '/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/'+suffix+'/data'
