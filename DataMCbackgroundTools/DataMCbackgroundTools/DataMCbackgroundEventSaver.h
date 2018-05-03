@@ -50,6 +50,10 @@ namespace top {
         void saveEvent(const top::Event& event);
 
     private:
+
+        // static function that prevents the unwanted creation of branches in any eventsaver using the tree manager
+        static int getBranchStatus(top::TreeManager const *, std::string const & variableName);
+
         // to load the AnalysisTop configuration
         std::shared_ptr<top::TopConfig> m_config;
 
