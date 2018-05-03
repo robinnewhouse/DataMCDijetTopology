@@ -246,8 +246,8 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         self.canvas.Update()
         self.canvas.Modified()
 
-        self.print_to_file(OUTPUT_DIR + "/" + self.name + "_dijet.pdf")
-        # self.print_to_file(OUTPUT_DIR + "/" + self.name + "_dijet.eps")
+        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
+        # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
         self.canvas.Clear()
 
 DEF_EXTRA_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", "Dijet Selection" ]
@@ -264,7 +264,7 @@ def make_pt_efficiency_plot( tag_name, ref_tag_name = None, **kwargs):
 
     return PlotDataPythiaHerwigEfficiency(
             histos,
-            name = tag_name + "_rej",
+            name = tag_name + "_rej_dijet",
             tex_size_mod = 0.9,
             tex_spacing_mod = 0.75,
             lumi_val = "36.7",
@@ -288,7 +288,7 @@ def make_mu_efficiency_plot( tag_name, ref_tag_name = None, **kwargs):
 
     return PlotDataPythiaHerwigEfficiency(
             histos,
-            name = tag_name + "_rej_mu",
+            name = tag_name + "_rej_mu_dijet",
             tex_size_mod = 0.9,
             tex_spacing_mod = 0.75,
             lumi_val = "36.7",
@@ -400,10 +400,9 @@ pt_bkg_rej_plots = [
 
         make_pt_efficiency_plot(
             "SDw_dcut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "ShD #font[52]{W}, #epsilon_{sig} = 50%" ],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): SD" ],
             y_max = 60,
             ),
-
         ]
 
 

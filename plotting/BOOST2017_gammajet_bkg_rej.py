@@ -242,7 +242,7 @@ class PlotGammaJetBkgRej(PlotBase):
         self.canvas.Update()
         self.canvas.Modified()
 
-        self.print_to_file(OUTPUT_DIR + "/" + self.name + "_gammajet.pdf")
+        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
         # self.print_to_file(OUTPUT_DIR + "/" + self.name + "_gammajet.eps")
         self.canvas.Clear()
 
@@ -257,7 +257,7 @@ def make_pt_rej_plot( tag_name, **kwargs):
 
     return PlotGammaJetBkgRej(
             histos,
-            name = tag_name + "_rej",
+            name = tag_name + "_rej_gammajet",
             lumi_val = "36.1",
             atlas_mod = "Internal",
             legend_loc = [0.62,0.93,0.89,0.75],
@@ -277,7 +277,7 @@ def make_mu_rej_plot( tag_name, **kwargs):
 
     return PlotGammaJetBkgRej(
             histos,
-            name = tag_name + "_rej_mu",
+            name = tag_name + "_rej_mu_gammajet",
             lumi_val = "36.1",
             atlas_mod = "Internal",
             legend_loc = [0.62,0.93,0.89,0.75],
@@ -393,6 +393,18 @@ bkg_rej_plots = [
             y_max = 200,
             ),
 
+        make_pt_rej_plot(
+            "SDt_dcut",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): SD" ],
+            y_max = 40,
+            ),
+
+        make_pt_rej_plot(
+            "SDw_dcut",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): SD" ],
+            y_max = 60,
+            ),
+
         ]
 
 bkg_rej_mu_plots = [
@@ -497,6 +509,18 @@ bkg_rej_mu_plots = [
             "DNN_W",
             extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): DNN" ],
             y_max = 200,
+            ),
+
+        make_mu_rej_plot(
+            "SDt_dcut",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): SD" ],
+            y_max = 40,
+            ),
+
+        make_mu_rej_plot(
+            "SDw_dcut",
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): SD" ],
+            y_max = 60,
             ),
 
         ]
