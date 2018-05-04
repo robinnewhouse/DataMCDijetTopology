@@ -69,13 +69,6 @@ namespace top {
         unsigned m_num_fatjets_keep;
         unsigned m_debug_level;
 
-        /*********/
-        /* TOOLS */
-        /*********/
-
-        // CA2 Subjet calibration tool
-        JetCalibrationTool* m_jetcalib_subjet;
-
         /***********/
         /* METHODS */
         /***********/
@@ -146,7 +139,6 @@ namespace top {
         void runSDandFillTree(std::vector<const xAOD::Jet*>& rljets, bool doSystShifts);
         std::vector<fastjet::PseudoJet> JetconVecToPseudojet(xAOD::JetConstituentVector input);
         std::unique_ptr<ShowerDeconstruction> tagger_SDw_win20_btag0;
-        std::unique_ptr<ShowerDeconstruction> tagger_SDt_win50_btag0;
         std::unique_ptr<ShowerDeconstruction> tagger_SDt_win50_btag1;
 
         // HEPTopTagger

@@ -578,18 +578,6 @@ DataMCbackgroundEventSaver::initializeSD(void)
     top::check (tagger_SDw_win20_btag0->setProperty("maxNjets", 6), "FAILURE");
     top::check (tagger_SDw_win20_btag0->setProperty("useBtag", 0), "FAILURE");
     top::check (tagger_SDw_win20_btag0->initialize(), "FAILURE" );
-    tagger_SDt_win50_btag0 = make_unique<ShowerDeconstruction>("SD_T_win50_Btag0");
-    top::check (tagger_SDt_win50_btag0->setProperty("mode", "t/g"), "FAILURE" );
-    top::check (tagger_SDt_win50_btag0->setProperty("R", 1.0), "FAILURE" );
-    top::check (tagger_SDt_win50_btag0->setProperty("topMass", 170), "FAILURE" );
-    top::check (tagger_SDt_win50_btag0->setProperty("topMassWindow", 50.0), "FAILURE" );
-    top::check (tagger_SDt_win50_btag0->setProperty("wMass", 80.403), "FAILURE" );
-    top::check (tagger_SDt_win50_btag0->setProperty("wMassWindow", 25.0), "FAILURE" );
-    top::check (tagger_SDt_win50_btag0->setProperty("hMass", 125.0), "FAILURE" );
-    top::check (tagger_SDt_win50_btag0->setProperty("hMassWindow", 20.0), "FAILURE" );
-    top::check (tagger_SDt_win50_btag0->setProperty("maxNjets", 6), "FAILURE" );
-    top::check (tagger_SDt_win50_btag0->setProperty("useBtag", 0), "FAILURE" );
-    top::check (tagger_SDt_win50_btag0->initialize(), "FAILURE" );
     tagger_SDt_win50_btag1 = make_unique<ShowerDeconstruction>("SD_T_win50_Btag1");
     top::check (tagger_SDt_win50_btag1->setProperty("mode", "t/g"), "FAILURE" );
     top::check (tagger_SDt_win50_btag1->setProperty("R", 1.0), "FAILURE" );
@@ -603,34 +591,6 @@ DataMCbackgroundEventSaver::initializeSD(void)
     top::check (tagger_SDt_win50_btag1->setProperty("useBtag", 0), "FAILURE" );
     top::check (tagger_SDt_win50_btag1->initialize(), "FAILURE" );
 
-    /*********************************************/
-    /* INITIALIZE SUBJET CALIBRATION TOOL FOR SD */
-    /*********************************************/
-
-    //string describing the current thread, for logging
-    const std::string name_thread = "DataMCbackgroundEventSaver";
-
-    //String describing your jet collection, for example AntiKt4EMTopo or AntiKt4LCTopo (see below)
-    TString jetAlgo_subjet = "CamKt020LCTopo";
-
-    //Path to global config used to initialize the tool (see below)
-    TString config_subjetcalib = "CamKt2LCTopoAreaCalib_JES_HTTmodified.config";
-
-    // may need to change this?
-    TString calibSeq_subjet = "EtaJES_DEV"; //String describing the calibration sequence to apply (see below)
-    // Old calibration
-    //  TString config_subjetcalib = "CamKt_JES_HTT.config"; //Path to global config used to initialize the tool (see below)
-    //  TString calibSeq_subjet = "Origin_EtaJES" ; //String describing the calibration sequence to apply (see below)
-
-    //The default constructor can also be used if the arguments are set with python configuration instead
-    m_jetcalib_subjet = new JetCalibrationTool(name_thread);
-    top::check( m_jetcalib_subjet->setProperty("JetCollection", jetAlgo_subjet.Data()), "FAILURE setting property 'JetCollection' for SD subjet calibration!" );
-    top::check( m_jetcalib_subjet->setProperty("ConfigFile", config_subjetcalib.Data()), "FAILURE setting property 'ConfigFile' for SD subjet calibration!" );
-    top::check( m_jetcalib_subjet->setProperty("CalibSequence", calibSeq_subjet.Data()), "FAILURE setting property 'CalibSequence' for SD subjet calibration!" );
-    top::check( m_jetcalib_subjet->setProperty("IsData", !m_config->isMC()), "FAILURE setting property 'IsData' for SD subjet calibration!" );
-
-    //Initialize the tool
-    top::check ( m_jetcalib_subjet->initializeTool(name_thread), "FAILURE: failed to initialize subject calibration tool for SD");
 }
 
 void
@@ -1389,178 +1349,89 @@ void DataMCbackgroundEventSaver::runHTTAndFillTree(void) {
 
 void DataMCbackgroundEventSaver::runSDandFillTree(std::vector<const xAOD::Jet*>& rljets, bool doSystShifts)
 {
-  for (unsigned i = 0; i < m_num_fatjets_keep && i < rljets.size(); i++) {
-    // Obtain ungroomed parent jet
-    const ElementLink<xAOD::JetContainer>& linkToUngroomed  = rljets[i]->getAttribute<ElementLink<xAOD::JetContainer>>("Parent");
-    const xAOD::Jet* ungroomed_fatjet = *linkToUngroomed;
+    for (unsigned i = 0; i < m_num_fatjets_keep && i < rljets.size(); i++) {
+        // Obtain ungroomed parent jet
+        const ElementLink<xAOD::JetContainer>& linkToUngroomed  = rljets[i]->getAttribute<ElementLink<xAOD::JetContainer>>("Parent");
+        const xAOD::Jet* ungroomed_fatjet = *linkToUngroomed;
+        
+        xAOD::JetConstituentVector AssociatedClusters_forSD = ungroomed_fatjet->getConstituents();
+        std::vector<fastjet::PseudoJet> constituents;
+        
+        // also get groomed constituents 
+        const xAOD::JetConstituentVector groomed_clusters = rljets[i]->getConstituents();
+        std::vector<fastjet::PseudoJet> groomed_constituents;
+        if (groomed_clusters.empty() || AssociatedClusters_forSD.empty())
+            return;
+        groomed_constituents = JetconVecToPseudojet(groomed_clusters);
+        constituents = JetconVecToPseudojet(AssociatedClusters_forSD);
 
-    xAOD::JetConstituentVector AssociatedClusters_forSD = ungroomed_fatjet->getConstituents();
-    std::vector<fastjet::PseudoJet> constituents;
 
-    // also get groomed constituents
-    const xAOD::JetConstituentVector groomed_clusters = rljets[i]->getConstituents();
-    std::vector<fastjet::PseudoJet> groomed_constituents;
+        // Now, obtain traditional subjets, uncalib subjet and force 3 subjets
+        fastjet::JetDefinition large_r_def(fastjet::kt_algorithm, 1.0 );
+        fastjet::JetDefinition microjet_def(fastjet::cambridge_algorithm, 0.2);
+        fastjet::ClusterSequence subjet_cs(constituents, microjet_def);
+        fastjet::ClusterSequence forcedN_cs(groomed_constituents, large_r_def);
+        fastjet::ClusterSequence d32_cs(groomed_constituents,large_r_def);
+        
 
-    if (groomed_clusters.empty() || AssociatedClusters_forSD.empty()) {
-      return;
+        float pt_cut = 20e3; // 20 GeV pt cut
+        std::vector<fastjet::PseudoJet> subjets = fastjet::sorted_by_pt(subjet_cs.inclusive_jets(pt_cut));
+        std::vector<fastjet::PseudoJet> uncalib_subjets = fastjet::sorted_by_pt(subjet_cs.inclusive_jets(10e3)); // use 10 GeV cut
+        std::vector<fastjet::PseudoJet> new_subjets_3 = fastjet::sorted_by_pt(forcedN_cs.exclusive_jets_up_to(3)) ;
+        
+        double dcut2 = 15.0e3*15.0e3;
+        double dcut3 = 20.0e3*20.0e3;
+
+        std::vector<fastjet::PseudoJet> dcut2_subjets = fastjet::sorted_by_pt(d32_cs.exclusive_jets(dcut2));
+        std::vector<fastjet::PseudoJet> dcut3_subjets = fastjet::sorted_by_pt(d32_cs.exclusive_jets(dcut3));
+
+        // Calibrate subjets
+        std::vector<fastjet::PseudoJet> calib_subjets;
+
+        // Get trackjets and their B tag status
+        std::vector<int> btag_uncalib(uncalib_subjets.size(), 0);
+        //std::vector<int> btag_special2(new_subjets_2.size(), 0);
+        std::vector<int> btag_special3(new_subjets_3.size(), 0);
+        std::vector<int> btag(calib_subjets.size(), 0);
+        std::vector<int> tracktag;    
+        std::vector<int> btag_special5(dcut2_subjets.size(),0);
+        std::vector<int> btag_special6(dcut3_subjets.size(),0);
+
+        std::vector<fastjet::PseudoJet> uncalib_subjets_UP;
+        std::vector<fastjet::PseudoJet> uncalib_subjets_DOWN;
+
+        for ( unsigned int i = 0; i < uncalib_subjets.size(); i++ ) {
+            uncalib_subjets_UP.push_back( uncalib_subjets[i] * 1.03 );
+            uncalib_subjets_DOWN.push_back( uncalib_subjets[i] * 0.97 );
+        }
+
+        std::vector<fastjet::PseudoJet> dcut2_subjets_UP;
+        std::vector<fastjet::PseudoJet> dcut2_subjets_DOWN;
+
+        for ( unsigned int i = 0; i < dcut2_subjets.size(); i++ ) {
+            dcut2_subjets_UP.push_back( dcut2_subjets[i] * 1.03 );
+            dcut2_subjets_DOWN.push_back( dcut2_subjets[i] * 0.97 );
+        }
+
+        std::vector<fastjet::PseudoJet> new_subjets_3_UP;
+        std::vector<fastjet::PseudoJet> new_subjets_3_DOWN;
+
+        for ( unsigned int i = 0; i < new_subjets_3.size(); i++ ) {
+            new_subjets_3_UP.push_back( new_subjets_3[i] * 1.03 );
+            new_subjets_3_DOWN.push_back( new_subjets_3[i] * 0.97 );
+        }
+
+        m_rljet_SDt_dcut[i] = tagger_SDt_win50_btag1->tagJetFromSubjets(dcut2_subjets,btag_special5);
+        m_rljet_SDw_dcut[i] = tagger_SDw_win20_btag0->tagJetFromSubjets(dcut2_subjets,btag_special5);
+
+        if(doSystShifts) {
+            m_rljet_SDt_dcut_UP[i] = tagger_SDt_win50_btag1->tagJetFromSubjets(dcut2_subjets_UP,btag_special5);
+            m_rljet_SDt_dcut_DOWN[i] = tagger_SDt_win50_btag1->tagJetFromSubjets(dcut2_subjets_DOWN,btag_special5);
+
+            m_rljet_SDw_dcut_UP[i] = tagger_SDw_win20_btag0->tagJetFromSubjets(dcut2_subjets_UP,btag_special5);
+            m_rljet_SDw_dcut_DOWN[i] = tagger_SDw_win20_btag0->tagJetFromSubjets(dcut2_subjets_DOWN,btag_special5);
+        }
     }
-
-    groomed_constituents = JetconVecToPseudojet(groomed_clusters);
-    constituents = JetconVecToPseudojet(AssociatedClusters_forSD);
-
-    // Now, obtain traditional subjets, uncalib subjet and force 3 subjets
-    fastjet::JetDefinition large_r_def(fastjet::kt_algorithm, 1.0 );
-    fastjet::JetDefinition microjet_def(fastjet::cambridge_algorithm, 0.2);
-    fastjet::ClusterSequence subjet_cs(constituents, microjet_def);
-    fastjet::ClusterSequence forcedN_cs(groomed_constituents, large_r_def);
-    fastjet::ClusterSequence d32_cs(groomed_constituents,large_r_def);
-
-    float pt_cut = 20e3; // 20 GeV pt cut
-    std::vector<fastjet::PseudoJet> subjets = fastjet::sorted_by_pt(subjet_cs.inclusive_jets(pt_cut));
-    std::vector<fastjet::PseudoJet> uncalib_subjets = fastjet::sorted_by_pt(subjet_cs.inclusive_jets(10e3)); // use 10 GeV cut
-    std::vector<fastjet::PseudoJet> new_subjets_3 = fastjet::sorted_by_pt(forcedN_cs.exclusive_jets_up_to(3)) ;
-
-    double dcut2 = 15.0e3*15.0e3;
-    double dcut3 = 20.0e3*20.0e3;
-    std::vector<fastjet::PseudoJet> dcut2_subjets = fastjet::sorted_by_pt(d32_cs.exclusive_jets(dcut2));
-    std::vector<fastjet::PseudoJet> dcut3_subjets = fastjet::sorted_by_pt(d32_cs.exclusive_jets(dcut3));
-    // Calibrate subjets
-
-    // Create a subjet container for calibration
-    xAOD::JetContainer* subjet_container = new xAOD::JetContainer();
-    subjet_container->setStore(new xAOD::JetAuxContainer);
-
-    top::check ( evtStore()->record(subjet_container, "subjet_container_name"), "FAILURE" );
-    top::check ( evtStore()->record(dynamic_cast<xAOD::JetAuxContainer*>(subjet_container->getStore()), "subjet_container_nameAux."), "FAILURE");
-
-    // Create xAOD::Jet's
-    std::vector<const xAOD::Jet*> subj_ptrs_const;
-    std::vector<xAOD::Jet*> subj_ptrs;
-    for(auto it = subjets.begin(); it != subjets.end(); it++) {
-      xAOD::Jet *subj = new xAOD::Jet();
-      subjet_container->push_back(subj);
-      subj_ptrs.push_back(subj);
-      subj_ptrs_const.push_back(subj);
-      // Set 4-mom
-      subj->setJetP4(xAOD::JetFourMom_t(it->pt(), it->eta(), it->phi(), it->m()));
-      subj->setJetP4(xAOD::JetConstitScaleMomentum, subj->jetP4());
-      subj->setAttribute<xAOD::JetFourMom_t>("JetPileupScaleMomentum", subj->jetP4()); // This is to workaound JetCalibTools issue
-    }
-
-
-    // To hold the callibrated subjets
-    std::vector<fastjet::PseudoJet> calib_subjets;
-    std::vector<fastjet::PseudoJet> calib_subjets_UP;
-    std::vector<fastjet::PseudoJet> calib_subjets_DOWN;
-    // Now calibrate the subjets of the container
-    for ( auto isubjet : *subjet_container) {
-      xAOD::Jet * jet = 0;
-
-      // SATUS CODE
-      top::check ( m_jetcalib_subjet->calibratedCopy(*isubjet,jet), "FAILURE "); //make a calibrated copy, assuming a copy hasn't been made already
-
-      // Here is your calibrated subjet: "jet"
-
-      fastjet::PseudoJet p(0,0,0,0);
-      float pt = jet->pt();
-      float y = jet->rapidity();
-      float phi = jet->phi();
-      // No mass calibration, set mass for each subjet as 1 MeV
-      float m = 1.0;
-      //float m = jet->m();
-      if (y != y) {
-        // Clean
-        delete jet;
-        continue; // null vectors cause NaNs
-      } else {
-        p.reset_PtYPhiM(pt, y, phi, m);
-        calib_subjets.push_back(p);
-
-        p *= 1.03;
-        calib_subjets_UP.push_back(p);
-
-        p *= 0.97/1.03;
-        calib_subjets_DOWN.push_back(p);
-      }
-
-      // Clean
-      delete jet;
-    }
-    top::check ( evtStore()->tds()->remove("subjet_container_name"), "FAILURE" );
-    top::check ( evtStore()->tds()->remove("subjet_container_nameAux."), "FAILURE" );
-    // Get trackjets and their B tag status
-    std::vector<int> btag_uncalib(uncalib_subjets.size(), 0);
-    //std::vector<int> btag_special2(new_subjets_2.size(), 0);
-    std::vector<int> btag_special3(new_subjets_3.size(), 0);
-    std::vector<int> btag(calib_subjets.size(), 0);
-    std::vector<int> tracktag;
-    std::vector<int> btag_special5(dcut2_subjets.size(),0);
-    std::vector<int> btag_special6(dcut3_subjets.size(),0);
-    std::vector<fastjet::PseudoJet> uncalib_subjets_UP;
-    std::vector<fastjet::PseudoJet> uncalib_subjets_DOWN;
-    for ( unsigned int i = 0; i < uncalib_subjets.size(); i++ ){
-      uncalib_subjets_UP.push_back( uncalib_subjets[i] * 1.03 );
-      uncalib_subjets_DOWN.push_back( uncalib_subjets[i] * 0.97 );
-
-    }
-    std::vector<fastjet::PseudoJet> dcut2_subjets_UP;
-    std::vector<fastjet::PseudoJet> dcut2_subjets_DOWN;
-    for ( unsigned int i = 0; i < dcut2_subjets.size(); i++ ){
-      dcut2_subjets_UP.push_back( dcut2_subjets[i] * 1.03 );
-      dcut2_subjets_DOWN.push_back( dcut2_subjets[i] * 0.97 );
-
-    }
-    std::vector<fastjet::PseudoJet> new_subjets_3_UP;
-    std::vector<fastjet::PseudoJet> new_subjets_3_DOWN;
-    for ( unsigned int i = 0; i < new_subjets_3.size(); i++ ){
-      new_subjets_3_UP.push_back( new_subjets_3[i] * 1.03 );
-      new_subjets_3_DOWN.push_back( new_subjets_3[i] * 0.97 );
-    }
-
-    m_rljet_SDw_calib[i]    = tagger_SDw_win20_btag0->tagJetFromSubjets(calib_subjets, btag);
-    m_rljet_SDw_uncalib[i]  = tagger_SDw_win20_btag0->tagJetFromSubjets(uncalib_subjets, btag_uncalib);
-    m_rljet_SDw_dcut[i]     = tagger_SDw_win20_btag0->tagJetFromSubjets(dcut2_subjets,btag_special5);
-    m_rljet_SDw_combined[i] = m_rljet_SDw_uncalib[i];
-    m_rljet_SDt_calib[i]    = tagger_SDt_win50_btag0->tagJetFromSubjets(calib_subjets, btag);
-    m_rljet_SDt_uncalib[i]  = tagger_SDt_win50_btag0->tagJetFromSubjets(uncalib_subjets, btag_uncalib);
-    m_rljet_SDt_dcut[i]     = tagger_SDt_win50_btag1->tagJetFromSubjets(dcut2_subjets,btag_special5);
-    m_rljet_SDt_combined[i] = m_rljet_SDt_uncalib[i];
-
-    if ( uncalib_subjets.size() < 4 ){
-      m_rljet_SDw_combined[i] = tagger_SDw_win20_btag0->tagJetFromSubjets(new_subjets_3, btag_special3);
-      m_rljet_SDt_combined[i] = tagger_SDt_win50_btag0->tagJetFromSubjets(new_subjets_3, btag_special3);
-    }
-
-    if(doSystShifts) {
-      m_rljet_SDw_calib_UP[i]    = tagger_SDw_win20_btag0->tagJetFromSubjets(calib_subjets_UP, btag);
-      m_rljet_SDw_uncalib_UP[i]  = tagger_SDw_win20_btag0->tagJetFromSubjets(uncalib_subjets_UP, btag_uncalib);
-      m_rljet_SDw_dcut_UP[i]     = tagger_SDw_win20_btag0->tagJetFromSubjets(dcut2_subjets_UP,btag_special5);
-      m_rljet_SDw_combined_UP[i] = m_rljet_SDw_uncalib_UP[i];
-      m_rljet_SDt_calib_UP[i]    = tagger_SDt_win50_btag0->tagJetFromSubjets(calib_subjets_UP, btag);
-      m_rljet_SDt_uncalib_UP[i]  = tagger_SDt_win50_btag0->tagJetFromSubjets(uncalib_subjets_UP, btag_uncalib);
-      m_rljet_SDt_dcut_UP[i]     = tagger_SDt_win50_btag1->tagJetFromSubjets(dcut2_subjets_UP,btag_special5);
-      m_rljet_SDt_combined_UP[i] = m_rljet_SDt_uncalib_UP[i];
-
-      if ( uncalib_subjets.size() < 4 ){
-        m_rljet_SDw_combined_UP[i] = tagger_SDw_win20_btag0->tagJetFromSubjets(new_subjets_3_UP, btag_special3);
-        m_rljet_SDt_combined_UP[i] = tagger_SDt_win50_btag0->tagJetFromSubjets(new_subjets_3_UP, btag_special3);
-      }
-
-      m_rljet_SDw_calib_DOWN[i]    = tagger_SDw_win20_btag0->tagJetFromSubjets(calib_subjets_DOWN, btag);
-      m_rljet_SDw_uncalib_DOWN[i]  = tagger_SDw_win20_btag0->tagJetFromSubjets(uncalib_subjets_DOWN, btag_uncalib);
-      m_rljet_SDw_dcut_DOWN[i]     = tagger_SDw_win20_btag0->tagJetFromSubjets(dcut2_subjets_DOWN,btag_special5);
-      m_rljet_SDw_combined_DOWN[i] = m_rljet_SDw_uncalib_DOWN[i];
-      m_rljet_SDt_calib_DOWN[i]    = tagger_SDt_win50_btag0->tagJetFromSubjets(calib_subjets_DOWN, btag);
-      m_rljet_SDt_uncalib_DOWN[i]  = tagger_SDt_win50_btag0->tagJetFromSubjets(uncalib_subjets_DOWN, btag_uncalib);
-      m_rljet_SDt_dcut_DOWN[i]     = tagger_SDt_win50_btag1->tagJetFromSubjets(dcut2_subjets_DOWN,btag_special5);
-      m_rljet_SDt_combined_DOWN[i] = m_rljet_SDt_uncalib_DOWN[i];
-
-      if ( uncalib_subjets.size() < 4 ){
-        m_rljet_SDw_combined_DOWN[i] = tagger_SDw_win20_btag0->tagJetFromSubjets(new_subjets_3_DOWN, btag_special3);
-        m_rljet_SDt_combined_DOWN[i] = tagger_SDt_win50_btag0->tagJetFromSubjets(new_subjets_3_DOWN, btag_special3);
-      }
-    }
-  }
 }
 
 const xAOD::Jet*
