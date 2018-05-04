@@ -97,6 +97,9 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
 
     passed_var_name = total_var_name + "_" + tag_name
 
+    # Fixes eff vs mu plots
+    if is_data and x_axis == "mu": total_var_name += "_corrSF"
+
     h_total = rej_rebin(
             tmp_loader.get_sigsub_data(total_var_name)
             if is_data
@@ -297,6 +300,7 @@ def make_mu_efficiency_plot( tag_name, ref_tag_name = None, do_systematics = DO_
             x_max = 40,
             y_min = 0.001,
             width = 600,
+            x_units = "",
             **kwargs)
 
 pt_bkg_rej_plots = [

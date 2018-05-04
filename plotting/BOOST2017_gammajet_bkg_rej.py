@@ -90,6 +90,7 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
     passed_var_name = total_var_name + "_" + tag_name
 
     if (is_data):
+        if x_axis == "mu": total_var_name+="_corrSF"
         h_total = rej_rebin(RAW.get_sigsub_data(total_var_name), bin_bounds)
         h_passed = rej_rebin(RAW.get_sigsub_data(passed_var_name), bin_bounds)
         h_total.Divide(h_passed)
@@ -97,7 +98,6 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
     else:
         h_total = rej_rebin(RAW.get_normalized_gamma(total_var_name, normalize_to_pretagged = True), bin_bounds)
         h_passed = rej_rebin(RAW.get_normalized_gamma(passed_var_name, normalize_to_pretagged = True), bin_bounds)
-        
         total_sys_dict = {}
         passed_sys_dict = {}
         if do_systematics:
@@ -287,6 +287,7 @@ def make_mu_rej_plot( tag_name, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwarg
             y_min = 0.001,
             x_max = 40,
             width = 600,
+            x_units = "",
             **kwargs)
 
 bkg_rej_plots = [
