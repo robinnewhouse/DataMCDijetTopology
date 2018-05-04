@@ -37,3 +37,4 @@ run/
 MuonEfficiencyCorrections/
 data/merged_prw_mc15c_latest.root
 
+RootCore.par
