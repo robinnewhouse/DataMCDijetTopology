@@ -991,24 +991,24 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
         }
 
         if (m_runSmoothToptag && m_runSmoothUncontained) {
-          m_rljet_smooth16Top_MassTau32Tag50eff_nocontain[i]    = topTagger16_MassTau32_50eff_nocontain->tag(*rljets[i]);
-          m_rljet_smooth16Top_MassTau32Tag80eff_nocontain[i]    = topTagger16_MassTau32_80eff_nocontain->tag(*rljets[i]);
+          m_rljet_smooth16Top_MassTau32Tag50eff_nocontain[i]    = static_cast<int>(convertSmoothedWZTaggerResult(topTagger16_MassTau32_50eff_nocontain->tag(*rljets[i])));
+          m_rljet_smooth16Top_MassTau32Tag80eff_nocontain[i]    = static_cast<int>(convertSmoothedWZTaggerResult(topTagger16_MassTau32_80eff_nocontain->tag(*rljets[i])));
         }
 
         if (m_runSmoothWZtag) {
-          m_rljet_smooth16W_Tag50eff[i] = wTagger16_50eff->tag(*rljets[i]);
-          m_rljet_smooth16W_Tag80eff[i] = wTagger16_80eff->tag(*rljets[i]);
+          m_rljet_smooth16W_Tag50eff[i] = static_cast<int>(convertSmoothedWZTaggerResult(wTagger16_50eff->tag(*rljets[i])));
+          m_rljet_smooth16W_Tag80eff[i] = static_cast<int>(convertSmoothedWZTaggerResult(wTagger16_80eff->tag(*rljets[i])));
 
-          m_rljet_smooth16Z_Tag50eff[i] = zTagger16_50eff->tag(*rljets[i]);
-          m_rljet_smooth16Z_Tag80eff[i] = zTagger16_80eff->tag(*rljets[i]);
+          m_rljet_smooth16Z_Tag50eff[i] = static_cast<int>(convertSmoothedWZTaggerResult(zTagger16_50eff->tag(*rljets[i])));
+          m_rljet_smooth16Z_Tag80eff[i] = static_cast<int>(convertSmoothedWZTaggerResult(zTagger16_80eff->tag(*rljets[i])));
         }
 
         if (m_runSmoothWZtag && m_runSmoothUncontained) {
-          m_rljet_smooth16W_Tag50eff_nocontain[i] = wTagger16_50eff_nocontain->tag(*rljets[i]);
-          m_rljet_smooth16W_Tag80eff_nocontain[i] = wTagger16_80eff_nocontain->tag(*rljets[i]);
+          m_rljet_smooth16W_Tag50eff_nocontain[i] = static_cast<int>(convertSmoothedWZTaggerResult(wTagger16_50eff_nocontain->tag(*rljets[i])));
+          m_rljet_smooth16W_Tag80eff_nocontain[i] = static_cast<int>(convertSmoothedWZTaggerResult(wTagger16_80eff_nocontain->tag(*rljets[i])));
 
-          m_rljet_smooth16Z_Tag50eff_nocontain[i] = zTagger16_50eff_nocontain->tag(*rljets[i]);
-          m_rljet_smooth16Z_Tag80eff_nocontain[i] = zTagger16_80eff_nocontain->tag(*rljets[i]);
+          m_rljet_smooth16Z_Tag50eff_nocontain[i] = static_cast<int>(convertSmoothedWZTaggerResult(zTagger16_50eff_nocontain->tag(*rljets[i])));
+          m_rljet_smooth16Z_Tag80eff_nocontain[i] = static_cast<int>(convertSmoothedWZTaggerResult(zTagger16_80eff_nocontain->tag(*rljets[i])));
         }
 
         if (m_savePhoton) {
@@ -1096,7 +1096,8 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
                   return a.pt() > b.pt();
                 });
 
-              if (clusters.size() >= 0) m_rljet_fractional_pt_0[i] = clusters[0]->pt()/rljets[i]->pt();
+              // if (clusters.size() >= 0) 
+                m_rljet_fractional_pt_0[i] = clusters[0]->pt()/rljets[i]->pt();
               if (clusters.size() >= 1) m_rljet_fractional_pt_1[i] = clusters[1]->pt()/rljets[i]->pt();
               if (clusters.size() >= 2) m_rljet_fractional_pt_2[i] = clusters[2]->pt()/rljets[i]->pt();
               if (clusters.size() >= 3) m_rljet_fractional_pt_3[i] = clusters[3]->pt()/rljets[i]->pt();
