@@ -5,58 +5,6 @@ samples_AOD = {}
 samples_EVNT = {}
 samples_DEBUG = {} # just for individual set testing and downloading xsection files. Shouldn't be used in production
 
-samples_DXAOD['resubmit_dijet'] = [ # X/pb
-                # "mc15_13TeV.426044.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ4W.merge.DAOD_JETM6.e4410_s2608_r7725_r7676_p3297",
-                # "mc15_13TeV.426045.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ5W.merge.DAOD_JETM6.e4410_s2608_r7725_r7676_p3297",
-                # "mc15_13TeV.426046.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ6W.merge.DAOD_JETM6.e4410_s2608_r7725_r7676_p3297",
-                # "mc15_13TeV.426047.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ7W.merge.DAOD_JETM6.e4410_s2608_r7725_r7676_p3297",
-                # "mc15_13TeV.426048.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ8W.merge.DAOD_JETM6.e4410_s2608_r7725_r7676_p3297",
-        "mc15_13TeV.426049.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ9W.merge.DAOD_JETM6.e4410_s2608_r7725_r7676_p3297",
-        "mc15_13TeV.426050.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ10W.merge.DAOD_JETM6.e4410_s2608_r7725_r7676_p3297",
-        "mc15_13TeV.426051.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ11W.merge.DAOD_JETM6.e4410_s2608_r7772_r7676_p3297",
-        "mc15_13TeV.426052.HerwigppEvtGen_UEEE5_CTEQ6L1_jetjet_JZ12W.merge.DAOD_JETM6.e4410_s2608_r7772_r7676_p3297",
-
-        #sherpa
-                # "mc15_13TeV.426131.Sherpa_CT10_jets_JZ1.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p3297",
-                # "mc15_13TeV.426132.Sherpa_CT10_jets_JZ2.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p3297",
-                # "mc15_13TeV.426133.Sherpa_CT10_jets_JZ3.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p3297",
-                # "mc15_13TeV.426134.Sherpa_CT10_jets_JZ4.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p3297",
-                # "mc15_13TeV.426135.Sherpa_CT10_jets_JZ5.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p3297",
-        # "mc15_13TeV.426136.Sherpa_CT10_jets_JZ6.merge.DAOD_JETM6.e4355_s2608_r7725_r7676_p3297",
-                # "mc15_13TeV.426137.Sherpa_CT10_jets_JZ7.merge.DAOD_JETM6.e4635_s2726_r7725_r7676_p3297",
-        # "mc15_13TeV.426138.Sherpa_CT10_jets_JZ8.merge.DAOD_JETM6.e4635_s2726_r7725_r7676_p3297",
-        # "mc15_13TeV.426139.Sherpa_CT10_jets_JZ9.merge.DAOD_JETM6.e4635_s2726_r7725_r7676_p3297",
-        # "mc15_13TeV.426140.Sherpa_CT10_jets_JZ10.merge.DAOD_JETM6.e4635_s2726_r7725_r7676_p3297",
-        # "mc15_13TeV.426141.Sherpa_CT10_jets_JZ11.merge.DAOD_JETM6.e4635_s2726_s2183_r7725_r7676_p3297",
-        # "mc15_13TeV.426142.Sherpa_CT10_jets_JZ12.merge.DAOD_JETM6.e4635_s2726_s2183_r7725_r7676_p3297",
-
-        #pythia
-                # "mc15_13TeV.361024.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ4W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p3297",
-                # "mc15_13TeV.361025.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ5W.merge.DAOD_JETM6.e3668_s2576_s2132_r7725_r7676_p3297",
-                # "mc15_13TeV.361026.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ6W.merge.DAOD_JETM6.e3569_s2608_s2183_r7725_r7676_p3297",
-                # "mc15_13TeV.361027.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ7W.merge.DAOD_JETM6.e3668_s2608_s2183_r7725_r7676_p3297",
-        "mc15_13TeV.361028.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ8W.merge.DAOD_JETM6.e3569_s2576_s2132_r7772_r7676_p3297",
-        "mc15_13TeV.361029.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ9W.merge.DAOD_JETM6.e3569_s2576_s2132_r7772_r7676_p3297",
-        "mc15_13TeV.361030.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ10W.merge.DAOD_JETM6.e3569_s2576_s2132_r7772_r7676_p3297",
-        "mc15_13TeV.361031.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ11W.merge.DAOD_JETM6.e3569_s2608_s2183_r7772_r7676_p3297",
-        "mc15_13TeV.361032.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ12W.merge.DAOD_JETM6.e3668_s2608_s2183_r7772_r7676_p3297",
-
-                # "mc15_13TeV.303722.PowhegPythiaEvtGen_P2012_ttbar_hdamp172p5_allhad_mtt_1.merge.DAOD_JETM6.e4321_s2608_r7772_r7676_p3297",
-
-    ]
-
-samples_DXAOD['resubmit_gammajet'] = [ # X/pb
-        "mc15_13TeV.423104.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP140_280.merge.DAOD_JETM6.e3791_s2608_s2183_r7725_r7676_p3297",
-        "mc15_13TeV.423106.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP500_800.merge.DAOD_JETM6.e3791_s2608_s2183_r7725_r7676_p3297",
-        # "mc15_13TeV.423112.Pythia8EvtGen_A14NNPDF23LO_gammajet_DP3000_inf.merge.DAOD_JETM6.e4453_s2726_r7772_r7676_p3297",
-        # "mc15_13TeV.305440.Sherpa_CT10_ZqqGammaPt140_280.merge.DAOD_JETM6.e5020_s2726_r7772_r7676_p3297",
-        "mc15_13TeV.361048.Sherpa_CT10_SinglePhotonPt280_500_CVetoBVeto.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p3297",
-
-
-    ]
-
-
-
 # {{{ DATA
 
 samples_DXAOD['data_2016'] = [ # X/pb
@@ -215,7 +163,7 @@ samples_DXAOD["sherpa_gammajet"] = [
     "mc15_13TeV.361057.Sherpa_CT10_SinglePhotonPt2000_4000_CVetoBVeto.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p3297",
     "mc15_13TeV.361058.Sherpa_CT10_SinglePhotonPt2000_4000_CFilterBVeto.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p3297",
     "mc15_13TeV.361059.Sherpa_CT10_SinglePhotonPt2000_4000_BFilter.merge.DAOD_JETM6.e3587_s2608_s2183_r7725_r7676_p3297",
-    # temporarily hidden to get xsections (issue with pyAMI)
+    # following samples may be temporarily hidden to get xsections (issue with pyAMI)
     "mc15_13TeV.361060.Sherpa_CT10_SinglePhotonPt4000_CVetoBVeto.merge.DAOD_JETM6.e3587_s2608_s2183_r8084_r7676_p3297",
     "mc15_13TeV.361061.Sherpa_CT10_SinglePhotonPt4000_CFilterBVeto.merge.DAOD_JETM6.e3587_s2608_s2183_r8129_r7676_p3297",
     "mc15_13TeV.361062.Sherpa_CT10_SinglePhotonPt4000_BFilter.merge.DAOD_JETM6.e3587_s2608_s2183_r8084_r7676_p3297"
@@ -244,7 +192,6 @@ samples_DXAOD["wz_gamma"] = [
 
 samples_DXAOD["ttbar_gamma"] = [
     "mc15_13TeV.410087.MadGraphPythia8EvtGen_A14NNPDF23LO_ttgamma_allhad.merge.DAOD_JETM6.e4404_s2726_r7772_r7676_p3395"
-    # "group.perf-jets.410087.MadGraphPythia8EvtGen_ttgamma_allhad_customJETM6_v0_EXT0", # local derivation
     ]
 
 # }}}
