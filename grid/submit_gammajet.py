@@ -37,5 +37,5 @@ mc_sample_names = [
 for sample_name in mc_sample_names + data_sample_names:
     TopExamples.grid.Add(sample_name).datasets = samples_DXAOD[sample_name]
 
-# TopExamples.grid.submit(data_config, TopExamples.grid.Samples(data_sample_names))
+TopExamples.grid.submit(data_config, TopExamples.grid.Samples(data_sample_names))
 TopExamples.grid.submit(mc_config, TopExamples.grid.Samples(mc_sample_names))
