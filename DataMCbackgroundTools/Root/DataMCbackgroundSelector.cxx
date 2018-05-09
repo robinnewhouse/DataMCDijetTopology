@@ -570,12 +570,12 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_Split23.at(i)->fill_tagged("combMgt100GeV", rljet_Split23->at(i)/1000., weight, rljet_m_comb->at(i) / 1000. > 100.);
 
 
-        if (!this->operating_on_mc) {
-          h_tau32_vs_mu->Fill(mu/1.09 , rljet_Tau32_wta->at(i), weight);
-          h_mass_vs_mu->Fill(mu/1.09 , rljet_m_comb->at(i)/1000., weight);
+        if (this->operating_on_mc) {
+            h_tau32_vs_mu->Fill(mu      , rljet_Tau32_wta->at(i)    , weight);
+            h_mass_vs_mu->Fill(mu       , rljet_m_comb->at(i)/1000. , weight);
         } else {
-          h_tau32_vs_mu->Fill(mu , rljet_Tau32_wta->at(i), weight);
-          h_mass_vs_mu->Fill(mu , rljet_m_comb->at(i)/1000., weight);
+            h_tau32_vs_mu->Fill(mu/1.09 , rljet_Tau32_wta->at(i)    , weight);
+            h_mass_vs_mu->Fill(mu/1.09  , rljet_m_comb->at(i)/1000. , weight);
         }
 
 
@@ -609,18 +609,18 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             mva_tag_map["TopoTag_Top_80_qqb"]   = (rljet_topTag_TopoTagger_score->at(i) > f_tcdnn->Eval(rljet_pt_comb->at(i)/1000.));
         
 
-            if (!this->operating_on_mc) {
-              h_bdt_top_vs_mu->Fill(mu/1.09 , rljet_topTag_BDT_qqb_score->at(i), weight);
-              h_bdt_w_vs_mu->Fill(mu/1.09   , rljet_wTag_BDT_qq_score->at(i), weight);
-              h_dnn_top_vs_mu->Fill(mu/1.09 , rljet_topTag_DNN_qqb_score->at(i), weight);
-              h_dnn_w_vs_mu->Fill(mu/1.09   , rljet_wTag_DNN_qq_score->at(i), weight);
-              h_topo_top_vs_mu->Fill(mu/1.09   , rljet_topTag_TopoTagger_score->at(i), weight);
+            if (this->operating_on_mc) {
+                h_bdt_top_vs_mu->Fill(mu       , rljet_topTag_BDT_qqb_score->at(i)    , weight);
+                h_bdt_w_vs_mu->Fill(mu         , rljet_wTag_BDT_qq_score->at(i)       , weight);
+                h_dnn_top_vs_mu->Fill(mu       , rljet_topTag_DNN_qqb_score->at(i)    , weight);
+                h_dnn_w_vs_mu->Fill(mu         , rljet_wTag_DNN_qq_score->at(i)       , weight);
+                h_topo_top_vs_mu->Fill(mu      , rljet_topTag_TopoTagger_score->at(i) , weight);
             } else {
-              h_bdt_top_vs_mu->Fill(mu , rljet_topTag_BDT_qqb_score->at(i), weight);
-              h_bdt_w_vs_mu->Fill(mu   , rljet_wTag_BDT_qq_score->at(i), weight);
-              h_dnn_top_vs_mu->Fill(mu , rljet_topTag_DNN_qqb_score->at(i), weight);
-              h_dnn_w_vs_mu->Fill(mu   , rljet_wTag_DNN_qq_score->at(i), weight);
-              h_topo_top_vs_mu->Fill(mu   , rljet_topTag_TopoTagger_score->at(i), weight);
+                h_bdt_top_vs_mu->Fill(mu/1.09  , rljet_topTag_BDT_qqb_score->at(i)    , weight);
+                h_bdt_w_vs_mu->Fill(mu/1.09    , rljet_wTag_BDT_qq_score->at(i)       , weight);
+                h_dnn_top_vs_mu->Fill(mu/1.09  , rljet_topTag_DNN_qqb_score->at(i)    , weight);
+                h_dnn_w_vs_mu->Fill(mu/1.09    , rljet_wTag_DNN_qq_score->at(i)       , weight);
+                h_topo_top_vs_mu->Fill(mu/1.09 , rljet_topTag_TopoTagger_score->at(i) , weight);
             }
         }
 
@@ -674,9 +674,9 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             SD_nominal_tag_map["SDt_dcut"]     = (rljet_SDt_dcut->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.)) && (rljet_m_comb->at(i) > 60e3);
 
             if (this->operating_on_mc) {
-                h_sd_logchi_vs_mu->Fill(mu , rljet_SDt_dcut->at(i), weight);
+                h_sd_logchi_vs_mu->Fill(mu      , rljet_SDt_dcut->at(i) , weight);
             } else {
-                h_sd_logchi_vs_mu->Fill(mu/1.09 , rljet_SDt_dcut->at(i), weight);
+                h_sd_logchi_vs_mu->Fill(mu/1.09 , rljet_SDt_dcut->at(i) , weight);
             }
 
         } // end of saving SD-tagged variables
@@ -692,9 +692,9 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             // post-tag mu plots only for leading-jet tag
             if (i == 0) {
                 if(this->operating_on_mc) {
-                    hp->h_mu->fill_tagged(itag.first, mu, weight, itag.second);
+                    hp->h_mu->fill_tagged(itag.first , mu           , weight , itag.second);
                 } else {
-                    hp->h_mu->fill_tagged(itag.first, mu * 1./1.09, weight, itag.second);
+                    hp->h_mu->fill_tagged(itag.first , mu * 1./1.09 , weight , itag.second);
                 }
             }
         }
@@ -705,9 +705,9 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             // post-tag mu plots only for leading-jet tag
             if (i == 0) {
                 if(this->operating_on_mc) {
-                    hp->h_mu->fill_tagged(itag.first, mu, weight, itag.second);
+                    hp->h_mu->fill_tagged(itag.first , mu           , weight , itag.second);
                 } else {
-                    hp->h_mu->fill_tagged(itag.first, mu * 1./1.09, weight, itag.second);
+                    hp->h_mu->fill_tagged(itag.first , mu * 1./1.09 , weight , itag.second);
                 }
             }
         }
@@ -718,9 +718,9 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             // post-tag mu plots only for leading-jet tag
             if (i == 0) {
                 if(this->operating_on_mc) {
-                    hp->h_mu->fill_tagged(itag.first, mu, weight, itag.second);
+                    hp->h_mu->fill_tagged(itag.first , mu           , weight , itag.second);
                 } else {
-                    hp->h_mu->fill_tagged(itag.first, mu * 1./1.09, weight, itag.second);
+                    hp->h_mu->fill_tagged(itag.first , mu * 1./1.09 , weight , itag.second);
                 }
             }
         }
@@ -816,14 +816,11 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
     hp->h_NPV->fill( (Float_t) NPV, weight);
 
+    // correct mu in data by factor 1/1.09 to adjust the data/MC agreement as per PRW twiki
     if (this->operating_on_mc) {
-        hp->h_mu->fill(mu              , weight);
-        hp->h_mu->fill_tagged("corrSF" , mu       , weight , true);
+        hp->h_mu->fill(mu           , weight);
     } else {
-        // note: we don't actually correct the mc mu distribution, making the below tagged
-        // histograms just makes it easier to do data/mc comparison plots later
-        hp->h_mu->fill(mu              , weight);
-        hp->h_mu->fill_tagged("corrSF" , mu * 1./1.09 , weight , true);
+        hp->h_mu->fill(mu * 1./1.09 , weight);
     }
 
     /*******************/
@@ -858,10 +855,10 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_D2.at(i)->fill_tagged("NTrimSubjetsGT3", rljet_D2->at(i), weight, rljet_NTrimSubjets->at(i) > 4);
         hp->h_rljet_D2.at(i)->fill_tagged("NTrimSubjetsGT4", rljet_D2->at(i), weight, rljet_NTrimSubjets->at(i) > 4);
 
-        if (!this->operating_on_mc) {
-          h_D2_vs_mu->Fill(mu/1.09 , rljet_D2->at(i), weight);
+        if (this->operating_on_mc) {
+            h_D2_vs_mu->Fill(mu      , rljet_D2->at(i) , weight);
         } else {
-          h_D2_vs_mu->Fill(mu , rljet_D2->at(i), weight);
+            h_D2_vs_mu->Fill(mu/1.09 , rljet_D2->at(i) , weight);
         }
 
         // JZX(W) SLICE TAGS
@@ -921,26 +918,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
         hp->h_rljet_NTrimSubjets.at(i)->fill(rljet_NTrimSubjets->at(i), weight);
         hp->h_rljet_ungroomed_ntrk500.at(i)->fill(rljet_ungroomed_ntrk500->at(i), weight);
-
-        std::string npv_bin_str;
-        if (NPV < 10) {
-            npv_bin_str = "NPVLT10";
-        } else if (NPV >= 10 && NPV < 15) {
-            npv_bin_str = "NPVGT10LT15";
-        } else if (NPV >= 15 && NPV < 20) {
-            npv_bin_str = "NPVGT15LT20";
-        } else if (NPV >= 20) {
-            npv_bin_str = "NPVGT20";
-        }
-
-        hp->h_rljet_m_comb.at(i)->fill_tagged(npv_bin_str, rljet_m_comb->at(i)/1000., weight, true);
-        hp->h_rljet_pt_comb.at(i)->fill_tagged(npv_bin_str, rljet_pt_comb->at(i)/1000., weight, true);
-
-        for (const auto& itag : smooth_tag_map) {
-            std::string tmp_tag_str = itag.first + "_" + npv_bin_str;
-            hp->h_rljet_m_comb.at(i)->fill_tagged(tmp_tag_str, rljet_m_comb->at(i)/1000., weight, itag.second);
-            hp->h_rljet_pt_comb.at(i)->fill_tagged(tmp_tag_str, rljet_pt_comb->at(i)/1000., weight, itag.second);
-        }
 
         if (this->operating_on_mc) {
           hp->h_rljet_m_comb.at(i)->fill_tagged("lightquark_b", rljet_m_comb->at(i)/1000., weight, TMath::Abs(rljet_pdgid->at(i)) < 6);
