@@ -133,14 +133,11 @@ void DataMCbackgroundSelector::Begin(TTree * /*tree*/)
     h_mass_vs_mu->Sumw2();
 
     const std::string rc = std::string(getenv("ROOTCOREBIN"));
-    std::string f_sdw_filepath = rc + "/data/DataMCbackgroundTools/SDW.root";
     std::string f_sdtop_filepath = rc + "/data/DataMCbackgroundTools/SDTop.root";
     std::string f_tcdnn_filepath = rc + "/data/DataMCbackgroundTools/TopoTaggerFitFunctionsContained.root";
-    TFile* f_sdw_file = TFile::Open(f_sdw_filepath.c_str(), "READ");
     TFile* f_sdtop_file = TFile::Open(f_sdtop_filepath.c_str(), "READ");
     TFile* f_tcdnn_file = TFile::Open(f_tcdnn_filepath.c_str(), "READ");
 
-    this->f_sdw = (TF1*) f_sdw_file->Get("fjet_SDw_win20_btag1_smooth_cut_fjet_SDw_win20_btag1+fjet_SDw_win20_btag1_50wp");
     this->f_sdtop =(TF1*) f_sdtop_file->Get("fjet_SDt_Dcut1_smooth_cut_fjet_SDt_Dcut1+fjet_SDt_Dcut1_80wp");
     this->f_tcdnn = (TF1*) f_tcdnn_file->Get("fjet_TopotaggerTopQuark_Score_smooth_cut_fjet_TopotaggerTopQuark_Score+fjet_TopotaggerTopQuark_Score_80wp");
 }
@@ -357,34 +354,13 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         }
 
         if (ranSD) {
-          b_rljet_SDw_calib->GetEntry(entry);
-          b_rljet_SDw_uncalib->GetEntry(entry);
-          b_rljet_SDw_combined->GetEntry(entry);
-          b_rljet_SDw_dcut->GetEntry(entry);
-          b_rljet_SDt_calib->GetEntry(entry);
-          b_rljet_SDt_uncalib->GetEntry(entry);
-          b_rljet_SDt_combined->GetEntry(entry);
           b_rljet_SDt_dcut->GetEntry(entry);
         }
 
         if (this->operating_on_mc) {
 
           if (ranSD) {
-            b_rljet_SDw_calib_DOWN->GetEntry(entry);
-            b_rljet_SDw_uncalib_DOWN->GetEntry(entry);
-            b_rljet_SDw_combined_DOWN->GetEntry(entry);
-            b_rljet_SDw_dcut_DOWN->GetEntry(entry);
-            b_rljet_SDt_calib_DOWN->GetEntry(entry);
-            b_rljet_SDt_uncalib_DOWN->GetEntry(entry);
-            b_rljet_SDt_combined_DOWN->GetEntry(entry);
             b_rljet_SDt_dcut_DOWN->GetEntry(entry);
-            b_rljet_SDw_calib_UP->GetEntry(entry);
-            b_rljet_SDw_uncalib_UP->GetEntry(entry);
-            b_rljet_SDw_combined_UP->GetEntry(entry);
-            b_rljet_SDw_dcut_UP->GetEntry(entry);
-            b_rljet_SDt_calib_UP->GetEntry(entry);
-            b_rljet_SDt_uncalib_UP->GetEntry(entry);
-            b_rljet_SDt_combined_UP->GetEntry(entry);
             b_rljet_SDt_dcut_UP->GetEntry(entry);
           }
 
@@ -665,16 +641,8 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
         // SD log(chi) variables
         if (ranSD) {
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_calib", rljet_SDw_calib->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_uncalib", rljet_SDw_uncalib->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_combined", rljet_SDw_combined->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_dcut", rljet_SDw_dcut->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_calib", rljet_SDt_calib->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_uncalib", rljet_SDt_uncalib->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_combined", rljet_SDt_combined->at(i), weight, true);
             hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut", rljet_SDt_dcut->at(i), weight, true);
 
-            SD_nominal_tag_map["SDw_dcut"]     = rljet_SDw_dcut->at(i) > f_sdw->Eval(rljet_pt_comb->at(i)/1000.);
             SD_nominal_tag_map["SDt_dcut"]     = (rljet_SDt_dcut->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.)) && (rljet_m_comb->at(i) > 60e3);
 
             if (i == 0) { // only consider leading-pT jet for X vs mu
@@ -1010,26 +978,10 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
         // Shower Deconstruction variations stored nominal TTree
         if (this->operating_on_mc) {
-            SD_systematic_tag_map["SDw_dcut_UP"]     = rljet_SDw_dcut_UP->at(i) > f_sdw->Eval(rljet_pt_comb->at(i)/1000.);
             SD_systematic_tag_map["SDt_dcut_UP"]     = (rljet_SDt_dcut_UP->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.)) && (rljet_m_comb->at(i) > 60e3);
-            SD_systematic_tag_map["SDw_dcut_DOWN"]     = rljet_SDw_dcut_DOWN->at(i) > f_sdw->Eval(rljet_pt_comb->at(i)/1000.);
             SD_systematic_tag_map["SDt_dcut_DOWN"]     = (rljet_SDt_dcut_DOWN->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.)) && (rljet_m_comb->at(i) > 60e3);
 
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_calib_DOWN", rljet_SDw_calib_DOWN->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_uncalib_DOWN", rljet_SDw_uncalib_DOWN->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_combined_DOWN", rljet_SDw_combined_DOWN->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_dcut_DOWN", rljet_SDw_dcut_DOWN->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_calib_DOWN", rljet_SDt_calib_DOWN->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_uncalib_DOWN", rljet_SDt_uncalib_DOWN->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_combined_DOWN", rljet_SDt_combined_DOWN->at(i), weight, true);
             hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut_DOWN", rljet_SDt_dcut_DOWN->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_calib_UP", rljet_SDw_calib_UP->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_uncalib_UP", rljet_SDw_uncalib_UP->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_combined_UP", rljet_SDw_combined_UP->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("w_dcut_UP", rljet_SDw_dcut_UP->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_calib_UP", rljet_SDt_calib_UP->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_uncalib_UP", rljet_SDt_uncalib_UP->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_combined_UP", rljet_SDt_combined_UP->at(i), weight, true);
             hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut_UP", rljet_SDt_dcut_UP->at(i), weight, true);
 
             for (const auto& itag : SD_systematic_tag_map) {

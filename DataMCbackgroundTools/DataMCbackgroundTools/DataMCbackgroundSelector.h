@@ -322,29 +322,8 @@ class DataMCbackgroundSelector : public TSelector {
         std::vector<float>   *htt_caGroomJet_phi_sjcalib0970;
         std::vector<float>   *htt_caGroomJet_m_sjcalib0970;
 
-        std::vector<float>* rljet_SDw_calib;
-        std::vector<float>* rljet_SDw_uncalib;
-        std::vector<float>* rljet_SDw_combined;
-        std::vector<float>* rljet_SDw_dcut;
-        std::vector<float>* rljet_SDt_calib;
-        std::vector<float>* rljet_SDt_uncalib;
-        std::vector<float>* rljet_SDt_combined;
         std::vector<float>* rljet_SDt_dcut;
-        std::vector<float>* rljet_SDw_calib_DOWN;
-        std::vector<float>* rljet_SDw_uncalib_DOWN;
-        std::vector<float>* rljet_SDw_combined_DOWN;
-        std::vector<float>* rljet_SDw_dcut_DOWN;
-        std::vector<float>* rljet_SDt_calib_DOWN;
-        std::vector<float>* rljet_SDt_uncalib_DOWN;
-        std::vector<float>* rljet_SDt_combined_DOWN;
         std::vector<float>* rljet_SDt_dcut_DOWN;
-        std::vector<float>* rljet_SDw_calib_UP;
-        std::vector<float>* rljet_SDw_uncalib_UP;
-        std::vector<float>* rljet_SDw_combined_UP;
-        std::vector<float>* rljet_SDw_dcut_UP;
-        std::vector<float>* rljet_SDt_calib_UP;
-        std::vector<float>* rljet_SDt_uncalib_UP;
-        std::vector<float>* rljet_SDt_combined_UP;
         std::vector<float>* rljet_SDt_dcut_UP;
 
         // List of branches
@@ -538,30 +517,9 @@ class DataMCbackgroundSelector : public TSelector {
         TBranch        *b_htt_caGroomJet_phi_sjcalib0970;   //!
         TBranch        *b_htt_caGroomJet_m_sjcalib0970;   //!
 
-        TBranch*  b_rljet_SDw_calib; //!
-        TBranch*  b_rljet_SDw_uncalib; //!
-        TBranch*  b_rljet_SDw_combined; //!
-        TBranch*  b_rljet_SDw_dcut; //!
-        TBranch*  b_rljet_SDt_calib; //!
-        TBranch*  b_rljet_SDt_uncalib; //!
-        TBranch*  b_rljet_SDt_combined; //!
         TBranch*  b_rljet_SDt_dcut; //!
 
-        TBranch*  b_rljet_SDw_calib_DOWN; //!
-        TBranch*  b_rljet_SDw_uncalib_DOWN; //!
-        TBranch*  b_rljet_SDw_combined_DOWN; //!
-        TBranch*  b_rljet_SDw_dcut_DOWN; //!
-        TBranch*  b_rljet_SDt_calib_DOWN; //!
-        TBranch*  b_rljet_SDt_uncalib_DOWN; //!
-        TBranch*  b_rljet_SDt_combined_DOWN; //!
         TBranch*  b_rljet_SDt_dcut_DOWN; //!
-        TBranch*  b_rljet_SDw_calib_UP; //!
-        TBranch*  b_rljet_SDw_uncalib_UP; //!
-        TBranch*  b_rljet_SDw_combined_UP; //!
-        TBranch*  b_rljet_SDw_dcut_UP; //!
-        TBranch*  b_rljet_SDt_calib_UP; //!
-        TBranch*  b_rljet_SDt_uncalib_UP; //!
-        TBranch*  b_rljet_SDt_combined_UP; //!
         TBranch*  b_rljet_SDt_dcut_UP; //!
 
         DataMCbackgroundSelector(
@@ -757,29 +715,8 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     htt_caGroomJet_phi_sjcalib0970 = 0;
     htt_caGroomJet_m_sjcalib0970 = 0;
 
-    rljet_SDw_calib = 0;
-    rljet_SDw_uncalib = 0;
-    rljet_SDw_combined = 0;
-    rljet_SDw_dcut = 0;
-    rljet_SDt_calib = 0;
-    rljet_SDt_uncalib = 0;
-    rljet_SDt_combined = 0;
     rljet_SDt_dcut = 0;
-    rljet_SDw_calib_DOWN = 0;
-    rljet_SDw_uncalib_DOWN = 0;
-    rljet_SDw_combined_DOWN = 0;
-    rljet_SDw_dcut_DOWN = 0;
-    rljet_SDt_calib_DOWN = 0;
-    rljet_SDt_uncalib_DOWN = 0;
-    rljet_SDt_combined_DOWN = 0;
     rljet_SDt_dcut_DOWN = 0;
-    rljet_SDw_calib_UP = 0;
-    rljet_SDw_uncalib_UP = 0;
-    rljet_SDw_combined_UP = 0;
-    rljet_SDw_dcut_UP = 0;
-    rljet_SDt_calib_UP = 0;
-    rljet_SDt_uncalib_UP = 0;
-    rljet_SDt_combined_UP = 0;
     rljet_SDt_dcut_UP = 0;
 
     // Set branch addresses and branch pointers
@@ -1001,13 +938,6 @@ void DataMCbackgroundSelector::Init(TTree *tree)
         }
 
         if (ranSD) {
-          fChain->SetBranchAddress("rljet_SDw_calib"         , &rljet_SDw_calib         , &b_rljet_SDw_calib);
-          fChain->SetBranchAddress("rljet_SDw_uncalib"       , &rljet_SDw_uncalib       , &b_rljet_SDw_uncalib);
-          fChain->SetBranchAddress("rljet_SDw_combined"      , &rljet_SDw_combined      , &b_rljet_SDw_combined);
-          fChain->SetBranchAddress("rljet_SDw_dcut"          , &rljet_SDw_dcut          , &b_rljet_SDw_dcut);
-          fChain->SetBranchAddress("rljet_SDt_calib"         , &rljet_SDt_calib         , &b_rljet_SDt_calib);
-          fChain->SetBranchAddress("rljet_SDt_uncalib"       , &rljet_SDt_uncalib       , &b_rljet_SDt_uncalib);
-          fChain->SetBranchAddress("rljet_SDt_combined"      , &rljet_SDt_combined      , &b_rljet_SDt_combined);
           fChain->SetBranchAddress("rljet_SDt_dcut"          , &rljet_SDt_dcut          , &b_rljet_SDt_dcut);
         }
 
@@ -1049,21 +979,7 @@ void DataMCbackgroundSelector::Init(TTree *tree)
             }
             
             if (ranSD) {
-              fChain->SetBranchAddress("rljet_SDw_calib_DOWN"    , &rljet_SDw_calib_DOWN    , &b_rljet_SDw_calib_DOWN);
-              fChain->SetBranchAddress("rljet_SDw_uncalib_DOWN"  , &rljet_SDw_uncalib_DOWN  , &b_rljet_SDw_uncalib_DOWN);
-              fChain->SetBranchAddress("rljet_SDw_combined_DOWN" , &rljet_SDw_combined_DOWN , &b_rljet_SDw_combined_DOWN);
-              fChain->SetBranchAddress("rljet_SDw_dcut_DOWN"     , &rljet_SDw_dcut_DOWN     , &b_rljet_SDw_dcut_DOWN);
-              fChain->SetBranchAddress("rljet_SDt_calib_DOWN"    , &rljet_SDt_calib_DOWN    , &b_rljet_SDt_calib_DOWN);
-              fChain->SetBranchAddress("rljet_SDt_uncalib_DOWN"  , &rljet_SDt_uncalib_DOWN  , &b_rljet_SDt_uncalib_DOWN);
-              fChain->SetBranchAddress("rljet_SDt_combined_DOWN" , &rljet_SDt_combined_DOWN , &b_rljet_SDt_combined_DOWN);
               fChain->SetBranchAddress("rljet_SDt_dcut_DOWN"     , &rljet_SDt_dcut_DOWN     , &b_rljet_SDt_dcut_DOWN);
-              fChain->SetBranchAddress("rljet_SDw_calib_UP"      , &rljet_SDw_calib_UP      , &b_rljet_SDw_calib_UP);
-              fChain->SetBranchAddress("rljet_SDw_uncalib_UP"    , &rljet_SDw_uncalib_UP    , &b_rljet_SDw_uncalib_UP);
-              fChain->SetBranchAddress("rljet_SDw_combined_UP"   , &rljet_SDw_combined_UP   , &b_rljet_SDw_combined_UP);
-              fChain->SetBranchAddress("rljet_SDw_dcut_UP"       , &rljet_SDw_dcut_UP       , &b_rljet_SDw_dcut_UP);
-              fChain->SetBranchAddress("rljet_SDt_calib_UP"      , &rljet_SDt_calib_UP      , &b_rljet_SDt_calib_UP);
-              fChain->SetBranchAddress("rljet_SDt_uncalib_UP"    , &rljet_SDt_uncalib_UP    , &b_rljet_SDt_uncalib_UP);
-              fChain->SetBranchAddress("rljet_SDt_combined_UP"   , &rljet_SDt_combined_UP   , &b_rljet_SDt_combined_UP);
               fChain->SetBranchAddress("rljet_SDt_dcut_UP"       , &rljet_SDt_dcut_UP       , &b_rljet_SDt_dcut_UP);
             }
         }
