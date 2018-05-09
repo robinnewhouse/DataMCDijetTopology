@@ -53,7 +53,7 @@ sane_defaults()
 TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
-CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/gammajet_20180405_syst/gammajet.merged.cp.root"
+CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/gammajet_20180504_syst/gammajet.merged.cp.root"
 RAW = GammaJetLoader(CP_ROOT_FILEPATH)
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/DataMC_GammaJet"
 
@@ -281,7 +281,7 @@ def make_mu_rej_plot( tag_name, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwarg
             lumi_val = "36.1",
             atlas_mod = "Internal",
             legend_loc = [0.62,0.93,0.89,0.75],
-            x_title = "Leading Groomed C/A 1.5 Jet #it{mu}" if "HTT" in tag_name else "Leading large-#it{R} Jet #it{mu}",
+            x_title = "Leading Groomed C/A 1.5 Jet #mu" if "HTT" in tag_name else "Leading large-#it{R} Jet #mu",
             tex_size_mod = 0.9,
             tex_spacing_mod = 0.75,
             y_min = 0.001,
@@ -403,7 +403,7 @@ bkg_rej_plots = [
         make_pt_rej_plot(
             "SDt_dcut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): SD" ],
-            y_max = 40,
+            y_max = 60,
             do_systematics = False, # for now
             ),
 
@@ -428,7 +428,7 @@ bkg_rej_mu_plots = [
            "smooth16Top_MassTau32Tag80eff_MassJSSCut",
            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 80%" ],
            x_min = 350,
-           y_max = 40,
+           y_max = 300,
            do_systematics = False,
            ),
 
@@ -493,7 +493,7 @@ bkg_rej_mu_plots = [
         make_mu_rej_plot(
             "HTT_CAND",
             extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
-            y_max = 80,
+            y_max = 6,
             x_min = 350,
             do_systematics = False,
             ),
@@ -533,7 +533,7 @@ bkg_rej_mu_plots = [
         make_mu_rej_plot(
             "SDt_dcut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): SD" ],
-            y_max = 40,
+            y_max = 300,
             do_systematics = False,
             ),
 

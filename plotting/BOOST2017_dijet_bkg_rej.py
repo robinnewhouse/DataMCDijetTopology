@@ -295,7 +295,7 @@ def make_mu_efficiency_plot( tag_name, ref_tag_name = None, do_systematics = DO_
             lumi_val = "36.7",
             atlas_mod = "Internal",
             legend_loc = [0.60,0.93,0.91,0.75],
-            x_title = "Leading Groomed C/A 1.5 Jet #it{mu}" if "HTT" in tag_name else "Leading large-#it{R} Jet #it{mu}",
+            x_title = "Leading Groomed C/A 1.5 Jet #mu" if "HTT" in tag_name else "Leading large-#it{R} Jet #mu",
             x_min = 0,
             x_max = 40,
             y_min = 0.001,
