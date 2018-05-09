@@ -295,6 +295,7 @@ void HistoPack::WriteCommonHistograms() const
     for (auto const &h : h_rljet_topTag_TopoTagger_50wp) h->write_all();
     for (auto const &h : h_rljet_topTag_TopoTagger_80wp) h->write_all();
     for (auto const &h : h_rljet_topTag_TopoTagger_score) h->write_all();
+    for (auto const &h : h_rljet_SD_logchi) h->write_all();
     h_mu->write_all();
 }
 
@@ -384,12 +385,6 @@ void HistoPack::WriteNominalOnlyHistograms() const
     for (auto const &h : h_htt_pts1) h->write_all();
     for (auto const &h : h_htt_pts2) h->write_all();
     for (auto const &h : h_htt_pts3) h->write_all();
-
-    for (auto const &h : h_rljet_SD_logchi) h->write_all();
-
-    // for (auto const &h : h_rljet_BDT_score) h->write_all();
-    // for (auto const &h : h_rljet_DNN_score) h->write_all();
-
 
 }
 

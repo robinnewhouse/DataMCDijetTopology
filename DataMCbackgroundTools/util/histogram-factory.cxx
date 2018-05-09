@@ -165,18 +165,11 @@ main(int argc, char** argv)
                 t->Process(dmd_selector);
                 delete dmd_selector;
 
-                // run luminosity uncertainty -- up shift
+                // run luminosity uncertainty -- up shift, we don't need down shift, symmetric uncert.
                 dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
                               "lumi_UP", data_trigger, event_selector, luminosity);
                 t->Process(dmd_selector);
                 delete dmd_selector;
-
-                // run luminosity uncertainty -- down shift
-                dmd_selector = new DataMCbackgroundSelector(output_filepath, sample_type,
-                              "lumi_DOWN", data_trigger, event_selector, luminosity);
-                t->Process(dmd_selector);
-                delete dmd_selector;
-
 
                 // photon SF systematics
                 if(event_selector.find("GAMMA") != std::string::npos) {
