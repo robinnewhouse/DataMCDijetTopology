@@ -20,10 +20,6 @@ git clone ssh://git@gitlab.cern.ch:7999/atlas-jetetmiss-substructure/JetMatching
 rc checkout_pkg $(rc version | grep "TopDataPreparation")
 cat data/xsections.txt >> TopDataPreparation/data/XSection-MC15-13TeV.data
 
-# JetEtMiss recs
-rc checkout_pkg atlasoff/Reconstruction/Jet/JetCalibTools/tags/JetCalibTools-00-04-76
-# rc checkout_pkg atlasoff/Reconstruction/Jet/JetUncertainties/tags/JetUncertainties-00-09-63
-
 # Checkout fork of JetUncertainties package with support for pT resolution uncertainty for fat jets
 # at some point this will be added to the official SVN repo
 git clone ssh://git@gitlab.cern.ch:7999/omajersk/JetUncertainties.git
@@ -32,16 +28,6 @@ git clone ssh://git@gitlab.cern.ch:7999/omajersk/JetUncertainties.git
 rc checkout_pkg `rc version | grep TopCPTools`
 patch -p0 -i ./data/initialSetup/TopCPTools_addFatJetJER.patch
 
-
-mkdir -p JetCalibTools/share/JetCalibTools
-cd JetCalibTools/share/JetCalibTools
-# Copy CalibArea tag you are using
-cp -rL /afs/cern.ch/atlas/www/GROUPS/DATABASE/GroupData/JetCalibTools/CalibArea-00-04-76 .
-# Go back to the working dir:
-cd ../../../
-# Put the configuration files at the right place
-cp data/SubjetCalibration/CamKt2LCTopoAreaCalib_361000_weighted_EtaJES_consts.config JetCalibTools/share/JetCalibTools/CalibArea-00-04-76/CalibrationFactors/
-cp data/SubjetCalibration/CamKt2LCTopoAreaCalib_JES_HTTmodified.config JetCalibTools/share/JetCalibTools/CalibArea-00-04-76/CalibrationConfigs/
 
 rc find_packages
 rc compile
