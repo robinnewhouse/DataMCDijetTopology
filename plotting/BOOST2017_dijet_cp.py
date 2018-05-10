@@ -24,6 +24,7 @@ LOADER = DijetLoader(CP_ROOT_FILEPATH)
 LOADER_SMOOTH = LOADER
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/DataMC_Dijet"
 DO_SYSTEMATICS_DEFAULT = True
+DO_SYSTEMATICS_DEFAULT = SYSTEMATICS_MC15C_WEAK_NOINPUTS
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/control"
 make_dir(ROOT_OUTPUT_DIR)
@@ -32,9 +33,6 @@ make_dir(OUTPUT_DIR)
 DEF_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", "Dijet Selection" , "p_{T} > 450 GeV"]
 HTT_DEF_LINES = [ "Trimmed C/A #it{R}=1.5", "Dijet Selection" , "p_{T} > 450 GeV"]
 MASS_PLOT_REBIN = 8
-
-#SYSTEMATICS = [ ]
-SYSTEMATICS = SYSTEMATICS_MC15C_MEDIUM
 
 class PlotDataPythiaHerwig(PlotBase):
     def __init__(self, var_name, flip_legend = False, do_systematics = DO_SYSTEMATICS_DEFAULT,
@@ -90,7 +88,7 @@ class PlotDataPythiaHerwig(PlotBase):
 
 
         if (do_systematics):
-          pythia_sys_dict = tmp_loader.get_systematics_dictionary("pythia_dijet", var_name, SYSTEMATICS)
+          pythia_sys_dict = tmp_loader.get_systematics_dictionary("pythia_dijet", var_name, do_systematics)
         else:
           pythia_sys_dict = {}
         self.hsys_pythia = TH1Sys(self.h_pythia_dijet, pythia_sys_dict)
@@ -482,7 +480,6 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "BDT_Top",
         x_max = 350,
         ttbar_sf = 25,
         wzjets_sf = 25,
-        # do_systematics = False,
         rebin = MASS_PLOT_REBIN,
         ))
 
@@ -494,7 +491,6 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "BDT_W",
         flip_legend = True,
         ttbar_sf = 25,
         wzjets_sf = 5,
-        # do_systematics = False,
         rebin = MASS_PLOT_REBIN,
         ))
 
@@ -505,7 +501,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "DNN_Top",
         x_max = 350,
         ttbar_sf = 25,
         wzjets_sf = 25,
-        # do_systematics = False,
+        do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS,
         rebin = MASS_PLOT_REBIN,
         ))
 
@@ -623,20 +619,19 @@ data_mc_plots.append(PlotDataPythiaHerwig("h_rljet0_D2_combMgt50GeV",
             y_min = 0.01,
             ))
 
-if DO_SYSTEMATICS_DEFAULT:
-    # for masstag in ["", "combMgt100GeV", "combMlt100GeV", "combMgt180GeV", "combMgt100lt150GeV", "combMgt150lt180GeV"]:
-    for masstag in ["", "combMgt100GeV"]:
-      data_mc_plots.append(PlotDataPythiaHerwig(
-                  "h_rljet0_Tau32_wta" if not masstag else "h_rljet0_Tau32_wta_" + masstag,
-                  empty_scale = 2.0,
-                  flip_legend = True,
-                  extra_legend_lines = DEF_LINES,
-                  x_units = "",
-                  x_min = 0.01,
-                  x_max = 0.9,
-                  y_min = 0.01,
-                  rebin = 4
-                  ))
+# for masstag in ["", "combMgt100GeV", "combMlt100GeV", "combMgt180GeV", "combMgt100lt150GeV", "combMgt150lt180GeV"]:
+for masstag in ["", "combMgt100GeV"]:
+    data_mc_plots.append(PlotDataPythiaHerwig(
+                "h_rljet0_Tau32_wta" if not masstag else "h_rljet0_Tau32_wta_" + masstag,
+                empty_scale = 2.0,
+                flip_legend = True,
+                extra_legend_lines = DEF_LINES,
+                x_units = "",
+                x_min = 0.01,
+                x_max = 0.9,
+                y_min = 0.01,
+                rebin = 4
+                ))
 
 # data_mc_plots.append(PlotDataPythiaHerwig("h_rljet0_Qw_combMgt100GeV",
 #             extra_legend_lines = DEF_LINES + ["m^{comb} > 100 GeV"],
@@ -654,6 +649,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_htt0_atan1312",
         ttbar_sf = 25,
         wzjets_sf = 25,
         rebin = 5,
+        do_systematics = SYSTEMATICS_MC15C_CAJET,
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_htt0_m23m123",
@@ -662,6 +658,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_htt0_m23m123",
         ttbar_sf = 25,
         wzjets_sf = 25,
         rebin = 8,
+        do_systematics = SYSTEMATICS_MC15C_CAJET,
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_htt0_m",
@@ -672,6 +669,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_htt0_m",
         ttbar_sf = 25,
         wzjets_sf = 25,
         rebin = 4,
+        do_systematics = SYSTEMATICS_MC15C_CAJET,
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_htt_caGroomJet0_m",
@@ -683,6 +681,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_htt_caGroomJet0_m",
         ttbar_sf = 25,
         wzjets_sf = 25,
         rebin = 14,
+        do_systematics = SYSTEMATICS_MC15C_CAJET,
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_htt_caGroomJet0_m_HTT_CAND",
@@ -694,6 +693,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_htt_caGroomJet0_m_HTT_CAND",
         ttbar_sf = 25,
         wzjets_sf = 25,
         rebin = 16,
+        do_systematics = SYSTEMATICS_MC15C_CAJET,
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_htt_caGroomJet0_pt",
@@ -705,6 +705,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_htt_caGroomJet0_pt",
         ttbar_sf = 25,
         wzjets_sf = 25,
         rebin = 10,
+        do_systematics = SYSTEMATICS_MC15C_CAJET,
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_htt_caGroomJet0_pt_HTT_CAND",
@@ -716,6 +717,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_htt_caGroomJet0_pt_HTT_CAND",
         ttbar_sf = 25,
         wzjets_sf = 25,
         rebin = 10,
+        do_systematics = SYSTEMATICS_MC15C_CAJET,
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_pt_comb",
@@ -738,7 +740,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_topTag_BDT_qqb_score_mva",
         wzjets_sf = 20,
         rebin = 4,
         log_scale = True,
-        do_systematics = False
+        do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS,
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_topTag_DNN_qqb_score_mva",
@@ -750,7 +752,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_topTag_DNN_qqb_score_mva",
         wzjets_sf = 20,
         log_scale = True,
         rebin = 4,
-        do_systematics = False
+        do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS,
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_wTag_BDT_qq_score_mva",
@@ -762,7 +764,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_wTag_BDT_qq_score_mva",
         rebin = 4,
         y_min = 1e2,
         log_scale = True,
-        do_systematics = False
+        do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS,
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_wTag_DNN_qq_score_mva",
@@ -774,7 +776,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_wTag_DNN_qq_score_mva",
         wzjets_sf = 10,
         log_scale = True,
         rebin = 4,
-        do_systematics = False
+        do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS,
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_topTag_TopoTagger_score_mva",
@@ -786,7 +788,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_topTag_TopoTagger_score_mva
         wzjets_sf = 10,
         log_scale = True,
         rebin = 4,
-        do_systematics = False
+        do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS,
         ))
 
 # data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_SD_logchi_t_calib",
