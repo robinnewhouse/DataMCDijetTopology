@@ -22,7 +22,7 @@ LOADER = DijetLoader(CP_ROOT_FILEPATH)
 LOADER_SMOOTH = LOADER
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/DataMC_Dijet"
 
-DO_SYSTEMATICS_DEFAULT = False
+DO_SYSTEMATICS_DEFAULT = SYSTEMATICS_MC15C_WEAK_NOINPUTS
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/bkg_rej"
 make_dir(ROOT_OUTPUT_DIR)
@@ -64,27 +64,25 @@ MU_BIN_BOUNDS = array.array('d', [
 def rej_rebin(h, bin_bounds):
   return h.Rebin(len(bin_bounds)-1, h.GetName()+"_rebinned", bin_bounds)
 
-def get_sys_dict_eff(gen_name, var_name):
-    tmp_loader = LOADER_SMOOTH if "smooth" in var_name else LOADER
+def get_sys_dict_eff(gen_name, var_name, bin_bounds, do_systematics):
     # get the Rtrk systematics and rebin them
-    dict = tmp_loader.get_systematics_dictionary(gen_name, var_name, SYSTEMATICS_MC15C_MEDIUM, norm_to_pretagged = True)
+    dict = HISTLOADER.get_systematics_dictionary(gen_name, var_name, do_systematics, norm_to_pretagged = True)
     for sys_name, var_dict in dict.iteritems():
         var_dict["up"] = rej_rebin(var_dict["up"], bin_bounds)
         var_dict["down"] = rej_rebin(var_dict["down"], bin_bounds)
     # create the sig. norm. systematics
     dict["sig_norm_sf"] = {}
-    h_tmp_up = rej_rebin(tmp_loader.get_normalized_dijet(gen_name, var_name, sig_sf = 1.25, normalize_to_pretagged = True), bin_bounds)
-    h_tmp_down = rej_rebin(tmp_loader.get_normalized_dijet(gen_name, var_name, sig_sf = 0.75, normalize_to_pretagged = True), bin_bounds)
+    h_tmp_up = rej_rebin(HISTLOADER.get_normalized_dijet(gen_name, var_name, sig_sf = 1.25, normalize_to_pretagged = True), bin_bounds)
+    h_tmp_down = rej_rebin(HISTLOADER.get_normalized_dijet(gen_name, var_name, sig_sf = 0.75, normalize_to_pretagged = True), bin_bounds)
     h_tmp_up.SetName(h_tmp_up.GetName() + "_sig_norm_sf_up")
-    h_tmp_down.SetName(h_tmp_down.GetName() + "_sig_norm_sf_own")
     dict["sig_norm_sf"]["up"] = h_tmp_up
+    h_tmp_down.SetName(h_tmp_down.GetName() + "_sig_norm_sf_down")
     dict["sig_norm_sf"]["down"] = h_tmp_down
     return dict
 
 def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
-    tmp_loader = LOADER_SMOOTH if "smooth" in tag_name else LOADER
     is_data = "data" in gen_name
-    
+
     if x_axis == "mu":
         bin_bounds = MU_BIN_BOUNDS
         total_var_name = "h_mu"
@@ -97,37 +95,27 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
 
     passed_var_name = total_var_name + "_" + tag_name
 
-    # Fixes eff vs mu plots
-    # if is_data and x_axis == "mu": total_var_name += "_corrSF"
-
     h_total = rej_rebin(
-            tmp_loader.get_sigsub_data(total_var_name)
+            HISTLOADER.get_sigsub_data(total_var_name)
             if is_data
-            else tmp_loader.get_normalized_dijet(gen_name, total_var_name, normalize_to_pretagged = True),
+            else HISTLOADER.get_normalized_dijet(gen_name, total_var_name, normalize_to_pretagged = True),
             bin_bounds)
 
     h_passed = rej_rebin(
-            tmp_loader.get_sigsub_data(passed_var_name)
+            HISTLOADER.get_sigsub_data(passed_var_name)
             if is_data
-            else tmp_loader.get_normalized_dijet(gen_name, passed_var_name, normalize_to_pretagged = True),
+            else HISTLOADER.get_normalized_dijet(gen_name, passed_var_name, normalize_to_pretagged = True),
             bin_bounds)
 
     if (is_data):
         h_total.Divide(h_passed)
         return h_total.Clone()
-    else:    
+    else:
         total_sys_dict = {}
         passed_sys_dict = {}
         if do_systematics:
-            if ("BDT" in tag_name or "DNN" in tag_name):
-              total_sys_dict = {}
-              passed_sys_dict = {}
-            elif ("SD" in tag_name):
-              total_sys_dict = {}
-              passed_sys_dict = {}
-            else:
-              total_sys_dict = get_sys_dict_eff(gen_name, total_var_name)
-              passed_sys_dict = get_sys_dict_eff(gen_name, passed_var_name)
+            total_sys_dict = get_sys_dict_eff(gen_name, total_var_name, bin_bounds, do_systematics)
+            passed_sys_dict = get_sys_dict_eff(gen_name, passed_var_name, bin_bounds, do_systematics)
         return TH1SysEff(h_total, total_sys_dict, h_passed, passed_sys_dict)
 
 class PlotDataPythiaHerwigEfficiency(PlotBase):
@@ -295,7 +283,7 @@ def make_mu_efficiency_plot( tag_name, ref_tag_name = None, do_systematics = DO_
             lumi_val = "36.7",
             atlas_mod = "Internal",
             legend_loc = [0.60,0.93,0.91,0.75],
-            x_title = "Leading Groomed C/A 1.5 Jet #mu" if "HTT" in tag_name else "Leading large-#it{R} Jet #mu",
+            x_title = "#mu",
             x_min = 0,
             x_max = 40,
             y_min = 0.001,
@@ -368,6 +356,7 @@ pt_bkg_rej_plots = [
             "HTT_CAND",
             extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
             y_max = 80,
+            do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS,
             ),
 
         make_pt_efficiency_plot(
@@ -481,6 +470,7 @@ mu_bkg_rej_plots = [
             "HTT_CAND",
             extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
             y_max = 80,
+            do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS,
             ),
 
         make_mu_efficiency_plot(
