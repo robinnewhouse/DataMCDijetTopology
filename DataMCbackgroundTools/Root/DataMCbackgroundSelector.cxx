@@ -615,14 +615,14 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         smooth_tag_map["smooth16Top_MassTau32Tag80eff_JSSCut"] = rljet_smooth16Top_MassTau32Tag80eff->at(i) == 3 || rljet_smooth16Top_MassTau32Tag80eff->at(i) == 2;
         smooth_tag_map["smooth16Top_MassTau32Tag80eff_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag80eff->at(i) == 3;
 
-        smooth_tag_map["smooth16WTag_50eff_JSSCut"] = rljet_smooth16WTag_50eff->at(i) == 1 || rljet_smooth16WTag_50eff->at(i) == 16 || rljet_smooth16WTag_50eff->at(i) == 4;
-        smooth_tag_map["smooth16WTag_50eff_MassJSSCut"] = rljet_smooth16WTag_50eff->at(i) == 1;
-        smooth_tag_map["smooth16WTag_80eff_JSSCut"] = rljet_smooth16WTag_80eff->at(i) == 1 || rljet_smooth16WTag_80eff->at(i) == 16 || rljet_smooth16WTag_80eff->at(i) == 4;
-        smooth_tag_map["smooth16WTag_80eff_MassJSSCut"] = rljet_smooth16WTag_80eff->at(i) == 1;
-        smooth_tag_map["smooth16ZTag_50eff_JSSCut"] = rljet_smooth16ZTag_50eff->at(i) == 1 || rljet_smooth16ZTag_50eff->at(i) == 16 || rljet_smooth16ZTag_50eff->at(i) == 4;
-        smooth_tag_map["smooth16ZTag_50eff_MassJSSCut"] = rljet_smooth16ZTag_50eff->at(i) == 1;
-        smooth_tag_map["smooth16ZTag_80eff_JSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 1 || rljet_smooth16ZTag_80eff->at(i) == 16 || rljet_smooth16ZTag_80eff->at(i) == 4;
-        smooth_tag_map["smooth16ZTag_80eff_MassJSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 1;
+        smooth_tag_map["smooth16WTag_50eff_JSSCut"] = rljet_smooth16WTag_50eff->at(i) == 3 || rljet_smooth16WTag_50eff->at(i) == 2;
+        smooth_tag_map["smooth16WTag_50eff_MassJSSCut"] = rljet_smooth16WTag_50eff->at(i) == 3;
+        smooth_tag_map["smooth16WTag_80eff_JSSCut"] = rljet_smooth16WTag_80eff->at(i) == 3 || rljet_smooth16WTag_80eff->at(i) == 2;
+        smooth_tag_map["smooth16WTag_80eff_MassJSSCut"] = rljet_smooth16WTag_80eff->at(i) == 3;
+        smooth_tag_map["smooth16ZTag_50eff_JSSCut"] = rljet_smooth16ZTag_50eff->at(i) == 3 || rljet_smooth16ZTag_50eff->at(i) == 2;
+        smooth_tag_map["smooth16ZTag_50eff_MassJSSCut"] = rljet_smooth16ZTag_50eff->at(i) == 3;
+        smooth_tag_map["smooth16ZTag_80eff_JSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 3 || rljet_smooth16ZTag_80eff->at(i) == 2;
+        smooth_tag_map["smooth16ZTag_80eff_MassJSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 3;
 
         // smooth_tag_map["smooth16WTag_50eff_nocontain_JSSCut"] = rljet_smooth16WTag_50eff_nocontain->at(i) == 1 || rljet_smooth16WTag_50eff_nocontain->at(i) == 16 || rljet_smooth16WTag_50eff_nocontain->at(i) == 4;
         // smooth_tag_map["smooth16WTag_50eff_nocontain_MassJSSCut"] = rljet_smooth16WTag_50eff_nocontain->at(i) == 1;
@@ -1047,6 +1047,11 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_htt_caGroomJet_phi.at(ijet)->fill_tagged("sjcalib1030", htt_caGroomJet_phi_sjcalib1030->at(ijet)        , weight, true);
             hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged("sjcalib1030", htt_caGroomJet_m_sjcalib1030->at(ijet) / 1000.  , weight, true);
 
+            const bool is_htt_tagged =
+                htt_tag_def->at(ijet) > 0
+                && htt_m_def->at(ijet)/1000. >= 140
+                && htt_m_def->at(ijet)/1000. <= 210;
+
             const bool is_htt_tagged_sjcalib0970 =
                 htt_tag_sjcalib0970->at(ijet) > 0
                 && htt_m_sjcalib0970->at(ijet)/1000. >= 140
@@ -1057,16 +1062,33 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
                 && htt_m_sjcalib1030->at(ijet)/1000. >= 140
                 && htt_m_sjcalib1030->at(ijet)/1000. <= 210;
 
-            hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("HTT_CAND_sjcalib0970", htt_caGroomJet_pt_sjcalib0970->at(ijet) / 1000. , weight, is_htt_tagged_sjcalib0970);
-            hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND_sjcalib0970", htt_caGroomJet_m_sjcalib0970->at(ijet) / 1000.  , weight, is_htt_tagged_sjcalib0970);
+            // post-tag distributions with full sub-jet JES uncertainty propagation
+            hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("HTT_CAND_sjcalib0970" , htt_caGroomJet_pt_sjcalib0970->at(ijet) / 1000. , weight , is_htt_tagged_sjcalib0970);
+            hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND_sjcalib0970" , htt_caGroomJet_m_sjcalib0970->at(ijet) / 1000.  , weight , is_htt_tagged_sjcalib0970);
 
-            hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("HTT_CAND_sjcalib1030", htt_caGroomJet_pt_sjcalib1030->at(ijet) / 1000. , weight, is_htt_tagged_sjcalib1030);
-            hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND_sjcalib1030", htt_caGroomJet_m_sjcalib1030->at(ijet) / 1000.  , weight, is_htt_tagged_sjcalib1030);
+            hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("HTT_CAND_sjcalib1030" , htt_caGroomJet_pt_sjcalib1030->at(ijet) / 1000. , weight , is_htt_tagged_sjcalib1030);
+            hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND_sjcalib1030" , htt_caGroomJet_m_sjcalib1030->at(ijet) / 1000.  , weight , is_htt_tagged_sjcalib1030);
+
+            // post-tag distributions with only C/A jet pT scale uncertainty propagated
+            // in other words, we do not propagate uncertainty in inputs to HepTopTagger
+            // These systematics are to be specifically used for rejection measurement
+            hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("HTT_CAND_CAJES_UP"   , htt_caGroomJet_pt_sjcalib0970->at(ijet) / 1000. , weight , is_htt_tagged);
+            hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND_CAJES_DOWN" , htt_caGroomJet_m_sjcalib0970->at(ijet) / 1000.  , weight , is_htt_tagged);
+
+            hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("HTT_CAND_CAJES_UP"   , htt_caGroomJet_pt_sjcalib1030->at(ijet) / 1000. , weight , is_htt_tagged);
+            hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND_CAJES_DOWN" , htt_caGroomJet_m_sjcalib1030->at(ijet) / 1000.  , weight , is_htt_tagged);
 
             // post-tag mu for MC-only HTT variations
             if (ijet == 0) {
+                // post-tag distributions with full sub-jet JES uncertainty propagation
                 hp->h_mu->fill_tagged("HTT_CAND_sjcalib0970" , mu , weight , is_htt_tagged_sjcalib0970);
                 hp->h_mu->fill_tagged("HTT_CAND_sjcalib1030" , mu , weight , is_htt_tagged_sjcalib1030);
+
+                // post-tag distributions with only C/A jet pT scale uncertainty propagated
+                // in other words, we do not propagate uncertainty in inputs to HepTopTagger
+                // These systematics are to be specifically used for rejection measurement
+                hp->h_mu->fill_tagged("HTT_CAND_CAJES_UP"   , mu , weight , is_htt_tagged);
+                hp->h_mu->fill_tagged("HTT_CAND_CAJES_DOWN" , mu , weight , is_htt_tagged);
             }
         } // end of loop over C/A 1.5 jets
     } // end of C/A 1.5 jets & HTT stuff for subjet systematics (in nominal TTree)
