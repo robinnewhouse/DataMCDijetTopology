@@ -18,6 +18,7 @@ if args.input[-1] != '/':
     args.input += '/'
 
 folders = glob.glob(args.input + '*user.*')
+folders += glob.glob(args.input + '*group.*')
 folders.sort()
 
 for i in range(len(folders)):
@@ -46,16 +47,16 @@ def merge_mc(mc_dir):
     output_name = str(dsid) + '.merged.root'
     input_files = glob.glob(mc_dir + '*.root*')
 
-    hadd_cmd = 'hadd -f ' + args.output + output_name + ' ' + ' '.join(input_files)
-    os.system(hadd_cmd)
+    mergeSample_cmd = 'mergeSample ' + args.output + output_name + ' ' + ' '.join(input_files)
+    os.system(mergeSample_cmd)
 
 def merge_data(data_dirs):
     input_files = []
     for dd in data_dirs:
         input_files += glob.glob(dd + '*.root*')
     print input_files
-    hadd_cmd = 'hadd -f ' + args.output + 'data.merged.root' + ' ' + ' '.join(input_files)
-    os.system(hadd_cmd)
+    mergeSample_cmd = 'mergeSample ' + args.output + 'data.merged.root' + ' ' + ' '.join(input_files)
+    os.system(mergeSample_cmd)
 
 if args.ismc:
     for mc_sample_dir in folders:

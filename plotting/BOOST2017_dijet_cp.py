@@ -19,7 +19,7 @@ TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
 CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2017/cp.merged.root"
-CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/dijet_20180405_syst/dijet.merged.cp.root"
+CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/dijet_20180504_syst/dijet.merged.cp.root"
 LOADER = DijetLoader(CP_ROOT_FILEPATH)
 LOADER_SMOOTH = LOADER
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/DataMC_Dijet"
@@ -920,7 +920,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_pt_comb_" + "smooth16Top_Ma
 #        wzjets_sf = 12
 #        ))
 #
-data_mc_plots.append(PlotDataPythiaHerwig( "h_mu_corrSF",
+data_mc_plots.append(PlotDataPythiaHerwig( "h_mu",
        empty_scale = 2.0,
        extra_legend_lines = DEF_LINES,
        do_systematics = False,

@@ -17,7 +17,7 @@ sane_defaults()
 TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
-CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/dijet_20180405_syst/dijet.merged.cp.root"
+CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/dijet_20180504_syst/dijet.merged.cp.root"
 LOADER = DijetLoader(CP_ROOT_FILEPATH)
 LOADER_SMOOTH = LOADER
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/DataMC_Dijet"
@@ -98,7 +98,7 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
     passed_var_name = total_var_name + "_" + tag_name
 
     # Fixes eff vs mu plots
-    if is_data and x_axis == "mu": total_var_name += "_corrSF"
+    # if is_data and x_axis == "mu": total_var_name += "_corrSF"
 
     h_total = rej_rebin(
             tmp_loader.get_sigsub_data(total_var_name)

@@ -90,7 +90,7 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
     passed_var_name = total_var_name + "_" + tag_name
 
     if (is_data):
-        if x_axis == "mu": total_var_name+="_corrSF"
+        # if x_axis == "mu": total_var_name+="_corrSF"
         h_total = rej_rebin(RAW.get_sigsub_data(total_var_name), bin_bounds)
         h_passed = rej_rebin(RAW.get_sigsub_data(passed_var_name), bin_bounds)
         h_total.Divide(h_passed)
@@ -302,7 +302,7 @@ bkg_rej_plots = [
            "smooth16Top_MassTau32Tag80eff_MassJSSCut",
            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 80%" ],
            x_min = 350,
-           y_max = 40,
+           # y_max = 40,
            ),
 
         #make_pt_rej_plot(
@@ -337,7 +337,7 @@ bkg_rej_plots = [
             "smooth16WTag_50eff_MassJSSCut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): D_2 + m^{comb}"],
             x_min = 200,
-            y_max = 175,
+            # y_max = 175,
             ),
 
         #make_pt_rej_plot(
@@ -428,7 +428,7 @@ bkg_rej_mu_plots = [
            "smooth16Top_MassTau32Tag80eff_MassJSSCut",
            extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 80%" ],
            x_min = 350,
-           y_max = 300,
+           # y_max = 300,
            do_systematics = False,
            ),
 
@@ -465,7 +465,7 @@ bkg_rej_mu_plots = [
             "smooth16WTag_50eff_MassJSSCut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): D_2 + m^{comb}"],
             x_min = 200,
-            y_max = 175,
+            # y_max = 175,
             do_systematics = False,
             ),
 
@@ -493,7 +493,7 @@ bkg_rej_mu_plots = [
         make_mu_rej_plot(
             "HTT_CAND",
             extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
-            y_max = 6,
+            # y_max = 6,
             x_min = 350,
             do_systematics = False,
             ),

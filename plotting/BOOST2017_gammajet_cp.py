@@ -391,7 +391,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "TopoTag_Top_80_qq
 #        rebin = 4,
 #        ))
 #
-data_mc_plots.append(PlotDataMcGammaJet( "h_mu_corrSF",
+data_mc_plots.append(PlotDataMcGammaJet( "h_mu",
        empty_scale = 2.0,
        extra_legend_lines = DEF_LINES,
        do_systematics = False,
