@@ -238,6 +238,49 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         b_rljet_topTag_TopoTagger_score->GetEntry(entry);
     }
 
+    if (ranHTT) {
+        b_htt_pt_def->GetEntry(entry);
+        b_htt_eta_def->GetEntry(entry);
+        b_htt_phi_def->GetEntry(entry);
+        b_htt_m_def->GetEntry(entry);
+        b_htt_m123_def->GetEntry(entry);
+        b_htt_m23m123_def->GetEntry(entry);
+        b_htt_atan1312_def->GetEntry(entry);
+        b_htt_nTagCands_def->GetEntry(entry);
+        b_htt_tag_def->GetEntry(entry);
+        b_htt_pts1_def->GetEntry(entry);
+        b_htt_pts2_def->GetEntry(entry);
+        b_htt_pts3_def->GetEntry(entry);
+        b_htt_caJet_pt->GetEntry(entry);
+        b_htt_caJet_eta->GetEntry(entry);
+        b_htt_caJet_phi->GetEntry(entry);
+        b_htt_caJet_m->GetEntry(entry);
+        b_caJet_count->GetEntry(entry);
+        b_htt_caGroomJet_pt_def->GetEntry(entry);
+        b_htt_caGroomJet_eta_def->GetEntry(entry);
+        b_htt_caGroomJet_phi_def->GetEntry(entry);
+        b_htt_caGroomJet_m_def->GetEntry(entry);
+    }
+
+    if (ranSD) {
+      b_rljet_SDt_dcut->GetEntry(entry);
+    }
+
+    if (keptPhotons) {
+        //   b_photon_ptcone20->GetEntry(entry);
+        //   b_photon_ptcone40->GetEntry(entry);
+        //   b_photon_topoetcone20->GetEntry(entry);
+        //   b_photon_topoetcone40->GetEntry(entry);
+        if (default_photon_vars) {
+            b_ph_pt->GetEntry(entry);
+            b_ph_phi->GetEntry(entry);
+            b_ph_eta->GetEntry(entry);
+            b_ph_e->GetEntry(entry);
+        } else {
+            b_photon0_phi->GetEntry(entry);
+        }
+    }
+
     // b_rljet_smooth16Top_MassTau32Tag50eff_nocontain->GetEntry(entry);
     // b_rljet_smooth16Top_MassTau32Tag80eff_nocontain->GetEntry(entry);
     // b_rljet_smooth16WTag_50eff_nocontain->GetEntry(entry);
@@ -258,21 +301,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         // b_rljet_BDT_score_w->GetEntry(entry);
         // b_rljet_DNN_score_top->GetEntry(entry);
         // b_rljet_DNN_score_w->GetEntry(entry);
-
-        if (keptPhotons) {
-          //   b_photon_ptcone20->GetEntry(entry);
-          //   b_photon_ptcone40->GetEntry(entry);
-          //   b_photon_topoetcone20->GetEntry(entry);
-          //   b_photon_topoetcone40->GetEntry(entry);
-          if (default_photon_vars) {
-            b_ph_pt->GetEntry(entry);
-            b_ph_phi->GetEntry(entry);
-            b_ph_eta->GetEntry(entry);
-            b_ph_e->GetEntry(entry);
-          } else {
-            b_photon0_phi->GetEntry(entry);
-          }
-        }
 
         if(topoPlot){
             b_rljet_fractional_pt_0->GetEntry(entry);
@@ -328,34 +356,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         b_rljet_ungroomed_ntrk500->GetEntry(entry);
         b_rljet_n_constituents->GetEntry(entry);
 
-
-        if (ranHTT) {
-            b_htt_pt_def->GetEntry(entry);
-            b_htt_eta_def->GetEntry(entry);
-            b_htt_phi_def->GetEntry(entry);
-            b_htt_m_def->GetEntry(entry);
-            b_htt_m123_def->GetEntry(entry);
-            b_htt_m23m123_def->GetEntry(entry);
-            b_htt_atan1312_def->GetEntry(entry);
-            b_htt_nTagCands_def->GetEntry(entry);
-            b_htt_tag_def->GetEntry(entry);
-            b_htt_pts1_def->GetEntry(entry);
-            b_htt_pts2_def->GetEntry(entry);
-            b_htt_pts3_def->GetEntry(entry);
-            b_htt_caJet_pt->GetEntry(entry);
-            b_htt_caJet_eta->GetEntry(entry);
-            b_htt_caJet_phi->GetEntry(entry);
-            b_htt_caJet_m->GetEntry(entry);
-            b_caJet_count->GetEntry(entry);
-            b_htt_caGroomJet_pt_def->GetEntry(entry);
-            b_htt_caGroomJet_eta_def->GetEntry(entry);
-            b_htt_caGroomJet_phi_def->GetEntry(entry);
-            b_htt_caGroomJet_m_def->GetEntry(entry);
-        }
-
-        if (ranSD) {
-          b_rljet_SDt_dcut->GetEntry(entry);
-        }
 
         if (this->operating_on_mc) {
 
