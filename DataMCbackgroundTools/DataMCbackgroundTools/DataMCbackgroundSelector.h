@@ -830,13 +830,56 @@ void DataMCbackgroundSelector::Init(TTree *tree)
         fChain->SetBranchAddress("rljet_topTag_TopoTagger_score", &rljet_topTag_TopoTagger_score, &b_rljet_topTag_TopoTagger_score);
     }
 
+    if (ranHTT){
+        fChain->SetBranchAddress("htt_pt_def", &htt_pt_def, &b_htt_pt_def);
+        fChain->SetBranchAddress("htt_eta_def", &htt_eta_def, &b_htt_eta_def);
+        fChain->SetBranchAddress("htt_phi_def", &htt_phi_def, &b_htt_phi_def);
+        fChain->SetBranchAddress("htt_m_def", &htt_m_def, &b_htt_m_def);
+        fChain->SetBranchAddress("htt_m123_def", &htt_m123_def, &b_htt_m123_def);
+        fChain->SetBranchAddress("htt_m23m123_def", &htt_m23m123_def, &b_htt_m23m123_def);
+        fChain->SetBranchAddress("htt_atan1312_def", &htt_atan1312_def, &b_htt_atan1312_def);
+        fChain->SetBranchAddress("htt_nTagCands_def", &htt_nTagCands_def, &b_htt_nTagCands_def);
+        fChain->SetBranchAddress("htt_tag_def", &htt_tag_def, &b_htt_tag_def);
+        fChain->SetBranchAddress("htt_pts1_def", &htt_pts1_def, &b_htt_pts1_def);
+        fChain->SetBranchAddress("htt_pts2_def", &htt_pts2_def, &b_htt_pts2_def);
+        fChain->SetBranchAddress("htt_pts3_def", &htt_pts3_def, &b_htt_pts3_def);
+        fChain->SetBranchAddress("htt_caJet_pt", &htt_caJet_pt, &b_htt_caJet_pt);
+        fChain->SetBranchAddress("htt_caJet_eta", &htt_caJet_eta, &b_htt_caJet_eta);
+        fChain->SetBranchAddress("htt_caJet_phi", &htt_caJet_phi, &b_htt_caJet_phi);
+        fChain->SetBranchAddress("htt_caJet_m", &htt_caJet_m, &b_htt_caJet_m);
+        fChain->SetBranchAddress("caJet_count", &caJet_count, &b_caJet_count);
+        fChain->SetBranchAddress("htt_caGroomJet_pt_def", &htt_caGroomJet_pt_def, &b_htt_caGroomJet_pt_def);
+        fChain->SetBranchAddress("htt_caGroomJet_eta_def", &htt_caGroomJet_eta_def, &b_htt_caGroomJet_eta_def);
+        fChain->SetBranchAddress("htt_caGroomJet_phi_def", &htt_caGroomJet_phi_def, &b_htt_caGroomJet_phi_def);
+        fChain->SetBranchAddress("htt_caGroomJet_m_def", &htt_caGroomJet_m_def, &b_htt_caGroomJet_m_def);
+    }
+
+    if (ranSD) {
+        fChain->SetBranchAddress("rljet_SDt_dcut", &rljet_SDt_dcut, &b_rljet_SDt_dcut);
+    }
+
+    if (keptPhotons) {
+        if (default_photon_vars) {
+            fChain->SetBranchAddress("ph_pt"  , &ph_pt  , &b_ph_pt);
+            fChain->SetBranchAddress("ph_phi" , &ph_phi  , &b_ph_phi);
+            fChain->SetBranchAddress("ph_eta" , &ph_eta , &b_ph_eta);
+            fChain->SetBranchAddress("ph_e"   , &ph_e   , &b_ph_e);
+        } else {
+            fChain->SetBranchAddress("photon0_phi"  , &photon0_phi  , &b_photon0_phi);
+        }
+        // fChain->SetBranchAddress("photon0_ptcone20", &photon_ptcone20, &b_photon_ptcone20);
+        // fChain->SetBranchAddress("photon0_ptcone40", &photon_ptcone40, &b_photon_ptcone40);
+        // fChain->SetBranchAddress("photon0_topoetcone20", &photon_topoetcone20, &b_photon_topoetcone20);
+        // fChain->SetBranchAddress("photon0_topoetcone40", &photon_topoetcone40, &b_photon_topoetcone40);
+    }
+
 
 
     if (sub_dir_str == "nominal") {
         fChain->SetBranchAddress("NPV", &NPV, &b_NPV);
 
         if (this->operating_on_mc) {
-          fChain->SetBranchAddress("rljet_pdgid", &rljet_pdgid, &b_rljet_pdgid);
+            fChain->SetBranchAddress("rljet_pdgid", &rljet_pdgid, &b_rljet_pdgid);
         }
 
         // fChain->SetBranchAddress("rljet_BDT_score_top_qqb"       , &rljet_BDT_score_top_qqb       , &b_rljet_BDT_score_top_qqb);
@@ -844,21 +887,6 @@ void DataMCbackgroundSelector::Init(TTree *tree)
         // fChain->SetBranchAddress("rljet_BDT_score_w"             , &rljet_BDT_score_w             , &b_rljet_BDT_score_w);
         // fChain->SetBranchAddress("rljet_DNN_score_top"           , &rljet_DNN_score_top           , &b_rljet_DNN_score_top);
         // fChain->SetBranchAddress("rljet_DNN_score_w"             , &rljet_DNN_score_w             , &b_rljet_DNN_score_w);
-
-        if (keptPhotons) {
-          if (default_photon_vars) {
-            fChain->SetBranchAddress("ph_pt"  , &ph_pt  , &b_ph_pt);
-            fChain->SetBranchAddress("ph_phi" , &ph_phi  , &b_ph_phi);
-            fChain->SetBranchAddress("ph_eta" , &ph_eta , &b_ph_eta);
-            fChain->SetBranchAddress("ph_e"   , &ph_e   , &b_ph_e);
-          } else {
-            fChain->SetBranchAddress("photon0_phi"  , &photon0_phi  , &b_photon0_phi);
-          }
-          // fChain->SetBranchAddress("photon0_ptcone20", &photon_ptcone20, &b_photon_ptcone20);
-          // fChain->SetBranchAddress("photon0_ptcone40", &photon_ptcone40, &b_photon_ptcone40);
-          // fChain->SetBranchAddress("photon0_topoetcone20", &photon_topoetcone20, &b_photon_topoetcone20);
-          // fChain->SetBranchAddress("photon0_topoetcone40", &photon_topoetcone40, &b_photon_topoetcone40);
-        }
 
         if (topoPlot){
             fChain->SetBranchAddress("rljet_fractional_pt_0", &rljet_fractional_pt_0, &b_rljet_fractional_pt_0);
@@ -913,33 +941,7 @@ void DataMCbackgroundSelector::Init(TTree *tree)
         fChain->SetBranchAddress("rljet_NTrimSubjets", &rljet_NTrimSubjets, &b_rljet_NTrimSubjets);
         fChain->SetBranchAddress("rljet_ungroomed_ntrk500", &rljet_ungroomed_ntrk500, &b_rljet_ungroomed_ntrk500);
         fChain->SetBranchAddress("rljet_n_constituents", &rljet_n_constituents, &b_rljet_n_constituents);
-        if (ranHTT){
-            fChain->SetBranchAddress("htt_pt_def", &htt_pt_def, &b_htt_pt_def);
-            fChain->SetBranchAddress("htt_eta_def", &htt_eta_def, &b_htt_eta_def);
-            fChain->SetBranchAddress("htt_phi_def", &htt_phi_def, &b_htt_phi_def);
-            fChain->SetBranchAddress("htt_m_def", &htt_m_def, &b_htt_m_def);
-            fChain->SetBranchAddress("htt_m123_def", &htt_m123_def, &b_htt_m123_def);
-            fChain->SetBranchAddress("htt_m23m123_def", &htt_m23m123_def, &b_htt_m23m123_def);
-            fChain->SetBranchAddress("htt_atan1312_def", &htt_atan1312_def, &b_htt_atan1312_def);
-            fChain->SetBranchAddress("htt_nTagCands_def", &htt_nTagCands_def, &b_htt_nTagCands_def);
-            fChain->SetBranchAddress("htt_tag_def", &htt_tag_def, &b_htt_tag_def);
-            fChain->SetBranchAddress("htt_pts1_def", &htt_pts1_def, &b_htt_pts1_def);
-            fChain->SetBranchAddress("htt_pts2_def", &htt_pts2_def, &b_htt_pts2_def);
-            fChain->SetBranchAddress("htt_pts3_def", &htt_pts3_def, &b_htt_pts3_def);
-            fChain->SetBranchAddress("htt_caJet_pt", &htt_caJet_pt, &b_htt_caJet_pt);
-            fChain->SetBranchAddress("htt_caJet_eta", &htt_caJet_eta, &b_htt_caJet_eta);
-            fChain->SetBranchAddress("htt_caJet_phi", &htt_caJet_phi, &b_htt_caJet_phi);
-            fChain->SetBranchAddress("htt_caJet_m", &htt_caJet_m, &b_htt_caJet_m);
-            fChain->SetBranchAddress("caJet_count", &caJet_count, &b_caJet_count);
-            fChain->SetBranchAddress("htt_caGroomJet_pt_def", &htt_caGroomJet_pt_def, &b_htt_caGroomJet_pt_def);
-            fChain->SetBranchAddress("htt_caGroomJet_eta_def", &htt_caGroomJet_eta_def, &b_htt_caGroomJet_eta_def);
-            fChain->SetBranchAddress("htt_caGroomJet_phi_def", &htt_caGroomJet_phi_def, &b_htt_caGroomJet_phi_def);
-            fChain->SetBranchAddress("htt_caGroomJet_m_def", &htt_caGroomJet_m_def, &b_htt_caGroomJet_m_def);
-        }
 
-        if (ranSD) {
-          fChain->SetBranchAddress("rljet_SDt_dcut"          , &rljet_SDt_dcut          , &b_rljet_SDt_dcut);
-        }
 
 
         if (this->operating_on_mc) {
