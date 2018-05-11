@@ -47,6 +47,8 @@ class DijetLoader(PlotLoader):
     def get_sigsub_data(self, hist_name, sig_sf = 1.0):
         if ("htt" in hist_name and "sjcalib" in hist_name):
             hist_name_data = hist_name.split("_sjcalib")[0]
+        elif ("htt" in hist_name and "CAJES" in hist name):
+            hist_name_data = hist_name.split("_CAJES")[0]
         elif ("SD" in hist_name and "_UP" in hist_name):
             hist_name_data = hist_name.split("_UP")[0]
         elif ("SD" in hist_name and "_DOWN" in hist_name):
@@ -187,6 +189,8 @@ class GammaJetLoader(PlotLoader):
     def get_sigsub_data(self, hist_name, sig_sf = 1.0):
         if ("htt" in hist_name and "sjcalib" in hist_name):
             hist_name_data = hist_name.split("_sjcalib")[0]
+        elif ("htt" in hist_name and "CAJES" in hist name):
+            hist_name_data = hist_name.split("_CAJES")[0]
         elif ("SD" in hist_name and "_UP" in hist_name):
             hist_name_data = hist_name.split("_UP")[0]
         elif ("SD" in hist_name and "_DOWN" in hist_name):
@@ -390,6 +394,19 @@ SYSTEMATICS_MC15C_CAJET_NOINPUTS = [
     # C/A sub-jet JES uncertainty
     "CAJES",
 ]
+
+# add photon systematics for gamma-jet
+SYSTEMATICS_PHOTON = [
+    "photonSF_ID",
+    "photonSF_effTrkIso",
+    "EG_SCALE_ALL",
+    "EG_RESOLUTION_ALL"
+]
+
+SYSTEMATICS_MC15C_WEAK_GAMMAJET = SYSTEMATICS_MC15C_WEAK + SYSTEMATICS_PHOTON
+SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET = SYSTEMATICS_MC15C_WEAK_NOINPUTS + SYSTEMATICS_PHOTON
+SYSTEMATICS_MC15C_CAJET_GAMMAJET = SYSTEMATICS_MC15C_CAJET + SYSTEMATICS_PHOTON
+SYSTEMATICS_MC15C_CAJET_NOINPUTS_GAMMAJET = SYSTEMATICS_MC15C_CAJET_NOINPUTS + SYSTEMATICS_PHOTON
 
 SYSTEMATICS_MC15C_MEDIUM = [
 	"LARGERJET_Medium_JET_Comb_Baseline_Kin",
