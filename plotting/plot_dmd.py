@@ -47,7 +47,7 @@ class DijetLoader(PlotLoader):
     def get_sigsub_data(self, hist_name, sig_sf = 1.0):
         if ("htt" in hist_name and "sjcalib" in hist_name):
             hist_name_data = hist_name.split("_sjcalib")[0]
-        elif ("htt" in hist_name and "CAJES" in hist name):
+        elif ("htt" in hist_name and "CAJES" in hist_name):
             hist_name_data = hist_name.split("_CAJES")[0]
         elif ("SD" in hist_name and "_UP" in hist_name):
             hist_name_data = hist_name.split("_UP")[0]
@@ -94,7 +94,7 @@ class DijetLoader(PlotLoader):
 
             systematics[systematic_name] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
 
-		return systematics
+        return systematics
 
     def get_normalized_dijet(self, generator, hist_name, branch = "nominal", sig_sf = 1.0, normalize_to_pretagged = False, normalize_to_unity = False):
 
@@ -189,7 +189,7 @@ class GammaJetLoader(PlotLoader):
     def get_sigsub_data(self, hist_name, sig_sf = 1.0):
         if ("htt" in hist_name and "sjcalib" in hist_name):
             hist_name_data = hist_name.split("_sjcalib")[0]
-        elif ("htt" in hist_name and "CAJES" in hist name):
+        elif ("htt" in hist_name and "CAJES" in hist_name):
             hist_name_data = hist_name.split("_CAJES")[0]
         elif ("SD" in hist_name and "_UP" in hist_name):
             hist_name_data = hist_name.split("_UP")[0]
@@ -281,7 +281,7 @@ class GammaJetLoader(PlotLoader):
 
             systematics[systematic_name] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
 
-		return systematics
+        return systematics
 
     def get_stack_plot(self, hist_name, generator = "sherpa_gammajet"):
         h_gamma   = self.get_normalized_gamma(hist_name, generator = generator).Clone()
@@ -330,7 +330,7 @@ class GammaJetLoader(PlotLoader):
         systematics["sjcalib"] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
 
         return systematics
-.
+
 
 #############
 ### MC15C ###
@@ -340,36 +340,36 @@ SYSTEMATICS_MC15C_WEAK = [
     # general uncertainties
     "lumi",
     "pileup",
-	# scale uncertainties
-	"LARGERJET_Weak_JET_Comb_Baseline_mass",
-	"LARGERJET_Weak_JET_Comb_Modelling_mass",
-	"LARGERJET_Weak_JET_Comb_TotalStat_mass",
-	"LARGERJET_Weak_JET_Comb_Tracking_mass",
-	"LARGERJET_Weak_JET_Rtrk_Baseline_D2Beta1",
-	"LARGERJET_Weak_JET_Rtrk_Baseline_Tau32WTA",
-	"LARGERJET_Weak_JET_Rtrk_Baseline_pT",
-	"LARGERJET_Weak_JET_Rtrk_Modelling_D2Beta1",
-	"LARGERJET_Weak_JET_Rtrk_Modelling_Tau32WTA",
-	"LARGERJET_Weak_JET_Rtrk_Modelling_pT",
-	"LARGERJET_Weak_JET_Rtrk_TotalStat_D2Beta1",
-	"LARGERJET_Weak_JET_Rtrk_TotalStat_Tau32WTA",
-	"LARGERJET_Weak_JET_Rtrk_TotalStat_pT",
-	"LARGERJET_Weak_JET_Rtrk_Tracking_D2Beta1",
-	"LARGERJET_Weak_JET_Rtrk_Tracking_Tau32WTA",
-	"LARGERJET_Weak_JET_Rtrk_Tracking_pT",
-	# resolution uncertainties
-	"LARGERJET_Weak_JET_CombPtRes",
-	"LARGERJET_Weak_JET_CombMassRes_QCD",
-	# resolution in inputs is assumed to be the same as scales
-	"RES_LARGERJET_Weak_JET_Rtrk_Baseline_D2Beta1",
-	"RES_LARGERJET_Weak_JET_Rtrk_Baseline_Tau32WTA",
-	"RES_LARGERJET_Weak_JET_Rtrk_Modelling_D2Beta1",
-	"RES_LARGERJET_Weak_JET_Rtrk_Modelling_Tau32WTA",
-	"RES_LARGERJET_Weak_JET_Rtrk_TotalStat_D2Beta1",
-	"RES_LARGERJET_Weak_JET_Rtrk_TotalStat_Tau32WTA",
-	"RES_LARGERJET_Weak_JET_Rtrk_Tracking_D2Beta1",
-	"RES_LARGERJET_Weak_JET_Rtrk_Tracking_Tau32WTA",
-	]
+    # scale uncertainties
+    "LARGERJET_Weak_JET_Comb_Baseline_mass",
+    "LARGERJET_Weak_JET_Comb_Modelling_mass",
+    "LARGERJET_Weak_JET_Comb_TotalStat_mass",
+    "LARGERJET_Weak_JET_Comb_Tracking_mass",
+    "LARGERJET_Weak_JET_Rtrk_Baseline_D2Beta1",
+    "LARGERJET_Weak_JET_Rtrk_Baseline_Tau32WTA",
+    "LARGERJET_Weak_JET_Rtrk_Baseline_pT",
+    "LARGERJET_Weak_JET_Rtrk_Modelling_D2Beta1",
+    "LARGERJET_Weak_JET_Rtrk_Modelling_Tau32WTA",
+    "LARGERJET_Weak_JET_Rtrk_Modelling_pT",
+    "LARGERJET_Weak_JET_Rtrk_TotalStat_D2Beta1",
+    "LARGERJET_Weak_JET_Rtrk_TotalStat_Tau32WTA",
+    "LARGERJET_Weak_JET_Rtrk_TotalStat_pT",
+    "LARGERJET_Weak_JET_Rtrk_Tracking_D2Beta1",
+    "LARGERJET_Weak_JET_Rtrk_Tracking_Tau32WTA",
+    "LARGERJET_Weak_JET_Rtrk_Tracking_pT",
+    # resolution uncertainties
+    "LARGERJET_Weak_JET_CombPtRes",
+    "LARGERJET_Weak_JET_CombMassRes_QCD",
+    # resolution in inputs is assumed to be the same as scales
+    "RES_LARGERJET_Weak_JET_Rtrk_Baseline_D2Beta1",
+    "RES_LARGERJET_Weak_JET_Rtrk_Baseline_Tau32WTA",
+    "RES_LARGERJET_Weak_JET_Rtrk_Modelling_D2Beta1",
+    "RES_LARGERJET_Weak_JET_Rtrk_Modelling_Tau32WTA",
+    "RES_LARGERJET_Weak_JET_Rtrk_TotalStat_D2Beta1",
+    "RES_LARGERJET_Weak_JET_Rtrk_TotalStat_Tau32WTA",
+    "RES_LARGERJET_Weak_JET_Rtrk_Tracking_D2Beta1",
+    "RES_LARGERJET_Weak_JET_Rtrk_Tracking_Tau32WTA",
+    ]
 
 SYSTEMATICS_MC15C_WEAK_NOINPUTS = [
     "LARGERJET_Weak_JET_Rtrk_Baseline_pT",
@@ -409,15 +409,15 @@ SYSTEMATICS_MC15C_CAJET_GAMMAJET = SYSTEMATICS_MC15C_CAJET + SYSTEMATICS_PHOTON
 SYSTEMATICS_MC15C_CAJET_NOINPUTS_GAMMAJET = SYSTEMATICS_MC15C_CAJET_NOINPUTS + SYSTEMATICS_PHOTON
 
 SYSTEMATICS_MC15C_MEDIUM = [
-	"LARGERJET_Medium_JET_Comb_Baseline_Kin",
-	"LARGERJET_Medium_JET_Comb_Modelling_Kin",
-	"LARGERJET_Medium_JET_Comb_TotalStat_Kin",
-	"LARGERJET_Medium_JET_Comb_Tracking_Kin",
-	"LARGERJET_Medium_JET_Rtrk_Baseline_Sub",
-	"LARGERJET_Medium_JET_Rtrk_Modelling_Sub",
-	"LARGERJET_Medium_JET_Rtrk_TotalStat_Sub",
-	"LARGERJET_Medium_JET_Rtrk_Tracking_Sub"
-	]
+    "LARGERJET_Medium_JET_Comb_Baseline_Kin",
+    "LARGERJET_Medium_JET_Comb_Modelling_Kin",
+    "LARGERJET_Medium_JET_Comb_TotalStat_Kin",
+    "LARGERJET_Medium_JET_Comb_Tracking_Kin",
+    "LARGERJET_Medium_JET_Rtrk_Baseline_Sub",
+    "LARGERJET_Medium_JET_Rtrk_Modelling_Sub",
+    "LARGERJET_Medium_JET_Rtrk_TotalStat_Sub",
+    "LARGERJET_Medium_JET_Rtrk_Tracking_Sub"
+    ]
 
 SYSTEMATICS_MC15C_STRONG = [
     "LARGERJET_Strong_JET_Comb_Baseline_All",
@@ -427,31 +427,31 @@ SYSTEMATICS_MC15C_STRONG = [
     ]
 
 SYSTEMATICS_MC15C_TEX = {
-	"LARGERJET_Medium_JET_Comb_Baseline_Kin"  : "R_{trk}^{baseline} Kin.",
-	"LARGERJET_Medium_JET_Comb_Modelling_Kin" : "R_{trk}^{modelling} Kin.",
-	"LARGERJET_Medium_JET_Comb_TotalStat_Kin" : "R_{trk}^{stat} Kin.",
-	"LARGERJET_Medium_JET_Comb_Tracking_Kin"  : "R_{trk}^{tracking} Kin.",
-	"LARGERJET_Medium_JET_Rtrk_Baseline_Sub"  : "R_{trk}^{baseline} Sub.",
-	"LARGERJET_Medium_JET_Rtrk_Modelling_Sub" : "R_{trk}^{modelling} Sub.",
-	"LARGERJET_Medium_JET_Rtrk_TotalStat_Sub" : "R_{trk}^{stat} Sub.",
-	"LARGERJET_Medium_JET_Rtrk_Tracking_Sub"  : "R_{trk}^{tracking} Sub.",
-	"sig_norm_sf"  : "Sig. Norm."
+    "LARGERJET_Medium_JET_Comb_Baseline_Kin"  : "R_{trk}^{baseline} Kin.",
+    "LARGERJET_Medium_JET_Comb_Modelling_Kin" : "R_{trk}^{modelling} Kin.",
+    "LARGERJET_Medium_JET_Comb_TotalStat_Kin" : "R_{trk}^{stat} Kin.",
+    "LARGERJET_Medium_JET_Comb_Tracking_Kin"  : "R_{trk}^{tracking} Kin.",
+    "LARGERJET_Medium_JET_Rtrk_Baseline_Sub"  : "R_{trk}^{baseline} Sub.",
+    "LARGERJET_Medium_JET_Rtrk_Modelling_Sub" : "R_{trk}^{modelling} Sub.",
+    "LARGERJET_Medium_JET_Rtrk_TotalStat_Sub" : "R_{trk}^{stat} Sub.",
+    "LARGERJET_Medium_JET_Rtrk_Tracking_Sub"  : "R_{trk}^{tracking} Sub.",
+    "sig_norm_sf"  : "Sig. Norm."
 }
 
 def get_mc15c_systematics_tex_title(sys_name):
     return get_closest_match(sys_name, SYSTEMATICS_MC15C_TEX)
 
 SYSTEMATICS_MC15C_LINESTYLE_COLOR = {
-	"LARGERJET_Medium_JET_Comb_Baseline_Kin"  : (1, 3),
-	"LARGERJET_Medium_JET_Comb_Modelling_Kin" : (1, 4),
-	"LARGERJET_Medium_JET_Comb_TotalStat_Kin" : (1, 6),
-	"LARGERJET_Medium_JET_Comb_Tracking_Kin"  : (1, 2),
-	"LARGERJET_Medium_JET_Rtrk_Baseline_Sub"  : (2, 3),
-	"LARGERJET_Medium_JET_Rtrk_Modelling_Sub" : (2, 4),
-	"LARGERJET_Medium_JET_Rtrk_TotalStat_Sub" : (2, 6),
-	"LARGERJET_Medium_JET_Rtrk_Tracking_Sub"  : (2, 2),
-	"sig_norm_sf"  : (1, 1),
-	"sjcalib"  : (1, 1),
+    "LARGERJET_Medium_JET_Comb_Baseline_Kin"  : (1, 3),
+    "LARGERJET_Medium_JET_Comb_Modelling_Kin" : (1, 4),
+    "LARGERJET_Medium_JET_Comb_TotalStat_Kin" : (1, 6),
+    "LARGERJET_Medium_JET_Comb_Tracking_Kin"  : (1, 2),
+    "LARGERJET_Medium_JET_Rtrk_Baseline_Sub"  : (2, 3),
+    "LARGERJET_Medium_JET_Rtrk_Modelling_Sub" : (2, 4),
+    "LARGERJET_Medium_JET_Rtrk_TotalStat_Sub" : (2, 6),
+    "LARGERJET_Medium_JET_Rtrk_Tracking_Sub"  : (2, 2),
+    "sig_norm_sf"  : (1, 1),
+    "sjcalib"  : (1, 1),
 }
 
 def get_mc15c_systematics_style_color(sys_name):
@@ -462,36 +462,36 @@ def get_mc15c_systematics_style_color(sys_name):
 ##########################
 
 AXIS_TITLES = {
-	"rljet0_pt"				   : "Leading Trimmed large-#it{R} jet #it{p_{T}}",
-	"rljet0_eta"			   : "Leading Trimmed large-#it{R} Jet #it{#eta}",
-	"rljet0_phi"			   : "Leading Trimmed large-#it{R} Jet #it{#phi}",
-	"rljet0_m"				   : "Leading Trimmed large-#it{R} jet combined mass",
-	"rljet0_D2"				   : "Leading Trimmed large-#it{R} Jet #it{D}_{2}",
-	"rljet0_Tau32"			   : "Leading Trimmed large-#it{R} Jet #it{#tau}_{32}",
-	"rljet0_Qw"				   : "Leading Trimmed large-#it{R} Jet Q_{w}",
-	"rljet0_Split23"		   : "Leading Trimmed large-#it{R} Jet #sqrt{d_{23}}",
-	"rl_dijet_m"			   : "m_{JJ}",
-	"rljet0_ungroomed_ntrk500" : "Leading large-#it{R} Jet n_{trk}",
-	"rljet0_NTrimSubjets"	   : "Leading large-#it{R} Jet n_{subjets}",
-	"rljet0_width"			   : "Leading large-#it{R} Jet width",
-	"caGroomJet0_pt"		   : "Leading Trimmed C/A large-#it{R} jet #it{p_{T}}",
-	"caGroomJet0_eta"		   : "Leading large-#it{R} jet #it{#eta}",
-	"caGroomJet0_phi"		   : "Leading large-#it{R} jet #it{#phi}",
-	"caGroomJet0_m"			   : "Leading Trimmed C/A large-#it{R} jet mass",
-	"htt0_pt"				   : "Top Candidate #it{p_{T}}",
-	"htt0_eta"				   : "Top Candidate #it{#eta}",
-	"htt0_phi"				   : "Top Candidate #it{#phi}",
-	"htt0_m"				   : "Top Candidate m_{T}",
-	"htt0_m23m123"			   : "Top Candidate m_{23} / m_{123}",
-	"htt0_atan1312"			   : "Top Candidate arctan (m_{13} / m_{12})",
-	"BDT_score_top"			   : "Leading large-#it{R} jet BDT #it{top} tag discriminant",
-	"BDT_score_w"			   : "Leading large-#it{R} jet BDT #it{W} tag discriminant",
-	"DNN_score_top"			   : "Leading large-#it{R} jet DNN #it{top} tag discriminant",
-	"DNN_score_w"			   : "Leading large-#it{R} jet DNN #it{W} tag discriminant",
-	"rljet0_SD"				   : "Leading large-#it{R} jet log #chi",
-	"h_mu_"					   : "<#mu>",
-	"h_NPV"					   : "NPV"
+    "rljet0_pt"                   : "Leading Trimmed large-#it{R} jet #it{p_{T}}",
+    "rljet0_eta"               : "Leading Trimmed large-#it{R} Jet #it{#eta}",
+    "rljet0_phi"               : "Leading Trimmed large-#it{R} Jet #it{#phi}",
+    "rljet0_m"                   : "Leading Trimmed large-#it{R} jet combined mass",
+    "rljet0_D2"                   : "Leading Trimmed large-#it{R} Jet #it{D}_{2}",
+    "rljet0_Tau32"               : "Leading Trimmed large-#it{R} Jet #it{#tau}_{32}",
+    "rljet0_Qw"                   : "Leading Trimmed large-#it{R} Jet Q_{w}",
+    "rljet0_Split23"           : "Leading Trimmed large-#it{R} Jet #sqrt{d_{23}}",
+    "rl_dijet_m"               : "m_{JJ}",
+    "rljet0_ungroomed_ntrk500" : "Leading large-#it{R} Jet n_{trk}",
+    "rljet0_NTrimSubjets"       : "Leading large-#it{R} Jet n_{subjets}",
+    "rljet0_width"               : "Leading large-#it{R} Jet width",
+    "caGroomJet0_pt"           : "Leading Trimmed C/A large-#it{R} jet #it{p_{T}}",
+    "caGroomJet0_eta"           : "Leading large-#it{R} jet #it{#eta}",
+    "caGroomJet0_phi"           : "Leading large-#it{R} jet #it{#phi}",
+    "caGroomJet0_m"               : "Leading Trimmed C/A large-#it{R} jet mass",
+    "htt0_pt"                   : "Top Candidate #it{p_{T}}",
+    "htt0_eta"                   : "Top Candidate #it{#eta}",
+    "htt0_phi"                   : "Top Candidate #it{#phi}",
+    "htt0_m"                   : "Top Candidate m_{T}",
+    "htt0_m23m123"               : "Top Candidate m_{23} / m_{123}",
+    "htt0_atan1312"               : "Top Candidate arctan (m_{13} / m_{12})",
+    "BDT_score_top"               : "Leading large-#it{R} jet BDT #it{top} tag discriminant",
+    "BDT_score_w"               : "Leading large-#it{R} jet BDT #it{W} tag discriminant",
+    "DNN_score_top"               : "Leading large-#it{R} jet DNN #it{top} tag discriminant",
+    "DNN_score_w"               : "Leading large-#it{R} jet DNN #it{W} tag discriminant",
+    "rljet0_SD"                   : "Leading large-#it{R} jet log #chi",
+    "h_mu_"                       : "<#mu>",
+    "h_NPV"                       : "NPV"
 }
 
 def get_axis_title(histo_name):
-	return get_closest_match(histo_name, AXIS_TITLES)
+    return get_closest_match(histo_name, AXIS_TITLES)

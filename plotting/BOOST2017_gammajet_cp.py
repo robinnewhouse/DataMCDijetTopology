@@ -21,7 +21,7 @@ gStyle.SetOptStat(0)
 CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/gammajet_20180504_syst/gammajet.merged.cp.root"
 RAW = GammaJetLoader(CP_ROOT_FILEPATH)
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/DataMC_GammaJet"
-DO_SYSTEMATICS_DEFAULT = True
+DO_SYSTEMATICS_DEFAULT = False
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/control"
 make_dir(ROOT_OUTPUT_DIR)

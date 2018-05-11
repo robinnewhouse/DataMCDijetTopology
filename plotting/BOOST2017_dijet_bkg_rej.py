@@ -22,7 +22,7 @@ LOADER = DijetLoader(CP_ROOT_FILEPATH)
 LOADER_SMOOTH = LOADER
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/DataMC_Dijet"
 
-DO_SYSTEMATICS_DEFAULT = SYSTEMATICS_MC15C_WEAK_NOINPUTS
+DO_SYSTEMATICS_DEFAULT = False
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/bkg_rej"
 make_dir(ROOT_OUTPUT_DIR)
@@ -66,14 +66,14 @@ def rej_rebin(h, bin_bounds):
 
 def get_sys_dict_eff(gen_name, var_name, bin_bounds, do_systematics):
     # get the Rtrk systematics and rebin them
-    dict = HISTLOADER.get_systematics_dictionary(gen_name, var_name, do_systematics, norm_to_pretagged = True)
+    dict = LOADER.get_systematics_dictionary(gen_name, var_name, do_systematics, norm_to_pretagged = True)
     for sys_name, var_dict in dict.iteritems():
         var_dict["up"] = rej_rebin(var_dict["up"], bin_bounds)
         var_dict["down"] = rej_rebin(var_dict["down"], bin_bounds)
     # create the sig. norm. systematics
     dict["sig_norm_sf"] = {}
-    h_tmp_up = rej_rebin(HISTLOADER.get_normalized_dijet(gen_name, var_name, sig_sf = 1.25, normalize_to_pretagged = True), bin_bounds)
-    h_tmp_down = rej_rebin(HISTLOADER.get_normalized_dijet(gen_name, var_name, sig_sf = 0.75, normalize_to_pretagged = True), bin_bounds)
+    h_tmp_up = rej_rebin(LOADER.get_normalized_dijet(gen_name, var_name, sig_sf = 1.25, normalize_to_pretagged = True), bin_bounds)
+    h_tmp_down = rej_rebin(LOADER.get_normalized_dijet(gen_name, var_name, sig_sf = 0.75, normalize_to_pretagged = True), bin_bounds)
     h_tmp_up.SetName(h_tmp_up.GetName() + "_sig_norm_sf_up")
     dict["sig_norm_sf"]["up"] = h_tmp_up
     h_tmp_down.SetName(h_tmp_down.GetName() + "_sig_norm_sf_down")
@@ -96,15 +96,15 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
     passed_var_name = total_var_name + "_" + tag_name
 
     h_total = rej_rebin(
-            HISTLOADER.get_sigsub_data(total_var_name)
+            LOADER.get_sigsub_data(total_var_name)
             if is_data
-            else HISTLOADER.get_normalized_dijet(gen_name, total_var_name, normalize_to_pretagged = True),
+            else LOADER.get_normalized_dijet(gen_name, total_var_name, normalize_to_pretagged = True),
             bin_bounds)
 
     h_passed = rej_rebin(
-            HISTLOADER.get_sigsub_data(passed_var_name)
+            LOADER.get_sigsub_data(passed_var_name)
             if is_data
-            else HISTLOADER.get_normalized_dijet(gen_name, passed_var_name, normalize_to_pretagged = True),
+            else LOADER.get_normalized_dijet(gen_name, passed_var_name, normalize_to_pretagged = True),
             bin_bounds)
 
     if (is_data):
@@ -356,7 +356,7 @@ pt_bkg_rej_plots = [
             "HTT_CAND",
             extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
             y_max = 80,
-            do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS,
+            # do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS,
             ),
 
         make_pt_efficiency_plot(
@@ -470,7 +470,7 @@ mu_bkg_rej_plots = [
             "HTT_CAND",
             extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
             y_max = 80,
-            do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS,
+            # do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS,
             ),
 
         make_mu_efficiency_plot(
