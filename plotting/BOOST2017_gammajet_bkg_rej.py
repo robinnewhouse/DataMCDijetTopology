@@ -96,8 +96,8 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
         h_total.Divide(h_passed)
         return h_total.Clone()
     else:
-        h_total = rej_rebin(RAW.get_normalized_gamma(total_var_name, normalize_to_pretagged = True), bin_bounds)
-        h_passed = rej_rebin(RAW.get_normalized_gamma(passed_var_name, normalize_to_pretagged = True), bin_bounds)
+        h_total = rej_rebin(RAW.get_normalized_gamma(total_var_name, normalize_to_pretagged = True, generator = gen_name), bin_bounds)
+        h_passed = rej_rebin(RAW.get_normalized_gamma(passed_var_name, normalize_to_pretagged = True, generator = gen_name), bin_bounds)
         total_sys_dict = {}
         passed_sys_dict = {}
         if do_systematics:
@@ -181,7 +181,7 @@ class PlotGammaJetBkgRej(PlotBase):
         self.h_sherpa_ratio.SetFillStyle(0)
         self.h_sherpa_ratio.SetFillColorAlpha(kBlue, 0.85)
 
-        set_mc_style_marker(self.h_pythia_ratio, kRed, shape = 21)
+        set_mc_style_marker(self.h_pythia_ratio, kRed, shape = 21, line_width = 3, marker_size = 1.0)
         set_mc_style_marker(self.h_sherpa_ratio, kBlue, shape = 22, line_width = 3, marker_size = 1.0)
 
         # TODO: necessary?
@@ -214,7 +214,7 @@ class PlotGammaJetBkgRej(PlotBase):
 
         self.pad1.cd()
 
-        #self.h_pythia.Draw("PE1,same")
+        self.h_pythia.Draw("PE1,same")
         self.h_sherpa.Draw("PE1,same")
         self.h_data.Draw("PE1,same")
 
@@ -222,8 +222,8 @@ class PlotGammaJetBkgRej(PlotBase):
 
         self.canvas.cd()
         self.leg.AddEntry(self.h_data, "Data - Sig.")
-        #self.leg.AddEntry(self.h_pythia, "Pythia8 MC")
-        self.leg.AddEntry(self.h_sherpa, "#gamma + jet")
+        self.leg.AddEntry(self.h_pythia, "Pythia8 MC #gamma + jet")
+        self.leg.AddEntry(self.h_sherpa, "Sherpa #gamma + jet")
         self.leg.AddEntry(self.h_sherpa_stat_ratio, "Stat. uncert.", "f")
         if (self.hsys_sherpa.num_systematics != 0):
             self.leg.AddEntry(self.h_sherpa_sys_ratio, "Sys. #oplus Stat. uncert.", "f")
@@ -233,7 +233,7 @@ class PlotGammaJetBkgRej(PlotBase):
         if (self.hsys_sherpa.num_systematics != 0):
             self.h_sherpa_sys_ratio.Draw("E2,same")
         self.h_sherpa_stat_ratio.Draw("E2,same")
-        #self.h_pythia_ratio.Draw("PE,same")
+        self.h_pythia_ratio.Draw("PE,same")
         self.h_sherpa_ratio.Draw("PE,same")
         self.pad2.RedrawAxis("g")
 
