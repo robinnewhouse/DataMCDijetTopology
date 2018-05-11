@@ -51,27 +51,38 @@ class PlotDataMcGammaJet(PlotBase):
 
         self.h_data = RAW.get_hist(["data"            , "nominal"] , var_name)
 
-        self.hs    = RAW.get_stack_plot(var_name)
-        self.h_sum = RAW.get_sum_plot(var_name, "nominal")
-        self.h_gamma = RAW.get_normalized_gamma(var_name, "sherpa_gammajet", "nominal")
-        self.h_sum_stat = self.h_sum.Clone(self.h_sum.GetName() + "_stat")
+        self.hs_sherpa    = RAW.get_stack_plot(var_name, generator = "sherpa_gammajet")
+        self.hs_pythia    = RAW.get_stack_plot(var_name, generator = "pythia_gammajet")
+        self.h_sum_sherpa = RAW.get_sum_plot(var_name, "nominal", generator = "sherpa_gammajet")
+        self.h_sum_pythia = RAW.get_sum_plot(var_name, "nominal", generator = "pythia_gammajet")
+        self.h_gamma_sherpa = RAW.get_normalized_gamma(var_name, "sherpa_gammajet", "nominal")
+        self.h_gamma_pythia = RAW.get_normalized_gamma(var_name, "pythia_gammajet", "nominal")
+        self.h_sum_sherpa_stat = self.h_sum_sherpa.Clone(self.h_sum_sherpa.GetName() + "_stat")
+        self.h_sum_pythia_stat = self.h_sum_pythia.Clone(self.h_sum_pythia.GetName() + "_stat")
 
         if (do_systematics):
             gammajet_sysdict = RAW.get_systematics_dictionary(var_name, SYSTEMATICS, "sherpa_gammajet", True)
         else:
             gammajet_sysdict = {}
 
-        self.hsys_sum = TH1Sys(self.h_gamma, gammajet_sysdict)
+        self.hsys_sum = TH1Sys(self.h_gamma_sherpa, gammajet_sysdict)
         self.hsys_sum._compute_errors()
-        self.h_sum_sys = self.hsys_sum.get_histo_with_systematic_errs()
-        self.h_sum_sys.SetName(self.h_sum.GetName() + "_sys")
-        self.h_sum_sys.Add(RAW.get_wzgamma(var_name))
-        self.h_sum_sys.Add(RAW.get_ttbar(var_name))
+        self.h_sum_sherpa_sys = self.hsys_sum.get_histo_with_systematic_errs()
+        self.h_sum_sherpa_sys.SetName(self.h_sum_sherpa.GetName() + "_sys")
+        self.h_sum_sherpa_sys.Add(RAW.get_wzgamma(var_name))
+        self.h_sum_sherpa_sys.Add(RAW.get_ttbar(var_name))
+        # scale factors, just for the legend
+        self.gamma_sherpa_SF = self.h_gamma_sherpa.Integral() / RAW.get_hist(["sherpa_gammajet", "nominal"] , var_name).Integral()
+        self.gamma_pythia_SF = self.h_gamma_pythia.Integral() / RAW.get_hist(["pythia_gammajet", "nominal"] , var_name).Integral()
 
-        all_hists = [self.h_data, self.h_sum, self.h_sum_stat, self.h_sum_sys]
 
-        for h in self.hs.GetHists():
+        all_hists = [self.h_data, self.h_sum_sherpa, self.h_sum_sherpa_stat, self.h_sum_sherpa_sys, self.h_sum_pythia]
+
+        for h in self.hs_sherpa.GetHists():
           all_hists.append(h)
+        for h in self.hs_pythia.GetHists():
+          all_hists.append(h)
+
 
         for h in all_hists:
           if (self.rebin): h.Rebin(self.rebin)
@@ -91,11 +102,16 @@ class PlotDataMcGammaJet(PlotBase):
 
         # CREATE RATIO PLOTS
 
-        self.h_ratio = self.h_sum.Clone("h_ratio")
-        self.h_ratio.Divide(self.h_data, self.h_ratio, 1, 1, "")
-        self.h_stat_ratio = self.h_ratio.Clone("h_ratio")
-        self.h_sys_ratio = self.h_sum_sys.Clone("h_ratio_sys")
+        self.h_sherpa_ratio = self.h_sum_sherpa.Clone("h_sherpa_ratio")
+        self.h_pythia_ratio = self.h_sum_pythia.Clone("h_pythia_ratio")
+
+        self.h_sherpa_ratio.Divide(self.h_data, self.h_sherpa_ratio, 1, 1, "")
+        self.h_pythia_ratio.Divide(self.h_data, self.h_pythia_ratio, 1, 1, "")
+        
+        self.h_sys_ratio = self.h_sum_sherpa_sys.Clone("h_sherpa_ratio_sys")
         self.h_sys_ratio.Divide(self.h_data, self.h_sys_ratio, 1, 1, "")
+        self.h_stat_ratio = self.h_sherpa_ratio.Clone("h_sherpa_ratio_stat")
+        
 
         # center the stat. and syst. errors around data/mc ratio = 1.0
         for ibin in range(self.h_stat_ratio.GetSize()):
@@ -103,19 +119,12 @@ class PlotDataMcGammaJet(PlotBase):
             self.h_sys_ratio.SetBinContent(ibin, 1.0)
 
         ratio_title = "#frac{Data}{MC}"
-        for h in [self.h_ratio, self.h_stat_ratio, self.h_sys_ratio]:
+        for h in [self.h_sherpa_ratio, self.h_pythia_ratio, self.h_stat_ratio, self.h_sys_ratio]:
             set_style_ratio(h, y_title = ratio_title, y_min = 0.5, y_max = 1.5)
             h.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
             h.GetXaxis().SetTitleOffset(4.0)
             h.GetYaxis().SetTitleOffset(2.0)
             h.GetXaxis().SetLabelSize(19)
-
-        set_mc_sys_err_style(self.h_sum_sys, col = kGreen+2)
-        set_mc_sys_err_style(self.h_sys_ratio, col = kGreen - 8)
-        set_mc_sys_err_style(self.h_stat_ratio, col = kGreen - 5)
-
-        self.h_stat_ratio.SetFillColor(kGreen-5)
-        self.h_stat_ratio.SetFillStyle(1001)
 
         self.name = var_name + "_data_mc_gammajet"
         if self.log_scale: self.name += "_log"
@@ -126,8 +135,20 @@ class PlotDataMcGammaJet(PlotBase):
         self._make_canvas()
         self._make_decorations()
 
+        set_mc_sys_err_style(self.h_sum_sherpa_sys, col = kGreen+2)
+        set_mc_sys_err_style(self.h_sys_ratio, col = kGreen - 8)
+        set_mc_sys_err_style(self.h_stat_ratio, col = kGreen - 5)
+
+        set_mc_style_line(self.h_sherpa_ratio, RAW.SHERPA_COLOR, line_width = 3, alpha = 0.9)
+        set_mc_style_line(self.h_pythia_ratio, RAW.PYTHIA_COLOR, line_width = 3, alpha = 0.9)
+
+        self.h_stat_ratio.SetFillColor(kGreen-5)
+        self.h_stat_ratio.SetFillStyle(1001)
+
         set_data_style_simple(self.h_data)
-        set_data_style_simple(self.h_ratio)
+        # set_data_style_simple(self.h_sherpa_ratio)
+        # set_data_style_simple(self.h_pythia_ratio)
+
 
         # SET UP THE CANVAS
         self.canvas.Divide(1,2)
@@ -154,18 +175,23 @@ class PlotDataMcGammaJet(PlotBase):
         self.pad1.cd()
 
         self.h_data.Draw("PE,same")
-        self.hs.Draw("histo,same")
+        self.hs_sherpa.Draw("histo,same")
+        self.hs_pythia.Draw("histo,same")
         self.h_data.Draw("PE,same")
 
         self.pad1.RedrawAxis()
 
         self.canvas.cd()
         self.leg.AddEntry(self.h_data       , "Data")
-        xss = self.hs.GetHists()
+        self.leg.AddEntry(self.h_gamma_sherpa, "Pythia8 dijet (#times " + '{0:.2f}'.format(self.gamma_sherpa_SF) + ")", "f")
+        self.leg.AddEntry(self.h_gamma_pythia, "Sherpa dijet (#times " + '{0:.2f}'.format(self.gamma_pythia_SF) + ")", "f")
+
+        xss = self.hs_sherpa.GetHists()
         xss.reverse()
         for h in xss:
           if ("gamma" in h.GetName()):
-            self.leg.AddEntry(h      , "Sherpa #gamma + jet"  , "f")
+            # self.leg.AddEntry(h      , "Sherpa #gamma + jet"  , "f")
+            pass
           elif ("wz" in h.GetName()):
             self.leg.AddEntry(h    , "Sherpa W/Z + #gamma"  , "f")
           elif ("ttbar" in h.GetName()):
@@ -182,7 +208,8 @@ class PlotDataMcGammaJet(PlotBase):
         if (do_systematics):
             self.h_sys_ratio.Draw("E2,same")
         self.h_stat_ratio.Draw("E2,same")
-        self.h_ratio.Draw("PE,same")
+        self.h_sherpa_ratio.Draw("hist,same")
+        self.h_pythia_ratio.Draw("hist,same")
         self.pad2.RedrawAxis("g")
 
         self.pad1.RedrawAxis()
