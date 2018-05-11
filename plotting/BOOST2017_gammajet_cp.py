@@ -27,12 +27,7 @@ OUTPUT_DIR = ROOT_OUTPUT_DIR + "/control"
 make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
 
-#SYSTEMATICS = [ ]
-PHOTON_SYSTEMATICS = [
-    "photonSF_ID"
-    "photonSF_effTrkIso"
-    ]
-SYSTEMATICS = SYSTEMATICS_MC15C_MEDIUM + PHOTON_SYSTEMATICS
+SYSTEMATICS = SYSTEMATICS_MC15C_WEAK + SYSTEMATICS_PHOTON
 
 class PlotDataMcGammaJet(PlotBase):
     def __init__(self, var_name, flip_legend = False, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwargs):
@@ -107,11 +102,11 @@ class PlotDataMcGammaJet(PlotBase):
 
         self.h_sherpa_ratio.Divide(self.h_data, self.h_sherpa_ratio, 1, 1, "")
         self.h_pythia_ratio.Divide(self.h_data, self.h_pythia_ratio, 1, 1, "")
-        
+
         self.h_sys_ratio = self.h_sum_sherpa_sys.Clone("h_sherpa_ratio_sys")
         self.h_sys_ratio.Divide(self.h_data, self.h_sys_ratio, 1, 1, "")
         self.h_stat_ratio = self.h_sherpa_ratio.Clone("h_sherpa_ratio_stat")
-        
+
 
         # center the stat. and syst. errors around data/mc ratio = 1.0
         for ibin in range(self.h_stat_ratio.GetSize()):
