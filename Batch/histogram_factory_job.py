@@ -16,9 +16,9 @@ args = parser.parse_args()
 
 assert(args.input_file != args.output_file)
 
-WORKAREA = "/afs/cern.ch/work/z/zmeadows/public/TopBosonTag/DataMCDijetTopology"
+WORKAREA = "/home/newhouse/public/Analysis/TopBosonTagging/DataMCDijetTopology/"
 
-os.chdir("/tmp/zmeadows")
+os.chdir("/home/newhouse/tmp/")
 RECO_TMP_DIR=tempfile.mkdtemp()
 os.chdir(RECO_TMP_DIR)
 
@@ -29,6 +29,7 @@ with open('job.sh', 'w') as fout:
           fout.write(cmd_str)
           fout.write("\n")
       write_cmd("#!/bin/sh\n")
+      write_cmd("#PBS -l  walltime=24:00:00\n\n")
       write_cmd("export ATLAS_LOCAL_ROOT_BASE=/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase")
       write_cmd("source ${ATLAS_LOCAL_ROOT_BASE}/user/atlasLocalSetup.sh")
       write_cmd("cd " + WORKAREA)
@@ -42,13 +43,17 @@ with open('job.sh', 'w') as fout:
         "-L", args.luminosity,
         "-E", args.selection,
         "-p", args.sample_type,
-        "-S"
+        "-S" # This toggles systematics 
         ])
       write_cmd(job_cmd)
       #write_cmd("xrdcp -r *.cp.root* root://eosatlas.cern.ch/" + os.path.dirname(args.output_file) + "/")
-      write_cmd("cp *.cp.root* " + os.path.dirname(args.output_file) + "/")
-      write_cmd("rm -rf *.root")
+      write_cmd("cp "+ TMP_OUTPUT_FILE + " " + os.path.dirname(args.output_file) + "/")
+      write_cmd("cp "+ TMP_OUTPUT_FILE+".log"+ " " + os.path.dirname(args.output_file) + "/")
+      write_cmd("rm -rf "+ TMP_OUTPUT_FILE + " " + TMP_OUTPUT_FILE+".log")
+      # write_cmd("cd " + WORKAREA)
+      # write_cmd("rm *.root.log")
       fout.close()
 
 os.system("chmod 755 job.sh")
-os.system("./job.sh")
+os.system("qsub -V job.sh")
+print
