@@ -178,8 +178,8 @@ class PlotDataMcGammaJet(PlotBase):
 
         self.canvas.cd()
         self.leg.AddEntry(self.h_data       , "Data")
-        self.leg.AddEntry(self.h_gamma_sherpa, "Pythia8 dijet (#times " + '{0:.2f}'.format(self.gamma_sherpa_SF) + ")", "f")
-        self.leg.AddEntry(self.h_gamma_pythia, "Sherpa dijet (#times " + '{0:.2f}'.format(self.gamma_pythia_SF) + ")", "f")
+        self.leg.AddEntry(self.h_gamma_sherpa, "Sherpa #gamma + jet (#times " + '{0:.2f}'.format(self.gamma_sherpa_SF) + ")", "f")
+        self.leg.AddEntry(self.h_gamma_pythia, "Pythia8 #gamma + jet (#times " + '{0:.2f}'.format(self.gamma_pythia_SF) + ")", "f")
 
         xss = self.hs_sherpa.GetHists()
         xss.reverse()

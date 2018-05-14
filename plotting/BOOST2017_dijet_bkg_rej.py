@@ -22,7 +22,8 @@ LOADER = DijetLoader(CP_ROOT_FILEPATH)
 LOADER_SMOOTH = LOADER
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/DataMC_Dijet"
 
-DO_SYSTEMATICS_DEFAULT = False
+# DO_SYSTEMATICS_DEFAULT = False
+DO_SYSTEMATICS_DEFAULT = SYSTEMATICS_MC15C_WEAK_NOINPUTS
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/bkg_rej"
 make_dir(ROOT_OUTPUT_DIR)
@@ -356,7 +357,7 @@ pt_bkg_rej_plots = [
             "HTT_CAND",
             extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
             y_max = 80,
-            # do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS,
+            do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS,
             ),
 
         make_pt_efficiency_plot(
@@ -470,7 +471,7 @@ mu_bkg_rej_plots = [
             "HTT_CAND",
             extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
             y_max = 80,
-            # do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS,
+            do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS,
             ),
 
         make_mu_efficiency_plot(

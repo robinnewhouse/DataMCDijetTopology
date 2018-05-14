@@ -15,7 +15,7 @@ from plot_loader import *
 from plot_systematics import *
 from plot_systematics_breakdown import *
 
-DO_SYSTEMATICS_DEFAULT = False
+DO_SYSTEMATICS_DEFAULT = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET
 
 PT_BIN_BOUNDS = array.array('d', [
     200,
