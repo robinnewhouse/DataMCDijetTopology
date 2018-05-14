@@ -779,6 +779,14 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         } // end of loop over C/A 1.5 jets
     } // end of C/A 1.5 jets & HTT stuff for systematics
 
+    // general mu histograms without post/pre tag
+    // correct mu in data by factor 1/1.09 to adjust the data/MC agreement as per PRW twiki
+    if (this->operating_on_mc) {
+        hp->h_mu->fill(mu           , weight);
+    } else {
+        hp->h_mu->fill(mu * 1./1.09 , weight);
+    }
+
     /*********************************************************/
     /* BELOW HERE, ONLY SAVING VARIABLES FROM NOMINAL BRANCH */
     /*********************************************************/
@@ -791,13 +799,6 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     /***************************/
 
     hp->h_NPV->fill( (Float_t) NPV, weight);
-
-    // correct mu in data by factor 1/1.09 to adjust the data/MC agreement as per PRW twiki
-    if (this->operating_on_mc) {
-        hp->h_mu->fill(mu           , weight);
-    } else {
-        hp->h_mu->fill(mu * 1./1.09 , weight);
-    }
 
     /*******************/
     /* ANTI-KT 10 JETS */
@@ -1072,11 +1073,15 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             // post-tag distributions with only C/A jet pT scale uncertainty propagated
             // in other words, we do not propagate uncertainty in inputs to HepTopTagger
             // These systematics are to be specifically used for rejection measurement
-            hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("HTT_CAND_CAJES_UP"   , htt_caGroomJet_pt_sjcalib0970->at(ijet) / 1000. , weight , is_htt_tagged);
-            hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND_CAJES_DOWN" , htt_caGroomJet_m_sjcalib0970->at(ijet) / 1000.  , weight , is_htt_tagged);
+            hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("HTT_CAND_CAJES_DOWN"   , htt_caGroomJet_pt_sjcalib0970->at(ijet) / 1000. , weight , is_htt_tagged);
+            hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND_CAJES_DOWN" , htt_caGroomJet_m_def->at(ijet) / 1000.  , weight , is_htt_tagged);
 
             hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("HTT_CAND_CAJES_UP"   , htt_caGroomJet_pt_sjcalib1030->at(ijet) / 1000. , weight , is_htt_tagged);
-            hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND_CAJES_DOWN" , htt_caGroomJet_m_sjcalib1030->at(ijet) / 1000.  , weight , is_htt_tagged);
+            hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND_CAJES_UP" , htt_caGroomJet_m_def->at(ijet) / 1000.  , weight , is_htt_tagged);
+
+            // pT distribution for rejection denominator
+            hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("CAJES_UP", htt_caGroomJet_pt_sjcalib1030->at(ijet) / 1000. , weight, true);
+            hp->h_htt_caGroomJet_pt.at(ijet)->fill_tagged ("CAJES_DOWN", htt_caGroomJet_pt_sjcalib0970->at(ijet) / 1000. , weight, true);
 
             // post-tag mu for MC-only HTT variations
             if (ijet == 0) {
