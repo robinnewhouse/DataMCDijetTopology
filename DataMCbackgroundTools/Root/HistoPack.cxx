@@ -282,6 +282,8 @@ void HistoPack::WriteCommonHistograms() const
     for (auto const &h : h_htt_caGroomJet_pt) h->write_all();
     for (auto const &h : h_htt_caGroomJet_m) h->write_all();
     for (auto const &h : h_htt_m) h->write_all();
+    for (auto const &h : h_htt_m23m123) h->write_all();
+    for (auto const &h : h_htt_atan1312) h->write_all();
 
     for (auto const &h : h_rljet_D2) h->write_all();
     for (auto const &h : h_rljet_Tau32_wta) h->write_all();
@@ -381,8 +383,7 @@ void HistoPack::WriteNominalOnlyHistograms() const
     for (auto const &h : h_htt_pt) h->write_all();
     for (auto const &h : h_htt_eta) h->write_all();
     for (auto const &h : h_htt_phi) h->write_all();
-    for (auto const &h : h_htt_m23m123) h->write_all();
-    for (auto const &h : h_htt_atan1312) h->write_all();
+
     for (auto const &h : h_htt_pts1) h->write_all();
     for (auto const &h : h_htt_pts2) h->write_all();
     for (auto const &h : h_htt_pts3) h->write_all();

@@ -45,9 +45,9 @@ class DijetLoader(PlotLoader):
         return h_data.Clone()
 
     def get_sigsub_data(self, hist_name, sig_sf = 1.0):
-        if ("htt" in hist_name and "sjcalib" in hist_name):
+        if ("sjcalib" in hist_name):
             hist_name_data = hist_name.split("_sjcalib")[0]
-        elif ("htt" in hist_name and "CAJES" in hist_name):
+        elif ("CAJES" in hist_name):
             hist_name_data = hist_name.split("_CAJES")[0]
         elif ("SD" in hist_name and "_UP" in hist_name):
             hist_name_data = hist_name.split("_UP")[0]
@@ -106,6 +106,9 @@ class DijetLoader(PlotLoader):
             generator = "sherpa_dijet"
         else: raise
 
+        if ('h_mu' in hist_name and ('sjcalib' in hist_name or 'CAJES' in hist_name)
+            and not 'HTT_CAND' in hist_name):
+            hist_name = 'h_mu'
 
         h_dijet = self.get_hist([generator, branch], hist_name)
         h_dijet_nominal = self.get_hist([generator, "nominal"], hist_name)
@@ -207,7 +210,7 @@ class GammaJetLoader(PlotLoader):
 
         return h_data.Clone()
 
-    def get_normalized_gamma(self, hist_name, generator = "sherpa_gammajet", branch = "nominal", sig_sf = 1.0, normalize_to_pretagged = False):
+    def get_normalized_gamma(self, generator, hist_name, branch = "nominal", sig_sf = 1.0, normalize_to_pretagged = False):
 
         if ("pythia" in generator):
             generator = "pythia_gammajet"
@@ -216,6 +219,10 @@ class GammaJetLoader(PlotLoader):
         elif ("sherpa" in generator):
             generator = "sherpa_gammajet"
         else: raise
+
+        if ('h_mu' in hist_name and ('sjcalib' in hist_name or 'CAJES' in hist_name)
+            and not 'HTT_CAND' in hist_name):
+            hist_name = 'h_mu'
 
         if (normalize_to_pretagged and is_tagged(hist_name, "h_rljet0_m_comb")):
             h_sigsub_data = self.get_sigsub_data("h_rljet0_m_comb", sig_sf)
@@ -253,38 +260,39 @@ class GammaJetLoader(PlotLoader):
 
         return h_gamma.Clone()
 
-    def get_systematics_dictionary(self, hist_name, branch_list, generator = "sherpa_dijet", normalize_to_pretagged = False):
+    def get_systematics_dictionary(self, generator, hist_name, branch_list, norm_to_pretagged = False):
         systematics = {}
 
         for systematic_name in branch_list:
             if ("sjcalib" in systematic_name):
-                h_sys_up = self.get_normalized_dijet(generator, hist_name + "_sjcalib1030", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
-                h_sys_down = self.get_normalized_dijet(generator, hist_name + "_sjcalib0970", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
+                h_sys_up = self.get_normalized_gamma(generator, hist_name + "_sjcalib1030", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
+                h_sys_down = self.get_normalized_gamma(generator, hist_name + "_sjcalib0970", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
             elif ("CAJES" in systematic_name):
-                h_sys_up = self.get_normalized_dijet(generator, hist_name + "_CAJES_UP", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
-                h_sys_down = self.get_normalized_dijet(generator, hist_name + "_CAJES_DOWN", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
+                h_sys_up = self.get_normalized_gamma(generator, hist_name + "_CAJES_UP", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
+                h_sys_down = self.get_normalized_gamma(generator, hist_name + "_CAJES_DOWN", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
             else:
                 if ("photon" in systematic_name or
                 "pileup" in systematic_name or
                 "lumi" in systematic_name):
                     up_branch_name = systematic_name + "_UP"
                     down_branch_name = systematic_name + "_DOWN"
-                elif 'RES' in systematic_name:
+                elif 'RES' in systematic_name \
+                    and ('EG_RESOLUTION' not in systematic_name):
                     up_branch_name = systematic_name[4:] + "__1up"
                     down_branch_name = systematic_name[4:] + "__1down"
                 else:
                     up_branch_name = systematic_name + "__1up"
                     down_branch_name = systematic_name + "__1down"
 
-                h_sys_up = self.get_normalized_gamma(hist_name, generator, up_branch_name, 1.0, normalize_to_pretagged)
-                h_sys_down = self.get_normalized_gamma(hist_name, generator, down_branch_name, 1.0, normalize_to_pretagged)
+                h_sys_up = self.get_normalized_gamma(generator, hist_name, up_branch_name, 1.0, normalize_to_pretagged = norm_to_pretagged)
+                h_sys_down = self.get_normalized_gamma(generator, hist_name, down_branch_name, 1.0, normalize_to_pretagged = norm_to_pretagged)
 
             systematics[systematic_name] = { "up" : h_sys_up.Clone(), "down" : h_sys_down.Clone() }
 
         return systematics
 
     def get_stack_plot(self, hist_name, generator = "sherpa_gammajet"):
-        h_gamma   = self.get_normalized_gamma(hist_name, generator = generator).Clone()
+        h_gamma   = self.get_normalized_gamma(generator, hist_name).Clone()
         h_wzgamma = self.get_wzgamma(hist_name).Clone()
         h_ttbar   = self.get_ttbar(hist_name).Clone()
 
@@ -307,7 +315,7 @@ class GammaJetLoader(PlotLoader):
         sig_sf = 1.0,
         normalize_to_pretagged = False):
 
-        h_gamma   = self.get_normalized_gamma(hist_name, generator, branch, sig_sf, normalize_to_pretagged)
+        h_gamma   = self.get_normalized_gamma(generator, hist_name, branch, sig_sf, normalize_to_pretagged)
         h_wzgamma = self.get_wzgamma(hist_name, branch)
         h_ttbar   = self.get_ttbar(hist_name, branch)
 

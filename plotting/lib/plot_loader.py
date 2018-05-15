@@ -26,7 +26,7 @@ class PlotLoader(object):
             if (not hist):
                 print "In path: " + str(dir_path)
                 print "hist not found: " + str(hist_name)
-                print "Returning None" + str(hist_name)
+                print "Returning None"
                 return None
                 print
             return hist.Clone()
