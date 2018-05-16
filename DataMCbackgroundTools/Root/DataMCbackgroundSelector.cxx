@@ -757,6 +757,10 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_htt_caGroomJet_eta.at(ijet)->fill_tagged("HTT_CAND", htt_caGroomJet_eta_def->at(ijet)        , weight, is_htt_tagged);
             hp->h_htt_caGroomJet_phi.at(ijet)->fill_tagged("HTT_CAND", htt_caGroomJet_phi_def->at(ijet)        , weight, is_htt_tagged);
             hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND", htt_caGroomJet_m_def->at(ijet) / 1000.  , weight, is_htt_tagged);
+            // specifically for gamma-jets HTT mass plot investigation, see what it looks like with dijet-like pT threshold
+            if(htt_caGroomJet_pt_def->at(ijet) > 450e3) {
+              hp->h_htt_m.at(ijet)->fill_tagged("pt450", htt_m_def->at(ijet)/1000., weight, is_htt_tagged);
+            }
 
 
             // only fill post-tag mu plots for leading-pT C/A jet
