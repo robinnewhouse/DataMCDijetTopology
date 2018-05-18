@@ -18,9 +18,10 @@ sane_defaults()
 TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
-CP_ROOT_FILEPATH = "/afs/cern.ch/work/o/omajersk/private/DataMCDijetTopology/dijet.merged.cp.root"
+# CP_ROOT_FILEPATH = "/afs/cern.ch/work/o/omajersk/private/DataMCDijetTopology/dijet.merged.cp.root"
+CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/dijet_20180504_syst/dijet.merged.cp.root"
 HISTLOADER = DijetLoader(CP_ROOT_FILEPATH)
-ROOT_OUTPUT_DIR = "../DataMC_Dijet"
+ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/DataMC_Dijet"
 
 DO_SYSTEMATICS_DEFAULT = SYSTEMATICS_MC15C_WEAK_NOINPUTS
 
@@ -561,29 +562,6 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "TopoTag_Top_80_
 #         rebin = MASS_PLOT_REBIN,
 #         ))
 
-data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "SDt_dcut",
-        empty_scale = 2.0,
-        extra_legend_lines = DEF_LINES + ["ShD Top-tagged"],
-        x_min = 0,
-        x_max = 350,
-        ttbar_sf = 25,
-        wzjets_sf = 25,
-        do_systematics = False,
-        rebin = MASS_PLOT_REBIN,
-        ))
-
-# data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "SDw_dcut",
-#         empty_scale = 2.0,
-#         flip_legend = True,
-#         extra_legend_lines = DEF_LINES + ["ShD W-tagged"],
-#         x_min = 0,
-#         x_max = 350,
-#         ttbar_sf = 25,
-#         wzjets_sf = 5,
-#         do_systematics = False,
-#         rebin = MASS_PLOT_REBIN,
-#         ))
-
 data_mc_plots.append(PlotDataPythiaHerwig("h_rljet0_m_comb",
             empty_scale = 3.0,
             extra_legend_lines = DEF_LINES,
@@ -787,57 +765,6 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_topTag_TopoTagger_score_mva
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS,
         ))
 
-# data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_SD_logchi_t_calib",
-#         empty_scale = 2.2,
-#         flip_legend = True,
-#         do_systematics = False,
-#         x_units = "",
-#         extra_legend_lines = DEF_LINES,
-#         x_min = -10,
-#         x_max = 10,
-#         ttbar_sf = 25,
-#         wzjets_sf = 25,
-#         rebin = 4,
-#         ))
-#
-# data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_SD_logchi_t_uncalib",
-#         empty_scale = 2.2,
-#         do_systematics = False,
-#         flip_legend = True,
-#         x_units = "",
-#         extra_legend_lines = DEF_LINES,
-#         x_min = -10,
-#         x_max = 10,
-#         ttbar_sf = 25,
-#         wzjets_sf = 25,
-#         rebin = 4,
-#         ))
-#
-# data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_SD_logchi_t_combined",
-#         empty_scale = 2.2,
-#         do_systematics = False,
-#         x_units = "",
-#         flip_legend = True,
-#         extra_legend_lines = DEF_LINES,
-#         x_min = -10,
-#         x_max = 10,
-#         ttbar_sf = 25,
-#         wzjets_sf = 25,
-#         rebin = 4,
-#         ))
-
-data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_SD_logchi_t_dcut",
-        empty_scale = 2.2,
-        do_systematics = False,
-        x_units = "",
-        flip_legend = True,
-        extra_legend_lines = DEF_LINES,
-        x_min = -10,
-        x_max = 10,
-        ttbar_sf = 25,
-        wzjets_sf = 25,
-        rebin = 4,
-        ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_pt_comb_" + "smooth16WTag_50eff_MassJSSCut",
         empty_scale = 10,
@@ -971,4 +898,107 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_NTrimSubjets",
         y_min = 1.0,
         ttbar_sf = 20,
         wzjets_sf = 20
+        ))
+
+
+## SD Workaround Section
+# CP_ROOT_FILEPATH = "/afs/cern.ch/work/o/omajersk/private/DataMCDijetTopology/dijet.merged.cp.root"
+CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/dijet_20180515_syst/dijet.merged.cp.root"
+HISTLOADER = DijetLoader(CP_ROOT_FILEPATH)
+# ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/DataMC_Dijet"
+
+# There are still some systematics missing, this is a hack to let it plot with the ones that still are there
+SD_SYSTEMATICS = SYSTEMATICS_MC15C_WEAK_NOINPUTS
+MISSING_SYSTEMATICS = [
+# "LARGERJET_Weak_JET_Rtrk_Baseline_D2Beta1",
+# "LARGERJET_Weak_JET_Rtrk_Baseline_Tau32WTA",
+# "LARGERJET_Weak_JET_Rtrk_Modelling_D2Beta1",
+# "LARGERJET_Weak_JET_Rtrk_Modelling_Tau32WTA",
+# "LARGERJET_Weak_JET_Rtrk_TotalStat_D2Beta1",
+# "LARGERJET_Weak_JET_Rtrk_TotalStat_Tau32WTA",
+# "LARGERJET_Weak_JET_Rtrk_Tracking_D2Beta1",
+# "LARGERJET_Weak_JET_Rtrk_Tracking_Tau32WTA",
+# "EG_SCALE_ALL",
+# "EG_RESOLUTION_ALL",
+]
+
+# OUTPUT_DIR = ROOT_OUTPUT_DIR + "/control"
+# make_dir(ROOT_OUTPUT_DIR)
+# make_dir(OUTPUT_DIR)
+
+
+data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "SDt_dcut",
+        empty_scale = 2.0,
+        extra_legend_lines = DEF_LINES + ["ShD Top-tagged"],
+        x_min = 0,
+        x_max = 350,
+        ttbar_sf = 25,
+        wzjets_sf = 25,
+        do_systematics = SD_SYSTEMATICS,
+        rebin = MASS_PLOT_REBIN,
+        ))
+
+# data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "SDw_dcut",
+#         empty_scale = 2.0,
+#         flip_legend = True,
+#         extra_legend_lines = DEF_LINES + ["ShD W-tagged"],
+#         x_min = 0,
+#         x_max = 350,
+#         ttbar_sf = 25,
+#         wzjets_sf = 5,
+#         do_systematics = SD_SYSTEMATICS,
+#         rebin = MASS_PLOT_REBIN,
+#         ))
+
+
+# data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_SD_logchi_t_calib",
+#         empty_scale = 2.2,
+#         flip_legend = True,
+#         do_systematics = SD_SYSTEMATICS,
+#         x_units = "",
+#         extra_legend_lines = DEF_LINES,
+#         x_min = -10,
+#         x_max = 10,
+#         ttbar_sf = 25,
+#         wzjets_sf = 25,
+#         rebin = 4,
+#         ))
+#
+# data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_SD_logchi_t_uncalib",
+#         empty_scale = 2.2,
+#         do_systematics = SD_SYSTEMATICS,
+#         flip_legend = True,
+#         x_units = "",
+#         extra_legend_lines = DEF_LINES,
+#         x_min = -10,
+#         x_max = 10,
+#         ttbar_sf = 25,
+#         wzjets_sf = 25,
+#         rebin = 4,
+#         ))
+#
+# data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_SD_logchi_t_combined",
+#         empty_scale = 2.2,
+#         do_systematics = SD_SYSTEMATICS,
+#         x_units = "",
+#         flip_legend = True,
+#         extra_legend_lines = DEF_LINES,
+#         x_min = -10,
+#         x_max = 10,
+#         ttbar_sf = 25,
+#         wzjets_sf = 25,
+#         rebin = 4,
+#         ))
+
+data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_SD_logchi_t_dcut",
+        empty_scale = 2.2,
+        do_systematics = SD_SYSTEMATICS,
+        x_units = "",
+        flip_legend = True,
+        extra_legend_lines = DEF_LINES,
+        x_min = -10,
+        x_max = 10,
+        ttbar_sf = 25,
+        wzjets_sf = 25,
+        rebin = 4,
         ))

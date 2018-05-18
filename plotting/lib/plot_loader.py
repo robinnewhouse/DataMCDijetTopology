@@ -35,7 +35,7 @@ class PlotLoader(object):
             print "hist not found: " + str(hist_name)
             print "exiting"
             print
-            quit() # remove this for more information to be raised in the exception
+            # quit() # remove this for more information to be raised in the exception
             raise e
 
     def get_systematics_dict(self,

@@ -285,260 +285,279 @@ def make_mu_rej_plot( tag_name, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwarg
             x_units = "",
             **kwargs)
 
-bkg_rej_plots = [
-    #make_pt_rej_plot(
+bkg_rej_plots = []
+#bkg_rej_plots.append(make_pt_rej_plot(
     #    "smooth16Top_MassTau32Tag50eff_MassJSSCut",
     #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 50%" ],
     #    x_min = 350,
     #    y_max = 150,
-    #    ),
+    #    ))
 
-    make_pt_rej_plot(
+bkg_rej_plots.append(make_pt_rej_plot(
         "smooth16Top_MassTau32Tag80eff_MassJSSCut",
         extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 80%" ],
         x_min = 350,
         # y_max = 40,
-        ),
+        ))
 
-    #make_pt_rej_plot(
+#bkg_rej_plots.append(make_pt_rej_plot(
     #    "smooth16Top_QwTau32Tag50eff",
     #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{sig} = 50%" ],
     #    x_min = 350,
     #    y_max = 150
-    #    ),
+    #    ))
 
-    #make_pt_rej_plot(
+#bkg_rej_plots.append(make_pt_rej_plot(
     #    "smooth16Top_QwTau32Tag80eff",
     #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{sig} = 80%" ],
     #    x_min = 350,
     #    y_max = 80,
-    #    ),
+    #    ))
 
-    #make_pt_rej_plot(
+#bkg_rej_plots.append(make_pt_rej_plot(
     #    "smooth16Top_Tau32Split23Tag50eff",
     #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + #sqrt{d_{23}}", "#epsilon_{sig} = 50%" ],
     #    x_min = 350,
     #    y_max = 150,
-    #    ),
+    #    ))
 
-    # make_pt_rej_plot(
+# bkg_rej_plots.append(make_pt_rej_plot(
     #     "smooth16Top_Tau32Split23Tag80eff",
     #     extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): #tau_{32} + #sqrt{d_{23}}"],
     #     x_min = 350,
     #     y_max = 45,
-    #     ),
+    #     ))
 
-    make_pt_rej_plot(
+bkg_rej_plots.append(make_pt_rej_plot(
         "smooth16WTag_50eff_MassJSSCut",
         extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): D_2 + m^{comb}"],
         x_min = 200,
         # y_max = 175,
-        ),
+        ))
 
-    #make_pt_rej_plot(
+#bkg_rej_plots.append(make_pt_rej_plot(
     #    "smooth16WTag_80eff_MassJSSCut",
     #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
     #    x_min = 200,
     #    y_max = 50
-    #    ),
+    #    ))
 
-    #make_pt_rej_plot(
+#bkg_rej_plots.append(make_pt_rej_plot(
     #    "smooth16ZTag_50eff_MassJSSCut",
     #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 50%" ],
     #    x_min = 200,
     #    y_max = 150
-    #    ),
+    #    ))
 
-    #make_pt_rej_plot(
+#bkg_rej_plots.append(make_pt_rej_plot(
     #    "smooth16ZTag_80eff_MassJSSCut",
     #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
     #    x_min = 200,
     #    y_max = 50
-    #    ),
+    #    ))
 
-    make_pt_rej_plot(
+bkg_rej_plots.append(make_pt_rej_plot(
         "HTT_CAND",
         extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
         y_max = 80,
         x_min = 350,
         # do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS_GAMMAJET,
         do_systematics=False,
-        ),
+        ))
 
-    make_pt_rej_plot(
+bkg_rej_plots.append(make_pt_rej_plot(
         "BDT_Top",
         extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): BDT" ],
         y_max = 80,
         x_min = 350,
-        ),
+        ))
 
-    make_pt_rej_plot(
+bkg_rej_plots.append(make_pt_rej_plot(
         "BDT_W",
         extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): BDT" ],
         y_max = 200,
-        ),
+        ))
 
-    make_pt_rej_plot(
+bkg_rej_plots.append(make_pt_rej_plot(
         "DNN_Top",
         extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): DNN" ],
         y_max = 75,
         x_min = 350,
-        ),
+        ))
 
-    make_pt_rej_plot(
+bkg_rej_plots.append(make_pt_rej_plot(
         "DNN_W",
         extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): DNN" ],
         y_max = 200,
-        ),
+        ))
 
-    make_pt_rej_plot(
+bkg_rej_plots.append(make_pt_rej_plot(
         "TopoTag_Top_80_qqb",
         extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): Topo" ],
         y_max = 40,
-        ),
+        ))
 
-    make_pt_rej_plot(
-        "SDt_dcut",
-        extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): SD" ],
-        y_max = 40,
-        do_systematics=False,
-        ),
-
-    # make_pt_rej_plot(
-    #     "SDw_dcut",
-    #     extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): SD" ],
-    #     y_max = 60,
-    #     do_systematics = False, # for now
-    #     ),
-
-]
-
-bkg_rej_mu_plots = [
-    #make_mu_rej_plot(
+bkg_rej_mu_plots = []
+#bkg_rej_mu_plots.append(make_mu_rej_plot(
     #    "smooth16Top_MassTau32Tag50eff_MassJSSCut",
     #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 50%" ],
     #    x_min = 350,
     #    y_max = 150,
-    #    ),
+    #    ))
 
-    make_mu_rej_plot(
+bkg_rej_mu_plots.append(make_mu_rej_plot(
         "smooth16Top_MassTau32Tag80eff_MassJSSCut",
         extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 80%" ],
         x_min = 350,
         y_max = 300,
         # do_systematics = False,
-        ),
+        ))
 
-    #make_mu_rej_plot(
+#bkg_rej_mu_plots.append(make_mu_rej_plot(
     #    "smooth16Top_QwTau32Tag50eff",
     #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{sig} = 50%" ],
     #    x_min = 350,
     #    y_max = 150
-    #    ),
+    #    ))
 
-    #make_mu_rej_plot(
+#bkg_rej_mu_plots.append(make_mu_rej_plot(
     #    "smooth16Top_QwTau32Tag80eff",
     #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{sig} = 80%" ],
     #    x_min = 350,
     #    y_max = 80,
-    #    ),
+    #    ))
 
-    #make_mu_rej_plot(
+#bkg_rej_mu_plots.append(make_mu_rej_plot(
     #    "smooth16Top_Tau32Split23Tag50eff",
     #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + #sqrt{d_{23}}", "#epsilon_{sig} = 50%" ],
     #    x_min = 350,
     #    y_max = 150,
-    #    ),
+    #    ))
 
-    # make_mu_rej_plot(
+# bkg_rej_mu_plots.append(make_mu_rej_plot(
     #     "smooth16Top_Tau32Split23Tag80eff",
     #     extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): #tau_{32} + #sqrt{d_{23}}"],
     #     x_min = 350,
     #     y_max = 45,
     #     do_systematics = False,
-    #     ),
+    #     ))
 
-    make_mu_rej_plot(
+bkg_rej_mu_plots.append(make_mu_rej_plot(
         "smooth16WTag_50eff_MassJSSCut",
         extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): D_2 + m^{comb}"],
         x_min = 200,
         # y_max = 175,
         do_systematics = False,
-        ),
+        ))
 
     #make_pt_rej_plot(
     #    "smooth16WTag_80eff_MassJSSCut",
     #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
     #    x_min = 200,
     #    y_max = 50
-    #    ),
+    #    ))
 
     #make_pt_rej_plot(
     #    "smooth16ZTag_50eff_MassJSSCut",
     #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 50%" ],
     #    x_min = 200,
     #    y_max = 150
-    #    ),
+    #    ))
 
     #make_pt_rej_plot(
     #    "smooth16ZTag_80eff_MassJSSCut",
     #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
     #    x_min = 200,
     #    y_max = 50
-    #    ),
+    #    ))
 
-    make_mu_rej_plot(
+bkg_rej_mu_plots.append(make_mu_rej_plot(
         "HTT_CAND",
         extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
         y_max = 10,
         x_min = 350,
         # do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS_GAMMAJET,
         do_systematics=False,
-        ),
+        ))
 
-    make_mu_rej_plot(
+bkg_rej_mu_plots.append(make_mu_rej_plot(
         "BDT_Top",
         extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): BDT" ],
         y_max = 400,
         x_min = 350,
-        ),
+        ))
 
-    make_mu_rej_plot(
+bkg_rej_mu_plots.append(make_mu_rej_plot(
         "BDT_W",
         extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): BDT" ],
         y_max = 200,
-        ),
+        ))
 
-    make_mu_rej_plot(
+bkg_rej_mu_plots.append(make_mu_rej_plot(
         "DNN_Top",
         extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): DNN" ],
         y_max = 400,
-        ),
+        ))
 
-    make_mu_rej_plot(
+bkg_rej_mu_plots.append(make_mu_rej_plot(
         "DNN_W",
         extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): DNN" ],
         y_max = 200,
-        ),
+        ))
 
-    make_mu_rej_plot(
+bkg_rej_mu_plots.append(make_mu_rej_plot(
         "TopoTag_Top_80_qqb",
         extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): Topo" ],
         y_max = 50,
-        ),
+        ))
 
-    make_mu_rej_plot(
+
+## SD Workaround Section
+
+CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/gammajet_20180515_syst/gammajet.merged.cp.root"
+HISTLOADER = GammaJetLoader(CP_ROOT_FILEPATH)
+# ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/DataMC_GammaJet"
+
+# OUTPUT_DIR = ROOT_OUTPUT_DIR + "/bkg_rej"
+# make_dir(ROOT_OUTPUT_DIR)
+# make_dir(OUTPUT_DIR)
+
+
+# There are still some systematics missing, this is a hack to let it plot with the ones that still are there
+SD_SYSTEMATICS = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET
+MISSING_SYSTEMATICS = [
+"EG_SCALE_ALL",
+"EG_RESOLUTION_ALL",
+]
+
+for systematic in MISSING_SYSTEMATICS:
+    while systematic in SD_SYSTEMATICS: SD_SYSTEMATICS.remove(systematic)
+    while "RES_"+systematic in SD_SYSTEMATICS: SD_SYSTEMATICS.remove("RES_"+systematic)
+
+bkg_rej_plots.append(make_pt_rej_plot(
         "SDt_dcut",
         extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): SD" ],
-        y_max = 300,
-        do_systematics = False,
-        ),
+        y_max = 40,
+        do_systematics=SD_SYSTEMATICS,
+        ))
 
-    # make_mu_rej_plot(
+# bkg_rej_plots.append(make_pt_rej_plot(
     #     "SDw_dcut",
     #     extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): SD" ],
     #     y_max = 60,
-    #     do_systematics = False,
-    #    ),
+    #     do_systematics = SD_SYSTEMATICS, # for now
+    #     ))
 
-]
+bkg_rej_mu_plots.append(make_mu_rej_plot(
+        "SDt_dcut",
+        extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): SD" ],
+        y_max = 300,
+        # do_systematics = SD_SYSTEMATICS,
+        ))
+
+# bkg_rej_mu_plots.append(make_mu_rej_plot(
+    #     "SDw_dcut",
+    #     extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): SD" ],
+    #     y_max = 60,
+    #     do_systematics = SD_SYSTEMATICS,
+    #    ))

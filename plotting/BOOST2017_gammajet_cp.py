@@ -42,7 +42,6 @@ class PlotDataMcGammaJet(PlotBase):
                 tex_spacing_mod = 0.75,
                 x_title = get_axis_title(var_name),
                 **kwargs)
-
         self.h_data = HISTLOADER.get_hist(["data"            , "nominal"] , var_name)
 
         self.hs_sherpa    = HISTLOADER.get_stack_plot(var_name, generator = "sherpa_gammajet")
@@ -422,8 +421,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_mu",
        rebin = 4,
        ))
 
-data_mc_plots += [
-    PlotDataMcGammaJet("h_rljet0_m_comb",
+data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_m_comb",
         empty_scale = 2.5,
         extra_legend_lines = DEF_LINES,
         x_min = 50,
@@ -431,115 +429,103 @@ data_mc_plots += [
         #y_min = 6e3 + 0.1,
         log_scale = True,
         rebin = MASS_PLOT_REBIN,
-        ),
+        ))
 
-    PlotDataMcGammaJet("h_rljet0_pt_comb",
+data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_pt_comb",
         empty_scale = 3.0,
         extra_legend_lines = DEF_LINES,
         x_max = 2000,
         x_min = 200,
         log_scale = True,
         rebin = 4,
-        ),
+        ))
 
-    PlotDataMcGammaJet("h_rljet0_pt_comb_smooth16WTag_50eff_JSSCut",
+data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_pt_comb_smooth16WTag_50eff_JSSCut",
         empty_scale = 2.5,
         extra_legend_lines = DEF_LINES,
         x_max = 600,
         x_min = 300,
         log_scale = True,
-        ),
+        ))
 
-    # PlotDataMcGammaJet("h_rljet0_Split23_combMgt100GeV",
+# data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_Split23_combMgt100GeV",
     #     empty_scale = 5,
     #     extra_legend_lines = DEF_LINES + ["m^{comb} > 100 GeV"],
     #     log_scale = True,
     #     x_max = 140,
-    #     ),
+    #     ))
 
-    PlotDataMcGammaJet("h_rljet0_D2_combMgt50GeV",
+data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_D2_combMgt50GeV",
         empty_scale = 1.9,
         extra_legend_lines = DEF_LINES + ["m^{comb} > 50 GeV"],
         x_units = "",
         rebin = 4,
         x_max = 4.0,
         y_min = 0.01,
-        ),
+        ))
 
-    PlotDataMcGammaJet("h_rljet0_topTag_BDT_qqb_score_mva",
+data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_topTag_BDT_qqb_score_mva",
         empty_scale = 4,
         do_systematics = False,
         x_units = "",
         rebin = 3,
         y_min = 0.1,
         log_scale = True,
-        ),
+        ))
 
-    PlotDataMcGammaJet("h_rljet0_wTag_BDT_qq_score_mva",
+data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_wTag_BDT_qq_score_mva",
         empty_scale = 4,
         do_systematics = False,
         x_units = "",
         rebin = 3,
         y_min = 0.1,
         log_scale = True,
-        ),
+        ))
 
-    PlotDataMcGammaJet("h_rljet0_topTag_DNN_qqb_score_mva",
+data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_topTag_DNN_qqb_score_mva",
         empty_scale = 4,
         do_systematics = False,
         x_units = "",
         rebin = 3,
         y_min = 0.1,
         log_scale = True,
-        ),
+        ))
 
-    PlotDataMcGammaJet("h_rljet0_wTag_DNN_qq_score_mva",
+data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_wTag_DNN_qq_score_mva",
         empty_scale = 4,
         do_systematics = False,
         x_units = "",
         rebin = 3,
         y_min = 0.1,
         log_scale = True,
-        ),
+        ))
 
-    PlotDataMcGammaJet("h_rljet0_topTag_TopoTagger_score_mva",
+data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_topTag_TopoTagger_score_mva",
         empty_scale = 4,
         do_systematics = False,
         x_units = "",
         rebin = 3,
         y_min = 0.1,
         log_scale = True,
-        ),
+        ))
 
-
-    PlotDataMcGammaJet( "h_rljet0_SD_logchi_t_dcut",
-        empty_scale = 4,
-        do_systematics = False,
-        x_units = "",
-        rebin = 3,
-        y_min = 0.1,
-        x_min = -8,
-        x_max = 10,
-        log_scale = True,
-        ),
-
-    PlotDataMcGammaJet( "h_htt0_atan1312",
+data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_atan1312",
             empty_scale = 1.9,
             extra_legend_lines = ["HTT-tagged"] + HTT_LINES,
             rebin = 5,
             # do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
             do_systematics=False,
-            ),
+            ))
 
-    PlotDataMcGammaJet( "h_htt0_m23m123",
+data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_m23m123",
             empty_scale = 2.0,
             extra_legend_lines = ["HTT-tagged"] + HTT_LINES,
             rebin = 8,
             # do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
             do_systematics=False,
-            ),
+            ))
 
-    PlotDataMcGammaJet( "h_htt0_m",
+data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_m",
             empty_scale = 2.35,
             x_min = 20,
             x_max = 250,
@@ -547,9 +533,9 @@ data_mc_plots += [
             rebin = 4,
             # do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
             do_systematics=False,
-            ),
+            ))
 
-    PlotDataMcGammaJet( "h_htt_caGroomJet0_m",
+data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_m",
             empty_scale = 2.15,
             log_scale = True,
             x_min = 0,
@@ -558,9 +544,9 @@ data_mc_plots += [
             rebin = 10,
             # do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
             do_systematics=False,
-            ),
+            ))
 
-    PlotDataMcGammaJet( "h_htt_caGroomJet0_m_HTT_CAND",
+data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_m_HTT_CAND",
             empty_scale = 2.15,
             log_scale = True,
             x_min = 0,
@@ -569,9 +555,9 @@ data_mc_plots += [
             rebin = 10,
             # do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
             do_systematics=False,
-            ),
+            ))
 
-    PlotDataMcGammaJet( "h_htt_caGroomJet0_pt",
+data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_pt",
             empty_scale = 2.15,
             log_scale = True,
             x_min = 200,
@@ -580,9 +566,9 @@ data_mc_plots += [
             rebin = 4,
             # do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
             do_systematics=False,
-            ),
+            ))
 
-    PlotDataMcGammaJet( "h_htt_caGroomJet0_pt_HTT_CAND",
+data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_pt_HTT_CAND",
             empty_scale = 2.15,
             log_scale = True,
             x_min = 200,
@@ -591,20 +577,19 @@ data_mc_plots += [
             rebin = 4,
             # do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
             do_systematics=False,
-            ),
+            ))
 
-    # PlotDataMcGammaJet("h_rljet0_Qw_combMgt100GeV",
+# data_mc_plots.appendPlotDataMcGammaJet("h_rljet0_Qw_combMgt100GeV",
     #     extra_legend_lines = DEF_LINES + ["m^{comb} > 100 GeV"],
     #     log_scale = True,
     #     x_max = 200,
     #     rebin = 2,
     #     empty_scale = 5,
-    #     )
-]
+    #     ))
 
 # for masstag in ["", "combMgt100GeV", "combMlt100GeV", "combMgt180GeV", "combMgt100lt150GeV", "combMgt150lt180GeV"]:
 for masstag in ["", "combMgt100GeV"]:
-  PlotDataMcGammaJet(
+    data_mc_plots.append(PlotDataMcGammaJet(
               "h_rljet0_Tau32_wta" if not masstag else "h_rljet0_Tau32_wta_" + masstag,
               empty_scale = 2.0,
               flip_legend = True,
@@ -614,4 +599,45 @@ for masstag in ["", "combMgt100GeV"]:
               x_max = 0.9,
               y_min = 0.01,
               rebin = 4
-              )
+              ))
+
+
+## SD Workaround Section
+
+CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/gammajet_20180515_syst/gammajet.merged.cp.root"
+HISTLOADER = GammaJetLoader(CP_ROOT_FILEPATH)
+# ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/DataMC_GammaJet"
+
+# OUTPUT_DIR = ROOT_OUTPUT_DIR + "/control"
+# make_dir(ROOT_OUTPUT_DIR)
+# make_dir(OUTPUT_DIR)
+
+# There are still some systematics missing, this is a hack to let it plot with the ones that still are there
+SD_SYSTEMATICS = SYSTEMATICS_MC15C_WEAK_GAMMAJET
+MISSING_SYSTEMATICS = [
+"LARGERJET_Weak_JET_Rtrk_Baseline_D2Beta1",
+"LARGERJET_Weak_JET_Rtrk_Baseline_Tau32WTA",
+"LARGERJET_Weak_JET_Rtrk_Modelling_D2Beta1",
+"LARGERJET_Weak_JET_Rtrk_Modelling_Tau32WTA",
+"LARGERJET_Weak_JET_Rtrk_TotalStat_D2Beta1",
+"LARGERJET_Weak_JET_Rtrk_TotalStat_Tau32WTA",
+"LARGERJET_Weak_JET_Rtrk_Tracking_D2Beta1",
+"LARGERJET_Weak_JET_Rtrk_Tracking_Tau32WTA",
+"EG_SCALE_ALL",
+"EG_RESOLUTION_ALL",
+]
+
+for systematic in MISSING_SYSTEMATICS:
+    while systematic in SD_SYSTEMATICS: SD_SYSTEMATICS.remove(systematic)
+    while "RES_"+systematic in SD_SYSTEMATICS: SD_SYSTEMATICS.remove("RES_"+systematic)
+
+data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_SD_logchi_t_dcut",
+        empty_scale = 4,
+        do_systematics = SD_SYSTEMATICS,
+        x_units = "",
+        rebin = 3,
+        y_min = 0.1,
+        x_min = -8,
+        x_max = 10,
+        log_scale = True,
+        ))
