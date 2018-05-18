@@ -210,8 +210,8 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
     b_rljet_Tau32_wta->GetEntry(entry);
     b_rljet_Qw->GetEntry(entry);
     b_rljet_Split23->GetEntry(entry);
-
-    if (ranMVA)
+    
+    if (ranSmooth)
     { 
         b_m_rljet_smooth16Top_Tau32Split23Tag50eff->GetEntry(entry);
         b_m_rljet_smooth16Top_Tau32Split23Tag80eff->GetEntry(entry);
@@ -223,6 +223,10 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         b_rljet_smooth16WTag_80eff->GetEntry(entry);
         b_rljet_smooth16ZTag_50eff->GetEntry(entry);
         b_rljet_smooth16ZTag_80eff->GetEntry(entry);
+    }
+
+    if (ranMVA)
+    { 
 
         b_rljet_topTag_BDT_qqb->GetEntry(entry);
         b_rljet_topTag_BDT_qqb_score->GetEntry(entry);
@@ -606,38 +610,40 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
 
         // SMOOTHED SUBSTRUCTURE TAGGERS
-        smooth_tag_map["smooth16Top_Tau32Split23Tag50eff"] = rljet_smooth16Top_Tau32Split23Tag50eff->at(i) == 3;
-        smooth_tag_map["smooth16Top_Tau32Split23Tag80eff"] = rljet_smooth16Top_Tau32Split23Tag80eff->at(i) == 3;
-        smooth_tag_map["smooth16Top_QwTau32Tag50eff"] = rljet_smooth16Top_QwTau32Tag50eff->at(i) == 3;
-        smooth_tag_map["smooth16Top_QwTau32Tag80eff"] = rljet_smooth16Top_QwTau32Tag80eff->at(i) == 3;
-        smooth_tag_map["smooth16Top_MassTau32Tag50eff_JSSCut"] = rljet_smooth16Top_MassTau32Tag50eff->at(i) == 3 || rljet_smooth16Top_MassTau32Tag50eff->at(i) == 2;
-        smooth_tag_map["smooth16Top_MassTau32Tag50eff_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag50eff->at(i) == 3;
-        smooth_tag_map["smooth16Top_MassTau32Tag80eff_JSSCut"] = rljet_smooth16Top_MassTau32Tag80eff->at(i) == 3 || rljet_smooth16Top_MassTau32Tag80eff->at(i) == 2;
-        smooth_tag_map["smooth16Top_MassTau32Tag80eff_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag80eff->at(i) == 3;
+        if (ranSmooth)
+        {
+            smooth_tag_map["smooth16Top_Tau32Split23Tag50eff"] = rljet_smooth16Top_Tau32Split23Tag50eff->at(i) == 3;
+            smooth_tag_map["smooth16Top_Tau32Split23Tag80eff"] = rljet_smooth16Top_Tau32Split23Tag80eff->at(i) == 3;
+            smooth_tag_map["smooth16Top_QwTau32Tag50eff"] = rljet_smooth16Top_QwTau32Tag50eff->at(i) == 3;
+            smooth_tag_map["smooth16Top_QwTau32Tag80eff"] = rljet_smooth16Top_QwTau32Tag80eff->at(i) == 3;
+            smooth_tag_map["smooth16Top_MassTau32Tag50eff_JSSCut"] = rljet_smooth16Top_MassTau32Tag50eff->at(i) == 3 || rljet_smooth16Top_MassTau32Tag50eff->at(i) == 2;
+            smooth_tag_map["smooth16Top_MassTau32Tag50eff_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag50eff->at(i) == 3;
+            smooth_tag_map["smooth16Top_MassTau32Tag80eff_JSSCut"] = rljet_smooth16Top_MassTau32Tag80eff->at(i) == 3 || rljet_smooth16Top_MassTau32Tag80eff->at(i) == 2;
+            smooth_tag_map["smooth16Top_MassTau32Tag80eff_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag80eff->at(i) == 3;
 
-        smooth_tag_map["smooth16WTag_50eff_JSSCut"] = rljet_smooth16WTag_50eff->at(i) == 3 || rljet_smooth16WTag_50eff->at(i) == 2;
-        smooth_tag_map["smooth16WTag_50eff_MassJSSCut"] = rljet_smooth16WTag_50eff->at(i) == 3;
-        smooth_tag_map["smooth16WTag_80eff_JSSCut"] = rljet_smooth16WTag_80eff->at(i) == 3 || rljet_smooth16WTag_80eff->at(i) == 2;
-        smooth_tag_map["smooth16WTag_80eff_MassJSSCut"] = rljet_smooth16WTag_80eff->at(i) == 3;
-        smooth_tag_map["smooth16ZTag_50eff_JSSCut"] = rljet_smooth16ZTag_50eff->at(i) == 3 || rljet_smooth16ZTag_50eff->at(i) == 2;
-        smooth_tag_map["smooth16ZTag_50eff_MassJSSCut"] = rljet_smooth16ZTag_50eff->at(i) == 3;
-        smooth_tag_map["smooth16ZTag_80eff_JSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 3 || rljet_smooth16ZTag_80eff->at(i) == 2;
-        smooth_tag_map["smooth16ZTag_80eff_MassJSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 3;
+            smooth_tag_map["smooth16WTag_50eff_JSSCut"] = rljet_smooth16WTag_50eff->at(i) == 3 || rljet_smooth16WTag_50eff->at(i) == 2;
+            smooth_tag_map["smooth16WTag_50eff_MassJSSCut"] = rljet_smooth16WTag_50eff->at(i) == 3;
+            smooth_tag_map["smooth16WTag_80eff_JSSCut"] = rljet_smooth16WTag_80eff->at(i) == 3 || rljet_smooth16WTag_80eff->at(i) == 2;
+            smooth_tag_map["smooth16WTag_80eff_MassJSSCut"] = rljet_smooth16WTag_80eff->at(i) == 3;
+            smooth_tag_map["smooth16ZTag_50eff_JSSCut"] = rljet_smooth16ZTag_50eff->at(i) == 3 || rljet_smooth16ZTag_50eff->at(i) == 2;
+            smooth_tag_map["smooth16ZTag_50eff_MassJSSCut"] = rljet_smooth16ZTag_50eff->at(i) == 3;
+            smooth_tag_map["smooth16ZTag_80eff_JSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 3 || rljet_smooth16ZTag_80eff->at(i) == 2;
+            smooth_tag_map["smooth16ZTag_80eff_MassJSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 3;
 
-        // smooth_tag_map["smooth16WTag_50eff_nocontain_JSSCut"] = rljet_smooth16WTag_50eff_nocontain->at(i) == 1 || rljet_smooth16WTag_50eff_nocontain->at(i) == 16 || rljet_smooth16WTag_50eff_nocontain->at(i) == 4;
-        // smooth_tag_map["smooth16WTag_50eff_nocontain_MassJSSCut"] = rljet_smooth16WTag_50eff_nocontain->at(i) == 1;
-        // smooth_tag_map["smooth16WTag_80eff_nocontain_JSSCut"] = rljet_smooth16WTag_80eff_nocontain->at(i) == 1 || rljet_smooth16WTag_80eff_nocontain->at(i) == 16 || rljet_smooth16WTag_80eff_nocontain->at(i) == 4;
-        // smooth_tag_map["smooth16WTag_80eff_nocontain_MassJSSCut"] = rljet_smooth16WTag_80eff_nocontain->at(i) == 1;
-        // smooth_tag_map["smooth16ZTag_50eff_nocontain_JSSCut"] = rljet_smooth16ZTag_50eff_nocontain->at(i) == 1 || rljet_smooth16ZTag_50eff_nocontain->at(i) == 16 || rljet_smooth16ZTag_50eff_nocontain->at(i) == 4;
-        // smooth_tag_map["smooth16ZTag_50eff_nocontain_MassJSSCut"] = rljet_smooth16ZTag_50eff_nocontain->at(i) == 1;
-        // smooth_tag_map["smooth16ZTag_80eff_nocontain_JSSCut"] = rljet_smooth16ZTag_80eff_nocontain->at(i) == 1 || rljet_smooth16ZTag_80eff_nocontain->at(i) == 16 || rljet_smooth16ZTag_80eff_nocontain->at(i) == 4;
-        // smooth_tag_map["smooth16ZTag_80eff_nocontain_MassJSSCut"] = rljet_smooth16ZTag_80eff_nocontain->at(i) == 1;
+            // smooth_tag_map["smooth16WTag_50eff_nocontain_JSSCut"] = rljet_smooth16WTag_50eff_nocontain->at(i) == 1 || rljet_smooth16WTag_50eff_nocontain->at(i) == 16 || rljet_smooth16WTag_50eff_nocontain->at(i) == 4;
+            // smooth_tag_map["smooth16WTag_50eff_nocontain_MassJSSCut"] = rljet_smooth16WTag_50eff_nocontain->at(i) == 1;
+            // smooth_tag_map["smooth16WTag_80eff_nocontain_JSSCut"] = rljet_smooth16WTag_80eff_nocontain->at(i) == 1 || rljet_smooth16WTag_80eff_nocontain->at(i) == 16 || rljet_smooth16WTag_80eff_nocontain->at(i) == 4;
+            // smooth_tag_map["smooth16WTag_80eff_nocontain_MassJSSCut"] = rljet_smooth16WTag_80eff_nocontain->at(i) == 1;
+            // smooth_tag_map["smooth16ZTag_50eff_nocontain_JSSCut"] = rljet_smooth16ZTag_50eff_nocontain->at(i) == 1 || rljet_smooth16ZTag_50eff_nocontain->at(i) == 16 || rljet_smooth16ZTag_50eff_nocontain->at(i) == 4;
+            // smooth_tag_map["smooth16ZTag_50eff_nocontain_MassJSSCut"] = rljet_smooth16ZTag_50eff_nocontain->at(i) == 1;
+            // smooth_tag_map["smooth16ZTag_80eff_nocontain_JSSCut"] = rljet_smooth16ZTag_80eff_nocontain->at(i) == 1 || rljet_smooth16ZTag_80eff_nocontain->at(i) == 16 || rljet_smooth16ZTag_80eff_nocontain->at(i) == 4;
+            // smooth_tag_map["smooth16ZTag_80eff_nocontain_MassJSSCut"] = rljet_smooth16ZTag_80eff_nocontain->at(i) == 1;
 
-        // smooth_tag_map["smooth16Top_MassTau32Tag50eff_nocontain_JSSCut"] = rljet_smooth16Top_MassTau32Tag50eff_nocontain->at(i) == 3 || rljet_smooth16Top_MassTau32Tag50eff_nocontain->at(i) == 2;
-        // smooth_tag_map["smooth16Top_MassTau32Tag50eff_nocontain_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag50eff_nocontain->at(i) == 3;
-        // smooth_tag_map["smooth16Top_MassTau32Tag80eff_nocontain_JSSCut"] = rljet_smooth16Top_MassTau32Tag80eff_nocontain->at(i) == 3 || rljet_smooth16Top_MassTau32Tag80eff_nocontain->at(i) == 2;
-        // smooth_tag_map["smooth16Top_MassTau32Tag80eff_nocontain_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag80eff_nocontain->at(i) == 3;
-
+            // smooth_tag_map["smooth16Top_MassTau32Tag50eff_nocontain_JSSCut"] = rljet_smooth16Top_MassTau32Tag50eff_nocontain->at(i) == 3 || rljet_smooth16Top_MassTau32Tag50eff_nocontain->at(i) == 2;
+            // smooth_tag_map["smooth16Top_MassTau32Tag50eff_nocontain_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag50eff_nocontain->at(i) == 3;
+            // smooth_tag_map["smooth16Top_MassTau32Tag80eff_nocontain_JSSCut"] = rljet_smooth16Top_MassTau32Tag80eff_nocontain->at(i) == 3 || rljet_smooth16Top_MassTau32Tag80eff_nocontain->at(i) == 2;
+            // smooth_tag_map["smooth16Top_MassTau32Tag80eff_nocontain_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag80eff_nocontain->at(i) == 3;
+        }
 
         // SD log(chi) variables
         if (ranSD) {

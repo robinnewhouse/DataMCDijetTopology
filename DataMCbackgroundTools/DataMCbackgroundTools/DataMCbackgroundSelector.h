@@ -92,6 +92,7 @@ class DataMCbackgroundSelector : public TSelector {
         bool ranSD;
         bool ranMVA;
         bool ranHTT;
+        bool ranSmooth;
         bool topoPlot;
   
         // // BDT's for top and W tagging -- contained top/W def
@@ -727,6 +728,7 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     ranSD = false;
     ranMVA = false;
     ranHTT = false;
+    ranSmooth = false;
     keptPhotons = false;
     topoPlot = false;
     auto array = fChain->GetListOfBranches();
@@ -742,6 +744,9 @@ void DataMCbackgroundSelector::Init(TTree *tree)
       }
       if (std::string(array->At(i)->GetName()).find("htt") != std::string::npos) {
         ranHTT = true;
+      }
+      if (std::string(array->At(i)->GetName()).find("smooth") != std::string::npos) {
+        ranSmooth = true;
       }
       if (std::string(array->At(i)->GetName()).find("fractional_pt") != std::string::npos) {
         topoPlot = true;
@@ -797,8 +802,7 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     fChain->SetBranchAddress("rljet_Tau32_wta", &rljet_Tau32_wta, &b_rljet_Tau32_wta);
     fChain->SetBranchAddress("rljet_Qw", &rljet_Qw, &b_rljet_Qw);
     fChain->SetBranchAddress("rljet_Split23", &rljet_Split23, &b_rljet_Split23);
-
-    if (ranMVA)
+    if (ranSmooth)
     {
         fChain->SetBranchAddress("m_rljet_smooth16Top_Tau32Split23Tag50eff", &rljet_smooth16Top_Tau32Split23Tag50eff, &b_m_rljet_smooth16Top_Tau32Split23Tag50eff);
         fChain->SetBranchAddress("m_rljet_smooth16Top_Tau32Split23Tag80eff", &rljet_smooth16Top_Tau32Split23Tag80eff, &b_m_rljet_smooth16Top_Tau32Split23Tag80eff);
@@ -816,6 +820,9 @@ void DataMCbackgroundSelector::Init(TTree *tree)
         // fChain->SetBranchAddress("rljet_smooth16WTag_80eff_nocontain", &rljet_smooth16WTag_80eff_nocontain, &b_rljet_smooth16WTag_80eff_nocontain);
         // fChain->SetBranchAddress("rljet_smooth16ZTag_50eff_nocontain", &rljet_smooth16ZTag_50eff_nocontain, &b_rljet_smooth16ZTag_50eff_nocontain);
         // fChain->SetBranchAddress("rljet_smooth16ZTag_80eff_nocontain", &rljet_smooth16ZTag_80eff_nocontain, &b_rljet_smooth16ZTag_80eff_nocontain);
+    }
+    if (ranMVA)
+    {
         fChain->SetBranchAddress("rljet_topTag_BDT_qqb", &rljet_topTag_BDT_qqb, &b_rljet_topTag_BDT_qqb);
         fChain->SetBranchAddress("rljet_topTag_BDT_qqb_score", &rljet_topTag_BDT_qqb_score, &b_rljet_topTag_BDT_qqb_score);
         fChain->SetBranchAddress("rljet_wTag_BDT_qq", &rljet_wTag_BDT_qq, &b_rljet_wTag_BDT_qq);
