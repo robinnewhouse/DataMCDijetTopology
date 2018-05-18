@@ -238,7 +238,7 @@ class PlotDataPythiaHerwig(PlotBase):
         self.leg.AddEntry(h_ttbar_mag, "all-had t#bar{t}", "f")
         self.leg.AddEntry(self.h_pythia_stat_ratio, "Stat. uncert.", "f")
         if (self.hsys_pythia.num_systematics != 0):
-            self.leg.AddEntry(self.h_pythia_sys_ratio, "Stat. #oplus syst. uncert.", "f")
+            self.leg.AddEntry(self.h_pythia_sys_ratio, "Total uncert.", "f")
         self.leg.Draw()
 
         self.pad2.cd()

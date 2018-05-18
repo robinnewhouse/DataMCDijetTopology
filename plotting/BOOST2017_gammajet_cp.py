@@ -111,7 +111,8 @@ class PlotDataMcGammaJet(PlotBase):
             self.h_stat_ratio.SetBinContent(ibin, 1.0)
             self.h_sys_ratio.SetBinContent(ibin, 1.0)
 
-        ratio_title = "#frac{Data}{MC}"
+        # ratio_title = "#frac{Data}{MC}"
+        ratio_title = "Data/Pred"
         for h in [self.h_sherpa_ratio, self.h_pythia_ratio, self.h_stat_ratio, self.h_sys_ratio]:
             set_style_ratio(h, y_title = ratio_title, y_min = 0.5, y_max = 1.5)
             h.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
@@ -191,7 +192,7 @@ class PlotDataMcGammaJet(PlotBase):
             self.leg.AddEntry(h      , "MG t#bar{t} + #gamma" , "f")
         self.leg.AddEntry(self.h_stat_ratio , "Stat. uncert.", "f")
         if (do_systematics):
-            self.leg.AddEntry(self.h_sys_ratio , "Sys. #oplus Stat. uncert.", "f")
+            self.leg.AddEntry(self.h_sys_ratio , "Total uncert.", "f")
         self.leg.Draw()
         xss.reverse()
 
@@ -234,7 +235,7 @@ data_mc_plots = []
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_MassTau32Tag80eff_JSSCut",
         empty_scale = 4,
         extra_legend_lines = DEF_LINES + ["Top-tagged"],
-        x_min = 0,
+        x_min = 50,
         x_max = 350,
         y_min = 1,
         log_scale = True,
@@ -281,7 +282,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16WTag_50ef
         empty_scale = 2.0,
         extra_legend_lines = DEF_LINES + ["W-tagged"],
         y_min = 0.01,
-        x_min = 0,
+        x_min = 50,
         x_max = 350,
         #log_scale = True,
         rebin = MASS_PLOT_REBIN,
