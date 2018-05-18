@@ -87,11 +87,15 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
 
     passed_var_name = total_var_name + "_" + tag_name
 
+
     if (is_data):
         # if x_axis == "mu": total_var_name+="_corrSF"
         h_total = rej_rebin(HISTLOADER.get_sigsub_data(total_var_name), bin_bounds)
         h_passed = rej_rebin(HISTLOADER.get_sigsub_data(passed_var_name), bin_bounds)
+        print("h_total.Integral()",h_total.Integral())
         h_total.Divide(h_passed)
+        print("h_total.Integral() (divided by h_passed)",h_total.Integral())
+        print("DEBUG" , tag_name, total_var_name, passed_var_name)
         return h_total.Clone()
     else:
         h_total = rej_rebin(HISTLOADER.get_normalized_gamma(gen_name, total_var_name, normalize_to_pretagged = True), bin_bounds)
@@ -240,6 +244,7 @@ class PlotGammaJetBkgRej(PlotBase):
         self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
         # self.print_to_file(OUTPUT_DIR + "/" + self.name + "_gammajet.eps")
         self.canvas.Clear()
+        print
 
 DEF_EXTRA_LINES = ["Trimmed anti-#it{k_{t}} #it{R}=1.0", "#gamma + jet selection"]
 HTT_EXTRA_LINES = ["Trimmed C/A #it{R}=1.5", "#gamma + jet selection"]
