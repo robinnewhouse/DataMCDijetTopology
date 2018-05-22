@@ -361,14 +361,6 @@ bkg_rej_plots.append(make_pt_rej_plot(
     #    y_max = 50
     #    ))
 
-bkg_rej_plots.append(make_pt_rej_plot(
-        "HTT_CAND",
-        extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
-        y_max = 80,
-        x_min = 350,
-        # do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS_GAMMAJET,
-        do_systematics=False,
-        ))
 
 bkg_rej_plots.append(make_pt_rej_plot(
         "BDT_Top",
@@ -476,14 +468,6 @@ bkg_rej_mu_plots.append(make_mu_rej_plot(
     #    y_max = 50
     #    ))
 
-bkg_rej_mu_plots.append(make_mu_rej_plot(
-        "HTT_CAND",
-        extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
-        y_max = 10,
-        x_min = 350,
-        # do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS_GAMMAJET,
-        do_systematics=False,
-        ))
 
 bkg_rej_mu_plots.append(make_mu_rej_plot(
         "BDT_Top",
@@ -519,7 +503,7 @@ bkg_rej_mu_plots.append(make_mu_rej_plot(
 
 ## SD Workaround Section
 
-CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/gammajet_20180515_syst/gammajet.merged.cp.root"
+CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/gammajet_20180520_syst/gammajet.merged.cp.root"
 HISTLOADER = GammaJetLoader(CP_ROOT_FILEPATH)
 # ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/DataMC_GammaJet"
 
@@ -531,8 +515,8 @@ HISTLOADER = GammaJetLoader(CP_ROOT_FILEPATH)
 # There are still some systematics missing, this is a hack to let it plot with the ones that still are there
 SD_SYSTEMATICS = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET
 MISSING_SYSTEMATICS = [
-"EG_SCALE_ALL",
-"EG_RESOLUTION_ALL",
+# "EG_SCALE_ALL",
+# "EG_RESOLUTION_ALL",
 ]
 
 for systematic in MISSING_SYSTEMATICS:
@@ -566,3 +550,21 @@ bkg_rej_mu_plots.append(make_mu_rej_plot(
     #     y_max = 60,
     #     do_systematics = SD_SYSTEMATICS,
     #    ))
+
+bkg_rej_plots.append(make_pt_rej_plot(
+        "HTT_CAND",
+        extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
+        y_max = 80,
+        x_min = 350,
+        # do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS_GAMMAJET,
+        do_systematics=False,
+        ))
+
+bkg_rej_mu_plots.append(make_mu_rej_plot(
+        "HTT_CAND",
+        extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
+        y_max = 10,
+        x_min = 350,
+        # do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS_GAMMAJET,
+        do_systematics=False,
+        ))

@@ -510,6 +510,70 @@ data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_topTag_TopoTagger_score_mva",
         log_scale = True,
         ))
 
+
+# data_mc_plots.appendPlotDataMcGammaJet("h_rljet0_Qw_combMgt100GeV",
+    #     extra_legend_lines = DEF_LINES + ["m^{comb} > 100 GeV"],
+    #     log_scale = True,
+    #     x_max = 200,
+    #     rebin = 2,
+    #     empty_scale = 5,
+    #     ))
+
+# for masstag in ["", "combMgt100GeV", "combMlt100GeV", "combMgt180GeV", "combMgt100lt150GeV", "combMgt150lt180GeV"]:
+for masstag in ["", "combMgt100GeV"]:
+    data_mc_plots.append(PlotDataMcGammaJet(
+              "h_rljet0_Tau32_wta" if not masstag else "h_rljet0_Tau32_wta_" + masstag,
+              empty_scale = 2.0,
+              flip_legend = True,
+              extra_legend_lines = DEF_LINES,
+              x_units = "",
+              x_min = 0.01,
+              x_max = 0.9,
+              y_min = 0.01,
+              rebin = 4
+              ))
+
+
+## SD Workaround Section
+
+CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/gammajet_20180520_syst/gammajet.merged.cp.root"
+HISTLOADER = GammaJetLoader(CP_ROOT_FILEPATH)
+# ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/DataMC_GammaJet"
+
+# OUTPUT_DIR = ROOT_OUTPUT_DIR + "/control"
+# make_dir(ROOT_OUTPUT_DIR)
+# make_dir(OUTPUT_DIR)
+
+# There are still some systematics missing, this is a hack to let it plot with the ones that still are there
+SD_SYSTEMATICS = SYSTEMATICS_MC15C_WEAK_GAMMAJET
+MISSING_SYSTEMATICS = [
+"LARGERJET_Weak_JET_Rtrk_Baseline_D2Beta1",
+"LARGERJET_Weak_JET_Rtrk_Baseline_Tau32WTA",
+"LARGERJET_Weak_JET_Rtrk_Modelling_D2Beta1",
+"LARGERJET_Weak_JET_Rtrk_Modelling_Tau32WTA",
+"LARGERJET_Weak_JET_Rtrk_TotalStat_D2Beta1",
+"LARGERJET_Weak_JET_Rtrk_TotalStat_Tau32WTA",
+"LARGERJET_Weak_JET_Rtrk_Tracking_D2Beta1",
+"LARGERJET_Weak_JET_Rtrk_Tracking_Tau32WTA",
+# "EG_SCALE_ALL",
+# "EG_RESOLUTION_ALL",
+]
+
+for systematic in MISSING_SYSTEMATICS:
+    while systematic in SD_SYSTEMATICS: SD_SYSTEMATICS.remove(systematic)
+    while "RES_"+systematic in SD_SYSTEMATICS: SD_SYSTEMATICS.remove("RES_"+systematic)
+
+data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_SD_logchi_t_dcut",
+        empty_scale = 4,
+        do_systematics = SD_SYSTEMATICS,
+        x_units = "",
+        rebin = 3,
+        y_min = 0.1,
+        x_min = -8,
+        x_max = 10,
+        log_scale = True,
+        ))
+
 data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_atan1312",
             empty_scale = 1.9,
             extra_legend_lines = ["HTT-tagged"] + HTT_LINES,
@@ -579,66 +643,3 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_pt_HTT_CAND",
             # do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
             do_systematics=False,
             ))
-
-# data_mc_plots.appendPlotDataMcGammaJet("h_rljet0_Qw_combMgt100GeV",
-    #     extra_legend_lines = DEF_LINES + ["m^{comb} > 100 GeV"],
-    #     log_scale = True,
-    #     x_max = 200,
-    #     rebin = 2,
-    #     empty_scale = 5,
-    #     ))
-
-# for masstag in ["", "combMgt100GeV", "combMlt100GeV", "combMgt180GeV", "combMgt100lt150GeV", "combMgt150lt180GeV"]:
-for masstag in ["", "combMgt100GeV"]:
-    data_mc_plots.append(PlotDataMcGammaJet(
-              "h_rljet0_Tau32_wta" if not masstag else "h_rljet0_Tau32_wta_" + masstag,
-              empty_scale = 2.0,
-              flip_legend = True,
-              extra_legend_lines = DEF_LINES,
-              x_units = "",
-              x_min = 0.01,
-              x_max = 0.9,
-              y_min = 0.01,
-              rebin = 4
-              ))
-
-
-## SD Workaround Section
-
-CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/gammajet_20180515_syst/gammajet.merged.cp.root"
-HISTLOADER = GammaJetLoader(CP_ROOT_FILEPATH)
-# ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/DataMC_GammaJet"
-
-# OUTPUT_DIR = ROOT_OUTPUT_DIR + "/control"
-# make_dir(ROOT_OUTPUT_DIR)
-# make_dir(OUTPUT_DIR)
-
-# There are still some systematics missing, this is a hack to let it plot with the ones that still are there
-SD_SYSTEMATICS = SYSTEMATICS_MC15C_WEAK_GAMMAJET
-MISSING_SYSTEMATICS = [
-"LARGERJET_Weak_JET_Rtrk_Baseline_D2Beta1",
-"LARGERJET_Weak_JET_Rtrk_Baseline_Tau32WTA",
-"LARGERJET_Weak_JET_Rtrk_Modelling_D2Beta1",
-"LARGERJET_Weak_JET_Rtrk_Modelling_Tau32WTA",
-"LARGERJET_Weak_JET_Rtrk_TotalStat_D2Beta1",
-"LARGERJET_Weak_JET_Rtrk_TotalStat_Tau32WTA",
-"LARGERJET_Weak_JET_Rtrk_Tracking_D2Beta1",
-"LARGERJET_Weak_JET_Rtrk_Tracking_Tau32WTA",
-"EG_SCALE_ALL",
-"EG_RESOLUTION_ALL",
-]
-
-for systematic in MISSING_SYSTEMATICS:
-    while systematic in SD_SYSTEMATICS: SD_SYSTEMATICS.remove(systematic)
-    while "RES_"+systematic in SD_SYSTEMATICS: SD_SYSTEMATICS.remove("RES_"+systematic)
-
-data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_SD_logchi_t_dcut",
-        empty_scale = 4,
-        do_systematics = SD_SYSTEMATICS,
-        x_units = "",
-        rebin = 3,
-        y_min = 0.1,
-        x_min = -8,
-        x_max = 10,
-        log_scale = True,
-        ))
