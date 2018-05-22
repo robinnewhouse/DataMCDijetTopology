@@ -121,6 +121,7 @@ class DataMCbackgroundSelector : public TSelector {
         std::unordered_map<std::string, bool> SD_nominal_tag_map;
         std::unordered_map<std::string, bool> SD_systematic_tag_map;
         std::unordered_map<std::string, bool> mva_tag_map;
+        std::unordered_map<std::string, bool> tagger_jet_valid_map;
 
         std::unordered_map<std::string, Float_t> fvars;
         std::unordered_map<std::string, UInt_t> uvars;

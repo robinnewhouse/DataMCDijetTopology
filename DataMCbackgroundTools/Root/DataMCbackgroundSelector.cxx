@@ -582,13 +582,21 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
             // Check if tagged
             mva_tag_map["BDT_Top"] = rljet_topTag_BDT_qqb->at(i) == static_cast<int>(simpleTaggerPass::both);
+            tagger_jet_valid_map["BDT_Top"] = rljet_topTag_BDT_qqb->at(i) != -1;
             mva_tag_map["BDT_W"]   = rljet_wTag_BDT_qq->at(i) == static_cast<int>(simpleTaggerPass::both);
+            tagger_jet_valid_map["BDT_W"]   = rljet_wTag_BDT_qq->at(i) == -1;
             mva_tag_map["DNN_Top"] = rljet_topTag_DNN_qqb->at(i) == static_cast<int>(simpleTaggerPass::both);
+            tagger_jet_valid_map["DNN_Top"] = rljet_topTag_DNN_qqb->at(i) == -1;
             mva_tag_map["DNN_W"]   = rljet_wTag_DNN_qq->at(i) == static_cast<int>(simpleTaggerPass::both);
+            tagger_jet_valid_map["DNN_W"]   = rljet_wTag_DNN_qq->at(i) == -1;
             mva_tag_map["TopoTag_Top_20"]   = rljet_topTag_TopoTagger_20wp->at(i) == static_cast<int>(simpleTaggerPass::both);
+            tagger_jet_valid_map["TopoTag_Top_20"]   = rljet_topTag_TopoTagger_20wp->at(i) == -1;
             mva_tag_map["TopoTag_Top_50"]   = rljet_topTag_TopoTagger_50wp->at(i) == static_cast<int>(simpleTaggerPass::both);
+            tagger_jet_valid_map["TopoTag_Top_50"]   = rljet_topTag_TopoTagger_50wp->at(i) == -1;
             mva_tag_map["TopoTag_Top_80"]   = rljet_topTag_TopoTagger_80wp->at(i) == static_cast<int>(simpleTaggerPass::both);
+            tagger_jet_valid_map["TopoTag_Top_80"]   = rljet_topTag_TopoTagger_80wp->at(i) == -1;
             mva_tag_map["TopoTag_Top_80_qqb"]   = (rljet_topTag_TopoTagger_score->at(i) > f_tcdnn->Eval(rljet_pt_comb->at(i)/1000.));
+            tagger_jet_valid_map["TopoTag_Top_80_qqb"] = (rljet_pt_comb->at(i) > 450e3 && rljet_pt_comb->at(i) < 3e6);
         
 
             if (i == 0) { // only consider leading-pT jet for X vs mu
@@ -613,22 +621,38 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         if (ranSmooth)
         {
             smooth_tag_map["smooth16Top_Tau32Split23Tag50eff"] = rljet_smooth16Top_Tau32Split23Tag50eff->at(i) == 3;
+            tagger_jet_valid_map["smooth16Top_Tau32Split23Tag50eff"] = rljet_smooth16Top_Tau32Split23Tag50eff->at(i) != -1;
             smooth_tag_map["smooth16Top_Tau32Split23Tag80eff"] = rljet_smooth16Top_Tau32Split23Tag80eff->at(i) == 3;
+            tagger_jet_valid_map["smooth16Top_Tau32Split23Tag80eff"] = rljet_smooth16Top_Tau32Split23Tag80eff->at(i) != -1;
             smooth_tag_map["smooth16Top_QwTau32Tag50eff"] = rljet_smooth16Top_QwTau32Tag50eff->at(i) == 3;
+            tagger_jet_valid_map["smooth16Top_QwTau32Tag50eff"] = rljet_smooth16Top_QwTau32Tag50eff->at(i) != -1;
             smooth_tag_map["smooth16Top_QwTau32Tag80eff"] = rljet_smooth16Top_QwTau32Tag80eff->at(i) == 3;
+            tagger_jet_valid_map["smooth16Top_QwTau32Tag80eff"] = rljet_smooth16Top_QwTau32Tag80eff->at(i) != -1;
             smooth_tag_map["smooth16Top_MassTau32Tag50eff_JSSCut"] = rljet_smooth16Top_MassTau32Tag50eff->at(i) == 3 || rljet_smooth16Top_MassTau32Tag50eff->at(i) == 2;
+            tagger_jet_valid_map["smooth16Top_MassTau32Tag50eff_JSSCut"] = rljet_smooth16Top_MassTau32Tag50eff->at(i) != -1;
             smooth_tag_map["smooth16Top_MassTau32Tag50eff_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag50eff->at(i) == 3;
+            tagger_jet_valid_map["smooth16Top_MassTau32Tag50eff_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag50eff->at(i) != -1;
             smooth_tag_map["smooth16Top_MassTau32Tag80eff_JSSCut"] = rljet_smooth16Top_MassTau32Tag80eff->at(i) == 3 || rljet_smooth16Top_MassTau32Tag80eff->at(i) == 2;
+            tagger_jet_valid_map["smooth16Top_MassTau32Tag80eff_JSSCut"] = rljet_smooth16Top_MassTau32Tag80eff->at(i) != -1;
             smooth_tag_map["smooth16Top_MassTau32Tag80eff_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag80eff->at(i) == 3;
+            tagger_jet_valid_map["smooth16Top_MassTau32Tag80eff_MassJSSCut"] = rljet_smooth16Top_MassTau32Tag80eff->at(i) != -1;
 
             smooth_tag_map["smooth16WTag_50eff_JSSCut"] = rljet_smooth16WTag_50eff->at(i) == 3 || rljet_smooth16WTag_50eff->at(i) == 2;
+            tagger_jet_valid_map["smooth16WTag_50eff_JSSCut"] = rljet_smooth16WTag_50eff->at(i) != -1;
             smooth_tag_map["smooth16WTag_50eff_MassJSSCut"] = rljet_smooth16WTag_50eff->at(i) == 3;
+            tagger_jet_valid_map["smooth16WTag_50eff_MassJSSCut"] = rljet_smooth16WTag_50eff->at(i) != -1;
             smooth_tag_map["smooth16WTag_80eff_JSSCut"] = rljet_smooth16WTag_80eff->at(i) == 3 || rljet_smooth16WTag_80eff->at(i) == 2;
+            tagger_jet_valid_map["smooth16WTag_80eff_JSSCut"] = rljet_smooth16WTag_80eff->at(i) != -1;
             smooth_tag_map["smooth16WTag_80eff_MassJSSCut"] = rljet_smooth16WTag_80eff->at(i) == 3;
+            tagger_jet_valid_map["smooth16WTag_80eff_MassJSSCut"] = rljet_smooth16WTag_80eff->at(i) != -1;
             smooth_tag_map["smooth16ZTag_50eff_JSSCut"] = rljet_smooth16ZTag_50eff->at(i) == 3 || rljet_smooth16ZTag_50eff->at(i) == 2;
+            tagger_jet_valid_map["smooth16ZTag_50eff_JSSCut"] = rljet_smooth16ZTag_50eff->at(i) != -1;
             smooth_tag_map["smooth16ZTag_50eff_MassJSSCut"] = rljet_smooth16ZTag_50eff->at(i) == 3;
+            tagger_jet_valid_map["smooth16ZTag_50eff_MassJSSCut"] = rljet_smooth16ZTag_50eff->at(i) != -1;
             smooth_tag_map["smooth16ZTag_80eff_JSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 3 || rljet_smooth16ZTag_80eff->at(i) == 2;
+            tagger_jet_valid_map["smooth16ZTag_80eff_JSSCut"] = rljet_smooth16ZTag_80eff->at(i) != -1;
             smooth_tag_map["smooth16ZTag_80eff_MassJSSCut"] = rljet_smooth16ZTag_80eff->at(i) == 3;
+            tagger_jet_valid_map["smooth16ZTag_80eff_MassJSSCut"] = rljet_smooth16ZTag_80eff->at(i) != -1;
 
             // smooth_tag_map["smooth16WTag_50eff_nocontain_JSSCut"] = rljet_smooth16WTag_50eff_nocontain->at(i) == 1 || rljet_smooth16WTag_50eff_nocontain->at(i) == 16 || rljet_smooth16WTag_50eff_nocontain->at(i) == 4;
             // smooth_tag_map["smooth16WTag_50eff_nocontain_MassJSSCut"] = rljet_smooth16WTag_50eff_nocontain->at(i) == 1;
@@ -650,6 +674,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut", rljet_SDt_dcut->at(i), weight, true);
 
             SD_nominal_tag_map["SDt_dcut"]     = (rljet_SDt_dcut->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.)) && (rljet_m_comb->at(i) > 60e3);
+            tagger_jet_valid_map["SDt_dcut"]     = (rljet_pt_comb->at(i) > 350e3 && rljet_pt_comb->at(i) < 3e6);
 
             if (i == 0) { // only consider leading-pT jet for X vs mu
                 if (this->operating_on_mc) {
@@ -673,8 +698,10 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             if (i == 0) {
                 if(this->operating_on_mc) {
                     hp->h_mu->fill_tagged(itag.first , mu           , weight , itag.second);
+                    hp->h_mu->fill_tagged(itag.first+"_pretag" ,   mu           , weight , tagger_jet_valid_map[itag.first]);
                 } else {
                     hp->h_mu->fill_tagged(itag.first , mu * 1./1.09 , weight , itag.second);
+                    hp->h_mu->fill_tagged(itag.first+"_pretag" ,   mu * 1./1.09 , weight , tagger_jet_valid_map[itag.first]);
                 }
             }
         }
@@ -686,8 +713,10 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             if (i == 0) {
                 if(this->operating_on_mc) {
                     hp->h_mu->fill_tagged(itag.first , mu           , weight , itag.second);
+                    hp->h_mu->fill_tagged(itag.first+"_pretag" ,   mu           , weight , tagger_jet_valid_map[itag.first]);
                 } else {
                     hp->h_mu->fill_tagged(itag.first , mu * 1./1.09 , weight , itag.second);
+                    hp->h_mu->fill_tagged(itag.first+"_pretag" ,   mu * 1./1.09 , weight , tagger_jet_valid_map[itag.first]);
                 }
             }
         }
@@ -699,8 +728,10 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             if (i == 0) {
                 if(this->operating_on_mc) {
                     hp->h_mu->fill_tagged(itag.first , mu           , weight , itag.second);
+                    hp->h_mu->fill_tagged(itag.first+"_pretag" , mu           , weight , itag.second);
                 } else {
                     hp->h_mu->fill_tagged(itag.first , mu * 1./1.09 , weight , itag.second);
+                    hp->h_mu->fill_tagged(itag.first+"_pretag" , mu * 1./1.09 , weight , tagger_jet_valid_map[itag.first]);
                 }
             }
         }
@@ -772,13 +803,16 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             // only fill post-tag mu plots for leading-pT C/A jet
             if (ijet == 0) {
                 // fill 1D and 2D mu htt histograms
+                bool caJet_isvalid = (htt_caGroomJet_pt_def->at(ijet) > 200e3);
                 if (this->operating_on_mc) {
                     hp->h_mu->fill_tagged("HTT_CAND" , mu           , weight , is_htt_tagged);
+                    hp->h_mu->fill_tagged("HTT_CAND_pretag" , mu           , weight , caJet_isvalid);
                 } else {
                     hp->h_mu->fill_tagged("HTT_CAND" , mu * 1./1.09 , weight , is_htt_tagged);
+                    hp->h_mu->fill_tagged("HTT_CAND_pretag" , mu * 1./1.09 , weight , caJet_isvalid);
                 }
 
-                if (ijet == 0) {
+                if (caJet_isvalid) {
                     if (this->operating_on_mc) {
                         h_htt_m_vs_mu->Fill(mu      , htt_m_def->at(ijet) / 1000, weight);
                     } else {
