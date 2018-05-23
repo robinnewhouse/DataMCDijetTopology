@@ -23,7 +23,7 @@ CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets
 HISTLOADER = DijetLoader(CP_ROOT_FILEPATH)
 ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/DataMC_Dijet"
 
-DO_SYSTEMATICS_DEFAULT = SYSTEMATICS_MC15C_WEAK_NOINPUTS
+DO_SYSTEMATICS_DEFAULT = SYSTEMATICS_MC15C_WEAK
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR + "/control"
 make_dir(ROOT_OUTPUT_DIR)
@@ -477,6 +477,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "BDT_Top",
         x_max = 350,
         ttbar_sf = 25,
         wzjets_sf = 25,
+        do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS,
         rebin = MASS_PLOT_REBIN,
         ))
 
@@ -488,6 +489,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "BDT_W",
         flip_legend = True,
         ttbar_sf = 25,
         wzjets_sf = 5,
+        do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS,
         rebin = MASS_PLOT_REBIN,
         ))
 
@@ -510,7 +512,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "DNN_W",
         x_max = 350,
         ttbar_sf = 25,
         wzjets_sf = 5,
-        # do_systematics = False,
+        do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS,
         rebin = MASS_PLOT_REBIN,
         ))
 
@@ -522,7 +524,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "TopoTag_Top_80_
         x_max = 350,
         ttbar_sf = 25,
         wzjets_sf = 5,
-        # do_systematics = False,
+        do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS,
         rebin = MASS_PLOT_REBIN,
         ))
 
