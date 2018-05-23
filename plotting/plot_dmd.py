@@ -380,6 +380,8 @@ SYSTEMATICS_MC15C_WEAK = [
     ]
 
 SYSTEMATICS_MC15C_WEAK_NOINPUTS = [
+    "lumi",
+    "pileup",
     "LARGERJET_Weak_JET_Rtrk_Baseline_pT",
     "LARGERJET_Weak_JET_Rtrk_Modelling_pT",
     "LARGERJET_Weak_JET_Rtrk_TotalStat_pT",

@@ -443,7 +443,6 @@ bkg_rej_mu_plots.append(make_mu_rej_plot(
         extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): D_2 + m^{comb}"],
         x_min = 200,
         # y_max = 175,
-        do_systematics = False,
         ))
 
     #make_pt_rej_plot(
