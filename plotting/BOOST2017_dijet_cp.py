@@ -29,8 +29,8 @@ OUTPUT_DIR = ROOT_OUTPUT_DIR + "/control"
 make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
 
-DEF_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", "Dijet Selection" , "p_{T} > 450 GeV"]
-HTT_DEF_LINES = [ "Trimmed C/A #it{R}=1.5", "Dijet Selection" , "p_{T} > 450 GeV"]
+DEF_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", "Multijet Selection" , "p_{T} > 450 GeV"]
+HTT_DEF_LINES = [ "Trimmed C/A #it{R}=1.5", "Multijet Selection" , "p_{T} > 450 GeV"]
 MASS_PLOT_REBIN = 8
 
 class PlotDataPythiaHerwig(PlotBase):
@@ -231,8 +231,8 @@ class PlotDataPythiaHerwig(PlotBase):
 
         self.canvas.cd()
         self.leg.AddEntry(self.h_data, "Data")
-        self.leg.AddEntry(self.h_pythia_dijet, "Pythia8 dijet (#times " + '{0:.2f}'.format(self.pythia_dijet_SF) + ")", "f")
-        self.leg.AddEntry(self.h_herwig_dijet, "Herwig++ dijet (#times " + '{0:.2f}'.format(self.herwig_dijet_SF) + ")", "f")
+        self.leg.AddEntry(self.h_pythia_dijet, "Pythia8 multijet (#times " + '{0:.2f}'.format(self.pythia_dijet_SF) + ")", "f")
+        self.leg.AddEntry(self.h_herwig_dijet, "Herwig++ multijet (#times " + '{0:.2f}'.format(self.herwig_dijet_SF) + ")", "f")
         self.leg.AddEntry(h_wjets_mag, "W+jets", "f")
         self.leg.AddEntry(h_zjets_mag, "Z+jets", "f")
         self.leg.AddEntry(h_ttbar_mag, "all-had t#bar{t}", "f")

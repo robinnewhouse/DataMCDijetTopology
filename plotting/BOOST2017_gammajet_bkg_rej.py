@@ -512,43 +512,30 @@ HISTLOADER = GammaJetLoader(CP_ROOT_FILEPATH)
 # make_dir(OUTPUT_DIR)
 
 
-# There are still some systematics missing, this is a hack to let it plot with the ones that still are there
-SD_SYSTEMATICS = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET
-MISSING_SYSTEMATICS = [
-# "EG_SCALE_ALL",
-# "EG_RESOLUTION_ALL",
-]
-
-for systematic in MISSING_SYSTEMATICS:
-    while systematic in SD_SYSTEMATICS: SD_SYSTEMATICS.remove(systematic)
-    while "RES_"+systematic in SD_SYSTEMATICS: SD_SYSTEMATICS.remove("RES_"+systematic)
-
 bkg_rej_plots.append(make_pt_rej_plot(
         "SDt_dcut",
         extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): SD" ],
         y_max = 40,
-        do_systematics=SD_SYSTEMATICS,
         ))
 
 # bkg_rej_plots.append(make_pt_rej_plot(
     #     "SDw_dcut",
     #     extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): SD" ],
     #     y_max = 60,
-    #     do_systematics = SD_SYSTEMATICS, # for now
+    #     do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET, # for now
     #     ))
 
 bkg_rej_mu_plots.append(make_mu_rej_plot(
         "SDt_dcut",
         extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): SD" ],
         y_max = 300,
-        # do_systematics = SD_SYSTEMATICS,
         ))
 
 # bkg_rej_mu_plots.append(make_mu_rej_plot(
     #     "SDw_dcut",
     #     extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): SD" ],
     #     y_max = 60,
-    #     do_systematics = SD_SYSTEMATICS,
+    #     do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
     #    ))
 
 bkg_rej_plots.append(make_pt_rej_plot(
@@ -556,8 +543,8 @@ bkg_rej_plots.append(make_pt_rej_plot(
         extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
         y_max = 80,
         x_min = 350,
-        # do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS_GAMMAJET,
-        do_systematics=False,
+        do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS_GAMMAJET,
+        # do_systematics=False,
         ))
 
 bkg_rej_mu_plots.append(make_mu_rej_plot(
@@ -565,6 +552,6 @@ bkg_rej_mu_plots.append(make_mu_rej_plot(
         extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
         y_max = 10,
         x_min = 350,
-        # do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS_GAMMAJET,
-        do_systematics=False,
+        do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS_GAMMAJET,
+        # do_systematics=False,
         ))

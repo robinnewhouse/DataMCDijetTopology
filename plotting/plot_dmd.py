@@ -496,6 +496,7 @@ AXIS_TITLES = {
     "BDT_score_w"               : "Leading large-#it{R} jet BDT #it{W} tag discriminant",
     "DNN_score_top"               : "Leading large-#it{R} jet DNN #it{top} tag discriminant",
     "DNN_score_w"               : "Leading large-#it{R} jet DNN #it{W} tag discriminant",
+    "topTag_TopoTagger_score"     : "Leading large-#it{R} jet Topo-DNN #it{top} tag discriminant",
     "rljet0_SD"                   : "Leading large-#it{R} jet log #chi",
     "h_mu_"                       : "<#mu>",
     "h_NPV"                       : "NPV"

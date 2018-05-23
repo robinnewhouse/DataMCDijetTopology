@@ -555,8 +555,6 @@ MISSING_SYSTEMATICS = [
 "LARGERJET_Weak_JET_Rtrk_TotalStat_Tau32WTA",
 "LARGERJET_Weak_JET_Rtrk_Tracking_D2Beta1",
 "LARGERJET_Weak_JET_Rtrk_Tracking_Tau32WTA",
-# "EG_SCALE_ALL",
-# "EG_RESOLUTION_ALL",
 ]
 
 for systematic in MISSING_SYSTEMATICS:
@@ -578,16 +576,16 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_atan1312",
             empty_scale = 1.9,
             extra_legend_lines = ["HTT-tagged"] + HTT_LINES,
             rebin = 5,
-            # do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
-            do_systematics=False,
+            do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
+            # do_systematics=False,
             ))
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_m23m123",
             empty_scale = 2.0,
             extra_legend_lines = ["HTT-tagged"] + HTT_LINES,
             rebin = 8,
-            # do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
-            do_systematics=False,
+            do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
+            # do_systematics=False,
             ))
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_m",
@@ -596,8 +594,8 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_m",
             x_max = 250,
             extra_legend_lines = ["HTT-tagged"] + HTT_LINES,
             rebin = 4,
-            # do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
-            do_systematics=False,
+            do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
+            # do_systematics=False,
             ))
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_m",
@@ -607,8 +605,8 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_m",
             x_max = 350,
             extra_legend_lines = HTT_LINES,
             rebin = 10,
-            # do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
-            do_systematics=False,
+            do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
+            # do_systematics=False,
             ))
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_m_HTT_CAND",
@@ -618,8 +616,8 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_m_HTT_CAND",
             x_max = 350,
             extra_legend_lines = HTT_LINES,
             rebin = 10,
-            # do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
-            do_systematics=False,
+            do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
+            # do_systematics=False,
             ))
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_pt",
@@ -629,8 +627,8 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_pt",
             x_max = 3000,
             extra_legend_lines = HTT_LINES,
             rebin = 4,
-            # do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
-            do_systematics=False,
+            do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
+            # do_systematics=False,
             ))
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_pt_HTT_CAND",
@@ -640,6 +638,6 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_pt_HTT_CAND",
             x_max = 2500,
             extra_legend_lines = HTT_LINES,
             rebin = 4,
-            # do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
-            do_systematics=False,
+            do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
+            # do_systematics=False,
             ))

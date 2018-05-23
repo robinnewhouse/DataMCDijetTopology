@@ -33,8 +33,11 @@ OUTPUT_DIR = ROOT_OUTPUT_DIR
 make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
 
-DEF_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", "Dijet Selection" , "   p_{T} > 450 GeV", "L+jets Selection" , "   p_{T} > 150 GeV", ]
-HTT_DEF_LINES = [ "Trimmed C/A #it{R}=1.5", "Dijet Selection" , "p_{T} > 450 GeV"]
+DEF_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", "Multijet Selection" , 
+              "   p_{T} > 450 GeV", 
+              "L+jets Selection" , 
+              "   p_{T} > 150 GeV", 
+              ]
 MASS_PLOT_REBIN = 8
 
 #SYSTEMATICS = [ ]
@@ -49,7 +52,7 @@ class PlotTopoclusters(PlotBase):
             extra_legend_lines = DEF_LINES,
             extra_lines_loc = [0.61,0.60],
             #               x1   y1   x2   y2
-            legend_loc = [0.60,0.915,0.83,0.63],
+            legend_loc = [0.60,0.915,0.89,0.63],
             atlas_mod = "Simulation Internal",
             **kwargs)
 
@@ -87,30 +90,30 @@ class PlotTopoclusters(PlotBase):
             if sig: h_sig.Draw("hist,same")
 
         for i in CLUSTER_INDEX:
-            if bkg: self.leg.AddEntry(self.h_topo_pt_bkg[i], "Cluster " +str(i) + (" Dijet"  if i==0 else ""))
+            if bkg: self.leg.AddEntry(self.h_topo_pt_bkg[i], "Cluster " +str(i) + (" Pythia8 multijet"  if i==0 else ""))
         for i in CLUSTER_INDEX:
-            if sig: self.leg.AddEntry(self.h_topo_pt_sig[i], "Cluster " +str(i) + (" Z'" if i==0 else ""))
+            if sig: self.leg.AddEntry(self.h_topo_pt_sig[i], "Cluster " +str(i) + (" Pythia8 Z'" if i==0 else ""))
 
         # Sample info
         bkg_sample_tex = TLatex(0.02, 0.14, "test");
         sig_sample_tex = TLatex(0.02, 0.15, "mc15_13TeV.301334.Pythia8EvtGen_A14NNPDF23LO_zprime4000_tt");
        
-        draw_sample_names()
+        # draw_sample_names()
 
         self.name = "topocluster_plots"
         self.canvas.Update()
         self.canvas.Modified()
         self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
-        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
-        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".png")
+        # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
+        # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".png")
 
         self.name = "topocluster_plots_log"
         self.canvas.SetLogy()
         self.canvas.Update()
         self.canvas.Modified()
         self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
-        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
-        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".png")
+        # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
+        # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".png")
 
         self.canvas.Clear()
 
@@ -122,11 +125,14 @@ class PlotTopoclustersMean(PlotBase):
         super(PlotTopoclustersMean, self).__init__(
             atlas_loc = [0.2,0.25],
             hide_lumi = True,
-            extra_legend_lines = DEF_LINES,
+            extra_legend_lines = DEF_LINES + ["#scale[0.9]{Errors represent RMS}","#scale[0.9]{       of p_{T} fraction dist.}"],
             extra_lines_loc = [0.61,0.80],
             #               x1   y1   x2   y2
             legend_loc = [0.60,0.915,0.83,0.83],
             atlas_mod = "Simulation Internal",
+            tex_size_mod    = 0.9,
+            tex_spacing_mod    = 0.9,
+
             **kwargs)
 
         tmp_loader = LOADER
@@ -167,9 +173,9 @@ class PlotTopoclustersMean(PlotBase):
 
 
         self.canvas.cd()
-        self.title = "Mean Fractional pT of First 10 Topoclusters"
+        self.title = "Mean fractional pT of First 10 Topoclusters"
         ### Legend
-        self.leg.AddEntry(h_bkg_mean, "Pythia8 dijet")
+        self.leg.AddEntry(h_bkg_mean, "Pythia8 multijet")
         self.leg.AddEntry(h_sig_mean, "Pythia8 Z'")
 
         # set_mc_style_line(h_mean, kGreen-2, line_width = 4)
@@ -179,31 +185,31 @@ class PlotTopoclustersMean(PlotBase):
         self.canvas.Clear()
         
         for h_mean in [h_bkg_mean, h_sig_mean]:
-            h_mean.GetYaxis().SetTitle("<p_{T}> fraction of cluster")
+            h_mean.GetYaxis().SetTitle("#LTp_{T}#GT fraction of cluster")
             h_mean.GetXaxis().SetTitle("Leading trimmed large-#it{R} jet cluster index (p_{T} sorted)")
 
             h_mean.Draw("hist,same")
             h_mean.Draw("e1,same")
         
-        draw_sample_names()
+        # draw_sample_names()
 
         self.name = "topocluster_mean_pt"
         self.canvas.Update()
         self.canvas.Modified()
         self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
-        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
-        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".png")
+        # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
+        # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".png")
 
         self.name = "topocluster_mean_log_pt"
         for h_mean in [h_bkg_mean, h_sig_mean]:
-            h_mean.SetMaximum(1.05)
+            h_mean.SetMaximum(1.25)
             h_mean.SetMinimum(3E-3)
         self.canvas.SetLogy()
         self.canvas.Update()
         self.canvas.Modified()
         self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
-        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
-        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".png")
+        # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
+        # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".png")
         self.canvas.Clear()
 
 
@@ -215,7 +221,7 @@ def draw_sample_names():
     saple_label.SetTextSize(0.03);
     saple_label.SetTextAngle(0);
     saple_label.SetTextColor(1);
-    saple_label.DrawText(0.02, 0.05, "Dijet: 361025.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ5W");
+    saple_label.DrawText(0.02, 0.05, "Multijet: 361025.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ5W");
     saple_label.DrawText(0.02, 0.012, "Z': 301334.Pythia8EvtGen_A14NNPDF23LO_zprime4000_tt");
 
 def get_background_histograms():
@@ -238,7 +244,7 @@ def get_signal_histograms():
     # Create histograms
     h_topo_pt_signal = []
     for i in range(0,10):
-        h_topo_pt_signal.append(TH1F("h_rljet_fractional_pt_"+str(i),"Topocluster Fractional pT "+str(i), 100, 0.0, 1.0))
+        h_topo_pt_signal.append(TH1F("h_rljet_fractional_pt_"+str(i),"Topocluster fractional pT "+str(i), 100, 0.0, 1.0))
 
     # Open output ntuples and read values
     ntuples_file = TFile.Open( SIGNAL_ROOT_FILEPATH , "READ" )
