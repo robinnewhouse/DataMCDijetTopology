@@ -77,25 +77,24 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
 
     if x_axis == "mu":
         bin_bounds = MU_BIN_BOUNDS
-        total_var_name = "h_mu_" + tag_name + "_pretag"
+        passed_var_name = "h_mu_" + tag_name 
+        total_var_name = passed_var_name + "_pretag"
     else:
         bin_bounds = PT_BIN_BOUNDS
         if ("HTT" in tag_name):
           total_var_name = "h_htt_caGroomJet0_pt"
         else:
           total_var_name = "h_rljet0_pt_comb"
+        passed_var_name = total_var_name + "_" + tag_name
 
-    passed_var_name = total_var_name + "_" + tag_name
+    print("DEBUG",tag_name, total_var_name)
 
 
     if (is_data):
         # if x_axis == "mu": total_var_name+="_corrSF"
         h_total = rej_rebin(HISTLOADER.get_sigsub_data(total_var_name), bin_bounds)
         h_passed = rej_rebin(HISTLOADER.get_sigsub_data(passed_var_name), bin_bounds)
-        print("h_total.Integral()",h_total.Integral())
         h_total.Divide(h_passed)
-        print("h_total.Integral() (divided by h_passed)",h_total.Integral())
-        print("DEBUG" , tag_name, total_var_name, passed_var_name)
         return h_total.Clone()
     else:
         h_total = rej_rebin(HISTLOADER.get_normalized_gamma(gen_name, total_var_name, normalize_to_pretagged = True), bin_bounds)
