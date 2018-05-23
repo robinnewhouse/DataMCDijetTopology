@@ -583,12 +583,12 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             // Check if tagged
             mva_tag_map["BDT_Top"] = rljet_topTag_BDT_qqb->at(i) == static_cast<int>(simpleTaggerPass::both) && rljet_pt_comb->at(i) > 350e3 && rljet_pt_comb->at(i) < 3e6;
             tagger_jet_valid_map["BDT_Top"] = rljet_topTag_BDT_qqb->at(i) != -1                              && rljet_pt_comb->at(i) > 350e3 && rljet_pt_comb->at(i) < 3e6;
-            mva_tag_map["BDT_W"]   = rljet_wTag_BDT_qq->at(i) == static_cast<int>(simpleTaggerPass::both)    && rljet_pt_comb->at(i) > 350e3 && rljet_pt_comb->at(i) < 3e6;
-            tagger_jet_valid_map["BDT_W"]   = rljet_wTag_BDT_qq->at(i) != -1                                 && rljet_pt_comb->at(i) > 350e3 && rljet_pt_comb->at(i) < 3e6;
+            mva_tag_map["BDT_W"]   = rljet_wTag_BDT_qq->at(i) == static_cast<int>(simpleTaggerPass::both)    && rljet_pt_comb->at(i) > 200e3 && rljet_pt_comb->at(i) < 3e6;
+            tagger_jet_valid_map["BDT_W"]   = rljet_wTag_BDT_qq->at(i) != -1                                 && rljet_pt_comb->at(i) > 200e3 && rljet_pt_comb->at(i) < 3e6;
             mva_tag_map["DNN_Top"] = rljet_topTag_DNN_qqb->at(i) == static_cast<int>(simpleTaggerPass::both) && rljet_pt_comb->at(i) > 350e3 && rljet_pt_comb->at(i) < 3e6;
             tagger_jet_valid_map["DNN_Top"] = rljet_topTag_DNN_qqb->at(i) != -1                              && rljet_pt_comb->at(i) > 350e3 && rljet_pt_comb->at(i) < 3e6;
-            mva_tag_map["DNN_W"]   = rljet_wTag_DNN_qq->at(i) == static_cast<int>(simpleTaggerPass::both)    && rljet_pt_comb->at(i) > 350e3 && rljet_pt_comb->at(i) < 3e6;
-            tagger_jet_valid_map["DNN_W"]   = rljet_wTag_DNN_qq->at(i) != -1                                 && rljet_pt_comb->at(i) > 350e3 && rljet_pt_comb->at(i) < 3e6;
+            mva_tag_map["DNN_W"]   = rljet_wTag_DNN_qq->at(i) == static_cast<int>(simpleTaggerPass::both)    && rljet_pt_comb->at(i) > 200e3 && rljet_pt_comb->at(i) < 3e6;
+            tagger_jet_valid_map["DNN_W"]   = rljet_wTag_DNN_qq->at(i) != -1                                 && rljet_pt_comb->at(i) > 200e3 && rljet_pt_comb->at(i) < 3e6;
             // mva_tag_map["TopoTag_Top_20"]   = rljet_topTag_TopoTagger_20wp->at(i) == static_cast<int>(simpleTaggerPass::both);
             // tagger_jet_valid_map["TopoTag_Top_20"]   = rljet_topTag_TopoTagger_20wp->at(i) != -1;
             // mva_tag_map["TopoTag_Top_50"]   = rljet_topTag_TopoTagger_50wp->at(i) == static_cast<int>(simpleTaggerPass::both);
@@ -596,7 +596,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             // mva_tag_map["TopoTag_Top_80"]   = rljet_topTag_TopoTagger_80wp->at(i) == static_cast<int>(simpleTaggerPass::both);
             // tagger_jet_valid_map["TopoTag_Top_80"]   = rljet_topTag_TopoTagger_80wp->at(i) != -1;
             mva_tag_map["TopoTag_Top_80_qqb"]   = (rljet_topTag_TopoTagger_score->at(i) > f_tcdnn->Eval(rljet_pt_comb->at(i)/1000.)) && rljet_pt_comb->at(i) > 450e3 && rljet_pt_comb->at(i) < 2.4e6 && rljet_n_constituents->at(i) >= 0;
-            tagger_jet_valid_map["TopoTag_Top_80_qqb"] = (rljet_pt_comb->at(i) > 450e3 && rljet_pt_comb->at(i) < 3e6) && rljet_pt_comb->at(i) > 450e3 && rljet_pt_comb->at(i) < 2.4e6 && rljet_n_constituents->at(i) >= 0;
+            tagger_jet_valid_map["TopoTag_Top_80_qqb"] = rljet_pt_comb->at(i) > 450e3 && rljet_pt_comb->at(i) < 2.4e6 && rljet_n_constituents->at(i) >= 0;
         
 
             if (i == 0) { // only consider leading-pT jet for X vs mu
@@ -673,7 +673,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         if (ranSD) {
             hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut", rljet_SDt_dcut->at(i), weight, true);
 
-            SD_nominal_tag_map["SDt_dcut"]     = (rljet_SDt_dcut->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.)) && (rljet_m_comb->at(i) > 60e3);
+            SD_nominal_tag_map["SDt_dcut"]     = (rljet_SDt_dcut->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.)) && (rljet_m_comb->at(i) > 60e3) && (rljet_pt_comb->at(i) > 350e3) && (rljet_pt_comb->at(i) < 3e6);
             tagger_jet_valid_map["SDt_dcut"]     = (rljet_pt_comb->at(i) > 350e3 && rljet_pt_comb->at(i) < 3e6);
 
             if (i == 0) { // only consider leading-pT jet for X vs mu
@@ -805,10 +805,10 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
                 // fill 1D and 2D mu htt histograms
                 bool caJet_isvalid = (htt_caGroomJet_pt_def->at(ijet) > 200e3);
                 if (this->operating_on_mc) {
-                    hp->h_mu->fill_tagged("HTT_CAND" , mu           , weight , is_htt_tagged);
+                    hp->h_mu->fill_tagged("HTT_CAND" , mu           , weight , is_htt_tagged && caJet_isvalid);
                     hp->h_mu->fill_tagged("HTT_CAND_pretag" , mu           , weight , caJet_isvalid);
                 } else {
-                    hp->h_mu->fill_tagged("HTT_CAND" , mu * 1./1.09 , weight , is_htt_tagged);
+                    hp->h_mu->fill_tagged("HTT_CAND" , mu * 1./1.09 , weight , is_htt_tagged && caJet_isvalid);
                     hp->h_mu->fill_tagged("HTT_CAND_pretag" , mu * 1./1.09 , weight , caJet_isvalid);
                 }
 
