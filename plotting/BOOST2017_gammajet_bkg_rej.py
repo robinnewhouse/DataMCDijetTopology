@@ -77,7 +77,7 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
 
     if x_axis == "mu":
         bin_bounds = MU_BIN_BOUNDS
-        total_var_name = "h_mu"
+        total_var_name = "h_mu_" + tag_name + "_pretag"
     else:
         bin_bounds = PT_BIN_BOUNDS
         if ("HTT" in tag_name):
@@ -544,7 +544,6 @@ bkg_rej_plots.append(make_pt_rej_plot(
         y_max = 80,
         x_min = 350,
         do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS_GAMMAJET,
-        # do_systematics=False,
         ))
 
 bkg_rej_mu_plots.append(make_mu_rej_plot(
@@ -553,5 +552,5 @@ bkg_rej_mu_plots.append(make_mu_rej_plot(
         y_max = 10,
         x_min = 350,
         do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS_GAMMAJET,
-        # do_systematics=False,
         ))
+

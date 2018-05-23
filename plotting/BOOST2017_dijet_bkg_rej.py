@@ -85,7 +85,7 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
 
     if x_axis == "mu":
         bin_bounds = MU_BIN_BOUNDS
-        total_var_name = "h_mu"
+        total_var_name = "h_mu_" + tag_name + "_pretag"
     else:
         bin_bounds = PT_BIN_BOUNDS
         if ("HTT" in tag_name):
