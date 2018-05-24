@@ -87,9 +87,6 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
           total_var_name = "h_rljet0_pt_comb"
         passed_var_name = total_var_name + "_" + tag_name
 
-    print("DEBUG",tag_name, total_var_name)
-
-
     if (is_data):
         # if x_axis == "mu": total_var_name+="_corrSF"
         h_total = rej_rebin(HISTLOADER.get_sigsub_data(total_var_name), bin_bounds)

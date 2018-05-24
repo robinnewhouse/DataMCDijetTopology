@@ -85,15 +85,15 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
 
     if x_axis == "mu":
         bin_bounds = MU_BIN_BOUNDS
-        total_var_name = "h_mu_" + tag_name + "_pretag"
+        passed_var_name = "h_mu_" + tag_name 
+        total_var_name = passed_var_name + "_pretag"
     else:
         bin_bounds = PT_BIN_BOUNDS
         if ("HTT" in tag_name):
           total_var_name = "h_htt_caGroomJet0_pt"
         else:
           total_var_name = "h_rljet0_pt_comb"
-
-    passed_var_name = total_var_name + "_" + tag_name
+        passed_var_name = total_var_name + "_" + tag_name
 
     h_total = rej_rebin(
             HISTLOADER.get_sigsub_data(total_var_name)
@@ -352,12 +352,6 @@ pt_bkg_rej_plots.append(make_pt_efficiency_plot(
         #    y_max = 35
         #    ))
 
-pt_bkg_rej_plots.append(make_pt_efficiency_plot(
-            "HTT_CAND",
-            extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
-            y_max = 80,
-            do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS,
-            ))
 
 pt_bkg_rej_plots.append(make_pt_efficiency_plot(
             "BDT_Top",
@@ -452,14 +446,6 @@ mu_bkg_rej_plots.append(make_mu_efficiency_plot(
         #    ))
 
 
-        # !!!
-mu_bkg_rej_plots.append(make_mu_efficiency_plot(
-            "HTT_CAND",
-            extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
-            y_max = 80,
-            # y_max = 10,
-            do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS,
-            ))
 
 mu_bkg_rej_plots.append(make_mu_efficiency_plot(
             "BDT_Top",
@@ -492,6 +478,21 @@ mu_bkg_rej_plots.append(make_mu_efficiency_plot(
             # do_systematics = False,
             ))
 
+
+pt_bkg_rej_plots.append(make_pt_efficiency_plot(
+            "HTT_CAND",
+            extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
+            y_max = 80,
+            do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS,
+            ))
+
+mu_bkg_rej_plots.append(make_mu_efficiency_plot(
+            "HTT_CAND",
+            extra_legend_lines = HTT_EXTRA_LINES + [ "Top tagger: HTT" ],
+            y_max = 80,
+            # y_max = 10,
+            do_systematics=SYSTEMATICS_MC15C_CAJET_NOINPUTS,
+            ))
 
 CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/dijet_20180515_syst/dijet.merged.cp.root"
 HISTLOADER = DijetLoader(CP_ROOT_FILEPATH)
@@ -530,5 +531,3 @@ mu_bkg_rej_plots.append(make_mu_efficiency_plot(
         #     extra_legend_lines = DEF_EXTRA_LINES + [ "ShD #font[52]{W}, #epsilon_{sig} = 50%" ],
         #     y_max = 60,
         #     ))
-
-        
