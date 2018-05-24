@@ -75,8 +75,12 @@ class DijetLoader(PlotLoader):
                 h_sys_up = self.get_normalized_dijet(generator, hist_name + "_sjcalib1030", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
                 h_sys_down = self.get_normalized_dijet(generator, hist_name + "_sjcalib0970", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
             elif ("CAJES" in systematic_name):
-                h_sys_up = self.get_normalized_dijet(generator, hist_name + "_CAJES_UP", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
-                h_sys_down = self.get_normalized_dijet(generator, hist_name + "_CAJES_DOWN", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
+                if 'h_mu' in hist_name:
+                    h_sys_up = self.get_normalized_dijet(generator, hist_name + "", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
+                    h_sys_down = self.get_normalized_dijet(generator, hist_name + "", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
+                else:
+                    h_sys_up = self.get_normalized_dijet(generator, hist_name + "_CAJES_UP", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
+                    h_sys_down = self.get_normalized_dijet(generator, hist_name + "_CAJES_DOWN", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
             else:
                 if ("pileup" in systematic_name
                     or "lumi" in systematic_name):
@@ -268,8 +272,12 @@ class GammaJetLoader(PlotLoader):
                 h_sys_up = self.get_normalized_gamma(generator, hist_name + "_sjcalib1030", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
                 h_sys_down = self.get_normalized_gamma(generator, hist_name + "_sjcalib0970", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
             elif ("CAJES" in systematic_name):
-                h_sys_up = self.get_normalized_gamma(generator, hist_name + "_CAJES_UP", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
-                h_sys_down = self.get_normalized_gamma(generator, hist_name + "_CAJES_DOWN", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
+                if 'h_mu' in hist_name:
+                    h_sys_up = self.get_normalized_gamma(generator, hist_name + "", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
+                    h_sys_down = self.get_normalized_gamma(generator, hist_name + "", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
+                else:
+                    h_sys_up = self.get_normalized_gamma(generator, hist_name + "_CAJES_UP", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
+                    h_sys_down = self.get_normalized_gamma(generator, hist_name + "_CAJES_DOWN", "nominal", sig_sf = 1.0, normalize_to_pretagged = norm_to_pretagged)
             else:
                 if ("photon" in systematic_name or
                 "pileup" in systematic_name or
