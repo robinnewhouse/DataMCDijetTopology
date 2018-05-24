@@ -162,7 +162,8 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         self.h_pythia_stat_ratio.SetMarkerSize(0)
 
 
-        ratio_title = "#frac{Data}{MC}"
+        # ratio_title = "#frac{Data}{MC}"
+        ratio_title = "(Data - Sig.)/Pred"
         for h_ratio in [ self.h_pythia_ratio, self.h_herwig_ratio, self.h_pythia_sys_ratio, self.h_pythia_stat_ratio ]:
             set_style_ratio(h_ratio, y_title = ratio_title, y_min = 0.5, y_max = 1.5)
             h_ratio.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
@@ -215,12 +216,12 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         self.pad1.RedrawAxis()
 
         self.canvas.cd()
-        self.leg.AddEntry(self.h_data, "Data - Sig.")
-        self.leg.AddEntry(self.h_pythia, "Pythia8 dijet")
-        self.leg.AddEntry(self.h_herwig, "Herwig++ dijet")
+        self.leg.AddEntry(self.h_data, "Data")
+        self.leg.AddEntry(self.h_pythia, "Pythia8")
+        self.leg.AddEntry(self.h_herwig, "Herwig++")
         self.leg.AddEntry(self.h_pythia_stat_ratio, "Stat. uncert.", "f")
         if (self.hsys_pythia.num_systematics != 0):
-          self.leg.AddEntry(self.h_pythia_sys, "Stat. #oplus syst. uncert.", "f")
+          self.leg.AddEntry(self.h_pythia_sys, "Total uncert.", "f")
         self.leg.Draw()
 
         self.pad2.cd()
@@ -239,7 +240,7 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
         self.canvas.Clear()
 
-DEF_EXTRA_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", "Dijet Selection" ]
+DEF_EXTRA_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", "Multijet Selection" ]
 HTT_EXTRA_LINES = ["Trimmed C/A #it{R}=1.5", "Dijet Selection"]
 
 def make_pt_efficiency_plot( tag_name, ref_tag_name = None, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwargs):

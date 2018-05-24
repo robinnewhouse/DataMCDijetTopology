@@ -153,7 +153,8 @@ class PlotGammaJetBkgRej(PlotBase):
             self.h_sherpa_sys_ratio.SetBinContent(ibin, 1.0)
             self.h_sherpa_stat_ratio.SetBinContent(ibin, 1.0)
 
-        ratio_title = "#frac{Data}{MC}"
+        # ratio_title = "#frac{Data}{MC}"
+        ratio_title = "(Data - Sig.)/Pred"
         for h_ratio in [ self.h_sherpa_ratio, self.h_sherpa_sys_ratio, self.h_sherpa_stat_ratio ]:
             set_style_ratio(h_ratio, y_title = ratio_title, y_min = 0.0, y_max = 2.0)
             h_ratio.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
@@ -216,12 +217,12 @@ class PlotGammaJetBkgRej(PlotBase):
         self.pad1.RedrawAxis()
 
         self.canvas.cd()
-        self.leg.AddEntry(self.h_data, "Data - Sig.")
-        self.leg.AddEntry(self.h_pythia, "Pythia8 MC #gamma + jet")
-        self.leg.AddEntry(self.h_sherpa, "Sherpa #gamma + jet")
+        self.leg.AddEntry(self.h_data, "Data")
+        self.leg.AddEntry(self.h_sherpa, "Sherpa")
+        self.leg.AddEntry(self.h_pythia, "Pythia8")
         self.leg.AddEntry(self.h_sherpa_stat_ratio, "Stat. uncert.", "f")
         if (self.hsys_sherpa.num_systematics != 0):
-            self.leg.AddEntry(self.h_sherpa_sys_ratio, "Sys. #oplus Stat. uncert.", "f")
+            self.leg.AddEntry(self.h_sherpa_sys_ratio, "Total uncert.", "f")
         self.leg.Draw()
 
         self.pad2.cd()
@@ -331,7 +332,7 @@ bkg_rej_plots.append(make_pt_rej_plot(
 
 bkg_rej_plots.append(make_pt_rej_plot(
         "smooth16WTag_50eff_MassJSSCut",
-        extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): D_2 + m^{comb}"],
+        extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%):", "D_{2} + m^{comb}"],
         x_min = 200,
         # y_max = 175,
         ))

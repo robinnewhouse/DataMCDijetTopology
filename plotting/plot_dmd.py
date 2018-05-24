@@ -153,10 +153,10 @@ class DijetLoader(PlotLoader):
 class GammaJetLoader(PlotLoader):
     def __init__(self, filepath):
         super(GammaJetLoader, self).__init__(filepath)
-        self.SHERPA_COLOR = kGreen - 3
+        self.SHERPA_COLOR =  kBlue - 3
         self.PYTHIA_COLOR = kRed - 3
-        self.WZGAMMA_COLOR = kAzure
-        self.TTBAR_COLOR = kViolet
+        self.WZGAMMA_COLOR = kOrange + 7
+        self.TTBAR_COLOR  = kViolet
 
     def get_gamma(self, hist_name, generator = "sherpa_gammajet", branch = "nominal"):
         h_gamma = self.get_hist([generator, branch] , hist_name)
@@ -491,7 +491,7 @@ AXIS_TITLES = {
     "htt0_pt"                   : "Top Candidate #it{p_{T}}",
     "htt0_eta"                   : "Top Candidate #it{#eta}",
     "htt0_phi"                   : "Top Candidate #it{#phi}",
-    "htt0_m"                   : "Top Candidate m_{T}",
+    "htt0_m"                   : "Top Candidate m_{HTT}",
     "htt0_m23m123"               : "Top Candidate m_{23} / m_{123}",
     "htt0_atan1312"               : "Top Candidate arctan (m_{13} / m_{12})",
     "BDT_score_top"               : "Leading large-#it{R} jet BDT #it{top} tag discriminant",

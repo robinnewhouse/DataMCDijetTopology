@@ -29,7 +29,7 @@ make_dir(OUTPUT_DIR)
 
 
 class PlotDataMcGammaJet(PlotBase):
-    def __init__(self, var_name, flip_legend = False, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwargs):
+    def __init__(self, var_name, flip_legend = False, do_systematics = DO_SYSTEMATICS_DEFAULT, suffix = "", **kwargs):
         super(PlotDataMcGammaJet, self).__init__(
                 lumi_val = "36.1",
                 width = 600,
@@ -211,7 +211,7 @@ class PlotDataMcGammaJet(PlotBase):
         self.canvas.Update()
         self.canvas.Modified()
 
-        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
+        self.print_to_file(OUTPUT_DIR + "/" + self.name + suffix + ".pdf")
         # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
         self.canvas.Clear()
 
@@ -357,7 +357,20 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "DNN_W",
         x_max = 350,
           y_min = 0.01,
         rebin = MASS_PLOT_REBIN,
+        suffix = "_unzoomed"
         ))
+
+
+data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "DNN_W",
+        empty_scale = 1.75,
+        extra_legend_lines = DEF_LINES + ["DNN W-tagged"],
+        do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
+        x_min = 50,
+        x_max = 150,
+          y_min = 0.01,
+        rebin = MASS_PLOT_REBIN,
+        ))
+
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "TopoTag_Top_80_qqb",
         empty_scale = 1.75,
@@ -525,7 +538,7 @@ for masstag in ["", "combMgt100GeV"]:
               "h_rljet0_Tau32_wta" if not masstag else "h_rljet0_Tau32_wta_" + masstag,
               empty_scale = 2.0,
               flip_legend = True,
-              extra_legend_lines = DEF_LINES,
+              extra_legend_lines = DEF_LINES + ["m^{comb} > 100 GeV"] + ["p_{T} > 450 GeV"] ,
               x_units = "",
               x_min = 0.01,
               x_max = 0.9,
@@ -575,6 +588,8 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_SD_logchi_t_dcut",
 data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_atan1312",
             empty_scale = 1.9,
             extra_legend_lines = ["HTT-tagged"] + HTT_LINES,
+            x_min = 50,
+            x_max = 250,
             rebin = 5,
             do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
             ))
@@ -582,13 +597,15 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_atan1312",
 data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_m23m123",
             empty_scale = 2.0,
             extra_legend_lines = ["HTT-tagged"] + HTT_LINES,
+            x_min = 50,
+            x_max = 250,
             rebin = 8,
             do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
             ))
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_m",
             empty_scale = 2.35,
-            x_min = 20,
+            x_min = 50,
             x_max = 250,
             extra_legend_lines = ["HTT-tagged"] + HTT_LINES,
             rebin = 4,

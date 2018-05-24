@@ -35,7 +35,7 @@ MASS_PLOT_REBIN = 8
 
 class PlotDataPythiaHerwig(PlotBase):
     def __init__(self, var_name, flip_legend = False, do_systematics = DO_SYSTEMATICS_DEFAULT,
-                 wzjets_sf = 50, ttbar_sf = 50, **kwargs):
+                 wzjets_sf = 50, ttbar_sf = 50, suffix = "", **kwargs):
 
         super(PlotDataPythiaHerwig, self).__init__(
                 lumi_val = "36.7",
@@ -140,7 +140,8 @@ class PlotDataPythiaHerwig(PlotBase):
             self.h_pythia_sys_ratio.SetBinContent(ibin, 1.0)
             self.h_pythia_stat_ratio.SetBinContent(ibin, 1.0)
 
-        ratio_title = "#frac{Data}{MC}"
+        # ratio_title = "#frac{Data}{MC}"
+        ratio_title = "Data/Pred"
         for h_ratio in [self.h_pythia_dijet_ratio, self.h_herwig_dijet_ratio, self.h_pythia_sys_ratio, self.h_pythia_stat_ratio]:
             set_style_ratio(h_ratio, y_title = ratio_title)
             h_ratio.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
@@ -231,8 +232,8 @@ class PlotDataPythiaHerwig(PlotBase):
 
         self.canvas.cd()
         self.leg.AddEntry(self.h_data, "Data")
-        self.leg.AddEntry(self.h_pythia_dijet, "Pythia8 multijet (#times " + '{0:.2f}'.format(self.pythia_dijet_SF) + ")", "f")
-        self.leg.AddEntry(self.h_herwig_dijet, "Herwig++ multijet (#times " + '{0:.2f}'.format(self.herwig_dijet_SF) + ")", "f")
+        self.leg.AddEntry(self.h_pythia_dijet, "Pythia8 (#times " + '{0:.2f}'.format(self.pythia_dijet_SF) + ")", "f")
+        self.leg.AddEntry(self.h_herwig_dijet, "Herwig++ (#times " + '{0:.2f}'.format(self.herwig_dijet_SF) + ")", "f")
         self.leg.AddEntry(h_wjets_mag, "W+jets", "f")
         self.leg.AddEntry(h_zjets_mag, "Z+jets", "f")
         self.leg.AddEntry(h_ttbar_mag, "all-had t#bar{t}", "f")
@@ -255,7 +256,7 @@ class PlotDataPythiaHerwig(PlotBase):
         self.canvas.Update()
         self.canvas.Modified()
 
-        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
+        self.print_to_file(OUTPUT_DIR + "/" + self.name + suffix + ".pdf")
         # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
         self.canvas.Clear()
 
@@ -510,6 +511,19 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "DNN_W",
         extra_legend_lines = DEF_LINES + ["DNN W-tagged"],
         x_min = 0,
         x_max = 350,
+        ttbar_sf = 25,
+        wzjets_sf = 5,
+        do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS,
+        rebin = MASS_PLOT_REBIN,
+        suffix = "_unzoomed"
+        ))
+
+data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "DNN_W",
+        empty_scale = 2.0,
+        flip_legend = True,
+        extra_legend_lines = DEF_LINES + ["DNN W-tagged"],
+        x_min = 50,
+        x_max = 150,
         ttbar_sf = 25,
         wzjets_sf = 5,
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS,
