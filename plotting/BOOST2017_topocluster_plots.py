@@ -33,9 +33,10 @@ OUTPUT_DIR = ROOT_OUTPUT_DIR
 make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
 
-DEF_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", "Multijet Selection" , 
+DEF_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", 
+              "QCD Jet Sample :" , 
               "   p_{T} > 450 GeV", 
-              "L+jets Selection" , 
+              "Top Quark Jet Sample:" , 
               "   p_{T} > 150 GeV", 
               ]
 MASS_PLOT_REBIN = 8
