@@ -595,8 +595,8 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             // tagger_jet_valid_map["TopoTag_Top_50"]   = rljet_topTag_TopoTagger_50wp->at(i) != -1;
             // mva_tag_map["TopoTag_Top_80"]   = rljet_topTag_TopoTagger_80wp->at(i) == static_cast<int>(simpleTaggerPass::both);
             // tagger_jet_valid_map["TopoTag_Top_80"]   = rljet_topTag_TopoTagger_80wp->at(i) != -1;
-            mva_tag_map["TopoTag_Top_80_qqb"]   = (rljet_topTag_TopoTagger_score->at(i) > f_tcdnn->Eval(rljet_pt_comb->at(i)/1000.)) && rljet_pt_comb->at(i) > 450e3 && rljet_pt_comb->at(i) < 2.4e6 && rljet_n_constituents->at(i) >= 0;
-            tagger_jet_valid_map["TopoTag_Top_80_qqb"] = rljet_pt_comb->at(i) > 450e3 && rljet_pt_comb->at(i) < 2.4e6 && rljet_n_constituents->at(i) >= 0;
+            mva_tag_map["TopoTag_Top_80_qqb"]   = (rljet_topTag_TopoTagger_score->at(i) > f_tcdnn->Eval(rljet_pt_comb->at(i)/1000.)) && rljet_pt_comb->at(i) > 450e3 && rljet_pt_comb->at(i) < 2.4e6;
+            tagger_jet_valid_map["TopoTag_Top_80_qqb"] = rljet_pt_comb->at(i) > 450e3 && rljet_pt_comb->at(i) < 2.4e6 && rljet_topTag_TopoTagger_score->at(i) >=0; // checks for valid jet content
         
 
             if (i == 0) { // only consider leading-pT jet for X vs mu
