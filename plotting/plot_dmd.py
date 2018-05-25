@@ -502,13 +502,13 @@ AXIS_TITLES = {
     "htt0_m"                   : "Top Candidate m_{HTT}",
     "htt0_m23m123"               : "Top Candidate m_{23} / m_{123}",
     "htt0_atan1312"               : "Top Candidate arctan (m_{13} / m_{12})",
-    "BDT_score_top"               : "Leading large-#it{R} jet BDT #it{top} tag discriminant",
-    "BDT_score_w"               : "Leading large-#it{R} jet BDT #it{W} tag discriminant",
-    "DNN_score_top"               : "Leading large-#it{R} jet DNN #it{top} tag discriminant",
-    "DNN_score_w"               : "Leading large-#it{R} jet DNN #it{W} tag discriminant",
-    "topTag_TopoTagger_score"     : "Leading large-#it{R} jet Topo-DNN #it{top} tag discriminant",
+    "topTag_BDT_qqb_score_mva"               : "Leading large-#it{R} jet BDT #it{top} tag discriminant",
+    "wTag_BDT_qq_score_mva"               : "Leading large-#it{R} jet BDT #it{W} tag discriminant",
+    "topTag_DNN_qqb_score_mva"               : "Leading large-#it{R} jet DNN #it{top} tag discriminant",
+    "wTag_DNN_qq_score_mva"               : "Leading large-#it{R} jet DNN #it{W} tag discriminant",
+    "topTag_TopoTagger_score_mva"     : "Leading large-#it{R} jet Topo-DNN #it{top} tag discriminant",
     "rljet0_SD"                   : "Leading large-#it{R} jet log #chi",
-    "h_mu_"                       : "<#mu>",
+    "h_mu"                       : "<#mu>",
     "h_NPV"                       : "NPV"
 }
 
