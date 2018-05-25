@@ -510,7 +510,7 @@ pt_bkg_rej_plots.append(make_pt_efficiency_plot(
             "SDt_dcut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): SD" ],
             y_max = 40,
-            do_systematics = False,
+            do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS,
             ))
 
 # pt_bkg_rej_plots.append(make_pt_efficiency_plot(
@@ -524,7 +524,7 @@ mu_bkg_rej_plots.append(make_mu_efficiency_plot(
             "SDt_dcut",
             extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): SD" ],
             y_max = 40,
-            do_systematics = False,
+            do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS,
             ))
 
 # mu_bkg_rej_plots.append(make_mu_efficiency_plot(
