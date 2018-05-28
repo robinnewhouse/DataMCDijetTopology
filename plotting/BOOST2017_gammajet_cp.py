@@ -340,6 +340,17 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "BDT_W",
         x_max = 350,
         y_min = 0.01,
         rebin = MASS_PLOT_REBIN,
+        suffix = "_unzoomed"
+        ))
+
+data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "BDT_W",
+        empty_scale = 1.75,
+        extra_legend_lines = DEF_LINES + W_PT_LINE + ["BDT W-tagged"],
+        do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
+        x_min = 50,
+        x_max = 150,
+        y_min = 0.01,
+        rebin = MASS_PLOT_REBIN,
         ))
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "DNN_Top",
@@ -358,7 +369,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "DNN_W",
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 0,
         x_max = 350,
-          y_min = 0.01,
+        y_min = 0.01,
         rebin = MASS_PLOT_REBIN,
         suffix = "_unzoomed"
         ))
