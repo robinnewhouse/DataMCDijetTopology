@@ -297,7 +297,7 @@ bkg_rej_plots = []
 
 bkg_rej_plots.append(make_pt_rej_plot(
         "smooth16Top_MassTau32Tag80eff_MassJSSCut",
-        extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 80%" ],
+        extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%):","#tau_{32} + m_{comb}"],
         x_min = 350,
         y_max = 50,
         ))
@@ -387,7 +387,7 @@ bkg_rej_plots.append(make_pt_rej_plot(
 
 bkg_rej_plots.append(make_pt_rej_plot(
         "TopoTag_Top_80_qqb",
-        extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): Topo" ],
+        extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): TopoDNN" ],
         y_max = 190,
         x_min = 350,
         ))
@@ -402,7 +402,7 @@ bkg_rej_mu_plots = []
 
 bkg_rej_mu_plots.append(make_mu_rej_plot(
         "smooth16Top_MassTau32Tag80eff_MassJSSCut",
-        extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 80%" ],
+        extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%):","#tau_{32} + m_{comb}" ],
         x_min = 350,
         y_max = 50,
         # do_systematics = False,
@@ -493,7 +493,7 @@ bkg_rej_mu_plots.append(make_mu_rej_plot(
 
 bkg_rej_mu_plots.append(make_mu_rej_plot(
         "TopoTag_Top_80_qqb",
-        extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): Topo" ],
+        extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): TopoDNN" ],
         y_max = 50,
         ))
 

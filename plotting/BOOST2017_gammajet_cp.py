@@ -177,8 +177,8 @@ class PlotDataMcGammaJet(PlotBase):
 
         self.canvas.cd()
         self.leg.AddEntry(self.h_data       , "Data")
-        self.leg.AddEntry(self.h_gamma_sherpa, "Sherpa #gamma + jet (#times " + '{0:.2f}'.format(self.gamma_sherpa_SF) + ")", "f")
-        self.leg.AddEntry(self.h_gamma_pythia, "Pythia8 #gamma + jet (#times " + '{0:.2f}'.format(self.gamma_pythia_SF) + ")", "f")
+        self.leg.AddEntry(self.h_gamma_sherpa, "Sherpa (#times " + '{0:.2f}'.format(self.gamma_sherpa_SF) + ")", "f")
+        self.leg.AddEntry(self.h_gamma_pythia, "Pythia8 (#times " + '{0:.2f}'.format(self.gamma_pythia_SF) + ")", "f")
 
         xss = self.hs_sherpa.GetHists()
         xss.reverse()
@@ -388,7 +388,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "DNN_W",
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "TopoTag_Top_80_qqb",
         empty_scale = 1.75,
-        extra_legend_lines = DEF_LINES + TOPOTAGGER_PT_LINE + ["Topo Top-tagged"],
+        extra_legend_lines = DEF_LINES + TOPOTAGGER_PT_LINE + ["TopoDNN Top-tagged"],
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 0,
         x_max = 350,
@@ -596,6 +596,7 @@ for systematic in MISSING_SYSTEMATICS:
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_SD_logchi_t_dcut",
         empty_scale = 4,
         do_systematics = SD_SYSTEMATICS,
+        extra_legend_lines = DEF_LINES + TOP_PT_LINE,
         x_units = "",
         rebin = 3,
         y_min = 0.1,

@@ -492,6 +492,19 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "BDT_W",
         wzjets_sf = 5,
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS,
         rebin = MASS_PLOT_REBIN,
+        suffix = "_unzoomed"
+        ))
+
+data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "BDT_W",
+        empty_scale = 2.0,
+        extra_legend_lines = DEF_LINES + ["BDT W-tagged"],
+        x_min = 50,
+        x_max = 150,
+        flip_legend = True,
+        ttbar_sf = 25,
+        wzjets_sf = 5,
+        do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS,
+        rebin = MASS_PLOT_REBIN,
         ))
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_m_comb_" + "DNN_Top",

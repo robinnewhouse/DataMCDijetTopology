@@ -301,7 +301,7 @@ pt_bkg_rej_plots = []
 
 pt_bkg_rej_plots.append(make_pt_efficiency_plot(
            "smooth16Top_MassTau32Tag80eff_MassJSSCut",
-           extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 80%" ],
+           extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%):","#tau_{32} + m_{comb}" ],
            y_max = 30,
            ))
 
@@ -394,7 +394,7 @@ mu_bkg_rej_plots = []
 
 mu_bkg_rej_plots.append(make_mu_efficiency_plot(
            "smooth16Top_MassTau32Tag80eff_MassJSSCut",
-           extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 80%" ],
+           extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%):", "#tau_{32} + m_{comb}" ],
            y_max = 30,
            ))
 
