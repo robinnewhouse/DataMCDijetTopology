@@ -219,8 +219,8 @@ SEL_LINE = [ "#gamma + jet selection" ]
 W_PT_LINE = ["p_{T} > 200 GeV"]
 TOP_PT_LINE = ["p_{T} > 350 GeV"]
 TOPOTAGGER_PT_LINE = ["p_{T} > 450 GeV"]
-DEF_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0" ] + SEL_LINE
-HTT_LINES = [ "Trimmed C/A #it{R}=1.5" ] + TOP_PT_LINE + SEL_LINE
+DEF_LINES = SEL_LINE + [ "Trimmed anti-#it{k_{t}} #it{R}=1.0" ]
+HTT_LINES = SEL_LINE + [ "Trimmed C/A #it{R}=1.5" ] + W_PT_LINE
 MASS_PLOT_REBIN = 5
 
 data_mc_plots = []
@@ -441,7 +441,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "TopoTag_Top_80_qq
 #
 data_mc_plots.append(PlotDataMcGammaJet( "h_mu",
        empty_scale = 2.0,
-       extra_legend_lines = DEF_LINES,
+       extra_legend_lines = DEF_LINES + W_PT_LINE,
        do_systematics = False,
        x_units = "",
        x_min = 5,
@@ -451,7 +451,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_mu",
 
 data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_m_comb",
         empty_scale = 2.5,
-        extra_legend_lines = DEF_LINES,
+        extra_legend_lines = DEF_LINES + W_PT_LINE,
         x_min = 50,
         x_max = 350,
         #y_min = 6e3 + 0.1,
@@ -485,7 +485,7 @@ data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_pt_comb_smooth16WTag_50eff_JSS
 
 data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_D2_combMgt50GeV",
         empty_scale = 1.9,
-        extra_legend_lines = DEF_LINES + ["m^{comb} > 50 GeV"],
+        extra_legend_lines = DEF_LINES + W_PT_LINE + ["m^{comb} > 50 GeV"],
         x_units = "",
         rebin = 4,
         x_max = 4.0,
@@ -557,7 +557,7 @@ for masstag in ["", "combMgt100GeV"]:
               "h_rljet0_Tau32_wta" if not masstag else "h_rljet0_Tau32_wta_" + masstag,
               empty_scale = 2.0,
               flip_legend = True,
-              extra_legend_lines = DEF_LINES + ["m^{comb} > 100 GeV"] + ["p_{T} > 450 GeV"] ,
+              extra_legend_lines = DEF_LINES + W_PT_LINE + ["m^{comb} > 100 GeV"],
               x_units = "",
               x_min = 0.01,
               x_max = 0.9,
@@ -607,7 +607,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_SD_logchi_t_dcut",
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_atan1312",
             empty_scale = 1.9,
-            extra_legend_lines = ["HTT-tagged"] + HTT_LINES,
+            extra_legend_lines = HTT_LINES + ["HTT-tagged"],
             x_min = 50,
             x_max = 250,
             rebin = 5,
@@ -616,7 +616,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_atan1312",
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_m23m123",
             empty_scale = 2.0,
-            extra_legend_lines = ["HTT-tagged"] + HTT_LINES,
+            extra_legend_lines = HTT_LINES + ["HTT-tagged"],
             x_min = 50,
             x_max = 250,
             rebin = 8,
@@ -627,9 +627,18 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_m",
             empty_scale = 2.35,
             x_min = 50,
             x_max = 250,
-            extra_legend_lines = ["HTT-tagged"] + HTT_LINES,
+            extra_legend_lines = HTT_LINES + ["HTT-tagged"],
             rebin = 4,
             do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
+            ))
+
+data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_m_pt450",
+            empty_scale = 2.35,
+            x_min = 50,
+            x_max = 250,
+            extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5" ] + ["p_{T} > 450 GeV"] + ["HTT-tagged"],
+            rebin = 4,
+            do_systematics=False,
             ))
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_m",
@@ -637,7 +646,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_m",
             log_scale = True,
             x_min = 0,
             x_max = 350,
-            extra_legend_lines = HTT_LINES,
+            extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5" ] + W_PT_LINE,
             rebin = 10,
             do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
             ))
@@ -647,7 +656,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_m_HTT_CAND",
             log_scale = True,
             x_min = 0,
             x_max = 350,
-            extra_legend_lines = HTT_LINES,
+            extra_legend_lines = HTT_LINES + ["HTT-Tagged"],
             rebin = 10,
             do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
             ))
@@ -657,7 +666,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_pt",
             log_scale = True,
             x_min = 200,
             x_max = 3000,
-            extra_legend_lines = HTT_LINES,
+            extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5" ],
             rebin = 4,
             do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
             ))
@@ -667,7 +676,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_pt_HTT_CAND",
             log_scale = True,
             x_min = 200,
             x_max = 2500,
-            extra_legend_lines = HTT_LINES,
+            extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5" ] + ["HTT-tagged"],
             rebin = 4,
             do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
             ))

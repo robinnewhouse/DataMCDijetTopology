@@ -104,6 +104,14 @@ class DataMCbackgroundSelector : public TSelector {
 
         std::map<std::string, double> jetMoments;
 
+        struct binRanges {
+            float min;
+            float max;
+            std::string label;
+        };
+
+        std::vector<binRanges> gammaBins;
+
         TF1* f_sdw;
         TF1* f_sdtop;
         TF1* f_tcdnn;

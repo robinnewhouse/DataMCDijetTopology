@@ -65,6 +65,17 @@ DataMCbackgroundSelector::DataMCbackgroundSelector(
         std::cout << "see DataMCbackgroundSelector.cxx for more details." << std::endl;
     }
 
+    // bins for gamma-jet bkg rejection for JSS variable studies
+    gammaBins = std::vector<binRanges>{
+      {200, 250, "pTgt200lt250"},
+      {250, 300, "pTgt250lt300"},
+      {300, 350, "pTgt300lt350"},
+      {350, 500, "pTgt350lt500"},
+      {500, 750, "pTgt500lt750"},
+      {750, 1200, "pTgt750lt1200"},
+      {1200, 4000, "pTgt1200"},
+    };
+
 }
 
 void DataMCbackgroundSelector::log(const std::string& line)
@@ -549,6 +560,15 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_Split23.at(i)->fill(rljet_Split23->at(i)/1000., weight);
         hp->h_rljet_Split23.at(i)->fill_tagged("combMgt100GeV", rljet_Split23->at(i)/1000., weight, rljet_m_comb->at(i) / 1000. > 100.);
 
+        // mass & D2 in gamma pT bins -- for further studies
+        for(auto &bin : gammaBins) {
+            bool inBin = (rljet_pt_comb->at(i)*1e-3 > bin.min
+                && (rljet_pt_comb->at(i)*1e-3 < bin.max || bin.max == -1)
+                );
+            hp->h_rljet_D2.at(i)->fill_tagged(bin.label, rljet_D2->at(i), weight, inBin);
+            hp->h_rljet_m_comb.at(i)->fill_tagged(bin.label, rljet_m_comb->at(i)/1e3, weight, inBin);
+        }
+
 
         if (i == 0) { // only consider leading-pT jet for X vs mu
             if (this->operating_on_mc) {
@@ -796,7 +816,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_htt_caGroomJet_m.at(ijet)->fill_tagged  ("HTT_CAND", htt_caGroomJet_m_def->at(ijet) / 1000.  , weight, is_htt_tagged);
             // specifically for gamma-jets HTT mass plot investigation, see what it looks like with dijet-like pT threshold
             if(htt_caGroomJet_pt_def->at(ijet) > 450e3) {
-              hp->h_htt_m.at(ijet)->fill_tagged("pt450", htt_m_def->at(ijet)/1000., weight);
+              hp->h_htt_m.at(ijet)->fill_tagged("pt450", htt_m_def->at(ijet)/1000., weight, true);
             }
 
 
@@ -1159,13 +1179,18 @@ void DataMCbackgroundSelector::Terminate()
     // a query. It always runs on the client, it can be used to present
     // the results graphically or save the results to file.
 
-    std::stringstream ss;
-    ss << "WRITING: " << this->output_filepath;
-    this->log(ss.str());
+
 
     // we run over multiple branches for the same file when dealing
     // with systematics, so don't RECREATE the file, but UPDATE
-    TFile* output_file = new TFile(this->output_filepath.c_str(), "UPDATE");
+    std::string output_path = this->output_filepath.substr(0, this->output_filepath.find_last_of(".root")-3);
+    output_path += this->sub_dir_str;
+    output_path += ".root";
+    TFile* output_file = new TFile(output_path.c_str(), "RECREATE");
+
+    std::stringstream ss;
+    ss << "WRITING: " << output_path;
+    this->log(ss.str());
 
     // make root/sub directory if it doesn't exist, otherwise just cd into them
     TDirectory* root_tdir = output_file->GetDirectory(this->root_dir_str.c_str());
