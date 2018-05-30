@@ -163,7 +163,7 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
 
 
         # ratio_title = "#frac{Data}{MC}"
-        ratio_title = "(Data - Sig.)/Pred"
+        ratio_title = "Data/Pred"
         for h_ratio in [ self.h_pythia_ratio, self.h_herwig_ratio, self.h_pythia_sys_ratio, self.h_pythia_stat_ratio ]:
             set_style_ratio(h_ratio, y_title = ratio_title, y_min = 0.5, y_max = 1.5)
             h_ratio.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
@@ -260,7 +260,7 @@ def make_pt_efficiency_plot( tag_name, ref_tag_name = None, do_systematics = DO_
             lumi_val = "36.7",
             atlas_mod = "Internal",
             legend_loc = [0.60,0.93,0.91,0.75],
-            x_title = "Leading Groomed C/A 1.5 Jet #it{p_{T}}" if "HTT" in tag_name else "Leading large-#it{R} Jet #it{p_{T}}",
+            x_title = "Leading large-#it{R} Jet #it{p_{T}}",
             x_min = 450,
             x_max = 2500,
             y_min = 0.001,
@@ -301,7 +301,7 @@ pt_bkg_rej_plots = []
 
 pt_bkg_rej_plots.append(make_pt_efficiency_plot(
            "smooth16Top_MassTau32Tag80eff_MassJSSCut",
-           extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%):","#tau_{32} + m_{comb}" ],
+           extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%):","m^{comb} + #tau_{32}" ],
            y_max = 30,
            ))
 
@@ -331,7 +331,7 @@ pt_bkg_rej_plots.append(make_pt_efficiency_plot(
 
 pt_bkg_rej_plots.append(make_pt_efficiency_plot(
             "smooth16WTag_50eff_MassJSSCut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%):", "D_{2} + m^{comb}"],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%):", "m^{comb} + D_{2}"],
             y_max = 175
             ))
 
@@ -380,7 +380,7 @@ pt_bkg_rej_plots.append(make_pt_efficiency_plot(
 
 pt_bkg_rej_plots.append(make_pt_efficiency_plot(
             "TopoTag_Top_80_qqb",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): Topo" ],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): TopoDNN" ],
             y_max = 40,
             ))
 
@@ -394,7 +394,7 @@ mu_bkg_rej_plots = []
 
 mu_bkg_rej_plots.append(make_mu_efficiency_plot(
            "smooth16Top_MassTau32Tag80eff_MassJSSCut",
-           extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%):", "#tau_{32} + m_{comb}" ],
+           extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%):", "m^{comb} + #tau_{32}" ],
            y_max = 30,
            ))
 
@@ -424,7 +424,7 @@ mu_bkg_rej_plots.append(make_mu_efficiency_plot(
 
 mu_bkg_rej_plots.append(make_mu_efficiency_plot(
             "smooth16WTag_50eff_MassJSSCut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%):", "D_{2} + m^{comb}"],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%):", "m^{comb} + D_{2}"],
             y_max = 175
             ))
 
@@ -474,7 +474,7 @@ mu_bkg_rej_plots.append(make_mu_efficiency_plot(
 
 mu_bkg_rej_plots.append(make_mu_efficiency_plot(
             "TopoTag_Top_80_qqb",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): Topo" ],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): TopoDNN" ],
             y_max = 50,
             # do_systematics = False,
             ))

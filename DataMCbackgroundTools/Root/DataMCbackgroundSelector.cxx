@@ -73,7 +73,7 @@ DataMCbackgroundSelector::DataMCbackgroundSelector(
       {350, 500, "pTgt350lt500"},
       {500, 750, "pTgt500lt750"},
       {750, 1200, "pTgt750lt1200"},
-      {1200, 4000, "pTgt1200"},
+      {1200, -1, "pTgt1200"},
     };
 
 }
@@ -567,6 +567,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
                 );
             hp->h_rljet_D2.at(i)->fill_tagged(bin.label, rljet_D2->at(i), weight, inBin);
             hp->h_rljet_m_comb.at(i)->fill_tagged(bin.label, rljet_m_comb->at(i)/1e3, weight, inBin);
+            hp->h_rljet_topTag_DNN_qqb_score.at(i)->fill_tagged(bin.label,rljet_topTag_DNN_qqb_score->at(i), weight, inBin);
         }
 
 
@@ -1179,7 +1180,7 @@ void DataMCbackgroundSelector::Terminate()
     // a query. It always runs on the client, it can be used to present
     // the results graphically or save the results to file.
 
-
+    
 
     // we run over multiple branches for the same file when dealing
     // with systematics, so don't RECREATE the file, but UPDATE

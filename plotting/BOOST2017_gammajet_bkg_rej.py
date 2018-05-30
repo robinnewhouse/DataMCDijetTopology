@@ -154,7 +154,7 @@ class PlotGammaJetBkgRej(PlotBase):
             self.h_sherpa_stat_ratio.SetBinContent(ibin, 1.0)
 
         # ratio_title = "#frac{Data}{MC}"
-        ratio_title = "(Data - Sig.)/Pred"
+        ratio_title = "Data/Pred"
         for h_ratio in [ self.h_sherpa_ratio, self.h_sherpa_sys_ratio, self.h_sherpa_stat_ratio ]:
             set_style_ratio(h_ratio, y_title = ratio_title, y_min = 0.0, y_max = 2.0)
             h_ratio.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
@@ -258,7 +258,7 @@ def make_pt_rej_plot( tag_name, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwarg
             lumi_val = "36.1",
             atlas_mod = "Internal",
             legend_loc = [0.62,0.93,0.89,0.75],
-            x_title = "Leading Groomed C/A 1.5 Jet p_{T}" if "HTT" in tag_name else "Leading Large-#it{R} Jet #it{p_{T}}",
+            x_title = "Leading Large-#it{R} Jet #it{p_{T}}",
             tex_size_mod = 0.9,
             tex_spacing_mod = 0.75,
             y_min = 0.001,
@@ -297,7 +297,7 @@ bkg_rej_plots = []
 
 bkg_rej_plots.append(make_pt_rej_plot(
         "smooth16Top_MassTau32Tag80eff_MassJSSCut",
-        extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%):","#tau_{32} + m_{comb}"],
+        extra_legend_lines = DEF_EXTRA_LINES + ["Top tagger (#epsilon_{sig} = 80%):","m^{comb} + #tau_{32}"],
         x_min = 350,
         y_max = 50,
         ))
@@ -332,7 +332,7 @@ bkg_rej_plots.append(make_pt_rej_plot(
 
 bkg_rej_plots.append(make_pt_rej_plot(
         "smooth16WTag_50eff_MassJSSCut",
-        extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%):", "D_{2} + m^{comb}"],
+        extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%):", "m^{comb} + D_{2}"],
         x_min = 200,
         y_max = 250,
         ))
@@ -402,7 +402,7 @@ bkg_rej_mu_plots = []
 
 bkg_rej_mu_plots.append(make_mu_rej_plot(
         "smooth16Top_MassTau32Tag80eff_MassJSSCut",
-        extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%):","#tau_{32} + m_{comb}" ],
+        extra_legend_lines = DEF_EXTRA_LINES + ["Top tagger (#epsilon_{sig} = 80%):","m^{comb} + #tau_{32}"],
         x_min = 350,
         y_max = 50,
         # do_systematics = False,
@@ -439,7 +439,7 @@ bkg_rej_mu_plots.append(make_mu_rej_plot(
 
 bkg_rej_mu_plots.append(make_mu_rej_plot(
         "smooth16WTag_50eff_MassJSSCut",
-        extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): D_2 + m^{comb}"],
+        extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%):", "m^{comb} + D_{2}"],
         x_min = 200,
         y_max = 175,
         ))
