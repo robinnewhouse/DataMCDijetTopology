@@ -137,7 +137,8 @@ main(int argc, char** argv)
     TSelector* dmd_selector;
     for (auto& t : tchains) {
         const std::string tchain_name = std::string(t->GetName());
-        const bool is_a_desired_tchain = process_systematics || tchain_name == "nominal" || tchain_name == "Nominal";
+        const bool is_a_desired_tchain = ((process_systematics || tchain_name == "nominal" || tchain_name == "Nominal")
+            && (tchain_name.find("LARGERJET_Medium") == std::string::npos) && (tchain_name.find("LARGERJET_Strong") == std::string::npos));
 
         if (t->GetEntries() == 0) {
           std::cout << "SKIPPING EMPTY FILE: " << input_filepath << std::endl;
