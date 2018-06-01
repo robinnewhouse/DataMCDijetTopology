@@ -545,20 +545,21 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         hp->h_rljet_D2.at(i)->fill(rljet_D2->at(i), weight);
         hp->h_rljet_D2.at(i)->fill_tagged("combMgt50GeV", rljet_D2->at(i), weight, rljet_m_comb->at(i) / 1000. > 50.);
 
+        if(rljet_pt_comb->at(i) > 350e3) {
+            hp->h_rljet_Tau32_wta.at(i)->fill(rljet_Tau32_wta->at(i), weight);
+            hp->h_rljet_Tau32_wta.at(i)->fill_tagged("combMgt100GeV", rljet_Tau32_wta->at(i), weight, rljet_m_comb->at(i) / 1000. > 100.);
 
-        hp->h_rljet_Tau32_wta.at(i)->fill(rljet_Tau32_wta->at(i), weight);
-        hp->h_rljet_Tau32_wta.at(i)->fill_tagged("combMgt100GeV", rljet_Tau32_wta->at(i), weight, rljet_m_comb->at(i) / 1000. > 100.);
+            hp->h_rljet_Tau32_wta.at(i)->fill_tagged("combMlt100GeV"      , rljet_Tau32_wta->at(i) , weight , rljet_m_comb->at(i) / 1000. < 100.);
+            hp->h_rljet_Tau32_wta.at(i)->fill_tagged("combMgt100lt150GeV" , rljet_Tau32_wta->at(i) , weight , rljet_m_comb->at(i) / 1000. >= 100. && rljet_m_comb->at(i) / 1000. < 150.);
+            hp->h_rljet_Tau32_wta.at(i)->fill_tagged("combMgt150lt180GeV" , rljet_Tau32_wta->at(i) , weight , rljet_m_comb->at(i) / 1000. >= 150. && rljet_m_comb->at(i) / 1000. < 180.);
+            hp->h_rljet_Tau32_wta.at(i)->fill_tagged("combMgt180GeV"      , rljet_Tau32_wta->at(i) , weight , rljet_m_comb->at(i) / 1000. >= 180.);
 
-        hp->h_rljet_Tau32_wta.at(i)->fill_tagged("combMlt100GeV"      , rljet_Tau32_wta->at(i) , weight , rljet_m_comb->at(i) / 1000. < 100.);
-        hp->h_rljet_Tau32_wta.at(i)->fill_tagged("combMgt100lt150GeV" , rljet_Tau32_wta->at(i) , weight , rljet_m_comb->at(i) / 1000. >= 100. && rljet_m_comb->at(i) / 1000. < 150.);
-        hp->h_rljet_Tau32_wta.at(i)->fill_tagged("combMgt150lt180GeV" , rljet_Tau32_wta->at(i) , weight , rljet_m_comb->at(i) / 1000. >= 150. && rljet_m_comb->at(i) / 1000. < 180.);
-        hp->h_rljet_Tau32_wta.at(i)->fill_tagged("combMgt180GeV"      , rljet_Tau32_wta->at(i) , weight , rljet_m_comb->at(i) / 1000. >= 180.);
+            hp->h_rljet_Qw.at(i)->fill(rljet_Qw->at(i)/1000., weight);
+            hp->h_rljet_Qw.at(i)->fill_tagged("combMgt100GeV", rljet_Qw->at(i)/1000., weight, rljet_m_comb->at(i) / 1000. > 100.);
 
-        hp->h_rljet_Qw.at(i)->fill(rljet_Qw->at(i)/1000., weight);
-        hp->h_rljet_Qw.at(i)->fill_tagged("combMgt100GeV", rljet_Qw->at(i)/1000., weight, rljet_m_comb->at(i) / 1000. > 100.);
-
-        hp->h_rljet_Split23.at(i)->fill(rljet_Split23->at(i)/1000., weight);
-        hp->h_rljet_Split23.at(i)->fill_tagged("combMgt100GeV", rljet_Split23->at(i)/1000., weight, rljet_m_comb->at(i) / 1000. > 100.);
+            hp->h_rljet_Split23.at(i)->fill(rljet_Split23->at(i)/1000., weight);
+            hp->h_rljet_Split23.at(i)->fill_tagged("combMgt100GeV", rljet_Split23->at(i)/1000., weight, rljet_m_comb->at(i) / 1000. > 100.);
+        }
 
         // mass & D2 in gamma pT bins -- for further studies
         for(auto &bin : gammaBins) {
@@ -567,7 +568,8 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
                 );
             hp->h_rljet_D2.at(i)->fill_tagged(bin.label, rljet_D2->at(i), weight, inBin);
             hp->h_rljet_m_comb.at(i)->fill_tagged(bin.label, rljet_m_comb->at(i)/1e3, weight, inBin);
-            hp->h_rljet_topTag_DNN_qqb_score.at(i)->fill_tagged(bin.label,rljet_topTag_DNN_qqb_score->at(i), weight, inBin);
+            if(ranMVA)
+              hp->h_rljet_wTag_DNN_qq_score.at(i)->fill_tagged(bin.label,rljet_wTag_DNN_qq_score->at(i), weight, inBin);
         }
 
 
@@ -605,18 +607,18 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             bool clustValid = (rljet_Tau32_wta->at(i) >= 0.);
             // if jet passes mass cut but has <= 2 clusters, consider an ML-tagged jet
             bool passClust = !clustValid && rljet_m_comb->at(i) > 40e3;
-            bool pTvalidTop = rljet_pt_comb->at(i) > 350e3 && rljet_pt_comb->at(i) < 3e6;
-            bool pTvalidW   = rljet_pt_comb->at(i) > 200e3 && rljet_pt_comb->at(i) < 3e6;
+            bool ptValidTop = rljet_pt_comb->at(i) > 350e3 && rljet_pt_comb->at(i) < 3e6;
+            bool ptValidW   = rljet_pt_comb->at(i) > 200e3 && rljet_pt_comb->at(i) < 3e6;
 
             // Check if tagged
-            mva_tag_map["BDT_Top"] = rljet_topTag_BDT_qqb->at(i)          == (static_cast<int>(simpleTaggerPass::both)    && pTvalidTop && clustValid) || (passClust && ptValidTop);
-            tagger_jet_valid_map["BDT_Top"] = rljet_topTag_BDT_qqb->at(i) !=  static_cast<int>(simpleTaggerPass::invalid) && pTvalidTop;
-            mva_tag_map["BDT_W"]   = rljet_wTag_BDT_qq->at(i)             == (static_cast<int>(simpleTaggerPass::both)    && pTvalidW   && clustValid) || (passClust && ptValidW);
-            tagger_jet_valid_map["BDT_W"]   = rljet_wTag_BDT_qq->at(i)    !=  static_cast<int>(simpleTaggerPass::invalid) && pTvalidW;
-            mva_tag_map["DNN_Top"] = rljet_topTag_DNN_qqb->at(i)          == (static_cast<int>(simpleTaggerPass::both)    && pTvalidTop && clustValid) || (passClust && ptValidTop);
-            tagger_jet_valid_map["DNN_Top"] = rljet_topTag_DNN_qqb->at(i) !=  static_cast<int>(simpleTaggerPass::invalid) && pTvalidTop;
-            mva_tag_map["DNN_W"]   = rljet_wTag_DNN_qq->at(i)             == (static_cast<int>(simpleTaggerPass::both)    && pTvalidW   && clustValid) || (passClust && ptValidW);
-            tagger_jet_valid_map["DNN_W"]   = rljet_wTag_DNN_qq->at(i)    !=  static_cast<int>(simpleTaggerPass::invalid) && pTvalidW;
+            mva_tag_map["BDT_Top"] = rljet_topTag_BDT_qqb->at(i)          == (static_cast<int>(simpleTaggerPass::both)    && ptValidTop && clustValid) || (passClust && ptValidTop);
+            tagger_jet_valid_map["BDT_Top"] = rljet_topTag_BDT_qqb->at(i) !=  static_cast<int>(simpleTaggerPass::invalid) && ptValidTop;
+            mva_tag_map["BDT_W"]   = rljet_wTag_BDT_qq->at(i)             == (static_cast<int>(simpleTaggerPass::both)    && ptValidW   && clustValid) || (passClust && ptValidW);
+            tagger_jet_valid_map["BDT_W"]   = rljet_wTag_BDT_qq->at(i)    !=  static_cast<int>(simpleTaggerPass::invalid) && ptValidW;
+            mva_tag_map["DNN_Top"] = rljet_topTag_DNN_qqb->at(i)          == (static_cast<int>(simpleTaggerPass::both)    && ptValidTop && clustValid) || (passClust && ptValidTop);
+            tagger_jet_valid_map["DNN_Top"] = rljet_topTag_DNN_qqb->at(i) !=  static_cast<int>(simpleTaggerPass::invalid) && ptValidTop;
+            mva_tag_map["DNN_W"]   = rljet_wTag_DNN_qq->at(i)             == (static_cast<int>(simpleTaggerPass::both)    && ptValidW   && clustValid) || (passClust && ptValidW);
+            tagger_jet_valid_map["DNN_W"]   = rljet_wTag_DNN_qq->at(i)    !=  static_cast<int>(simpleTaggerPass::invalid) && ptValidW;
             // mva_tag_map["TopoTag_Top_20"]   = rljet_topTag_TopoTagger_20wp->at(i) == static_cast<int>(simpleTaggerPass::both);
             // tagger_jet_valid_map["TopoTag_Top_20"]   = rljet_topTag_TopoTagger_20wp->at(i) != -1;
             // mva_tag_map["TopoTag_Top_50"]   = rljet_topTag_TopoTagger_50wp->at(i) == static_cast<int>(simpleTaggerPass::both);
@@ -699,7 +701,7 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
 
         // SD log(chi) variables
         if (ranSD) {
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut", rljet_SDt_dcut->at(i), weight, true);
+            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut", rljet_SDt_dcut->at(i), weight, (rljet_m_comb->at(i) > 60e3));
 
             SD_nominal_tag_map["SDt_dcut"]     = (rljet_SDt_dcut->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.)) && (rljet_m_comb->at(i) > 60e3) && (rljet_pt_comb->at(i) > 350e3) && (rljet_pt_comb->at(i) < 3e6);
             tagger_jet_valid_map["SDt_dcut"]     = (rljet_pt_comb->at(i) > 350e3 && rljet_pt_comb->at(i) < 3e6);
@@ -1054,8 +1056,8 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             SD_systematic_tag_map["SDt_dcut_UP"]     = (rljet_SDt_dcut_UP->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.)) && (rljet_m_comb->at(i) > 60e3);
             SD_systematic_tag_map["SDt_dcut_DOWN"]     = (rljet_SDt_dcut_DOWN->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.)) && (rljet_m_comb->at(i) > 60e3);
 
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut_DOWN", rljet_SDt_dcut_DOWN->at(i), weight, true);
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut_UP", rljet_SDt_dcut_UP->at(i), weight, true);
+            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut_DOWN", rljet_SDt_dcut_DOWN->at(i), weight, (rljet_m_comb->at(i) > 60e3));
+            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut_UP", rljet_SDt_dcut_UP->at(i), weight, (rljet_m_comb->at(i) > 60e3));
 
             for (const auto& itag : SD_systematic_tag_map) {
                 hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
