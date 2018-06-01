@@ -34,7 +34,7 @@ make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
 
 DEF_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", 
-              "QCD Jet Sample :" , 
+              "Light Quark Jet Sample :" , 
               "   p_{T} > 450 GeV", 
               "Top Quark Jet Sample:" , 
               "   p_{T} > 150 GeV", 
@@ -112,7 +112,7 @@ class PlotTopoclusters(PlotBase):
         self.canvas.SetLogy()
         self.canvas.Update()
         self.canvas.Modified()
-        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
+        # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf") // No one wants to see this
         # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
         # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".png")
 

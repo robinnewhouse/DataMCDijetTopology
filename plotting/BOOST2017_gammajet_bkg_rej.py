@@ -136,8 +136,8 @@ class PlotGammaJetBkgRej(PlotBase):
         self.determine_y_axis_title(self.h_data, "Background rejection (1/#epsilon_{bkg})", show_binwidth = False)
 
         set_data_style_simple(self.h_data)
-        set_mc_style_marker(self.h_pythia, kRed, shape = 21)
-        set_mc_style_marker(self.h_sherpa, kBlue, shape = 22, marker_size = 1.0, line_width = 3)
+        set_mc_style_marker(self.h_pythia, kRed, shape = 21, marker_size = 1.0, line_width = 1)
+        set_mc_style_marker(self.h_sherpa, kBlue, shape = 22, marker_size = 1.0, line_width = 1)
 
         for h in [self.h_data, self.h_pythia, self.h_pythia_sys, self.h_sherpa, self.h_sherpa_sys]:
             h.GetYaxis().SetTitle(self.y_title)
@@ -188,8 +188,8 @@ class PlotGammaJetBkgRej(PlotBase):
         self.h_sherpa_ratio.SetFillStyle(0)
         self.h_sherpa_ratio.SetFillColorAlpha(kBlue, 0.85)
 
-        set_mc_style_marker(self.h_pythia_ratio, kRed, shape = 21, line_width = 3, marker_size = 1.0)
-        set_mc_style_marker(self.h_sherpa_ratio, kBlue, shape = 22, line_width = 3, marker_size = 1.0)
+        set_mc_style_marker(self.h_pythia_ratio, kRed, shape = 21, line_width = 1, marker_size = 1.0)
+        set_mc_style_marker(self.h_sherpa_ratio, kBlue, shape = 22, line_width = 1, marker_size = 1.0)
 
         # TODO: necessary?
         # self.canvas.Clear()
