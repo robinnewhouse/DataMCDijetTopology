@@ -36,6 +36,14 @@ PT_BIN_BOUNDS = array.array('d', [
     ]
     )
 
+TOPODNN_PT_BIN_BOUNDS = array.array('d', [
+    450,
+    500,
+    750,
+    1200
+    ]
+    )
+
 
 MU_BIN_BOUNDS = array.array('d', [
         5,
@@ -80,7 +88,10 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
         passed_var_name = "h_mu_" + tag_name 
         total_var_name = passed_var_name + "_pretag"
     else:
-        bin_bounds = PT_BIN_BOUNDS
+        if "TopoTag" in tag_name:
+            bin_bounds = TOPODNN_PT_BIN_BOUNDS
+        else:
+            bin_bounds = PT_BIN_BOUNDS
         if ("HTT" in tag_name):
           total_var_name = "h_htt_caGroomJet0_pt"
         else:
@@ -388,8 +399,8 @@ bkg_rej_plots.append(make_pt_rej_plot(
 bkg_rej_plots.append(make_pt_rej_plot(
         "TopoTag_Top_80_qqb",
         extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): TopoDNN" ],
-        y_max = 190,
-        x_min = 350,
+        y_max = 60,
+        x_min = 450,
         ))
 
 bkg_rej_mu_plots = []
