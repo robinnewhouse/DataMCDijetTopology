@@ -606,19 +606,19 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             // check if we have >2 clusters via Tau32 value -- for <=2 it has value of -999.
             bool clustValid = (rljet_Tau32_wta->at(i) >= 0.);
             // if jet passes mass cut but has <= 2 clusters, consider an ML-tagged jet
-            bool passClust = !clustValid && rljet_m_comb->at(i) > 40e3;
-            bool ptValidTop = rljet_pt_comb->at(i) > 350e3 && rljet_pt_comb->at(i) < 3e6;
-            bool ptValidW   = rljet_pt_comb->at(i) > 200e3 && rljet_pt_comb->at(i) < 3e6;
+            bool passClust = (!clustValid) && (rljet_m_comb->at(i) > 40e3);
+            bool ptValidTop = (rljet_pt_comb->at(i) > 350e3) && (rljet_pt_comb->at(i) < 3e6);
+            bool ptValidW   = (rljet_pt_comb->at(i) > 200e3) && (rljet_pt_comb->at(i) < 3e6);
 
             // Check if tagged
-            mva_tag_map["BDT_Top"] = rljet_topTag_BDT_qqb->at(i)          == (static_cast<int>(simpleTaggerPass::both)    && ptValidTop && clustValid) || (passClust && ptValidTop);
-            tagger_jet_valid_map["BDT_Top"] = rljet_topTag_BDT_qqb->at(i) !=  static_cast<int>(simpleTaggerPass::invalid) && ptValidTop;
-            mva_tag_map["BDT_W"]   = rljet_wTag_BDT_qq->at(i)             == (static_cast<int>(simpleTaggerPass::both)    && ptValidW   && clustValid) || (passClust && ptValidW);
-            tagger_jet_valid_map["BDT_W"]   = rljet_wTag_BDT_qq->at(i)    !=  static_cast<int>(simpleTaggerPass::invalid) && ptValidW;
-            mva_tag_map["DNN_Top"] = rljet_topTag_DNN_qqb->at(i)          == (static_cast<int>(simpleTaggerPass::both)    && ptValidTop && clustValid) || (passClust && ptValidTop);
-            tagger_jet_valid_map["DNN_Top"] = rljet_topTag_DNN_qqb->at(i) !=  static_cast<int>(simpleTaggerPass::invalid) && ptValidTop;
-            mva_tag_map["DNN_W"]   = rljet_wTag_DNN_qq->at(i)             == (static_cast<int>(simpleTaggerPass::both)    && ptValidW   && clustValid) || (passClust && ptValidW);
-            tagger_jet_valid_map["DNN_W"]   = rljet_wTag_DNN_qq->at(i)    !=  static_cast<int>(simpleTaggerPass::invalid) && ptValidW;
+            mva_tag_map["BDT_Top"] = ((rljet_topTag_BDT_qqb->at(i) == static_cast<int>(simpleTaggerPass::both)) && ptValidTop && clustValid) || (passClust && ptValidTop);
+            tagger_jet_valid_map["BDT_Top"] = (rljet_topTag_BDT_qqb->at(i) != static_cast<int>(simpleTaggerPass::invalid)) && ptValidTop;
+            mva_tag_map["BDT_W"] = ((rljet_wTag_BDT_qq->at(i) == static_cast<int>(simpleTaggerPass::both)) && ptValidW && clustValid) || (passClust && ptValidW);
+            tagger_jet_valid_map["BDT_W"] = (rljet_wTag_BDT_qq->at(i) != static_cast<int>(simpleTaggerPass::invalid)) && ptValidW;
+            mva_tag_map["DNN_Top"] = ((rljet_topTag_DNN_qqb->at(i) == static_cast<int>(simpleTaggerPass::both)) && ptValidTop && clustValid) || (passClust && ptValidTop);
+            tagger_jet_valid_map["DNN_Top"] = (rljet_topTag_DNN_qqb->at(i) != static_cast<int>(simpleTaggerPass::invalid)) && ptValidTop;
+            mva_tag_map["DNN_W"] = ((rljet_wTag_DNN_qq->at(i) == static_cast<int>(simpleTaggerPass::both)) && ptValidW && clustValid) || (passClust && ptValidW);
+            tagger_jet_valid_map["DNN_W"] = (rljet_wTag_DNN_qq->at(i) != static_cast<int>(simpleTaggerPass::invalid)) && ptValidW;
             // mva_tag_map["TopoTag_Top_20"]   = rljet_topTag_TopoTagger_20wp->at(i) == static_cast<int>(simpleTaggerPass::both);
             // tagger_jet_valid_map["TopoTag_Top_20"]   = rljet_topTag_TopoTagger_20wp->at(i) != -1;
             // mva_tag_map["TopoTag_Top_50"]   = rljet_topTag_TopoTagger_50wp->at(i) == static_cast<int>(simpleTaggerPass::both);
