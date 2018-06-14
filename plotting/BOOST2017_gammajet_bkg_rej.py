@@ -32,7 +32,8 @@ PT_BIN_BOUNDS = array.array('d', [
     500,
     #500,
     750,
-    1200
+    1200,
+    1600,
     ]
     )
 
@@ -40,7 +41,8 @@ TOPODNN_PT_BIN_BOUNDS = array.array('d', [
     450,
     500,
     750,
-    1200
+    1200,
+    1600,
     ]
     )
 
@@ -124,11 +126,6 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
 class PlotGammaJetBkgRej(PlotBase):
     def __init__(self, histos, **kwargs):
         super(PlotGammaJetBkgRej, self).__init__(**kwargs)
-        tag_name = self.name.split("_rej")[0]
-        if "_mu_" in self.name: 
-            x_axis = "mu"
-        else: 
-            x_axis = "pt"
 
         self.h_data      = histos["data"]
         self.hsys_sherpa = histos["sherpa_gammajet"]
@@ -285,7 +282,7 @@ def make_pt_rej_plot( tag_name, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwarg
             tex_size_mod = 0.9,
             tex_spacing_mod = 0.75,
             y_min = 0.001,
-            x_max = 3000,
+            x_max = PT_BIN_BOUNDS[-1],
             width = 600,
             **kwargs)
 
@@ -305,7 +302,7 @@ def make_mu_rej_plot( tag_name, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwarg
             tex_size_mod = 0.9,
             tex_spacing_mod = 0.75,
             y_min = 0.001,
-            x_max = 40,
+            x_max = MU_BIN_BOUNDS[-1],
             width = 600,
             x_units = "",
             **kwargs)

@@ -363,9 +363,8 @@ def is_tagged(var_name, untagged_var_name):
 def get_bin_bounds(histogram):
     bins_list = []
     TArrayD = histogram.GetXaxis().GetXbins()
-    for i in range(100): # can't get the size of the array
-        try: bins_list.append(TArrayD[i])
-        except: break
+    for i in range(histogram.GetXaxis().GetNbins()+1):
+        bins_list.append(TArrayD[i])
     return arr.array('d',bins_list)
 
 def graph_to_histogram(graph, bin_bounds, name = "fromgraph"):
@@ -373,9 +372,17 @@ def graph_to_histogram(graph, bin_bounds, name = "fromgraph"):
     for i in range(graph.GetN()):
         x = graph.GetX()[i]
         y = graph.GetY()[i]
+        dy = graph.GetErrorY(i)
+        # dy = max(graph.GetErrorYhigh(i), graph.GetErrorYlow(i))
 
-        if y != 0: h.SetBinContent(i+1, 1/y)
-        else: h.SetBinContent(i+1, 0)
+        if y != 0: 
+            h.SetBinContent(i+1, 1/y)
+            dy_inv = dy / y**2 # propegate the error linearly
+            h.SetBinError(i+1, dy_inv)
+        else: 
+            h.SetBinContent(i+1, 0)
+            h.SetBinError(i+1, 0)
+
 
         print("x", h.GetBinLowEdge(i), "y", h.GetBinContent(i) )
 
