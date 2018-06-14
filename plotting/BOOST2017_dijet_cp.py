@@ -29,8 +29,8 @@ OUTPUT_DIR = ROOT_OUTPUT_DIR + "/control"
 make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
 
-DEF_LINES = ["Multijet Selection", "Trimmed anti-#it{k_{t}} #it{R}=1.0", "p_{T} > 450 GeV"]
-HTT_DEF_LINES = ["Multijet Selection", "Trimmed C/A #it{R}=1.5", "p_{T} > 450 GeV"]
+DEF_LINES = ["Multijet Selection", "Trimmed anti-#it{k}_{t} #it{R}=1.0", "#it{p}_{T} > 450 GeV"]
+HTT_DEF_LINES = ["Multijet Selection", "Trimmed C/A #it{R}=1.5", "#it{p}_{T} > 450 GeV"]
 MASS_PLOT_REBIN = 8
 
 class PlotDataPythiaHerwig(PlotBase):
@@ -46,7 +46,7 @@ class PlotDataPythiaHerwig(PlotBase):
                 atlas_loc = [0.6,0.9] if flip_legend else None,
                 extra_lines_loc = [0.6,0.82] if flip_legend else None,
                 tex_size_mod = 0.9,
-                tex_spacing_mod = 0.75,
+                tex_spacing_mod = 0.80,
                 x_title = get_axis_title(var_name),
                 **kwargs)
 
@@ -677,6 +677,19 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_pt_comb_" + "smooth16WTag_5
         wzjets_sf = 12,
         rebin = 8,
         ))
+
+
+data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_pt_comb_" + "BDT_W",
+        empty_scale = 10,
+        extra_legend_lines = ["Multijet Selection", "Trimmed anti-#it{k_{t}} #it{R}=1.0"] + ["BDT #it{W} (#epsilon_{sig} = 50%)", "#it{W} tag pass"],
+        log_scale = True,
+        x_min = 450,
+        x_max = 4000,
+        ttbar_sf = 25,
+        wzjets_sf = 12,
+        rebin = 8,
+        ))
+
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_pt_comb_" + "smooth16Top_MassTau32Tag80eff_JSSCut",
         empty_scale = 7,

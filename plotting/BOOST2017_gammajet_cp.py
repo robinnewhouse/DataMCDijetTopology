@@ -39,7 +39,7 @@ class PlotDataMcGammaJet(PlotBase):
                 atlas_loc = [0.6,0.9] if flip_legend else None,
                 extra_lines_loc = [0.6,0.82] if flip_legend else None,
                 tex_size_mod = 0.95,
-                tex_spacing_mod = 0.75,
+                tex_spacing_mod = 0.80,
                 x_title = get_axis_title(var_name),
                 **kwargs)
         self.h_data = HISTLOADER.get_hist(["data" , "nominal"] , var_name)
@@ -216,10 +216,10 @@ class PlotDataMcGammaJet(PlotBase):
         self.canvas.Clear()
 
 SEL_LINE = [ "#gamma + jet selection" ]
-W_PT_LINE = ["p_{T} > 200 GeV"]
-TOP_PT_LINE = ["p_{T} > 350 GeV"]
-TOPOTAGGER_PT_LINE = ["p_{T} > 450 GeV"]
-DEF_LINES = SEL_LINE + [ "Trimmed anti-#it{k_{t}} #it{R}=1.0" ]
+W_PT_LINE = ["#it{p}_{T} > 200 GeV"]
+TOP_PT_LINE = ["#it{p}_{T} > 350 GeV"]
+TOPOTAGGER_PT_LINE = ["#it{p}_{T} > 450 GeV"]
+DEF_LINES = SEL_LINE + [ "Trimmed anti-#it{k}_{t} #it{R}=1.0" ]
 HTT_LINES = SEL_LINE + [ "Trimmed C/A #it{R}=1.5" ] + W_PT_LINE
 MASS_PLOT_REBIN = 5
 
@@ -578,7 +578,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_m_pt450",
         empty_scale = 2.35,
         x_min = 50,
         x_max = 250,
-        extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5" ] + ["p_{T} > 450 GeV"] + ["HTT top tag pass"],
+        extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5" ] + ["#it{p}_{T} > 450 GeV"] + ["HTT top tag pass"],
         rebin = 4,
         do_systematics=False,
         ))
