@@ -108,6 +108,9 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
             bin_bounds)
 
     if (is_data):
+        h_divided = get_assym_error_histogram(h_passed.Clone(), h_total.Clone())
+        return h_divided
+        # Old Method
         h_total.Divide(h_passed)
         return h_total.Clone()
     else:
@@ -262,7 +265,7 @@ def make_pt_efficiency_plot( tag_name, ref_tag_name = None, do_systematics = DO_
             legend_loc = [0.60,0.93,0.91,0.75],
             x_title = "Leading large-#it{R} Jet #it{p_{T}}",
             x_min = 450,
-            x_max = 2500,
+            x_max = PT_BIN_BOUNDS[-1],
             y_min = 0.001,
             width = 600,
             **kwargs)
@@ -286,7 +289,7 @@ def make_mu_efficiency_plot( tag_name, ref_tag_name = None, do_systematics = DO_
             legend_loc = [0.60,0.93,0.91,0.75],
             x_title = "#mu",
             x_min = 0,
-            x_max = 40,
+            x_max = MU_BIN_BOUNDS[-1],
             y_min = 0.001,
             width = 600,
             x_units = "",

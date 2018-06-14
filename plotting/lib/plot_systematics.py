@@ -126,19 +126,19 @@ class TH1Sys(object):
 
 class TH1SysEff(TH1Sys):
     def __init__(self,
+            h_nominal_total,
+            systematics_dictionary_total,
             h_nominal_passed,
             systematics_dictionary_passed,
-            h_nominal_total,
-            systematics_dictionary_total
             ):
         ''' Takes care of the division necessary for an efficiency plot.
             NOTE: it is not actually necessary that BinContent(passed) < BinContent(total)
                   for the case of making a rejection (1/selection efficiency) plot
         '''
 
-        self.h_nominal = h_nominal_passed.Clone(h_nominal_passed.GetName() + "_eff")
-        self.h_nominal.Divide(h_nominal_total)
-        # self.h_nominal = get_assym_error_histogram(h_nominal_passed.Clone(), h_nominal_total.Clone(), "n")
+        self.h_nominal = h_nominal_total.Clone(h_nominal_total.GetName() + "_eff")
+        # self.h_nominal.Divide(h_nominal_passed) # Old Method
+        self.h_nominal = get_assym_error_histogram(h_nominal_passed.Clone(), h_nominal_total.Clone(), "n")
 
         self.systematics_dictionary = {}
         if (systematics_dictionary_passed != None):
@@ -146,16 +146,16 @@ class TH1SysEff(TH1Sys):
                self.systematics_dictionary[sys_name] = {}
                for variation in ["up", "down"]:
                    h_tmp = h_sys[variation].Clone(h_sys[variation].GetName() + "_eff")
-                   h_tmp.Divide(h_tmp, systematics_dictionary_total[sys_name][variation], 1, 1, "B")
-                   # h_tmp = get_assym_error_histogram(h_tmp.Clone(), systematics_dictionary_total[sys_name][variation].Clone(), "n")
+                   # h_tmp.Divide(systematics_dictionary_total[sys_name][variation], h_tmp,  1, 1, "B") # Old Method
+                   h_tmp = get_assym_error_histogram(h_tmp.Clone(), systematics_dictionary_total[sys_name][variation].Clone(), "n")
                    self.systematics_dictionary[sys_name][variation] = h_tmp
         else:
            for sys_name, h_sys in systematics_dictionary_total.iteritems():
                self.systematics_dictionary[sys_name] = {}
                for variation in ["up", "down"]:
                    h_tmp = h_sys[variation].Clone(h_sys[variation].GetName() + "_eff")
-                   h_tmp.Divide(h_nominal_passed, h_tmp, 1, 1, "B")
-                   # h_tmp = get_assym_error_histogram(h_nominal_passed.Clone(), h_tmp.Clone(), "n")
+                   # h_tmp.Divide( h_tmp, h_nominal_passed, 1, 1, "B") # Old Method
+                   h_tmp = get_assym_error_histogram(h_nominal_passed.Clone(), h_tmp.Clone(), "n")
                    self.systematics_dictionary[sys_name][variation] = h_tmp
 
         self._reset()

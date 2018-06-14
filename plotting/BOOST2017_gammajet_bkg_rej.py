@@ -104,17 +104,17 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
         # if x_axis == "mu": total_var_name+="_corrSF"
         h_total = rej_rebin(HISTLOADER.get_sigsub_data(total_var_name), bin_bounds)
         h_passed = rej_rebin(HISTLOADER.get_sigsub_data(passed_var_name), bin_bounds)
-
         h_divided = get_assym_error_histogram(h_passed.Clone(), h_total.Clone())
 
-        h_total.Divide(h_passed)
-
         return h_divided
+        # Old Method
+        h_total.Divide(h_passed)
         return h_total.Clone()
 
     else:
         h_total = rej_rebin(HISTLOADER.get_normalized_gamma(gen_name, total_var_name, normalize_to_pretagged = True), bin_bounds)
         h_passed = rej_rebin(HISTLOADER.get_normalized_gamma(gen_name, passed_var_name, normalize_to_pretagged = True), bin_bounds)
+
         total_sys_dict = {}
         passed_sys_dict = {}
         if do_systematics:

@@ -368,7 +368,8 @@ def get_bin_bounds(histogram):
     return arr.array('d',bins_list)
 
 def graph_to_histogram(graph, bin_bounds, name = "fromgraph"):
-    h = TH1F(name, "Background Rejection", int(len(bin_bounds)-1), bin_bounds)
+    # Surpressing name to remove runtime errors. Could be improved.
+    h = TH1F("", "Background Rejection", int(len(bin_bounds)-1), bin_bounds)
     for i in range(graph.GetN()):
         x = graph.GetX()[i]
         y = graph.GetY()[i]
@@ -384,12 +385,16 @@ def graph_to_histogram(graph, bin_bounds, name = "fromgraph"):
             h.SetBinError(i+1, 0)
 
 
-        print("x", h.GetBinLowEdge(i), "y", h.GetBinContent(i) )
+        # print("x", h.GetBinLowEdge(i), "y", h.GetBinContent(i) )
 
     return h
 
 def get_assym_error_histogram(h_passed, h_total, options="n"):
     asym_err_graph = TGraphAsymmErrors( h_passed, h_total, options)
-    asym_err_histogram = graph_to_histogram(asym_err_graph, get_bin_bounds(h_total), name = h_total.GetName()+"_divided")
+    asym_err_histogram = graph_to_histogram(asym_err_graph, get_bin_bounds(h_total), name = h_passed.GetName()+"_divided")
     return asym_err_histogram
 
+def print_bin_content(h):
+    print h.GetName()
+    for i in range(h.GetXaxis().GetNbins()+1):
+        print("x", h.GetBinLowEdge(i), "y", h.GetBinContent(i) )
