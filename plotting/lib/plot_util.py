@@ -1,4 +1,6 @@
 from ROOT import kGreen, kBlack, kRed, kBlue, kWhite, kMagenta, kViolet, gStyle, gROOT, TGaxis
+from ROOT import TH1F, TGraphAsymmErrors
+
 # from math import *
 import array as arr
 import os
@@ -358,19 +360,29 @@ def calculate_inclusive_rejection(h_tagged, h_inclusive):
 def is_tagged(var_name, untagged_var_name):
   return untagged_var_name in var_name and len(var_name) > len(untagged_var_name)
 
+def get_bin_bounds(histogram):
+    bins_list = []
+    TArrayD = histogram.GetXaxis().GetXbins()
+    for i in range(100): # can't get the size of the array
+        try: bins_list.append(TArrayD[i])
+        except: break
+    return arr.array('d',bins_list)
 
+def graph_to_histogram(graph, bin_bounds, name = "fromgraph"):
+    h = TH1F(name, "Background Rejection", int(len(bin_bounds)-1), bin_bounds)
+    for i in range(graph.GetN()):
+        x = graph.GetX()[i]
+        y = graph.GetY()[i]
 
+        if y != 0: h.SetBinContent(i+1, 1/y)
+        else: h.SetBinContent(i+1, 0)
 
+        print("x", h.GetBinLowEdge(i), "y", h.GetBinContent(i) )
 
+    return h
 
-
-
-
-
-
-
-
-
-
-
+def get_assym_error_histogram(h_passed, h_total, options="n"):
+    asym_err_graph = TGraphAsymmErrors( h_passed, h_total, options)
+    asym_err_histogram = graph_to_histogram(asym_err_graph, get_bin_bounds(h_total), name = h_total.GetName()+"_divided")
+    return asym_err_histogram
 

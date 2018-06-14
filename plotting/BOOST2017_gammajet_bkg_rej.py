@@ -102,8 +102,14 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
         # if x_axis == "mu": total_var_name+="_corrSF"
         h_total = rej_rebin(HISTLOADER.get_sigsub_data(total_var_name), bin_bounds)
         h_passed = rej_rebin(HISTLOADER.get_sigsub_data(passed_var_name), bin_bounds)
+
+        h_divided = get_assym_error_histogram(h_passed.Clone(), h_total.Clone())
+
         h_total.Divide(h_passed)
+
+        return h_divided
         return h_total.Clone()
+
     else:
         h_total = rej_rebin(HISTLOADER.get_normalized_gamma(gen_name, total_var_name, normalize_to_pretagged = True), bin_bounds)
         h_passed = rej_rebin(HISTLOADER.get_normalized_gamma(gen_name, passed_var_name, normalize_to_pretagged = True), bin_bounds)
@@ -114,9 +120,15 @@ def make_rej_TH1SysEff(gen_name, tag_name, do_systematics, x_axis = "pt"):
             passed_sys_dict = get_sys_dict_eff(gen_name, passed_var_name, bin_bounds, do_systematics)
         return TH1SysEff(h_total, total_sys_dict, h_passed, passed_sys_dict)
 
+
 class PlotGammaJetBkgRej(PlotBase):
     def __init__(self, histos, **kwargs):
         super(PlotGammaJetBkgRej, self).__init__(**kwargs)
+        tag_name = self.name.split("_rej")[0]
+        if "_mu_" in self.name: 
+            x_axis = "mu"
+        else: 
+            x_axis = "pt"
 
         self.h_data      = histos["data"]
         self.hsys_sherpa = histos["sherpa_gammajet"]

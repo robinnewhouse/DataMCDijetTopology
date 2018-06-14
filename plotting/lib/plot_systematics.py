@@ -138,6 +138,7 @@ class TH1SysEff(TH1Sys):
 
         self.h_nominal = h_nominal_passed.Clone(h_nominal_passed.GetName() + "_eff")
         self.h_nominal.Divide(h_nominal_total)
+        # self.h_nominal = get_assym_error_histogram(h_nominal_passed.Clone(), h_nominal_total.Clone(), "n")
 
         self.systematics_dictionary = {}
         if (systematics_dictionary_passed != None):
@@ -146,6 +147,7 @@ class TH1SysEff(TH1Sys):
                for variation in ["up", "down"]:
                    h_tmp = h_sys[variation].Clone(h_sys[variation].GetName() + "_eff")
                    h_tmp.Divide(h_tmp, systematics_dictionary_total[sys_name][variation], 1, 1, "B")
+                   # h_tmp = get_assym_error_histogram(h_tmp.Clone(), systematics_dictionary_total[sys_name][variation].Clone(), "n")
                    self.systematics_dictionary[sys_name][variation] = h_tmp
         else:
            for sys_name, h_sys in systematics_dictionary_total.iteritems():
@@ -153,6 +155,7 @@ class TH1SysEff(TH1Sys):
                for variation in ["up", "down"]:
                    h_tmp = h_sys[variation].Clone(h_sys[variation].GetName() + "_eff")
                    h_tmp.Divide(h_nominal_passed, h_tmp, 1, 1, "B")
+                   # h_tmp = get_assym_error_histogram(h_nominal_passed.Clone(), h_tmp.Clone(), "n")
                    self.systematics_dictionary[sys_name][variation] = h_tmp
 
         self._reset()
