@@ -166,9 +166,9 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
 
 
         # ratio_title = "#frac{Data}{MC}"
-        ratio_title = "Data/Pred"
+        ratio_title = "Data/Pred."
         for h_ratio in [ self.h_pythia_ratio, self.h_herwig_ratio, self.h_pythia_sys_ratio, self.h_pythia_stat_ratio ]:
-            set_style_ratio(h_ratio, y_title = ratio_title, y_min = 0.5, y_max = 1.5)
+            set_style_ratio(h_ratio, y_title = ratio_title, y_min = -0.1, y_max = 2.1, Ndiv = 505)
             h_ratio.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
             h_ratio.GetXaxis().SetTitleOffset(4.0)
             h_ratio.GetYaxis().SetTitleOffset(2.0)

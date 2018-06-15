@@ -270,9 +270,9 @@ def get_closest_match(full_name, match_dict):
             tmp_val_match = v
     return tmp_val_match
 
-def set_style_ratio(hist, y_title = "Data/Pred.", y_min = 0.5, y_max = 1.5):
+def set_style_ratio(hist, y_title = "Data/Pred.", y_min = 0.5, y_max = 1.5, Ndiv = 504):
      hist.GetYaxis().SetRangeUser(y_min, y_max)
-     hist.GetYaxis().SetNdivisions(504, 0)
+     hist.GetYaxis().SetNdivisions(Ndiv, 1)
      hist.GetYaxis().SetTitle(y_title)
      hist.GetYaxis().CenterTitle()
 

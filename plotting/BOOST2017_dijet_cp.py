@@ -141,9 +141,9 @@ class PlotDataPythiaHerwig(PlotBase):
             self.h_pythia_stat_ratio.SetBinContent(ibin, 1.0)
 
         # ratio_title = "#frac{Data}{MC}"
-        ratio_title = "Data/Pred"
+        ratio_title = "Data/Pred."
         for h_ratio in [self.h_pythia_dijet_ratio, self.h_herwig_dijet_ratio, self.h_pythia_sys_ratio, self.h_pythia_stat_ratio]:
-            set_style_ratio(h_ratio, y_title = ratio_title)
+            set_style_ratio(h_ratio, y_title = ratio_title, y_min = 0.25, y_max = 1.75, Ndiv = 504)
             h_ratio.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
             #self.set_x_axis_bounds(h_ratio) #TODO
             h_ratio.GetXaxis().SetTitleOffset(4.0)

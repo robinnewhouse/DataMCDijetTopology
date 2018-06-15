@@ -112,9 +112,9 @@ class PlotDataMcGammaJet(PlotBase):
             self.h_sys_ratio.SetBinContent(ibin, 1.0)
 
         # ratio_title = "#frac{Data}{MC}"
-        ratio_title = "Data/Pred"
+        ratio_title = "Data/Pred."
         for h in [self.h_sherpa_ratio, self.h_pythia_ratio, self.h_stat_ratio, self.h_sys_ratio]:
-            set_style_ratio(h, y_title = ratio_title, y_min = 0.5, y_max = 1.5)
+            set_style_ratio(h, y_title = ratio_title, y_min = 0.25, y_max = 1.75, Ndiv = 504)
             h.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
             h.GetXaxis().SetTitleOffset(4.0)
             h.GetYaxis().SetTitleOffset(2.0)
@@ -419,7 +419,7 @@ data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_pt_comb_smooth16WTag_50eff_JSS
         empty_scale = 2.5,
         extra_legend_lines = DEF_LINES + W_PT_LINE + ["m^{comb} + D_{2} (#epsilon_{sig} = 50%)", "#it{W} tag pass"],
         x_max = 600,
-        x_min = 300,
+        x_min = 200,
         log_scale = True,
         ))
 

@@ -174,9 +174,9 @@ class PlotGammaJetBkgRej(PlotBase):
             self.h_sherpa_stat_ratio.SetBinContent(ibin, 1.0)
 
         # ratio_title = "#frac{Data}{MC}"
-        ratio_title = "Data/Pred"
+        ratio_title = "Data/Pred."
         for h_ratio in [ self.h_sherpa_ratio, self.h_sherpa_sys_ratio, self.h_sherpa_stat_ratio ]:
-            set_style_ratio(h_ratio, y_title = ratio_title, y_min = 0.0, y_max = 2.0)
+            set_style_ratio(h_ratio, y_title = ratio_title, y_min = -0.1, y_max = 2.1, Ndiv = 505)
             h_ratio.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
             h_ratio.GetXaxis().SetTitleOffset(4.0)
             h_ratio.GetYaxis().SetTitleOffset(2.0)
