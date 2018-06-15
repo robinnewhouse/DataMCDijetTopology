@@ -438,7 +438,7 @@ data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_topTag_BDT_qqb_score_mva",
         extra_legend_lines = DEF_LINES + TOP_PT_LINE,
         x_units = "",
         rebin = 3,
-        y_min = 0.1,
+        y_min = 0.3,
         log_scale = True,
         ))
 
@@ -448,7 +448,7 @@ data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_wTag_BDT_qq_score_mva",
         extra_legend_lines = DEF_LINES + W_PT_LINE,
         x_units = "",
         rebin = 3,
-        y_min = 0.1,
+        y_min = 0.3,
         log_scale = True,
         ))
 
@@ -458,7 +458,7 @@ data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_topTag_DNN_qqb_score_mva",
         extra_legend_lines = DEF_LINES + TOP_PT_LINE,
         x_units = "",
         rebin = 3,
-        y_min = 0.1,
+        y_min = 0.3,
         log_scale = True,
         ))
 
@@ -468,7 +468,7 @@ data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_wTag_DNN_qq_score_mva",
         extra_legend_lines = DEF_LINES + W_PT_LINE,
         x_units = "",
         rebin = 3,
-        y_min = 0.1,
+        y_min = 0.3,
         log_scale = True,
         ))
 
@@ -478,7 +478,7 @@ data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_topTag_TopoTagger_score_mva",
         extra_legend_lines = DEF_LINES + TOPOTAGGER_PT_LINE,
         x_units = "",
         rebin = 3,
-        y_min = 0.1,
+        y_min = 0.3,
         log_scale = True,
         ))
 
@@ -529,7 +529,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_SD_logchi_t_dcut",
         extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["m^{comb} > 60 GeV"],
         x_units = "",
         rebin = 3,
-        y_min = 0.1,
+        y_min = 0.2,
         x_min = -8,
         x_max = 10,
         log_scale = True,
