@@ -276,6 +276,10 @@ def set_style_ratio(hist, y_title = "Data/Pred.", y_min = 0.5, y_max = 1.5, Ndiv
      hist.GetYaxis().SetTitle(y_title)
      hist.GetYaxis().CenterTitle()
 
+def optimize_y_axis(hist, Ndiv = 504):
+    Ndiv = hist.GetYaxis().GetNdivisions()
+    hist.GetYaxis().SetNdivisions(Ndiv, 1)
+
 class Enumeration(object):
     def __init__(self, names):  # or *names, with no .split()
         for number, name in enumerate(names):

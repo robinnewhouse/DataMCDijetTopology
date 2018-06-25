@@ -33,11 +33,11 @@ OUTPUT_DIR = ROOT_OUTPUT_DIR
 make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
 
-DEF_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", 
-              "Light Quark Jet Sample :" , 
-              "   p_{T} > 450 GeV", 
-              "Top Quark Jet Sample:" , 
-              "   p_{T} > 150 GeV", 
+DEF_LINES = [ "#scale[0.9]{Trimmed anti-#it{k_{t}} #it{R}=1.0}", 
+              "#scale[0.9]{Light Quark Jet Sample :}" , 
+              "#scale[0.9]{   p_{T} > 450 GeV}", 
+              "#scale[0.9]{Top Quark Jet Sample:}" , 
+              "#scale[0.9]{   p_{T} > 150 GeV}", 
               ]
 MASS_PLOT_REBIN = 8
 
@@ -55,6 +55,9 @@ class PlotTopoclusters(PlotBase):
             #               x1   y1   x2   y2
             legend_loc = [0.60,0.915,0.89,0.63],
             atlas_mod = "Simulation Internal",
+            # tex_size_mod = 0.9,
+            height = 600,
+            width = 600,
             **kwargs)
 
         # Load and validate histograms
@@ -79,8 +82,13 @@ class PlotTopoclusters(PlotBase):
             if bkg: h_bkg = self.h_topo_pt_bkg[i]
             if sig: h_sig = self.h_topo_pt_sig[i]
             if bkg: 
-                h_bkg.GetYaxis().SetTitle("Normalized units")
                 h_bkg.GetXaxis().SetTitle("p_{T} fraction of cluster")
+                h_bkg.GetYaxis().SetTitle("Normalized units")
+                h_bkg.GetXaxis().SetTitleSize(21.0) # percent
+                h_bkg.GetYaxis().SetTitleSize(21.0)
+                h_bkg.GetXaxis().SetLabelSize(20.0)
+                h_bkg.GetYaxis().SetLabelSize(20.0)
+                h_bkg.GetYaxis().SetTitleOffset(1.6)
 
 
             if bkg: h_bkg.SetMaximum(0.16)
@@ -100,6 +108,8 @@ class PlotTopoclusters(PlotBase):
         sig_sample_tex = TLatex(0.02, 0.15, "mc15_13TeV.301334.Pythia8EvtGen_A14NNPDF23LO_zprime4000_tt");
        
         # draw_sample_names()
+
+
 
         self.name = "topocluster_plots"
         self.canvas.Update()
@@ -133,7 +143,8 @@ class PlotTopoclustersMean(PlotBase):
             atlas_mod = "Simulation Internal",
             tex_size_mod    = 0.9,
             tex_spacing_mod    = 0.9,
-
+            height = 600,
+            width = 600,
             **kwargs)
 
         tmp_loader = LOADER
@@ -188,6 +199,11 @@ class PlotTopoclustersMean(PlotBase):
         for h_mean in [h_bkg_mean, h_sig_mean]:
             h_mean.GetYaxis().SetTitle("#LTp_{T}#GT fraction of cluster")
             h_mean.GetXaxis().SetTitle("Leading trimmed large-#it{R} jet cluster index (p_{T} sorted)")
+            h_mean.GetXaxis().SetTitleSize(21.0) # percent
+            h_mean.GetYaxis().SetTitleSize(21.0) 
+            h_mean.GetXaxis().SetLabelSize(20.0)
+            h_mean.GetYaxis().SetLabelSize(20.0)
+            h_mean.GetYaxis().SetTitleOffset(1.4)
 
             h_mean.Draw("hist,same")
             h_mean.Draw("e1,same")
