@@ -115,7 +115,7 @@ class PlotTopoclusters(PlotBase):
         self.canvas.Update()
         self.canvas.Modified()
         self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
-        # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
+        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
         # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".png")
 
         self.name = "topocluster_plots_log"

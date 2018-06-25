@@ -259,7 +259,7 @@ class PlotGammaJetBkgRej(PlotBase):
         self.canvas.Modified()
 
         self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
-        # self.print_to_file(OUTPUT_DIR + "/" + self.name + "_gammajet.eps")
+        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
         self.canvas.Clear()
         print
 

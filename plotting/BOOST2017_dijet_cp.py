@@ -257,7 +257,7 @@ class PlotDataPythiaHerwig(PlotBase):
         self.canvas.Modified()
 
         self.print_to_file(OUTPUT_DIR + "/" + self.name + suffix + ".pdf")
-        # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
+        self.print_to_file(OUTPUT_DIR + "/" + self.name + suffix + ".eps")
         self.canvas.Clear()
 
 
