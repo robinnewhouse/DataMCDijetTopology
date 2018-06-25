@@ -152,14 +152,14 @@ class PlotDataMcGammaJet(PlotBase):
         self.pad1.SetPad(0.0, 0.33, 1., 1.)
         self.pad1.SetTopMargin(0.07)
         self.pad1.SetRightMargin(0.07)
-        self.pad1.SetBottomMargin(0.00)
+        self.pad1.SetBottomMargin(0.02)
         self.pad1.SetFillColorAlpha(0, 0.)
         self.pad1.SetBorderSize(0)
         if self.log_scale: self.pad1.SetLogy()
 
         self.pad2 = self.canvas.cd(2)
         self.pad2.SetPad(0.0, 0.0, 1., 0.33)
-        self.pad2.SetTopMargin(0.05)
+        self.pad2.SetTopMargin(0.025)
         self.pad2.SetRightMargin(0.07)
         self.pad2.SetBottomMargin(0.3)
         self.pad2.SetFillColorAlpha(0, 0.)
@@ -249,7 +249,6 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_MassT
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16WTag_50eff_JSSCut",
         empty_scale = 2.0,
         extra_legend_lines = DEF_LINES + W_PT_LINE + ["m^{comb} + D_{2} (#epsilon_{sig} = 50%)", "#it{W} tag pass"],
-        y_min = 0.01,
         x_min = 50,
         x_max = 350,
         #log_scale = True,
@@ -259,7 +258,6 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16WTag_50ef
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16WTag_50eff_JSSCut",
         empty_scale = 2.0,
         extra_legend_lines = DEF_LINES + W_PT_LINE + ["m^{comb} + D_{2} (#epsilon_{sig} = 50%)", "#it{W} tag pass"],
-        y_min = 0.01,
         x_min = 0,
         x_max = 350,
         #log_scale = True,
@@ -271,7 +269,6 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "BDT_Top",
         empty_scale = 1.75,
         extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["BDT top (#epsilon_{sig} = 80%)", "top tag pass"],
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
-        y_min = 0.01,
         x_min = 50,
         x_max = 350,
         rebin = MASS_PLOT_REBIN,
@@ -281,7 +278,6 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "BDT_Top",
         empty_scale = 1.75,
         extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["BDT top (#epsilon_{sig} = 80%)", "top tag pass"],
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
-        y_min = 0.01,
         x_min = 0,
         x_max = 350,
         rebin = MASS_PLOT_REBIN,
@@ -294,7 +290,6 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "BDT_W",
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 0,
         x_max = 350,
-        y_min = 0.01,
         rebin = MASS_PLOT_REBIN,
         suffix = "_unzoomed"
         ))
@@ -305,7 +300,6 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "BDT_W",
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 50,
         x_max = 150,
-        y_min = 0.01,
         rebin = MASS_PLOT_REBIN,
         ))
 
@@ -314,7 +308,6 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "DNN_Top",
         extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["DNN top (#epsilon_{sig} = 80%)", "top tag pass"],
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 50,
-        y_min = 0.01,
         x_max = 350,
         rebin = MASS_PLOT_REBIN,
         ))
@@ -324,7 +317,6 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "DNN_Top",
         extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["DNN top (#epsilon_{sig} = 80%)", "top tag pass"],
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 0,
-        y_min = 0.01,
         x_max = 350,
         rebin = MASS_PLOT_REBIN,
         suffix = "_fullrange"
@@ -336,7 +328,6 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "DNN_W",
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 0,
         x_max = 350,
-        y_min = 0.01,
         rebin = MASS_PLOT_REBIN,
         suffix = "_unzoomed"
         ))
@@ -348,7 +339,6 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "DNN_W",
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 50,
         x_max = 130,
-        y_min = 0.01,
         rebin = MASS_PLOT_REBIN,
         ))
 
@@ -359,7 +349,6 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "TopoTag_Top_80_qq
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 50,
         x_max = 350,
-        y_min = 0.01,
         rebin = MASS_PLOT_REBIN,
         ))
 
@@ -369,7 +358,6 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "TopoTag_Top_80_qq
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 0,
         x_max = 350,
-        y_min = 0.01,
         rebin = MASS_PLOT_REBIN,
         suffix = "_fullrange"
         ))
@@ -429,7 +417,6 @@ data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_D2_combMgt50GeV",
         x_units = "",
         rebin = 4,
         x_max = 4.0,
-        y_min = 0.01,
         ))
 
 data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_topTag_BDT_qqb_score_mva",
