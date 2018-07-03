@@ -27,6 +27,8 @@ OUTPUT_DIR = ROOT_OUTPUT_DIR + "/control"
 make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
 
+LABEL_SIZE = 23
+TITLE_SIZE = LABEL_SIZE
 
 class PlotDataMcGammaJet(PlotBase):
     def __init__(self, var_name, flip_legend = False, do_systematics = DO_SYSTEMATICS_DEFAULT, suffix = "", **kwargs):
@@ -87,6 +89,8 @@ class PlotDataMcGammaJet(PlotBase):
             h.GetYaxis().SetTitle(self.y_title)
             h.GetXaxis().SetLabelSize(0)
             h.GetYaxis().SetTitleOffset(2.0)
+            h.GetYaxis().SetLabelSize(LABEL_SIZE)
+            h.GetYaxis().SetTitleSize(TITLE_SIZE)
             self.set_y_min(h)
             self.set_y_max(h)
 
@@ -118,7 +122,10 @@ class PlotDataMcGammaJet(PlotBase):
             h.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
             h.GetXaxis().SetTitleOffset(4.0)
             h.GetYaxis().SetTitleOffset(2.0)
-            h.GetXaxis().SetLabelSize(19)
+            h.GetXaxis().SetLabelSize(LABEL_SIZE)
+            h.GetYaxis().SetLabelSize(LABEL_SIZE)
+            h.GetXaxis().SetTitleSize(TITLE_SIZE)
+            h.GetYaxis().SetTitleSize(TITLE_SIZE)
 
         self.name = var_name + "_data_mc_gammajet"
         if self.log_scale: self.name += "_log"
@@ -151,8 +158,8 @@ class PlotDataMcGammaJet(PlotBase):
         self.pad1 = self.canvas.cd(1)
         self.pad1.SetPad(0.0, 0.33, 1., 1.)
         self.pad1.SetTopMargin(0.07)
-        self.pad1.SetRightMargin(0.07)
-        self.pad1.SetBottomMargin(0.02)
+        self.pad1.SetRightMargin(0.1)
+        self.pad1.SetBottomMargin(0.022)
         self.pad1.SetFillColorAlpha(0, 0.)
         self.pad1.SetBorderSize(0)
         if self.log_scale: self.pad1.SetLogy()
@@ -160,23 +167,23 @@ class PlotDataMcGammaJet(PlotBase):
         self.pad2 = self.canvas.cd(2)
         self.pad2.SetPad(0.0, 0.0, 1., 0.33)
         self.pad2.SetTopMargin(0.025)
-        self.pad2.SetRightMargin(0.07)
-        self.pad2.SetBottomMargin(0.3)
+        self.pad2.SetRightMargin(0.1)
+        self.pad2.SetBottomMargin(0.4)
         self.pad2.SetFillColorAlpha(0, 0.)
         self.pad2.SetGridy(1) # grid for ratio plot
         self.pad2.SetBorderSize(0)
 
         self.pad1.cd()
 
-        self.h_data.Draw("PE,same")
+        self.h_data.Draw("pex0,same")
         self.hs_sherpa.Draw("histo,same")
         self.hs_pythia.Draw("histo,same")
-        self.h_data.Draw("PE,same")
+        self.h_data.Draw("pex0,same")
 
         self.pad1.RedrawAxis()
 
         self.canvas.cd()
-        self.leg.AddEntry(self.h_data       , "Data")
+        self.leg.AddEntry(self.h_data       , "Data 2015+2016")
         self.leg.AddEntry(self.h_gamma_sherpa, "Sherpa (#times " + '{0:.2f}'.format(self.gamma_sherpa_SF) + ")", "f")
         self.leg.AddEntry(self.h_gamma_pythia, "Pythia8 (#times " + '{0:.2f}'.format(self.gamma_pythia_SF) + ")", "f")
 
@@ -187,7 +194,7 @@ class PlotDataMcGammaJet(PlotBase):
             # self.leg.AddEntry(h      , "Sherpa #gamma + jet"  , "f")
             pass
           elif ("wz" in h.GetName()):
-            self.leg.AddEntry(h    , "Sherpa W/Z + #gamma"  , "f")
+            self.leg.AddEntry(h    , "Sherpa #it{W}/#it{Z} + #gamma"  , "f")
           elif ("ttbar" in h.GetName()):
             self.leg.AddEntry(h      , "MG t#bar{t} + #gamma" , "f")
         self.leg.AddEntry(self.h_stat_ratio , "Stat. uncert.", "f")
@@ -227,7 +234,7 @@ data_mc_plots = []
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_MassTau32Tag80eff_JSSCut",
         empty_scale = 4,
-        extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["m^{comb} + #tau_{32} (#epsilon_{sig} = 80%)", "top tag pass"],
+        extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["#it{m}^{comb} + #tau_{32} (#epsilon_{ sig} = 80%)", "top tag pass"],
         x_min = 50,
         x_max = 350,
         y_min = 1,
@@ -237,7 +244,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_MassT
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_MassTau32Tag80eff_JSSCut",
         empty_scale = 4,
-        extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["m^{comb} + #tau_{32} (#epsilon_{sig} = 80%)", "top tag pass"],
+        extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["#it{m}^{comb} + #tau_{32} (#epsilon_{ sig} = 80%)", "top tag pass"],
         x_min = 0,
         x_max = 350,
         y_min = 1,
@@ -248,7 +255,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_MassT
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16WTag_50eff_JSSCut",
         empty_scale = 2.0,
-        extra_legend_lines = DEF_LINES + W_PT_LINE + ["m^{comb} + D_{2} (#epsilon_{sig} = 50%)", "#it{W} tag pass"],
+        extra_legend_lines = DEF_LINES + W_PT_LINE + ["#it{m}^{comb} + #it{D}_{2} (#epsilon_{ sig} = 50%)", "#it{W} tag pass"],
         x_min = 50,
         x_max = 350,
         #log_scale = True,
@@ -257,7 +264,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16WTag_50ef
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16WTag_50eff_JSSCut",
         empty_scale = 2.0,
-        extra_legend_lines = DEF_LINES + W_PT_LINE + ["m^{comb} + D_{2} (#epsilon_{sig} = 50%)", "#it{W} tag pass"],
+        extra_legend_lines = DEF_LINES + W_PT_LINE + ["#it{m}^{comb} + #it{D}_{2} (#epsilon_{ sig} = 50%)", "#it{W} tag pass"],
         x_min = 0,
         x_max = 350,
         #log_scale = True,
@@ -267,7 +274,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16WTag_50ef
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "BDT_Top",
         empty_scale = 1.75,
-        extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["BDT top (#epsilon_{sig} = 80%)", "top tag pass"],
+        extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["BDT top (#epsilon_{ sig} = 80%)", "top tag pass"],
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 50,
         x_max = 350,
@@ -276,7 +283,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "BDT_Top",
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "BDT_Top",
         empty_scale = 1.75,
-        extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["BDT top (#epsilon_{sig} = 80%)", "top tag pass"],
+        extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["BDT top (#epsilon_{ sig} = 80%)", "top tag pass"],
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 0,
         x_max = 350,
@@ -286,7 +293,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "BDT_Top",
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "BDT_W",
         empty_scale = 1.75,
-        extra_legend_lines = DEF_LINES + W_PT_LINE + ["BDT #it{W} (#epsilon_{sig} = 50%)", "#it{W} tag pass"],
+        extra_legend_lines = DEF_LINES + W_PT_LINE + ["BDT #it{W} (#epsilon_{ sig} = 50%)", "#it{W} tag pass"],
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 0,
         x_max = 350,
@@ -296,7 +303,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "BDT_W",
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "BDT_W",
         empty_scale = 1.75,
-        extra_legend_lines = DEF_LINES + W_PT_LINE + ["BDT #it{W} (#epsilon_{sig} = 50%)", "#it{W} tag pass"],
+        extra_legend_lines = DEF_LINES + W_PT_LINE + ["BDT #it{W} (#epsilon_{ sig} = 50%)", "#it{W} tag pass"],
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 50,
         x_max = 150,
@@ -305,26 +312,28 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "BDT_W",
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "DNN_Top",
         empty_scale = 1.75,
-        extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["DNN top (#epsilon_{sig} = 80%)", "top tag pass"],
+        extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["DNN top (#epsilon_{ sig} = 80%)", "top tag pass"],
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 50,
         x_max = 350,
+        y_max = 1100,
         rebin = MASS_PLOT_REBIN,
         ))
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "DNN_Top",
         empty_scale = 1.75,
-        extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["DNN top (#epsilon_{sig} = 80%)", "top tag pass"],
+        extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["DNN top (#epsilon_{ sig} = 80%)", "top tag pass"],
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 0,
         x_max = 350,
+        y_max = 1100,
         rebin = MASS_PLOT_REBIN,
         suffix = "_fullrange"
         ))
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "DNN_W",
         empty_scale = 1.75,
-        extra_legend_lines = DEF_LINES + W_PT_LINE + ["DNN #it{W} (#epsilon_{sig} = 50%)", "#it{W} tag pass"],
+        extra_legend_lines = DEF_LINES + W_PT_LINE + ["DNN #it{W} (#epsilon_{ sig} = 50%)", "#it{W} tag pass"],
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 0,
         x_max = 350,
@@ -335,7 +344,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "DNN_W",
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "DNN_W",
         empty_scale = 1.75,
-        extra_legend_lines = DEF_LINES + W_PT_LINE + ["DNN #it{W} (#epsilon_{sig} = 50%)", "#it{W} tag pass"],
+        extra_legend_lines = DEF_LINES + W_PT_LINE + ["DNN #it{W} (#epsilon_{ sig} = 50%)", "#it{W} tag pass"],
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 50,
         x_max = 130,
@@ -345,7 +354,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "DNN_W",
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "TopoTag_Top_80_qqb",
         empty_scale = 1.75,
-        extra_legend_lines = DEF_LINES + TOPOTAGGER_PT_LINE + ["TopoDNN (#epsilon_{sig} = 80%)", "top tag pass"],
+        extra_legend_lines = DEF_LINES + TOPOTAGGER_PT_LINE + ["TopoDNN (#epsilon_{ sig} = 80%)", "top tag pass"],
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 50,
         x_max = 350,
@@ -354,7 +363,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "TopoTag_Top_80_qq
 
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "TopoTag_Top_80_qqb",
         empty_scale = 1.75,
-        extra_legend_lines = DEF_LINES + TOPOTAGGER_PT_LINE + ["TopoDNN (#epsilon_{sig} = 80%)", "top tag pass"],
+        extra_legend_lines = DEF_LINES + TOPOTAGGER_PT_LINE + ["TopoDNN (#epsilon_{ sig} = 80%)", "top tag pass"],
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 0,
         x_max = 350,
@@ -405,7 +414,7 @@ data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_pt_comb",
 
 data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_pt_comb_smooth16WTag_50eff_JSSCut",
         empty_scale = 2.5,
-        extra_legend_lines = DEF_LINES + W_PT_LINE + ["m^{comb} + D_{2} (#epsilon_{sig} = 50%)", "#it{W} tag pass"],
+        extra_legend_lines = DEF_LINES + W_PT_LINE + ["#it{m}^{comb} + #it{D}_{2} (#epsilon_{ sig} = 50%)", "#it{W} tag pass"],
         x_max = 600,
         x_min = 200,
         log_scale = True,
@@ -413,7 +422,7 @@ data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_pt_comb_smooth16WTag_50eff_JSS
 
 data_mc_plots.append(PlotDataMcGammaJet("h_rljet0_D2_combMgt50GeV",
         empty_scale = 1.9,
-        extra_legend_lines = DEF_LINES + W_PT_LINE + ["m^{comb} > 50 GeV"],
+        extra_legend_lines = DEF_LINES + W_PT_LINE + ["#it{m}^{comb} > 50 GeV"],
         x_units = "",
         rebin = 4,
         x_max = 4.0,
@@ -474,7 +483,7 @@ for masstag in ["combMgt100GeV"]:
               "h_rljet0_Tau32_wta" if not masstag else "h_rljet0_Tau32_wta_" + masstag,
               empty_scale = 2.0,
               flip_legend = True,
-              extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["m^{comb} > 100 GeV"],
+              extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["#it{m}^{comb} > 100 GeV"],
               x_units = "",
               x_min = 0.01,
               x_max = 0.9,
@@ -513,7 +522,7 @@ for systematic in MISSING_SYSTEMATICS:
 data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_SD_logchi_t_dcut",
         empty_scale = 4,
         do_systematics = SD_SYSTEMATICS,
-        extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["m^{comb} > 60 GeV"],
+        extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["#it{m}^{comb} > 60 GeV"],
         x_units = "",
         rebin = 3,
         y_min = 0.2,
@@ -524,7 +533,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_SD_logchi_t_dcut",
 
 # data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_atan1312",
 #             empty_scale = 1.9,
-#             extra_legend_lines = HTT_LINES + ["HTT top tag pass"],
+#             extra_legend_lines = HTT_LINES + ["HTT-tagged"],
 #             x_min = 50,
 #             x_max = 250,
 #             rebin = 5,
@@ -533,7 +542,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_SD_logchi_t_dcut",
 #
 # data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_m23m123",
 #             empty_scale = 2.0,
-#             extra_legend_lines = HTT_LINES + ["HTT top tag pass"],
+#             extra_legend_lines = HTT_LINES + ["HTT-tagged"],
 #             x_min = 50,
 #             x_max = 250,
 #             rebin = 8,
@@ -544,7 +553,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_m",
         empty_scale = 2.35,
         x_min = 50,
         x_max = 250,
-        extra_legend_lines = HTT_LINES + ["HTT top tag pass"],
+        extra_legend_lines = HTT_LINES + ["HTT-tagged"],
         rebin = 4,
         do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
         ))
@@ -553,7 +562,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_m",
         empty_scale = 2.35,
         x_min = 0,
         x_max = 250,
-        extra_legend_lines = HTT_LINES + ["HTT top tag pass"],
+        extra_legend_lines = HTT_LINES + ["HTT-tagged"],
         rebin = 4,
         do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
         suffix = "_fullrange"
@@ -565,7 +574,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_m_pt450",
         empty_scale = 2.35,
         x_min = 50,
         x_max = 250,
-        extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5" ] + ["#it{p}_{T} > 450 GeV"] + ["HTT top tag pass"],
+        extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5" ] + ["#it{p}_{T} > 450 GeV"] + ["HTT-tagged"],
         rebin = 4,
         do_systematics=False,
         ))
@@ -627,7 +636,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_pt_HTT_CAND",
         log_scale = True,
         x_min = 200,
         x_max = 2500,
-        extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5" ] + ["HTT top tag pass"],
+        extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5" ] + ["HTT-tagged"],
         rebin = 4,
         do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
         ))

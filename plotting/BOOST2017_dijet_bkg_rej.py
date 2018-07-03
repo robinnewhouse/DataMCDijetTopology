@@ -61,6 +61,9 @@ MU_BIN_BOUNDS = array.array('d', [
         40,
     ])
 
+LABEL_SIZE = 23
+TITLE_SIZE = LABEL_SIZE
+
 def rej_rebin(h, bin_bounds):
   return h.Rebin(len(bin_bounds)-1, h.GetName()+"_rebinned", bin_bounds)
 
@@ -144,6 +147,8 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         for h in [self.h_data, self.h_pythia, self.h_herwig, self.h_pythia_sys, self.h_pythia_stat]:
             h.GetYaxis().SetTitle(self.y_title)
             h.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
+            h.GetYaxis().SetLabelSize(LABEL_SIZE)
+            h.GetYaxis().SetTitleSize(TITLE_SIZE)
             self.set_x_axis_bounds(h)
             self.set_y_min(h)
             self.set_y_max(h)
@@ -172,7 +177,10 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
             h_ratio.GetXaxis().SetTitle(self.x_title + " " + self.x_units_str)
             h_ratio.GetXaxis().SetTitleOffset(4.0)
             h_ratio.GetYaxis().SetTitleOffset(2.0)
-            h_ratio.GetXaxis().SetLabelSize(19)
+            h_ratio.GetXaxis().SetLabelSize(LABEL_SIZE)
+            h_ratio.GetYaxis().SetLabelSize(LABEL_SIZE)
+            h_ratio.GetXaxis().SetTitleSize(TITLE_SIZE)
+            h_ratio.GetYaxis().SetTitleSize(TITLE_SIZE)
 
         for ibin in range(self.h_pythia_sys_ratio.GetSize()):
             self.h_pythia_sys_ratio.SetBinContent(ibin, 1.0)
@@ -193,7 +201,7 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         self.pad1 = self.canvas.cd(1)
         self.pad1.SetPad(0.0, 0.33, 1., 1.)
         self.pad1.SetTopMargin(0.07)
-        self.pad1.SetRightMargin(0.07)
+        self.pad1.SetRightMargin(0.1)
         self.pad1.SetBottomMargin(0.00)
         self.pad1.SetFillColorAlpha(0, 0.)
         self.pad1.SetBorderSize(0)
@@ -202,8 +210,8 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         self.pad2 = self.canvas.cd(2)
         self.pad2.SetPad(0.0, 0.0, 1., 0.33)
         self.pad2.SetTopMargin(0.05)
-        self.pad2.SetRightMargin(0.07)
-        self.pad2.SetBottomMargin(0.3)
+        self.pad2.SetRightMargin(0.1)
+        self.pad2.SetBottomMargin(0.4)
         self.pad2.SetFillColorAlpha(0, 0.)
         self.pad2.SetGridy(1) # grid for ratio plot
         self.pad2.SetBorderSize(0)
@@ -219,7 +227,7 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         self.pad1.RedrawAxis()
 
         self.canvas.cd()
-        self.leg.AddEntry(self.h_data, "Data")
+        self.leg.AddEntry(self.h_data, "Data 2015+2016")
         self.leg.AddEntry(self.h_pythia, "Pythia8")
         self.leg.AddEntry(self.h_herwig, "Herwig++")
         self.leg.AddEntry(self.h_pythia_stat_ratio, "Stat. uncert.", "f")
@@ -243,7 +251,7 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
         self.canvas.Clear()
 
-DEF_EXTRA_LINES = [ "Trimmed anti-#it{k_{t}} #it{R}=1.0", "Multijet Selection" ]
+DEF_EXTRA_LINES = [ "Trimmed anti-#it{k}_{t} #it{R}=1.0", "Multijet Selection" ]
 HTT_EXTRA_LINES = ["Trimmed C/A #it{R}=1.5", "Dijet Selection"]
 
 def make_pt_efficiency_plot( tag_name, ref_tag_name = None, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwargs):
@@ -298,92 +306,92 @@ def make_mu_efficiency_plot( tag_name, ref_tag_name = None, do_systematics = DO_
 pt_bkg_rej_plots = []
 #pt_bkg_rej_plots.append(make_pt_efficiency_plot(
         #    "smooth16Top_MassTau32Tag50eff_MassJSSCut",
-        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 50%" ],
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{ sig} = 50%" ],
         #    y_max = 100,
         #    ))
 
 pt_bkg_rej_plots.append(make_pt_efficiency_plot(
            "smooth16Top_MassTau32Tag80eff_MassJSSCut",
-           extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%):","m^{comb} + #tau_{32}" ],
+           extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{ sig} = 80%):","#it{m}^{comb} + #tau_{32}" ],
            y_max = 30,
            ))
 
 #pt_bkg_rej_plots.append(make_pt_efficiency_plot(
         #    "smooth16Top_QwTau32Tag50eff",
-        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{sig} = 50%" ],
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{ sig} = 50%" ],
         #    y_max = 100
         #    ))
 
 #pt_bkg_rej_plots.append(make_pt_efficiency_plot(
         #    "smooth16Top_QwTau32Tag80eff",
-        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{sig} = 80%" ],
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{ sig} = 80%" ],
         #    y_max = 40,
         #    ))
 
 #pt_bkg_rej_plots.append(make_pt_efficiency_plot(
         #    "smooth16Top_Tau32Split23Tag50eff",
-        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + #sqrt{d_{23}}", "#epsilon_{sig} = 50%" ],
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + #sqrt{d_{23}}", "#epsilon_{ sig} = 50%" ],
         #    y_max = 100,
         #    ))
 
 # pt_bkg_rej_plots.append(make_pt_efficiency_plot(
         #     "smooth16Top_Tau32Split23Tag80eff",
-        #     extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): #tau_{32} + #sqrt{d_{23}}"],
+        #     extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{ sig} = 80%): #tau_{32} + #sqrt{d_{23}}"],
         #     y_max = 45,
         #     ))
 
 pt_bkg_rej_plots.append(make_pt_efficiency_plot(
             "smooth16WTag_50eff_MassJSSCut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%):", "m^{comb} + D_{2}"],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{ sig} = 50%):", "#it{m}^{comb} + #it{D}_{2}"],
             y_max = 175
             ))
 
 #pt_bkg_rej_plots.append(make_pt_efficiency_plot(
         #    "smooth16WTag_80eff_MassJSSCut",
-        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #it{D}_{2} + m_{comb}", "#epsilon_{ sig} = 80%" ],
         #    y_max = 35
         #    ))
 
 #pt_bkg_rej_plots.append(make_pt_efficiency_plot(
         #    "smooth16ZTag_50eff_MassJSSCut",
-        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 50%" ],
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #it{D}_{2} + m_{comb}", "#epsilon_{ sig} = 50%" ],
         #    y_max = 175
         #    ))
 
 #pt_bkg_rej_plots.append(make_pt_efficiency_plot(
         #    "smooth16ZTag_80eff_MassJSSCut",
-        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #it{D}_{2} + m_{comb}", "#epsilon_{ sig} = 80%" ],
         #    y_max = 35
         #    ))
 
 
 pt_bkg_rej_plots.append(make_pt_efficiency_plot(
             "BDT_Top",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): BDT" ],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{ sig} = 80%): BDT" ],
             y_max = 80,
             ))
 
 pt_bkg_rej_plots.append(make_pt_efficiency_plot(
             "BDT_W",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): BDT" ],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{ sig} = 50%): BDT" ],
             y_max = 200,
             ))
 
 pt_bkg_rej_plots.append(make_pt_efficiency_plot(
             "DNN_Top",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): DNN" ],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{ sig} = 80%): DNN" ],
             y_max = 75,
             ))
 
 pt_bkg_rej_plots.append(make_pt_efficiency_plot(
             "DNN_W",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): DNN" ],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{ sig} = 50%): DNN" ],
             y_max = 200,
             ))
 
 pt_bkg_rej_plots.append(make_pt_efficiency_plot(
             "TopoTag_Top_80_qqb",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): TopoDNN" ],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{ sig} = 80%): TopoDNN" ],
             y_max = 40,
             ))
 
@@ -391,61 +399,61 @@ pt_bkg_rej_plots.append(make_pt_efficiency_plot(
 mu_bkg_rej_plots = []
 #mu_bkg_rej_plots.append(make_mu_efficiency_plot(
         #    "smooth16Top_MassTau32Tag50eff_MassJSSCut",
-        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{sig} = 50%" ],
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + m_{comb}", "#epsilon_{ sig} = 50%" ],
         #    y_max = 100,
         #    ))
 
 mu_bkg_rej_plots.append(make_mu_efficiency_plot(
            "smooth16Top_MassTau32Tag80eff_MassJSSCut",
-           extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%):", "m^{comb} + #tau_{32}" ],
+           extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{ sig} = 80%):", "#it{m}^{comb} + #tau_{32}" ],
            y_max = 30,
            ))
 
 #mu_bkg_rej_plots.append(make_mu_efficiency_plot(
         #    "smooth16Top_QwTau32Tag50eff",
-        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{sig} = 50%" ],
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{ sig} = 50%" ],
         #    y_max = 100
         #    ))
 
 #mu_bkg_rej_plots.append(make_mu_efficiency_plot(
         #    "smooth16Top_QwTau32Tag80eff",
-        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{sig} = 80%" ],
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + Q_{w}", "#epsilon_{ sig} = 80%" ],
         #    y_max = 40,
         #    ))
 
 #mu_bkg_rej_plots.append(make_mu_efficiency_plot(
         #    "smooth16Top_Tau32Split23Tag50eff",
-        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + #sqrt{d_{23}}", "#epsilon_{sig} = 50%" ],
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #tau_{32} + #sqrt{d_{23}}", "#epsilon_{ sig} = 50%" ],
         #    y_max = 100,
         #    ))
 
 # mu_bkg_rej_plots.append(make_mu_efficiency_plot(
         #     "smooth16Top_Tau32Split23Tag80eff",
-        #     extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): #tau_{32} + #sqrt{d_{23}}"],
+        #     extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{ sig} = 80%): #tau_{32} + #sqrt{d_{23}}"],
         #     y_max = 45,
         #     ))
 
 mu_bkg_rej_plots.append(make_mu_efficiency_plot(
             "smooth16WTag_50eff_MassJSSCut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%):", "m^{comb} + D_{2}"],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{ sig} = 50%):", "#it{m}^{comb} + #it{D}_{2}"],
             y_max = 175
             ))
 
 #mu_bkg_rej_plots.append(make_mu_efficiency_plot(
         #    "smooth16WTag_80eff_MassJSSCut",
-        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #it{D}_{2} + m_{comb}", "#epsilon_{ sig} = 80%" ],
         #    y_max = 35
         #    ))
 
 #mu_bkg_rej_plots.append(make_mu_efficiency_plot(
         #    "smooth16ZTag_50eff_MassJSSCut",
-        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 50%" ],
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #it{D}_{2} + m_{comb}", "#epsilon_{ sig} = 50%" ],
         #    y_max = 175
         #    ))
 
 #mu_bkg_rej_plots.append(make_mu_efficiency_plot(
         #    "smooth16ZTag_80eff_MassJSSCut",
-        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: D_{2} + m_{comb}", "#epsilon_{sig} = 80%" ],
+        #    extra_legend_lines = DEF_EXTRA_LINES + [ "Smooth Tag: #it{D}_{2} + m_{comb}", "#epsilon_{ sig} = 80%" ],
         #    y_max = 35
         #    ))
 
@@ -453,31 +461,31 @@ mu_bkg_rej_plots.append(make_mu_efficiency_plot(
 
 mu_bkg_rej_plots.append(make_mu_efficiency_plot(
             "BDT_Top",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): BDT" ],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{ sig} = 80%): BDT" ],
             y_max = 80,
             ))
 
 mu_bkg_rej_plots.append(make_mu_efficiency_plot(
             "BDT_W",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): BDT" ],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{ sig} = 50%): BDT" ],
             y_max = 200,
             ))
 
 mu_bkg_rej_plots.append(make_mu_efficiency_plot(
             "DNN_Top",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): DNN" ],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{ sig} = 80%): DNN" ],
             y_max = 75,
             ))
 
 mu_bkg_rej_plots.append(make_mu_efficiency_plot(
             "DNN_W",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): DNN" ],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{ sig} = 50%): DNN" ],
             y_max = 200,
             ))
 
 mu_bkg_rej_plots.append(make_mu_efficiency_plot(
             "TopoTag_Top_80_qqb",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): TopoDNN" ],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{ sig} = 80%): TopoDNN" ],
             y_max = 50,
             # do_systematics = False,
             ))
@@ -511,27 +519,27 @@ DO_SYSTEMATICS_DEFAULT = SYSTEMATICS_MC15C_WEAK_NOINPUTS
 
 pt_bkg_rej_plots.append(make_pt_efficiency_plot(
             "SDt_dcut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): SD" ],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{ sig} = 80%): SD" ],
             y_max = 40,
             do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS,
             ))
 
 # pt_bkg_rej_plots.append(make_pt_efficiency_plot(
         #     "SDw_dcut",
-        #     extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{sig} = 50%): SD" ],
+        #     extra_legend_lines = DEF_EXTRA_LINES + [ "#font[52]{W} tagger (#epsilon_{ sig} = 50%): SD" ],
         #     y_max = 60,
         #     ))
         
 
 mu_bkg_rej_plots.append(make_mu_efficiency_plot(
             "SDt_dcut",
-            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{sig} = 80%): SD" ],
+            extra_legend_lines = DEF_EXTRA_LINES + [ "Top tagger (#epsilon_{ sig} = 80%): SD" ],
             y_max = 40,
             do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS,
             ))
 
 # mu_bkg_rej_plots.append(make_mu_efficiency_plot(
         #     "SDw_dcut",
-        #     extra_legend_lines = DEF_EXTRA_LINES + [ "ShD #font[52]{W}, #epsilon_{sig} = 50%" ],
+        #     extra_legend_lines = DEF_EXTRA_LINES + [ "ShD #font[52]{W}, #epsilon_{ sig} = 50%" ],
         #     y_max = 60,
         #     ))
