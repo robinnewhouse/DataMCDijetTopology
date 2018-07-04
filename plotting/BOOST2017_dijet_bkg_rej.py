@@ -138,7 +138,7 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         self.h_pythia_sys = self.hsys_pythia.get_histo_with_systematic_errs()
 
         self.determine_y_axis_title(self.h_data,
-            "Background rejection (1/#epsilon_{bkg})", show_binwidth = False)
+            "Background rejection (1/#it{#epsilon}_{ bkg})", show_binwidth = False)
 
         set_data_style_simple(self.h_data)
         set_mc_style_marker(self.h_pythia, kRed, shape = 21)

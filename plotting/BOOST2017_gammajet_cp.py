@@ -196,7 +196,7 @@ class PlotDataMcGammaJet(PlotBase):
           elif ("wz" in h.GetName()):
             self.leg.AddEntry(h    , "Sherpa #it{W}/#it{Z} + #gamma"  , "f")
           elif ("ttbar" in h.GetName()):
-            self.leg.AddEntry(h      , "MG t#bar{t} + #gamma" , "f")
+            self.leg.AddEntry(h      , "MG #it{t#bar{t}} + #gamma" , "f")
         self.leg.AddEntry(self.h_stat_ratio , "Stat. uncert.", "f")
         if (do_systematics):
             self.leg.AddEntry(self.h_sys_ratio , "Total uncert.", "f")

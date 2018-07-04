@@ -77,8 +77,8 @@ class PlotDataPythiaHerwig(PlotBase):
 
         print "###", var_name, "###"
         print "dijet: ", self.h_pythia_dijet.Integral()
-        print "#it{W}+jets: ", self.h_wjets.Integral()
-        print "#it{Z}+jets: ", self.h_zjets.Integral()
+        print "#it{W} + jets: ", self.h_wjets.Integral()
+        print "#it{Z} + jets: ", self.h_zjets.Integral()
         print "ttbar: ", self.h_ttbar.Integral()
 
         for h in [self.h_pythia_dijet, self.h_herwig_dijet]:
@@ -242,8 +242,8 @@ class PlotDataPythiaHerwig(PlotBase):
         self.leg.AddEntry(self.h_data, "Data 2015+2016")
         self.leg.AddEntry(self.h_pythia_dijet, "Pythia8 (#times " + '{0:.2f}'.format(self.pythia_dijet_SF) + ")", "f")
         self.leg.AddEntry(self.h_herwig_dijet, "Herwig++ (#times " + '{0:.2f}'.format(self.herwig_dijet_SF) + ")", "f")
-        self.leg.AddEntry(h_wjets_mag, "#it{W}+jets", "f")
-        self.leg.AddEntry(h_zjets_mag, "#it{Z}+jets", "f")
+        self.leg.AddEntry(h_wjets_mag, "#it{W} + jets", "f")
+        self.leg.AddEntry(h_zjets_mag, "#it{Z} + jets", "f")
         self.leg.AddEntry(h_ttbar_mag, "all-had t#bar{t}", "f")
         self.leg.AddEntry(self.h_pythia_stat_ratio, "Stat. uncert.", "f")
         if (self.hsys_pythia.num_systematics != 0):

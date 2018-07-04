@@ -145,7 +145,7 @@ class PlotGammaJetBkgRej(PlotBase):
         set_mc_sys_err_style(self.h_pythia_sys)
         set_mc_sys_err_style(self.h_sherpa_sys)
 
-        self.determine_y_axis_title(self.h_data, "Background rejection (1/#epsilon_{ bkg})", show_binwidth = False)
+        self.determine_y_axis_title(self.h_data, "Background rejection (1/#it{#epsilon}_{ bkg})", show_binwidth = False)
 
         set_data_style_simple(self.h_data)
         set_mc_style_marker(self.h_pythia, kRed, shape = 21, marker_size = 1.0, line_width = 1)
