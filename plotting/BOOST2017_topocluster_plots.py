@@ -214,6 +214,7 @@ class PlotTopoclustersMean(PlotBase):
             h_mean.GetXaxis().SetLabelSize(20.0)
             h_mean.GetYaxis().SetLabelSize(20.0)
             h_mean.GetYaxis().SetTitleOffset(1.4)
+            h_mean.GetXaxis().SetNdivisions(10,True)
 
             h_mean.Draw("hist,same")
             h_mean.Draw("e1,same")
