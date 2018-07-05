@@ -35,9 +35,9 @@ make_dir(OUTPUT_DIR)
 
 DEF_LINES = [ "#scale[0.9]{Trimmed anti-#it{k_{t}} #it{R}=1.0}", 
               "#scale[0.9]{Light Quark Jet Sample :}" , 
-              "#scale[0.9]{   p_{T} > 450 GeV}", 
+              "#scale[0.9]{   #it{p}_{T} > 450 GeV}", 
               "#scale[0.9]{Top Quark Jet Sample:}" , 
-              "#scale[0.9]{   p_{T} > 150 GeV}", 
+              "#scale[0.9]{   #it{p}_{T} > 150 GeV}", 
               ]
 MASS_PLOT_REBIN = 8
 
@@ -48,12 +48,12 @@ class PlotTopoclusters(PlotBase):
     def __init__(self, **kwargs):
 
         super(PlotTopoclusters, self).__init__(
-            atlas_loc = [0.21,0.8],
+            atlas_loc = [0.21,0.89],
             hide_lumi = True,
             extra_legend_lines = DEF_LINES,
-            extra_lines_loc = [0.61,0.60],
+            extra_lines_loc = [0.61,0.65],
             #               x1   y1   x2   y2
-            legend_loc = [0.60,0.915,0.89,0.63],
+            legend_loc = [0.60,0.850,1.15,0.69],
             atlas_mod = "Simulation Internal",
             # tex_size_mod = 0.9,
             height = 600,
@@ -82,7 +82,7 @@ class PlotTopoclusters(PlotBase):
             if bkg: h_bkg = self.h_topo_pt_bkg[i]
             if sig: h_sig = self.h_topo_pt_sig[i]
             if bkg: 
-                h_bkg.GetXaxis().SetTitle("p_{T} fraction of cluster")
+                h_bkg.GetXaxis().SetTitle("#it{p}_{T} fraction of cluster")
                 h_bkg.GetYaxis().SetTitle("Normalized units")
                 h_bkg.GetXaxis().SetTitleSize(21.0) # percent
                 h_bkg.GetYaxis().SetTitleSize(21.0)
@@ -98,16 +98,26 @@ class PlotTopoclusters(PlotBase):
             if bkg: h_bkg.Draw("hist,same")
             if sig: h_sig.Draw("hist,same")
 
+
+        self.leg.SetColumnSeparation(0.0)
+        self.leg.SetEntrySeparation(0.0) 
+        self.leg.SetNColumns(2)
+        # self.leg.AddEntry("")
+        # self.leg.AddEntry(" Pythia8 multijet" )
+        # self.leg.AddEntry(" Pythia8 Z'")
+
         for i in CLUSTER_INDEX:
-            if bkg: self.leg.AddEntry(self.h_topo_pt_bkg[i], "Cluster " +str(i) + (" Pythia8 multijet"  if i==0 else ""))
-        for i in CLUSTER_INDEX:
-            if sig: self.leg.AddEntry(self.h_topo_pt_sig[i], "Cluster " +str(i) + (" Pythia8 Z'" if i==0 else ""))
+            # self.leg.AddEntry("Cluster " +str(i),"","l")
+            if bkg: self.leg.AddEntry( self.h_topo_pt_bkg[i], "\~","l")
+            if sig: self.leg.AddEntry(self.h_topo_pt_sig[i], "#scale[0.85]{ Cluster " +str(i)+"}" ,"l")
+
+
+        draw_sample_names()
 
         # Sample info
         bkg_sample_tex = TLatex(0.02, 0.14, "test");
         sig_sample_tex = TLatex(0.02, 0.15, "mc15_13TeV.301334.Pythia8EvtGen_A14NNPDF23LO_zprime4000_tt");
        
-        # draw_sample_names()
 
 
 
@@ -136,7 +146,7 @@ class PlotTopoclustersMean(PlotBase):
         super(PlotTopoclustersMean, self).__init__(
             atlas_loc = [0.2,0.25],
             hide_lumi = True,
-            extra_legend_lines = DEF_LINES + ["#scale[0.9]{Errors represent RMS}","#scale[0.9]{       of p_{T} fraction dist.}"],
+            extra_legend_lines = DEF_LINES + ["#scale[0.9]{Errors represent RMS}","#scale[0.9]{       of #it{p}_{T} fraction dist.}"],
             extra_lines_loc = [0.61,0.80],
             #               x1   y1   x2   y2
             legend_loc = [0.60,0.915,0.83,0.83],
@@ -197,8 +207,8 @@ class PlotTopoclustersMean(PlotBase):
         self.canvas.Clear()
         
         for h_mean in [h_bkg_mean, h_sig_mean]:
-            h_mean.GetYaxis().SetTitle("#LTp_{T}#GT fraction of cluster")
-            h_mean.GetXaxis().SetTitle("Leading trimmed large-#it{R} jet cluster index (p_{T} sorted)")
+            h_mean.GetYaxis().SetTitle("#LT#it{p}_{T}#GT fraction of cluster")
+            h_mean.GetXaxis().SetTitle("Leading trimmed large-#it{R} jet cluster index (#it{p}_{T} sorted)")
             h_mean.GetXaxis().SetTitleSize(21.0) # percent
             h_mean.GetYaxis().SetTitleSize(21.0) 
             h_mean.GetXaxis().SetLabelSize(20.0)
@@ -208,13 +218,12 @@ class PlotTopoclustersMean(PlotBase):
             h_mean.Draw("hist,same")
             h_mean.Draw("e1,same")
         
-        # draw_sample_names()
 
         self.name = "topocluster_mean_pt"
         self.canvas.Update()
         self.canvas.Modified()
         self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
-        # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
+        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
         # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".png")
 
         self.name = "topocluster_mean_log_pt"
@@ -225,7 +234,7 @@ class PlotTopoclustersMean(PlotBase):
         self.canvas.Update()
         self.canvas.Modified()
         self.print_to_file(OUTPUT_DIR + "/" + self.name + ".pdf")
-        # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
+        self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
         # self.print_to_file(OUTPUT_DIR + "/" + self.name + ".png")
         self.canvas.Clear()
 
@@ -234,12 +243,19 @@ class PlotTopoclustersMean(PlotBase):
 def draw_sample_names():
     saple_label = TText();
     saple_label.SetNDC();
-    saple_label.SetTextFont(1);
-    saple_label.SetTextSize(0.03);
+    saple_label.SetTextFont(42);
     saple_label.SetTextAngle(0);
+    saple_label.SetTextSize(0.03);
     saple_label.SetTextColor(1);
-    saple_label.DrawText(0.02, 0.05, "Multijet: 361025.Pythia8EvtGen_A14NNPDF23LO_jetjet_JZ5W");
-    saple_label.DrawText(0.02, 0.012, "Z': 301334.Pythia8EvtGen_A14NNPDF23LO_zprime4000_tt");
+    y = 0.86
+    x = 0.61
+
+    saple_label.DrawText(x,y+.033, "Pythia 8");
+    saple_label.DrawText(x+.125,y+.033, "Pythia 8");
+    saple_label.DrawText(x,y, "Multijet");
+    saple_label.DrawText(x+.125,y, "Z'");
+
+
 
 def get_background_histograms():
     tmp_loader = LOADER
