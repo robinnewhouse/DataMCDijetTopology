@@ -226,7 +226,7 @@ SEL_LINE = [ "#gamma + jet selection" ]
 W_PT_LINE = ["#it{p}_{T} > 200 GeV"]
 TOP_PT_LINE = ["#it{p}_{T} > 350 GeV"]
 TOPOTAGGER_PT_LINE = ["#it{p}_{T} > 450 GeV"]
-DEF_LINES = SEL_LINE + [ "Trimmed anti-#it{k}_{t} #it{R}=1.0" ]
+DEF_LINES = SEL_LINE + [ "Trimmed anti-#it{k}_{t} #it{R}=1.0 jets" ]
 HTT_LINES = SEL_LINE + [ "Trimmed C/A #it{R}=1.5" ] + W_PT_LINE
 MASS_PLOT_REBIN = 5
 

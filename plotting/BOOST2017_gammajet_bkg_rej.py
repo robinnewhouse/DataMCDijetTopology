@@ -271,7 +271,7 @@ class PlotGammaJetBkgRej(PlotBase):
         self.canvas.Clear()
         print
 
-DEF_EXTRA_LINES = ["Trimmed anti-#it{k}_{t} #it{R}=1.0", "#gamma + jet selection"]
+DEF_EXTRA_LINES = ["Trimmed anti-#it{k}_{t} #it{R}=1.0 jets", "#gamma + jet selection"]
 HTT_EXTRA_LINES = ["Trimmed C/A #it{R}=1.5", "#gamma + jet selection"]
 
 def make_pt_rej_plot( tag_name, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwargs):

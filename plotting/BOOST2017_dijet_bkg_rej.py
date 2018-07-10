@@ -251,7 +251,7 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
         self.canvas.Clear()
 
-DEF_EXTRA_LINES = [ "Trimmed anti-#it{k}_{t} #it{R}=1.0", "Multijet Selection" ]
+DEF_EXTRA_LINES = [ "Trimmed anti-#it{k}_{t} #it{R}=1.0 jets", "Multijet Selection" ]
 HTT_EXTRA_LINES = ["Trimmed C/A #it{R}=1.5", "Dijet Selection"]
 
 def make_pt_efficiency_plot( tag_name, ref_tag_name = None, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwargs):

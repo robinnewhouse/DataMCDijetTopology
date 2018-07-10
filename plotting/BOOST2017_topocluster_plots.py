@@ -33,11 +33,11 @@ OUTPUT_DIR = ROOT_OUTPUT_DIR
 make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
 
-DEF_LINES = [ "#scale[0.9]{Trimmed anti-#it{k_{t}} #it{R}=1.0}", 
-              "#scale[0.9]{Light Quark Jet Sample :}" , 
-              "#scale[0.9]{   #it{p}_{T} > 450 GeV}", 
-              "#scale[0.9]{Top Quark Jet Sample:}" , 
-              "#scale[0.9]{   #it{p}_{T} > 150 GeV}", 
+DEF_LINES = [ "#scale[0.85]{Trimmed anti-#it{k}_{t} #it{R}=1.0 jets} ", 
+              "#scale[0.85]{Light Quark Jet Sample :}" , 
+              "#scale[0.85]{   #it{p}_{T} > 450 GeV}", 
+              "#scale[0.85]{Top Quark Jet Sample:}" , 
+              "#scale[0.85]{   #it{p}_{T} > 150 GeV}", 
               ]
 MASS_PLOT_REBIN = 8
 

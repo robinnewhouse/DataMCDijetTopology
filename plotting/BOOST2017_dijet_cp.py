@@ -29,7 +29,7 @@ OUTPUT_DIR = ROOT_OUTPUT_DIR + "/control"
 make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
 
-DEF_LINES = ["Multijet Selection", "Trimmed anti-#it{k}_{t} #it{R}=1.0", "#it{p}_{T} > 450 GeV"]
+DEF_LINES = ["Multijet Selection", "Trimmed anti-#it{k}_{t} #it{R}=1.0 jets", "#it{p}_{T} > 450 GeV"]
 HTT_DEF_LINES = ["Multijet Selection", "Trimmed C/A #it{R}=1.5", "#it{p}_{T} > 450 GeV"]
 MASS_PLOT_REBIN = 8
 
@@ -605,7 +605,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_htt_caGroomJet0_pt_HTT_CAND",
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_pt_comb",
         empty_scale = 6,
-        extra_legend_lines = ["Multijet Selection", "Trimmed anti-#it{k}_{t} #it{R}=1.0"],
+        extra_legend_lines = ["Multijet Selection", "Trimmed anti-#it{k}_{t} #it{R}=1.0 jets"],
         x_min = 450,
         x_max = 4000,
         log_scale = True,
@@ -677,7 +677,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_topTag_TopoTagger_score_mva
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_pt_comb_" + "smooth16WTag_50eff_MassJSSCut",
         empty_scale = 10,
-        extra_legend_lines = ["Multijet Selection", "Trimmed anti-#it{k}_{t} #it{R}=1.0"] + ["#it{m}^{comb} + #it{D}_{2} (#it{#epsilon}_{sig} = 50%)", "#it{W} tag pass"],
+        extra_legend_lines = ["Multijet Selection", "Trimmed anti-#it{k}_{t} #it{R}=1.0 jets"] + ["#it{m}^{comb} + #it{D}_{2} (#it{#epsilon}_{sig} = 50%)", "#it{W} tag pass"],
         log_scale = True,
         x_min = 450,
         x_max = 4000,
@@ -689,7 +689,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_pt_comb_" + "smooth16WTag_5
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_pt_comb_" + "BDT_W",
         empty_scale = 10,
-        extra_legend_lines = ["Multijet Selection", "Trimmed anti-#it{k}_{t} #it{R}=1.0"] + ["BDT #it{W} (#it{#epsilon}_{sig} = 50%)", "#it{W} tag pass"],
+        extra_legend_lines = ["Multijet Selection", "Trimmed anti-#it{k}_{t} #it{R}=1.0 jets"] + ["BDT #it{W} (#it{#epsilon}_{sig} = 50%)", "#it{W} tag pass"],
         log_scale = True,
         x_min = 450,
         x_max = 4000,
@@ -701,7 +701,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_pt_comb_" + "BDT_W",
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_rljet0_pt_comb_" + "smooth16Top_MassTau32Tag80eff_JSSCut",
         empty_scale = 7,
-        extra_legend_lines = ["Multijet Selection", "Trimmed anti-#it{k}_{t} #it{R}=1.0"] + ["#it{m}^{comb} + #tau_{32} (#it{#epsilon}_{sig} = 80%)", "top tag pass"],
+        extra_legend_lines = ["Multijet Selection", "Trimmed anti-#it{k}_{t} #it{R}=1.0 jets"] + ["#it{m}^{comb} + #tau_{32} (#it{#epsilon}_{sig} = 80%)", "top tag pass"],
         log_scale = True,
         y_min = 10,
         x_min = 450,
