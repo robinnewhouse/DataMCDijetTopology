@@ -294,7 +294,7 @@ def make_mu_efficiency_plot( tag_name, ref_tag_name = None, do_systematics = DO_
             tex_spacing_mod = 0.8,
             lumi_val = "36.7",
             atlas_mod = "Internal",
-            legend_loc = [0.60,0.93,0.91,0.75],
+            legend_loc = [0.62,0.93,0.89,0.75],
             x_title = "#mu",
             x_min = 0,
             x_max = MU_BIN_BOUNDS[-1],
