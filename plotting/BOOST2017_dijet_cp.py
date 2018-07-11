@@ -30,7 +30,7 @@ make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
 
 DEF_LINES = ["Multijet Selection", "Trimmed anti-#it{k}_{t} #it{R}=1.0 jets", "#it{p}_{T} > 450 GeV"]
-HTT_DEF_LINES = ["Multijet Selection", "Trimmed C/A #it{R}=1.5", "#it{p}_{T} > 450 GeV"]
+HTT_DEF_LINES = ["Multijet Selection", "Trimmed C/A #it{R}=1.5 jets", "#it{p}_{T} > 450 GeV"]
 MASS_PLOT_REBIN = 8
 
 LABEL_SIZE = 23
@@ -46,8 +46,8 @@ class PlotDataPythiaHerwig(PlotBase):
                 name = var_name,
                 atlas_mod = "Internal",
                 legend_loc = [0.20,0.93,0.56,0.66] if flip_legend else [0.53,0.93,0.90,0.66],
-                atlas_loc = [0.6,0.9] if flip_legend else None,
-                extra_lines_loc = [0.6,0.82] if flip_legend else None,
+                atlas_loc = [0.55,0.9] if flip_legend else None,
+                extra_lines_loc = [0.55,0.82] if flip_legend else None,
                 tex_size_mod = 0.9,
                 tex_spacing_mod = 0.80,
                 x_title = get_axis_title(var_name),
@@ -239,7 +239,7 @@ class PlotDataPythiaHerwig(PlotBase):
         self.pad1.RedrawAxis()
 
         self.canvas.cd()
-        self.leg.AddEntry(self.h_data, "Data 2015+2016")
+        self.leg.AddEntry(self.h_data, "Data 2015+2016","ep")
         self.leg.AddEntry(self.h_pythia_dijet, "Pythia8 (#times " + '{0:.2f}'.format(self.pythia_dijet_SF) + ")", "f")
         self.leg.AddEntry(self.h_herwig_dijet, "Herwig++ (#times " + '{0:.2f}'.format(self.herwig_dijet_SF) + ")", "f")
         self.leg.AddEntry(h_wjets_mag, "#it{W} + jets", "f")
@@ -581,7 +581,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_htt_caGroomJet0_m_HTT_CAND",
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_htt_caGroomJet0_pt",
         empty_scale = 4,
-        extra_legend_lines = ["Multijet Selection", "Trimmed C/A #it{R}=1.5"],
+        extra_legend_lines = ["Multijet Selection", "Trimmed C/A #it{R}=1.5 jets"],
         x_min = 450,
         x_max = 3000,
         log_scale = True,
@@ -593,7 +593,7 @@ data_mc_plots.append(PlotDataPythiaHerwig( "h_htt_caGroomJet0_pt",
 
 data_mc_plots.append(PlotDataPythiaHerwig( "h_htt_caGroomJet0_pt_HTT_CAND",
         empty_scale = 6,
-        extra_legend_lines = ["Multijet Selection", "Trimmed C/A #it{R}=1.5"] + ["HTT-Tagged"],
+        extra_legend_lines = ["Multijet Selection", "Trimmed C/A #it{R}=1.5 jets"] + ["HTT-Tagged"],
         x_min = 450,
         x_max = 3000,
         log_scale = True,

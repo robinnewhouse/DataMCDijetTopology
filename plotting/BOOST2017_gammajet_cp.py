@@ -37,9 +37,9 @@ class PlotDataMcGammaJet(PlotBase):
                 width = 600,
                 name = var_name,
                 atlas_mod = "Internal",
-                legend_loc = [0.20,0.93,0.56,0.70] if flip_legend else [0.59,0.93,0.89,0.70],
-                atlas_loc = [0.6,0.9] if flip_legend else None,
-                extra_lines_loc = [0.6,0.82] if flip_legend else None,
+                legend_loc = [0.20,0.93,0.56,0.70] if flip_legend else [0.59,0.93,0.86,0.70],
+                atlas_loc = [0.55,0.9] if flip_legend else None,
+                extra_lines_loc = [0.55,0.82] if flip_legend else None,
                 tex_size_mod = 0.95,
                 tex_spacing_mod = 0.80,
                 x_title = get_axis_title(var_name),
@@ -183,7 +183,7 @@ class PlotDataMcGammaJet(PlotBase):
         self.pad1.RedrawAxis()
 
         self.canvas.cd()
-        self.leg.AddEntry(self.h_data       , "Data 2015+2016")
+        self.leg.AddEntry(self.h_data       , "Data 2015+2016","ep")
         self.leg.AddEntry(self.h_gamma_sherpa, "Sherpa (#times " + '{0:.2f}'.format(self.gamma_sherpa_SF) + ")", "f")
         self.leg.AddEntry(self.h_gamma_pythia, "Pythia8 (#times " + '{0:.2f}'.format(self.gamma_pythia_SF) + ")", "f")
 
@@ -227,7 +227,7 @@ W_PT_LINE = ["#it{p}_{T} > 200 GeV"]
 TOP_PT_LINE = ["#it{p}_{T} > 350 GeV"]
 TOPOTAGGER_PT_LINE = ["#it{p}_{T} > 450 GeV"]
 DEF_LINES = SEL_LINE + [ "Trimmed anti-#it{k}_{t} #it{R}=1.0 jets" ]
-HTT_LINES = SEL_LINE + [ "Trimmed C/A #it{R}=1.5" ] + W_PT_LINE
+HTT_LINES = SEL_LINE + [ "Trimmed C/A #it{R}=1.5 jets" ] + W_PT_LINE
 MASS_PLOT_REBIN = 5
 
 data_mc_plots = []
@@ -248,6 +248,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "smooth16Top_MassT
         x_min = 0,
         x_max = 350,
         y_min = 1,
+        y_max = 11e9,
         log_scale = True,
         rebin = MASS_PLOT_REBIN + 4,
         suffix = "_fullrange"
@@ -278,6 +279,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "BDT_Top",
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 50,
         x_max = 350,
+        y_max = 1050,
         rebin = MASS_PLOT_REBIN,
         ))
 
@@ -287,6 +289,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "BDT_Top",
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 0,
         x_max = 350,
+        y_max = 1050,
         rebin = MASS_PLOT_REBIN,
         suffix = "_fullrange"
         ))
@@ -297,6 +300,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "BDT_W",
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 0,
         x_max = 350,
+        y_max = 14e3,
         rebin = MASS_PLOT_REBIN,
         suffix = "_unzoomed"
         ))
@@ -307,6 +311,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "BDT_W",
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 50,
         x_max = 150,
+        y_max = 14e3,
         rebin = MASS_PLOT_REBIN,
         ))
 
@@ -337,6 +342,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "DNN_W",
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 0,
         x_max = 350,
+        y_max = 14e3,
         rebin = MASS_PLOT_REBIN,
         suffix = "_unzoomed"
         ))
@@ -358,6 +364,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "TopoTag_Top_80_qq
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 50,
         x_max = 350,
+        y_max = 700,
         rebin = MASS_PLOT_REBIN,
         ))
 
@@ -367,6 +374,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_rljet0_m_comb_" + "TopoTag_Top_80_qq
         do_systematics = SYSTEMATICS_MC15C_WEAK_NOINPUTS_GAMMAJET,
         x_min = 0,
         x_max = 350,
+        y_max = 700,
         rebin = MASS_PLOT_REBIN,
         suffix = "_fullrange"
         ))
@@ -482,7 +490,7 @@ for masstag in ["combMgt100GeV"]:
     data_mc_plots.append(PlotDataMcGammaJet(
               "h_rljet0_Tau32_wta" if not masstag else "h_rljet0_Tau32_wta_" + masstag,
               empty_scale = 2.0,
-              flip_legend = True,
+              # flip_legend = True,
               extra_legend_lines = DEF_LINES + TOP_PT_LINE + ["#it{m}^{comb} > 100 GeV"],
               x_units = "",
               x_min = 0.01,
@@ -574,7 +582,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt0_m_pt450",
         empty_scale = 2.35,
         x_min = 50,
         x_max = 250,
-        extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5" ] + ["#it{p}_{T} > 450 GeV"] + ["HTT-tagged"],
+        extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5 jets" ] + ["#it{p}_{T} > 450 GeV"] + ["HTT-tagged"],
         rebin = 4,
         do_systematics=False,
         ))
@@ -584,7 +592,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_m",
         log_scale = True,
         x_min = 50,
         x_max = 350,
-        extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5" ] + W_PT_LINE,
+        extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5 jets" ] + W_PT_LINE,
         rebin = 10,
         do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
         ))
@@ -594,7 +602,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_m",
         log_scale = True,
         x_min = 0,
         x_max = 350,
-        extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5" ] + W_PT_LINE,
+        extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5 jets" ] + W_PT_LINE,
         rebin = 10,
         do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
         suffix = "_fullrange"
@@ -626,7 +634,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_pt",
         log_scale = True,
         x_min = 200,
         x_max = 3000,
-        extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5" ],
+        extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5 jets" ],
         rebin = 4,
         do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
         ))
@@ -636,7 +644,7 @@ data_mc_plots.append(PlotDataMcGammaJet( "h_htt_caGroomJet0_pt_HTT_CAND",
         log_scale = True,
         x_min = 200,
         x_max = 2500,
-        extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5" ] + ["HTT-tagged"],
+        extra_legend_lines = SEL_LINE + [ "Trimmed C/A #it{R}=1.5 jets" ] + ["HTT-tagged"],
         rebin = 4,
         do_systematics=SYSTEMATICS_MC15C_CAJET_GAMMAJET,
         ))

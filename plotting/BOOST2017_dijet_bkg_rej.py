@@ -227,9 +227,9 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         self.pad1.RedrawAxis()
 
         self.canvas.cd()
-        self.leg.AddEntry(self.h_data, "Data 2015+2016")
-        self.leg.AddEntry(self.h_pythia, "Pythia8")
-        self.leg.AddEntry(self.h_herwig, "Herwig++")
+        self.leg.AddEntry(self.h_data, "Data 2015+2016","ple")
+        self.leg.AddEntry(self.h_pythia, "Pythia8","ple")
+        self.leg.AddEntry(self.h_herwig, "Herwig++","ple")
         self.leg.AddEntry(self.h_pythia_stat_ratio, "Stat. uncert.", "f")
         if (self.hsys_pythia.num_systematics != 0):
           self.leg.AddEntry(self.h_pythia_sys, "Total uncert.", "f")
@@ -252,7 +252,7 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         self.canvas.Clear()
 
 DEF_EXTRA_LINES = [ "Trimmed anti-#it{k}_{t} #it{R}=1.0 jets", "Multijet Selection" ]
-HTT_EXTRA_LINES = ["Trimmed C/A #it{R}=1.5", "Dijet Selection"]
+HTT_EXTRA_LINES = ["Trimmed C/A #it{R}=1.5 jets", "Dijet Selection"]
 
 def make_pt_efficiency_plot( tag_name, ref_tag_name = None, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwargs):
 

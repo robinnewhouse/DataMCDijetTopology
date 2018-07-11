@@ -245,9 +245,9 @@ class PlotGammaJetBkgRej(PlotBase):
         self.pad1.RedrawAxis()
 
         self.canvas.cd()
-        self.leg.AddEntry(self.h_data, "Data 2015+2016")
-        self.leg.AddEntry(self.h_sherpa, "Sherpa")
-        self.leg.AddEntry(self.h_pythia, "Pythia8")
+        self.leg.AddEntry(self.h_data, "Data 2015+2016","ple")
+        self.leg.AddEntry(self.h_sherpa, "Sherpa","ple")
+        self.leg.AddEntry(self.h_pythia, "Pythia8","ple")
         self.leg.AddEntry(self.h_sherpa_stat_ratio, "Stat. uncert.", "f")
         if (self.hsys_sherpa.num_systematics != 0):
             self.leg.AddEntry(self.h_sherpa_sys_ratio, "Total uncert.", "f")
@@ -272,7 +272,7 @@ class PlotGammaJetBkgRej(PlotBase):
         print
 
 DEF_EXTRA_LINES = ["Trimmed anti-#it{k}_{t} #it{R}=1.0 jets", "#gamma + jet selection"]
-HTT_EXTRA_LINES = ["Trimmed C/A #it{R}=1.5", "#gamma + jet selection"]
+HTT_EXTRA_LINES = ["Trimmed C/A #it{R}=1.5 jets", "#gamma + jet selection"]
 
 def make_pt_rej_plot( tag_name, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwargs):
 
