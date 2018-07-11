@@ -270,7 +270,7 @@ def make_pt_efficiency_plot( tag_name, ref_tag_name = None, do_systematics = DO_
             tex_spacing_mod = 0.8,
             lumi_val = "36.7",
             atlas_mod = "Internal",
-            legend_loc = [0.60,0.93,0.91,0.75],
+            legend_loc = [0.62,0.93,0.89,0.75],
             x_title = "Leading large-#it{R} Jet #it{p}_{T}",
             x_min = 450,
             x_max = PT_BIN_BOUNDS[-1],
