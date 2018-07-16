@@ -203,7 +203,8 @@ class PlotTopoclustersMean(PlotBase):
         # set_mc_style_line(h_mean, kGreen-2, line_width = 4)
         set_mc_style_line(h_bkg_mean, kViolet -7, line_width = 4, alpha = 1.0)
         set_mc_style_line(h_sig_mean, kGreen -2, line_width = 4, alpha = 0.8)
-        
+        h_sig_mean.GetXaxis().SetLimits(-0.4, 9.6)
+
         self.canvas.Clear()
         
         for h_mean in [h_bkg_mean, h_sig_mean]:
@@ -216,7 +217,6 @@ class PlotTopoclustersMean(PlotBase):
             h_mean.GetYaxis().SetTitleOffset(1.4)
             h_mean.GetXaxis().SetNdivisions(10,True)
 
-            h_mean.Draw("hist,same")
             h_mean.Draw("e1,same")
         
 
