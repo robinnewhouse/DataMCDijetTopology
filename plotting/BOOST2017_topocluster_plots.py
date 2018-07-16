@@ -55,7 +55,7 @@ class PlotTopoclusters(PlotBase):
             #               x1   y1   x2   y2
             legend_loc = [0.60,0.850,1.15,0.69],
             atlas_mod = "Simulation Internal",
-            # tex_size_mod = 0.9,
+            tex_size_mod = 0.9,
             height = 600,
             width = 600,
             **kwargs)
@@ -97,6 +97,7 @@ class PlotTopoclusters(PlotBase):
             if sig: set_mc_style_line(h_sig, colors[i], line_width = 4, line_style = 2, alpha = 0.7)
             if bkg: h_bkg.Draw("hist,same")
             if sig: h_sig.Draw("hist,same")
+            gPad.RedrawAxis()
 
 
         self.leg.SetColumnSeparation(0.0)
@@ -110,6 +111,15 @@ class PlotTopoclusters(PlotBase):
             # self.leg.AddEntry("Cluster " +str(i),"","l")
             if bkg: self.leg.AddEntry( self.h_topo_pt_bkg[i], "\~","l")
             if sig: self.leg.AddEntry(self.h_topo_pt_sig[i], "#scale[0.85]{ Cluster " +str(i)+"}" ,"l")
+
+        # ugly hack to get rid of horizontal red line of 9th cluster at top of
+        # plot -- basically draw a white thick line over it and then redraw
+        # pad axes
+        l = TLine(0., 0.16, 0.0167, 0.16)
+        l.SetLineColor(0)
+        l.SetLineWidth(5)
+        l.Draw()
+        gPad.RedrawAxis()
 
 
         draw_sample_names()
@@ -151,7 +161,7 @@ class PlotTopoclustersMean(PlotBase):
             #               x1   y1   x2   y2
             legend_loc = [0.60,0.915,0.83,0.83],
             atlas_mod = "Simulation Internal",
-            tex_size_mod    = 0.9,
+            tex_size_mod    = 0.9, # FIXME temporary, because Preliminary was too long to fit in without overlaps
             tex_spacing_mod    = 0.9,
             height = 600,
             width = 600,
