@@ -13,7 +13,7 @@ from plot_util import *
 from plot_dmd import *
 from plot_loader import *
 from plot_systematics import *
-from ROOT import TH1F, TText
+from ROOT import TH1F, TText, gPad, TLine
 
 gROOT.SetBatch()
 sane_defaults()
@@ -109,7 +109,7 @@ class PlotTopoclusters(PlotBase):
 
         for i in CLUSTER_INDEX:
             # self.leg.AddEntry("Cluster " +str(i),"","l")
-            if bkg: self.leg.AddEntry( self.h_topo_pt_bkg[i], "\~","l")
+            if bkg: self.leg.AddEntry( self.h_topo_pt_bkg[i], " ","l")
             if sig: self.leg.AddEntry(self.h_topo_pt_sig[i], "#scale[0.85]{ Cluster " +str(i)+"}" ,"l")
 
         # ugly hack to get rid of horizontal red line of 9th cluster at top of
