@@ -251,8 +251,8 @@ class PlotDataPythiaHerwigEfficiency(PlotBase):
         self.print_to_file(OUTPUT_DIR + "/" + self.name + ".eps")
         self.canvas.Clear()
 
-DEF_EXTRA_LINES = [ "Trimmed anti-#it{k}_{t} #it{R}=1.0 jets", "Multijet Selection" ]
-HTT_EXTRA_LINES = ["Trimmed C/A #it{R}=1.5 jets", "Dijet Selection"]
+DEF_EXTRA_LINES = [ "Trimmed anti-#it{k}_{t} #it{R}=1.0 jets", "Multijet selection" ]
+HTT_EXTRA_LINES = ["Trimmed C/A #it{R}=1.5 jets", "Multijet selection"]
 
 def make_pt_efficiency_plot( tag_name, ref_tag_name = None, do_systematics = DO_SYSTEMATICS_DEFAULT, **kwargs):
 
@@ -269,7 +269,7 @@ def make_pt_efficiency_plot( tag_name, ref_tag_name = None, do_systematics = DO_
             tex_size_mod = 0.9,
             tex_spacing_mod = 0.8,
             lumi_val = "36.7",
-            atlas_mod = "Internal",
+            atlas_mod = "",
             legend_loc = [0.62,0.93,0.89,0.75],
             x_title = "Leading large-#it{R} Jet #it{p}_{T}",
             x_min = 450,
@@ -293,7 +293,7 @@ def make_mu_efficiency_plot( tag_name, ref_tag_name = None, do_systematics = DO_
             tex_size_mod = 0.9,
             tex_spacing_mod = 0.8,
             lumi_val = "36.7",
-            atlas_mod = "Internal",
+            atlas_mod = "",
             legend_loc = [0.62,0.93,0.89,0.75],
             x_title = "#mu",
             x_min = 0,

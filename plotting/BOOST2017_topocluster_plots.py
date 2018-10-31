@@ -54,7 +54,7 @@ class PlotTopoclusters(PlotBase):
             extra_lines_loc = [0.61,0.65],
             #               x1   y1   x2   y2
             legend_loc = [0.60,0.850,1.15,0.69],
-            atlas_mod = "Simulation Internal",
+            atlas_mod = "Simulation",
             tex_size_mod = 0.9,
             height = 600,
             width = 600,
