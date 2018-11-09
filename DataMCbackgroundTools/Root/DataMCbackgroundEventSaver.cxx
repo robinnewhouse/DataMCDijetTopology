@@ -358,8 +358,18 @@ void DataMCbackgroundEventSaver::initialize(std::shared_ptr<top::TopConfig> conf
             systematicTree->makeOutputVariable(m_rljet_fractional_pt_7     , "rljet_fractional_pt_7");
             systematicTree->makeOutputVariable(m_rljet_fractional_pt_8     , "rljet_fractional_pt_8");
             systematicTree->makeOutputVariable(m_rljet_fractional_pt_9     , "rljet_fractional_pt_9");
-
-
+            systematicTree->makeOutputVariable(m_rljet_fractional_pt_10    , "rljet_fractional_pt_10");
+            systematicTree->makeOutputVariable(m_rljet_fractional_pt_11    , "rljet_fractional_pt_11");
+            systematicTree->makeOutputVariable(m_rljet_fractional_pt_12    , "rljet_fractional_pt_12");
+            systematicTree->makeOutputVariable(m_rljet_fractional_pt_13    , "rljet_fractional_pt_13");
+            systematicTree->makeOutputVariable(m_rljet_fractional_pt_14    , "rljet_fractional_pt_14");
+            systematicTree->makeOutputVariable(m_rljet_fractional_pt_15    , "rljet_fractional_pt_15");
+            systematicTree->makeOutputVariable(m_rljet_fractional_pt_16    , "rljet_fractional_pt_16");
+            systematicTree->makeOutputVariable(m_rljet_fractional_pt_17    , "rljet_fractional_pt_17");
+            systematicTree->makeOutputVariable(m_rljet_fractional_pt_18    , "rljet_fractional_pt_18");
+            systematicTree->makeOutputVariable(m_rljet_fractional_pt_19    , "rljet_fractional_pt_19");
+            systematicTree->makeOutputVariable(m_rljet_fractional_pt_rest  , "rljet_fractional_pt_rest");
+            
             if (m_runHTT) {
               // have to resize in order to makeOutputVariable below
               m_htt_tag       . resize(m_nHttTools);
@@ -734,6 +744,17 @@ DataMCbackgroundEventSaver::reset_containers(const bool on_nominal_branch)
         m_rljet_fractional_pt_7     . assign(m_num_fatjets_keep, -1000 );
         m_rljet_fractional_pt_8     . assign(m_num_fatjets_keep, -1000 );
         m_rljet_fractional_pt_9     . assign(m_num_fatjets_keep, -1000 );
+        m_rljet_fractional_pt_10    . assign(m_num_fatjets_keep, -1000 );
+        m_rljet_fractional_pt_11    . assign(m_num_fatjets_keep, -1000 );
+        m_rljet_fractional_pt_12    . assign(m_num_fatjets_keep, -1000 );
+        m_rljet_fractional_pt_13    . assign(m_num_fatjets_keep, -1000 );
+        m_rljet_fractional_pt_14    . assign(m_num_fatjets_keep, -1000 );
+        m_rljet_fractional_pt_15    . assign(m_num_fatjets_keep, -1000 );
+        m_rljet_fractional_pt_16    . assign(m_num_fatjets_keep, -1000 );
+        m_rljet_fractional_pt_17    . assign(m_num_fatjets_keep, -1000 );
+        m_rljet_fractional_pt_18    . assign(m_num_fatjets_keep, -1000 );
+        m_rljet_fractional_pt_19    . assign(m_num_fatjets_keep, -1000 );
+        m_rljet_fractional_pt_rest  . assign(m_num_fatjets_keep, -1000 );
 
         if (m_runSD) {
           m_rljet_SDw_calib . assign(m_num_fatjets_keep, -1000.);
@@ -1096,8 +1117,8 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
                   return a.pt() > b.pt();
                 });
 
-              // if (clusters.size() >= 0) 
-                m_rljet_fractional_pt_0[i] = clusters[0]->pt()/rljets[i]->pt();
+              
+              if (clusters.size() >= 0) m_rljet_fractional_pt_0[i] = clusters[0]->pt()/rljets[i]->pt();
               if (clusters.size() >= 1) m_rljet_fractional_pt_1[i] = clusters[1]->pt()/rljets[i]->pt();
               if (clusters.size() >= 2) m_rljet_fractional_pt_2[i] = clusters[2]->pt()/rljets[i]->pt();
               if (clusters.size() >= 3) m_rljet_fractional_pt_3[i] = clusters[3]->pt()/rljets[i]->pt();
@@ -1107,6 +1128,27 @@ DataMCbackgroundEventSaver::saveEvent(const top::Event& event)
               if (clusters.size() >= 7) m_rljet_fractional_pt_7[i] = clusters[7]->pt()/rljets[i]->pt();
               if (clusters.size() >= 8) m_rljet_fractional_pt_8[i] = clusters[8]->pt()/rljets[i]->pt();
               if (clusters.size() >= 9) m_rljet_fractional_pt_9[i] = clusters[9]->pt()/rljets[i]->pt();
+              if (clusters.size() >= 10) m_rljet_fractional_pt_10[i] = clusters[10]->pt()/rljets[i]->pt();
+              if (clusters.size() >= 11) m_rljet_fractional_pt_11[i] = clusters[11]->pt()/rljets[i]->pt();
+              if (clusters.size() >= 12) m_rljet_fractional_pt_12[i] = clusters[12]->pt()/rljets[i]->pt();
+              if (clusters.size() >= 13) m_rljet_fractional_pt_13[i] = clusters[13]->pt()/rljets[i]->pt();
+              if (clusters.size() >= 14) m_rljet_fractional_pt_14[i] = clusters[14]->pt()/rljets[i]->pt();
+              if (clusters.size() >= 15) m_rljet_fractional_pt_15[i] = clusters[15]->pt()/rljets[i]->pt();
+              if (clusters.size() >= 16) m_rljet_fractional_pt_16[i] = clusters[16]->pt()/rljets[i]->pt();
+              if (clusters.size() >= 17) m_rljet_fractional_pt_17[i] = clusters[17]->pt()/rljets[i]->pt();
+              if (clusters.size() >= 18) m_rljet_fractional_pt_18[i] = clusters[18]->pt()/rljets[i]->pt();
+              if (clusters.size() >= 19) m_rljet_fractional_pt_19[i] = clusters[19]->pt()/rljets[i]->pt();
+
+              // Keep track of the pt remaining in the other jets
+              // Make sure to change the starting index to one above the last cluster index above
+              float remaining_frac_pt = 0;
+              if (clusters.size() >= 20){
+                for (int j = 20; j < clusters.size(); ++j)
+                {
+                  remaining_frac_pt += clusters[j]->pt()/rljets[i]->pt();
+                }
+              }
+              m_rljet_fractional_pt_rest[i] = remaining_frac_pt;  
 
             }catch(...){
               // l_jet_fractional_pt->Fill(-1);

@@ -181,6 +181,18 @@ namespace top {
         std::vector<float> m_rljet_fractional_pt_7;
         std::vector<float> m_rljet_fractional_pt_8;
         std::vector<float> m_rljet_fractional_pt_9;
+        std::vector<float> m_rljet_fractional_pt_10;
+        std::vector<float> m_rljet_fractional_pt_11;
+        std::vector<float> m_rljet_fractional_pt_12;
+        std::vector<float> m_rljet_fractional_pt_13;
+        std::vector<float> m_rljet_fractional_pt_14;
+        std::vector<float> m_rljet_fractional_pt_15;
+        std::vector<float> m_rljet_fractional_pt_16;
+        std::vector<float> m_rljet_fractional_pt_17;
+        std::vector<float> m_rljet_fractional_pt_18;
+        std::vector<float> m_rljet_fractional_pt_19;
+        std::vector<float> m_rljet_fractional_pt_rest;
+
 
         // reco large leading jets
         int m_rljet_count;
