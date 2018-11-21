@@ -32,6 +32,28 @@ HistoPack::HistoPack(unsigned num_fatjets_keep)
                     "h_rljet" + std::to_string (i) + "_fractional_pt_8" ,0.,  1,  0.01));
         this->h_rljet_fractional_pt_9.push_back  (make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string (i) + "_fractional_pt_9" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_10.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_10" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_11.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_11" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_12.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_12" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_13.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_13" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_14.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_14" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_15.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_15" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_16.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_16" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_17.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_17" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_18.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_18" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_19.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_19" ,0.,  1,  0.01));
+        this->h_rljet_fractional_pt_rest.push_back  (make_unique<TH1Tagged>(
+                    "h_rljet" + std::to_string (i) + "_fractional_pt_rest" ,0.,  1,  0.01));
 
         this->h_rljet_pt_comb.push_back  ( make_unique<TH1Tagged>(
                     "h_rljet" + std::to_string (i) + "_pt_comb", 0., 4000., 10.));
@@ -318,6 +340,17 @@ void HistoPack::WriteNominalOnlyHistograms() const
     for (auto const &h : h_rljet_fractional_pt_7) h->write_all();
     for (auto const &h : h_rljet_fractional_pt_8) h->write_all();
     for (auto const &h : h_rljet_fractional_pt_9) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_10) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_11) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_12) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_13) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_14) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_15) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_16) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_17) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_18) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_19) h->write_all();
+    for (auto const &h : h_rljet_fractional_pt_rest) h->write_all();
 
     for (auto const &h : h_rljet_pt_calo) h->write_all();
     for (auto const &h : h_rljet_m_calo) h->write_all();

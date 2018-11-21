@@ -243,6 +243,17 @@ class DataMCbackgroundSelector : public TSelector {
         std::vector<float>   *rljet_fractional_pt_7;
         std::vector<float>   *rljet_fractional_pt_8;
         std::vector<float>   *rljet_fractional_pt_9;
+        std::vector<float>   *rljet_fractional_pt_10;
+        std::vector<float>   *rljet_fractional_pt_11;
+        std::vector<float>   *rljet_fractional_pt_12;
+        std::vector<float>   *rljet_fractional_pt_13;
+        std::vector<float>   *rljet_fractional_pt_14;
+        std::vector<float>   *rljet_fractional_pt_15;
+        std::vector<float>   *rljet_fractional_pt_16;
+        std::vector<float>   *rljet_fractional_pt_17;
+        std::vector<float>   *rljet_fractional_pt_18;
+        std::vector<float>   *rljet_fractional_pt_19;
+        std::vector<float>   *rljet_fractional_pt_rest;
         std::vector<float>   *rljet_m_calo;
         std::vector<float>   *rljet_pt_calo;
         std::vector<float>   *rljet_m_ta;
@@ -437,6 +448,17 @@ class DataMCbackgroundSelector : public TSelector {
         TBranch        *b_rljet_fractional_pt_7;  //!
         TBranch        *b_rljet_fractional_pt_8;  //!
         TBranch        *b_rljet_fractional_pt_9;  //!
+        TBranch        *b_rljet_fractional_pt_10;  //!
+        TBranch        *b_rljet_fractional_pt_11;  //!
+        TBranch        *b_rljet_fractional_pt_12;  //!
+        TBranch        *b_rljet_fractional_pt_13;  //!
+        TBranch        *b_rljet_fractional_pt_14;  //!
+        TBranch        *b_rljet_fractional_pt_15;  //!
+        TBranch        *b_rljet_fractional_pt_16;  //!
+        TBranch        *b_rljet_fractional_pt_17;  //!
+        TBranch        *b_rljet_fractional_pt_18;  //!
+        TBranch        *b_rljet_fractional_pt_19;  //!
+        TBranch        *b_rljet_fractional_pt_rest;  //!
 
         TBranch        *b_rljet_m_calo;   //!
         TBranch        *b_rljet_pt_calo;   //!
@@ -636,6 +658,17 @@ void DataMCbackgroundSelector::Init(TTree *tree)
     rljet_fractional_pt_7 = 0;
     rljet_fractional_pt_8 = 0;
     rljet_fractional_pt_9 = 0;
+    rljet_fractional_pt_10 = 0;
+    rljet_fractional_pt_11 = 0;
+    rljet_fractional_pt_12 = 0;
+    rljet_fractional_pt_13 = 0;
+    rljet_fractional_pt_14 = 0;
+    rljet_fractional_pt_15 = 0;
+    rljet_fractional_pt_16 = 0;
+    rljet_fractional_pt_17 = 0;
+    rljet_fractional_pt_18 = 0;
+    rljet_fractional_pt_19 = 0;
+    rljet_fractional_pt_rest = 0;
 
     rljet_m_calo = 0;
     rljet_pt_calo = 0;
@@ -915,6 +948,17 @@ void DataMCbackgroundSelector::Init(TTree *tree)
             fChain->SetBranchAddress("rljet_fractional_pt_7", &rljet_fractional_pt_7, &b_rljet_fractional_pt_7);
             fChain->SetBranchAddress("rljet_fractional_pt_8", &rljet_fractional_pt_8, &b_rljet_fractional_pt_8);
             fChain->SetBranchAddress("rljet_fractional_pt_9", &rljet_fractional_pt_9, &b_rljet_fractional_pt_9);
+            fChain->SetBranchAddress("rljet_fractional_pt_10", &rljet_fractional_pt_10, &b_rljet_fractional_pt_10);
+            fChain->SetBranchAddress("rljet_fractional_pt_11", &rljet_fractional_pt_11, &b_rljet_fractional_pt_11);
+            fChain->SetBranchAddress("rljet_fractional_pt_12", &rljet_fractional_pt_12, &b_rljet_fractional_pt_12);
+            fChain->SetBranchAddress("rljet_fractional_pt_13", &rljet_fractional_pt_13, &b_rljet_fractional_pt_13);
+            fChain->SetBranchAddress("rljet_fractional_pt_14", &rljet_fractional_pt_14, &b_rljet_fractional_pt_14);
+            fChain->SetBranchAddress("rljet_fractional_pt_15", &rljet_fractional_pt_15, &b_rljet_fractional_pt_15);
+            fChain->SetBranchAddress("rljet_fractional_pt_16", &rljet_fractional_pt_16, &b_rljet_fractional_pt_16);
+            fChain->SetBranchAddress("rljet_fractional_pt_17", &rljet_fractional_pt_17, &b_rljet_fractional_pt_17);
+            fChain->SetBranchAddress("rljet_fractional_pt_18", &rljet_fractional_pt_18, &b_rljet_fractional_pt_18);
+            fChain->SetBranchAddress("rljet_fractional_pt_19", &rljet_fractional_pt_19, &b_rljet_fractional_pt_19);
+            fChain->SetBranchAddress("rljet_fractional_pt_rest", &rljet_fractional_pt_rest, &b_rljet_fractional_pt_rest);
         }  
 
         fChain->SetBranchAddress("rljet_count", &rljet_count, &b_rljet_count);

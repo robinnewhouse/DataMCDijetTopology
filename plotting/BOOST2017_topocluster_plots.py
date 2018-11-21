@@ -20,23 +20,28 @@ sane_defaults()
 TGaxis.SetMaxDigits(4)
 gStyle.SetOptStat(0)
 
-CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2017/cp.merged.root"
-CP_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/studies/topocluster/topocluster_distribution_histograms.root"
-SIGNAL_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/studies/topocluster/zprime_output.root"
-LOADER = DijetLoader(CP_ROOT_FILEPATH)
+# DIJET_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2017/cp.merged.root"
+# DIJET_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/studies/topocluster/topocluster_distribution_histograms.root"
+BASE_DIR = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/studies/topocluster/gt150/"
+# BASE_DIR = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/studies/topocluster/gt450/"
+DIJET_ROOT_FILEPATH = BASE_DIR + "output.cp.nominal.root"
+ZPRIME_ROOT_FILEPATH = BASE_DIR + "zprime_cluster_study_4000/output.root"
+LOADER = DijetLoader(DIJET_ROOT_FILEPATH)
 LOADER_SMOOTH = LOADER
-ROOT_OUTPUT_DIR = os.path.dirname(CP_ROOT_FILEPATH) + "/plots"
+ROOT_OUTPUT_DIR = os.path.dirname(DIJET_ROOT_FILEPATH) + "/plots_4000"
 DO_SYSTEMATICS_DEFAULT = False
 CLUSTER_INDEX = [0,1,2,9]
+N_CLUSTERS_MEAN = 20
+Y_MAX = 0.16
 
 OUTPUT_DIR = ROOT_OUTPUT_DIR
 make_dir(ROOT_OUTPUT_DIR)
 make_dir(OUTPUT_DIR)
 
 DEF_LINES = [ "#scale[0.85]{Trimmed anti-#it{k}_{t} #it{R}=1.0 jets} ", 
-              "#scale[0.85]{Light Quark Jet Sample :}" , 
-              "#scale[0.85]{   #it{p}_{T} > 450 GeV}", 
-              "#scale[0.85]{Top Quark Jet Sample:}" , 
+              # "#scale[0.85]{Light Quark Jet Sample :}" , 
+              # "#scale[0.85]{   #it{p}_{T} > 450 GeV}", 
+              # "#scale[0.85]{Top Quark Jet Sample:}" , 
               "#scale[0.85]{   #it{p}_{T} > 150 GeV}", 
               ]
 MASS_PLOT_REBIN = 8
@@ -91,10 +96,14 @@ class PlotTopoclusters(PlotBase):
                 h_bkg.GetYaxis().SetTitleOffset(1.6)
 
 
-            if bkg: h_bkg.SetMaximum(0.16)
-            if sig: h_sig.SetMaximum(0.16)
             if bkg: set_mc_style_line(h_bkg, colors[i], line_width = 4, line_style = 1, alpha = 1.0)
             if sig: set_mc_style_line(h_sig, colors[i], line_width = 4, line_style = 2, alpha = 0.7)
+            if bkg: h_bkg.Rebin(2)
+            if sig: h_sig.Rebin(2)
+            if bkg: h_bkg.Scale(1/h_bkg.Integral()/2)
+            if sig: h_sig.Scale(1/h_sig.Integral()/2)
+            if bkg: h_bkg.SetMaximum(Y_MAX)
+            if sig: h_sig.SetMaximum(Y_MAX)
             if bkg: h_bkg.Draw("hist,same")
             if sig: h_sig.Draw("hist,same")
             gPad.RedrawAxis()
@@ -115,7 +124,7 @@ class PlotTopoclusters(PlotBase):
         # ugly hack to get rid of horizontal red line of 9th cluster at top of
         # plot -- basically draw a white thick line over it and then redraw
         # pad axes
-        l = TLine(0., 0.16, 0.0167, 0.16)
+        l = TLine(0., Y_MAX, 0.0167, Y_MAX)
         l.SetLineColor(0)
         l.SetLineWidth(5)
         l.Draw()
@@ -123,13 +132,6 @@ class PlotTopoclusters(PlotBase):
 
 
         draw_sample_names()
-
-        # Sample info
-        bkg_sample_tex = TLatex(0.02, 0.14, "test");
-        sig_sample_tex = TLatex(0.02, 0.15, "mc15_13TeV.301334.Pythia8EvtGen_A14NNPDF23LO_zprime4000_tt");
-       
-
-
 
         self.name = "topocluster_plots"
         self.canvas.Update()
@@ -160,7 +162,7 @@ class PlotTopoclustersMean(PlotBase):
             extra_lines_loc = [0.61,0.80],
             #               x1   y1   x2   y2
             legend_loc = [0.60,0.915,0.83,0.83],
-            atlas_mod = "Simulation Internal",
+            atlas_mod = "Simulation",
             tex_size_mod    = 0.9, # FIXME temporary, because Preliminary was too long to fit in without overlaps
             tex_spacing_mod    = 0.9,
             height = 600,
@@ -186,15 +188,20 @@ class PlotTopoclustersMean(PlotBase):
 
    
         # h_mean = TH1F("topocluster_mean_pt","Topocluster Mean pT", 10,0,10)
-        h_bkg_mean = TH1F("topocluster_bkg_mean_pt","Topocluster Background Mean pT", 10,-0.50,9.5)
-        h_sig_mean = TH1F("topocluster_sig_mean_pt","Topocluster Signal Mean pT", 10,-0.50,9.5)
+        h_bkg_mean = TH1F("topocluster_bkg_mean_pt","Topocluster Background Mean pT", N_CLUSTERS_MEAN+1,-0.50,9.5)
+        h_sig_mean = TH1F("topocluster_sig_mean_pt","Topocluster Signal Mean pT", N_CLUSTERS_MEAN+1,-0.50,9.5)
 
-        self.x_min = -.5
-        self.x_max = 9.5
-        self.set_x_axis_bounds(h_bkg_mean)  
+        # self.x_min = -.5
+        # self.x_max = 10 - .5
         for h_mean in [h_bkg_mean, h_sig_mean]:
+            self.set_x_axis_bounds(h_mean)  
             h_mean.SetMaximum(.8)
             h_mean.SetMinimum(0)
+            h_mean.GetYaxis().SetLimits(-0.4, 1.2)
+            h_mean.GetXaxis().SetLimits(-0.5, N_CLUSTERS_MEAN - 0.5)
+        # Offset the signal marks slightly
+        h_sig_mean.GetXaxis().SetLimits(-0.3, N_CLUSTERS_MEAN - 0.3)
+
         # h_mean.GetXaxis().SetRange(1,30)
 
         for i in range(len(self.h_topo_pt_bkg)):
@@ -205,7 +212,7 @@ class PlotTopoclustersMean(PlotBase):
 
 
         self.canvas.cd()
-        self.title = "Mean fractional pT of First 10 Topoclusters"
+        self.title = "Mean fractional pT of First "+str(N_CLUSTERS_MEAN)+" Topoclusters"
         ### Legend
         self.leg.AddEntry(h_bkg_mean, "Pythia8 multijet")
         self.leg.AddEntry(h_sig_mean, "Pythia8 Z'")
@@ -213,7 +220,6 @@ class PlotTopoclustersMean(PlotBase):
         # set_mc_style_line(h_mean, kGreen-2, line_width = 4)
         set_mc_style_line(h_bkg_mean, kViolet -7, line_width = 4, alpha = 1.0)
         set_mc_style_line(h_sig_mean, kGreen -2, line_width = 4, alpha = 0.8)
-        h_sig_mean.GetXaxis().SetLimits(-0.4, 9.6)
 
         self.canvas.Clear()
         
@@ -225,7 +231,7 @@ class PlotTopoclustersMean(PlotBase):
             h_mean.GetXaxis().SetLabelSize(20.0)
             h_mean.GetYaxis().SetLabelSize(20.0)
             h_mean.GetYaxis().SetTitleOffset(1.4)
-            h_mean.GetXaxis().SetNdivisions(10,True)
+            h_mean.GetXaxis().SetNdivisions(10, True)
 
             h_mean.Draw("e1,same")
         
@@ -240,7 +246,8 @@ class PlotTopoclustersMean(PlotBase):
         self.name = "topocluster_mean_log_pt"
         for h_mean in [h_bkg_mean, h_sig_mean]:
             h_mean.SetMaximum(1.25)
-            h_mean.SetMinimum(3E-3)
+            # h_mean.SetMinimum(3E-3)
+            h_mean.SetMinimum(1E-3)
         self.canvas.SetLogy()
         self.canvas.Update()
         self.canvas.Modified()
@@ -252,19 +259,19 @@ class PlotTopoclustersMean(PlotBase):
 
 
 def draw_sample_names():
-    saple_label = TText();
-    saple_label.SetNDC();
-    saple_label.SetTextFont(42);
-    saple_label.SetTextAngle(0);
-    saple_label.SetTextSize(0.03);
-    saple_label.SetTextColor(1);
+    sample_label = TText();
+    sample_label.SetNDC();
+    sample_label.SetTextFont(42);
+    sample_label.SetTextAngle(0);
+    sample_label.SetTextSize(0.03);
+    sample_label.SetTextColor(1);
     y = 0.86
     x = 0.61
 
-    saple_label.DrawText(x,y+.033, "Pythia 8");
-    saple_label.DrawText(x+.125,y+.033, "Pythia 8");
-    saple_label.DrawText(x,y, "Multijet");
-    saple_label.DrawText(x+.125,y, "Z'");
+    sample_label.DrawText(x,y+.033, "Pythia 8");
+    sample_label.DrawText(x+.125,y+.033, "Pythia 8");
+    sample_label.DrawText(x,y, "Multijet");
+    sample_label.DrawText(x+.125,y, "Z'");
 
 
 
@@ -273,7 +280,7 @@ def get_background_histograms():
     var_base_name = "h_rljet0_fractional_pt_"
     h_topo_pt_bkg = []
 
-    for i in range(0,10):
+    for i in range(0,N_CLUSTERS_MEAN):
          h_topo_pt_bkg.append(tmp_loader.get_normalized_dijet("pythia_dijet", var_base_name+str(i), normalize_to_unity = True))
     return h_topo_pt_bkg
 
@@ -287,20 +294,20 @@ def get_signal_histograms():
 
     # Create histograms
     h_topo_pt_signal = []
-    for i in range(0,10):
+    for i in range(0,N_CLUSTERS_MEAN):
         h_topo_pt_signal.append(TH1F("h_rljet_fractional_pt_"+str(i),"Topocluster fractional pT "+str(i), 100, 0.0, 1.0))
 
     # Open output ntuples and read values
-    ntuples_file = TFile.Open( SIGNAL_ROOT_FILEPATH , "READ" )
+    ntuples_file = TFile.Open( ZPRIME_ROOT_FILEPATH , "READ" )
     nominal = ntuples_file.Get("nominal")
     for j in range(nominal.GetEntries()):
         nominal.GetEntry(j)
 
-        for i in range(0,10):
+        for i in range(0,N_CLUSTERS_MEAN):
             h_topo_pt_signal[i].Fill(nominal.GetLeaf("rljet_fractional_pt_"+str(i)).GetValue())
     
     # Normalize to Unity
-    for i in range(0,10):
+    for i in range(0,N_CLUSTERS_MEAN):
         h_topo_pt_signal[i].Scale(1/h_topo_pt_signal[i].Integral())
 
 

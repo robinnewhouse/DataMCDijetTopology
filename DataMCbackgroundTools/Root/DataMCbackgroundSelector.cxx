@@ -328,6 +328,17 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             b_rljet_fractional_pt_7->GetEntry(entry);
             b_rljet_fractional_pt_8->GetEntry(entry);
             b_rljet_fractional_pt_9->GetEntry(entry);
+            b_rljet_fractional_pt_10->GetEntry(entry);
+            b_rljet_fractional_pt_11->GetEntry(entry);
+            b_rljet_fractional_pt_12->GetEntry(entry);
+            b_rljet_fractional_pt_13->GetEntry(entry);
+            b_rljet_fractional_pt_14->GetEntry(entry);
+            b_rljet_fractional_pt_15->GetEntry(entry);
+            b_rljet_fractional_pt_16->GetEntry(entry);
+            b_rljet_fractional_pt_17->GetEntry(entry);
+            b_rljet_fractional_pt_18->GetEntry(entry);
+            b_rljet_fractional_pt_19->GetEntry(entry);
+            b_rljet_fractional_pt_rest->GetEntry(entry);
         }
 
         b_rljet_count->GetEntry(entry);
@@ -893,6 +904,17 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
             hp->h_rljet_fractional_pt_7.at(i)->fill(rljet_fractional_pt_7->at(i), weight);
             hp->h_rljet_fractional_pt_8.at(i)->fill(rljet_fractional_pt_8->at(i), weight);
             hp->h_rljet_fractional_pt_9.at(i)->fill(rljet_fractional_pt_9->at(i), weight);
+            hp->h_rljet_fractional_pt_10.at(i)->fill(rljet_fractional_pt_10->at(i), weight);
+            hp->h_rljet_fractional_pt_11.at(i)->fill(rljet_fractional_pt_11->at(i), weight);
+            hp->h_rljet_fractional_pt_12.at(i)->fill(rljet_fractional_pt_12->at(i), weight);
+            hp->h_rljet_fractional_pt_13.at(i)->fill(rljet_fractional_pt_13->at(i), weight);
+            hp->h_rljet_fractional_pt_14.at(i)->fill(rljet_fractional_pt_14->at(i), weight);
+            hp->h_rljet_fractional_pt_15.at(i)->fill(rljet_fractional_pt_15->at(i), weight);
+            hp->h_rljet_fractional_pt_16.at(i)->fill(rljet_fractional_pt_16->at(i), weight);
+            hp->h_rljet_fractional_pt_17.at(i)->fill(rljet_fractional_pt_17->at(i), weight);
+            hp->h_rljet_fractional_pt_18.at(i)->fill(rljet_fractional_pt_18->at(i), weight);
+            hp->h_rljet_fractional_pt_19.at(i)->fill(rljet_fractional_pt_19->at(i), weight);
+            hp->h_rljet_fractional_pt_rest.at(i)->fill(rljet_fractional_pt_rest->at(i), weight);
         }
         
         hp->h_rljet_pt_calo.at(i)->fill(rljet_pt_calo->at(i)/1000., weight);
@@ -1052,22 +1074,22 @@ Bool_t DataMCbackgroundSelector::Process(Long64_t entry)
         // }
 
         // Shower Deconstruction variations stored nominal TTree
-        if (this->operating_on_mc) {
-            SD_systematic_tag_map["SDt_dcut_UP"]     = (rljet_SDt_dcut_UP->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.)) && (rljet_m_comb->at(i) > 60e3);
-            SD_systematic_tag_map["SDt_dcut_DOWN"]     = (rljet_SDt_dcut_DOWN->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.)) && (rljet_m_comb->at(i) > 60e3);
+        // if (this->operating_on_mc) {
+        //     SD_systematic_tag_map["SDt_dcut_UP"]     = (rljet_SDt_dcut_UP->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.)) && (rljet_m_comb->at(i) > 60e3);
+        //     SD_systematic_tag_map["SDt_dcut_DOWN"]     = (rljet_SDt_dcut_DOWN->at(i) > f_sdtop->Eval(rljet_pt_comb->at(i)/1000.)) && (rljet_m_comb->at(i) > 60e3);
 
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut_DOWN", rljet_SDt_dcut_DOWN->at(i), weight, (rljet_m_comb->at(i) > 60e3));
-            hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut_UP", rljet_SDt_dcut_UP->at(i), weight, (rljet_m_comb->at(i) > 60e3));
+        //     hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut_DOWN", rljet_SDt_dcut_DOWN->at(i), weight, (rljet_m_comb->at(i) > 60e3));
+        //     hp->h_rljet_SD_logchi.at(i)->fill_tagged("t_dcut_UP", rljet_SDt_dcut_UP->at(i), weight, (rljet_m_comb->at(i) > 60e3));
 
-            for (const auto& itag : SD_systematic_tag_map) {
-                hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
-                hp->h_rljet_pt_comb.at(i)->fill_tagged(itag.first, rljet_pt_comb->at(i)/1000., weight, itag.second);
-                // post-tag mu for MC-only for SD variations
-                if (i == 0) {
-                    hp->h_mu->fill_tagged(itag.first, mu, weight, itag.second);
-                }
-            }
-        } // end of saving systematic branch SD-tagged variables        
+        //     for (const auto& itag : SD_systematic_tag_map) {
+        //         hp->h_rljet_m_comb.at(i)->fill_tagged(itag.first, rljet_m_comb->at(i)/1000., weight, itag.second);
+        //         hp->h_rljet_pt_comb.at(i)->fill_tagged(itag.first, rljet_pt_comb->at(i)/1000., weight, itag.second);
+        //         // post-tag mu for MC-only for SD variations
+        //         if (i == 0) {
+        //             hp->h_mu->fill_tagged(itag.first, mu, weight, itag.second);
+        //         }
+        //     }
+        // } // end of saving systematic branch SD-tagged variables        
     } // end of saving all anti-kt R = 1.0 distributions
 
     if (rljet_count >= 2) {

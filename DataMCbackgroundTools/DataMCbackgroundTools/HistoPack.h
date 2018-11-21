@@ -28,6 +28,17 @@ public:
     vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_7;
     vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_8;
     vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_9;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_10;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_11;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_12;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_13;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_14;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_15;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_16;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_17;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_18;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_19;
+    vector<unique_ptr<TH1Tagged>> h_rljet_fractional_pt_rest;
 
     vector<unique_ptr<TH1Tagged>> h_rljet_pt_comb;
     vector<unique_ptr<TH1Tagged>> h_rljet_m_comb;
