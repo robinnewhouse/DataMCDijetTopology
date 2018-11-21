@@ -178,14 +178,14 @@ class GammaJetLoader(PlotLoader):
         h_wzgamma = self.get_hist(["sherpa_wz_gamma", branch] , hist_name)
         h_wzgamma.SetFillColor(self.WZGAMMA_COLOR)
         h_wzgamma.SetMarkerSize(0)
-        h_wzgamma.SetLineWidth(1)
+        h_wzgamma.SetLineWidth(0)
         return h_wzgamma.Clone()
 
     def get_ttbar(self, hist_name, branch = "nominal"):
         h_ttbar = self.get_hist(["ttbar_gamma", branch] , hist_name)
         h_ttbar.SetFillColor(self.TTBAR_COLOR)
         h_ttbar.SetMarkerSize(0)
-        h_ttbar.SetLineWidth(1)
+        h_ttbar.SetLineWidth(0)
         return h_ttbar.Clone()
 
     def get_data(self, hist_name):
