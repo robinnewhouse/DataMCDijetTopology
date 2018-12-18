@@ -22,8 +22,8 @@ gStyle.SetOptStat(0)
 
 # DIJET_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2017/cp.merged.root"
 # DIJET_ROOT_FILEPATH = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/studies/topocluster/topocluster_distribution_histograms.root"
-BASE_DIR = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/studies/topocluster/gt150/"
-# BASE_DIR = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/studies/topocluster/gt450/"
+# BASE_DIR = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/studies/topocluster/gt150/"
+BASE_DIR = "/data/newhouse/TopBosonTagAnalysis2018/NTuples_DataMC_dijets/studies/topocluster/gt450/"
 DIJET_ROOT_FILEPATH = BASE_DIR + "output.cp.nominal.root"
 ZPRIME_ROOT_FILEPATH = BASE_DIR + "zprime_cluster_study_4000/output.root"
 LOADER = DijetLoader(DIJET_ROOT_FILEPATH)
@@ -40,9 +40,9 @@ make_dir(OUTPUT_DIR)
 
 DEF_LINES = [ "#scale[0.85]{Trimmed anti-#it{k}_{t} #it{R}=1.0 jets} ", 
               # "#scale[0.85]{Light Quark Jet Sample :}" , 
-              # "#scale[0.85]{   #it{p}_{T} > 450 GeV}", 
+              "#scale[0.85]{   #it{p}_{T} > 450 GeV}", 
               # "#scale[0.85]{Top Quark Jet Sample:}" , 
-              "#scale[0.85]{   #it{p}_{T} > 150 GeV}", 
+              # "#scale[0.85]{   #it{p}_{T} > 150 GeV}", 
               ]
 MASS_PLOT_REBIN = 8
 
@@ -156,7 +156,7 @@ class PlotTopoclustersMean(PlotBase):
     def __init__(self, **kwargs):
 
         super(PlotTopoclustersMean, self).__init__(
-            atlas_loc = [0.2,0.25],
+            atlas_loc = [0.25,0.88],
             hide_lumi = True,
             extra_legend_lines = DEF_LINES + ["#scale[0.9]{Errors represent RMS}","#scale[0.9]{       of #it{p}_{T} fraction dist.}"],
             extra_lines_loc = [0.61,0.80],
@@ -188,8 +188,8 @@ class PlotTopoclustersMean(PlotBase):
 
    
         # h_mean = TH1F("topocluster_mean_pt","Topocluster Mean pT", 10,0,10)
-        h_bkg_mean = TH1F("topocluster_bkg_mean_pt","Topocluster Background Mean pT", N_CLUSTERS_MEAN+1,-0.50,9.5)
-        h_sig_mean = TH1F("topocluster_sig_mean_pt","Topocluster Signal Mean pT", N_CLUSTERS_MEAN+1,-0.50,9.5)
+        h_bkg_mean = TH1F("topocluster_bkg_mean_pt","Topocluster Background Mean pT", N_CLUSTERS_MEAN,-0.50,20.5)
+        h_sig_mean = TH1F("topocluster_sig_mean_pt","Topocluster Signal Mean pT", N_CLUSTERS_MEAN,-0.50,20.5)
 
         # self.x_min = -.5
         # self.x_max = 10 - .5

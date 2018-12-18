@@ -146,7 +146,7 @@ class PlotDataMcGammaJet(PlotBase):
         self.h_stat_ratio.SetFillColor(kGreen-5)
         self.h_stat_ratio.SetFillStyle(1001)
 
-        set_data_style_simple(self.h_data)
+        set_data_style_simple(self.h_data, marker_size = 0.7)
         # set_data_style_simple(self.h_sherpa_ratio)
         # set_data_style_simple(self.h_pythia_ratio)
 
