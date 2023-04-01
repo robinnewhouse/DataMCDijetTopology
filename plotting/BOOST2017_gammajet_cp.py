@@ -36,7 +36,7 @@ class PlotDataMcGammaJet(PlotBase):
                 lumi_val = "36.1",
                 width = 600,
                 name = var_name,
-                atlas_mod = "",
+                atlas_mod = "Internal",
                 legend_loc = [0.20,0.93,0.56,0.70] if flip_legend else [0.59,0.93,0.86,0.70],
                 atlas_loc = [0.55,0.9] if flip_legend else None,
                 extra_lines_loc = [0.55,0.82] if flip_legend else None,

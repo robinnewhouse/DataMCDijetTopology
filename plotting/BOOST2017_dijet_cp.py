@@ -44,7 +44,7 @@ class PlotDataPythiaHerwig(PlotBase):
                 lumi_val = "36.7",
                 width = 600,
                 name = var_name,
-                atlas_mod = "",
+                atlas_mod = "Internal",
                 legend_loc = [0.20,0.93,0.56,0.66] if flip_legend else [0.53,0.93,0.90,0.66],
                 atlas_loc = [0.55,0.9] if flip_legend else None,
                 extra_lines_loc = [0.55,0.82] if flip_legend else None,
